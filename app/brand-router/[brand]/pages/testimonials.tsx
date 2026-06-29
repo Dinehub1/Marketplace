@@ -13,6 +13,10 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
     { name: "Raju Tea Stall", text: "SarkarDost par listing karne ke baad mere customers badh gaye — log directly call karte hain ab.", rating: 5, role: "Chaiwala, Rajwada" },
     { name: "Meena Tailor", text: "Pehle sirf mile jo aate the — ab naye customers bhi mil rahe hain. Bahut achha platform hai!", rating: 5, role: "Tailor, Palasia" },
     { name: "Pandit Electrician", text: "Maine apni service online lagayi — ab 5-6 calls daily aati hain. Pehle 1-2 hoti the.", rating: 5, role: "Electrician, Sudama Nagar" },
+    { name: "Sita Devi", text: "SarkarDost ne mere beauty parlour ki online booking system banayi — ab clients appointment easily book karte hain.", rating: 5, role: "Beauty Parlour Owner, Vijay Nagar" },
+    { name: "Ashok Kumar", text: "Mere kirane ki dukaan ki online listing karwayi — ab doorstep delivery bhi shuru ki. Sales 40% badhi!", rating: 4, role: "Grocery Store Owner, Rajwada" },
+    { name: "Deepika Joshi", text: "Yoga classes ki promotion SarkarDost se ki — ab har batch full hoti hai. Zumba aur meditation ke liye best platform!", rating: 5, role: "Yoga Instructor, Palasia" },
+    { name: "Rajesh Malviya", text: "Free website banwaya SarkarDost ne — ab mere coaching institute ki details online hai. Parents easily contact karte hain.", rating: 5, role: "Tutor, Sudama Nagar" },
   ],
   followup: [
     { name: "Amit Sales", text: "FollowUp se mere clients ko kabhi miss nahi karna padta — automated messages sab yaad dilate hain.", rating: 5, role: "Sales Executive" },
