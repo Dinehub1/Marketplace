@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+    ============================================================
+    SarkarWellness - Ayurvedic Wellness Platform
+    A comprehensive landing page for traditional Indian
+    Ayurvedic health and wellness services.
+    ============================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>SarkarWellness — Authentic Ayurvedic Wellness & Panchakarma Therapy | India</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="Experience authentic Ayurvedic wellness with SarkarWellness. Expert Panchakarma therapy, herbal consultations, personalized diet plans, yoga sessions, and natural remedies. Book your consultation today.">
+
+    <!-- SEO: Keywords -->
+    <meta name="keywords" content="Ayurveda, Panchakarma, herbal medicine, wellness, yoga, natural remedies, dosha analysis, Ayurvedic doctor, India">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="SarkarWellness — Authentic Ayurvedic Wellness & Panchakarma Therapy">
+    <meta property="og:description" content="Experience authentic Ayurvedic wellness. Expert Panchakarma therapy, herbal consultations, personalized diet plans, and natural remedies.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarwellness.in">
+    <meta property="og:image" content="https://sarkarwellness.in/assets/og-image.jpg">
+    <meta property="og:site_name" content="SarkarWellness">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarWellness — Authentic Ayurvedic Wellness">
+    <meta name="twitter:description" content="Expert Panchakarma therapy, herbal consultations, and natural remedies.">
+    <meta name="twitter:image" content="https://sarkarwellness.in/assets/twitter-card.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalBusiness",
+        "name": "SarkarWellness",
+        "description": "Authentic Ayurvedic wellness center offering Panchakarma therapy, herbal consultations, and natural remedies.",
+        "url": "https://sarkarwellness.in",
+        "telephone": "+91-9876543210",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Wellness Road, MG Road",
+            "addressLocality": "Indore",
+            "addressRegion": "Madhya Pradesh",
+            "postalCode": "452001",
+            "addressCountry": "IN"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "22.7196",
+            "longitude": "75.8577"
+        },
+        "priceRange": "₹₹",
+        "openingHours": ["Mo-Su 08:00-20:00"],
+        "medicalSpecialty": "Ayurveda",
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "1247"
+        },
+        "sameAs": [
+            "https://facebook.com/sarkarwellness",
+            "https://twitter.com/sarkarwellness",
+            "https://instagram.com/sarkarwellness"
+        ]
+    }
+    </script>
+
+    <!-- CSS Variables and Preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================================
+         SKIP LINK (Accessibility)
+    ============================================================ -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ============================================================
+         NAVIGATION BAR
+    ============================================================ -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="nav-logo" aria-label="SarkarWellness Home">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Wellness</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Services</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="toggle-icon" id="toggleIcon">🌙</span>
+                </button>
+                <a href="#pricing" class="btn btn-primary btn-nav">Book Consultation</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+         MAIN CONTENT
+    ============================================================ -->
+    <main id="main-content">
+
+        <!-- ============================================================
+             HERO SECTION
+        ============================================================ -->
+        <section class="hero" id="hero">
+            <div class="hero-bg-pattern"></div>
+            <div class="hero-container">
+                <div class="hero-content">
+                    <span class="hero-badge">🇮🇳 Trusted by 10,000+ Patients Across India</span>
+                    <h1 class="hero-title">
+                        Heal Naturally with
+                        <span class="gradient-text">Authentic Ayurveda</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Experience 5,000 years of ancient Indian wisdom. Our expert Vaidyas provide
+                        personalized Panchakarma therapy, herbal treatments, and holistic wellness plans
+                        tailored to your unique dosha constitution.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#pricing" class="btn btn-primary btn-lg">
+                            Start Your Healing Journey
+                            <span class="btn-arrow">→</span>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline btn-lg">
+                            Learn More
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" data-count="10000">10,000+</span>
+                            <span class="stat-label">Happy Patients</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">4.8★</span>
+                            <span class="stat-label">Average Rating</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="50">50+</span>
+                            <span class="stat-label">Expert Vaidyas</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="15">15+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-image-wrapper">
+                        <div class="hero-illustration">
+                            <div class="ayurveda-circle">
+                                <span class="dosha vata">Vata</span>
+                                <span class="dosha pitta">Pitta</span>
+                                <span class="dosha kapha">Kapha</span>
+                                <div class="center-herb">🌿</div>
+                            </div>
+                        </div>
+                        <div class="floating-card card-1">
+                            <span>✅ Dosha Analysis</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <span>🧘 Yoga Session</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <span>💊 Herbal Remedy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #1 — Below Hero
+        ============================================================ -->
+        <div class="ad-slot" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-content">
+                <p>🌿 Ad Space — Premium Ayurvedic Products | <a href="#">Shop Now</a></p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FEATURES / SERVICES GRID
+        ============================================================ -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Our Services</span>
+                    <h2 class="section-title">Comprehensive Ayurvedic <span class="gradient-text">Wellness Solutions</span></h2>
+                    <p class="section-subtitle">From diagnosis to treatment, we offer a complete range of traditional Ayurvedic services for your holistic well-being.</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🧪</div>
+                        <h3>Dosha Analysis</h3>
+                        <p>Advanced Prakriti assessment using traditional Nadi Pariksha (pulse diagnosis) combined with modern health profiling to determine your unique constitution.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🛁</div>
+                        <h3>Panchakarma Therapy</h3>
+                        <p>Five-fold detoxification treatment including Vamana, Virechana, Basti, Nasya, and Raktamokshana for deep cleansing and rejuvenation.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🌱</div>
+                        <h3>Herbal Medicine</h3>
+                        <p>Custom-formulated herbal preparations using 100% natural ingredients sourced from organic farms across Kerala, Himalayas, and Western Ghats.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🧘</div>
+                        <h3>Yoga & Meditation</h3>
+                        <p>Daily guided yoga sessions, pranayama breathing exercises, and meditation practices tailored to your dosha type and health goals.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🥗</div>
+                        <h3>Ayurvedic Diet Plan</h3>
+                        <p>Personalized nutrition plans based on your Prakriti, Vikriti, and seasonal Rutucharya. Includes custom meal plans and cooking guidance.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">💆</div>
+                        <h3>Abhyanga Massage</h3>
+                        <p>Traditional warm oil massage using medicated oils specific to your dosha. Promotes circulation, relaxation, and toxin elimination.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 7 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">📋</div>
+                        <h3>Health Consultation</h3>
+                        <p>One-on-one consultation with certified Ayurvedic practitioners. Available in-person and via video call for patients across India.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+
+                    <!-- Feature 8 -->
+                    <div class="feature-card" data-aos="fade-up">
+                        <div class="feature-icon">🏋️</div>
+                        <h3>Lifestyle Coaching</h3>
+                        <p>Dinacharya (daily routine) and Ritucharya (seasonal routine) guidance to align your lifestyle with natural rhythms for optimal health.</p>
+                        <a href="#" class="feature-link">Learn more →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #2 — Between Features and How It Works
+        ============================================================ -->
+        <div class="ad-slot" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-content">
+                <p>🧘 Ad Space — Online Yoga Classes | <a href="#">Join Free Trial</a></p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             HOW IT WORKS SECTION
+        ============================================================ -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Simple Process</span>
+                    <h2 class="section-title">Your Journey to <span class="gradient-text">Wellness</span></h2>
+                    <p class="section-subtitle">Getting started with SarkarWellness is easy. Follow these four simple steps to begin your healing journey.</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Step 1 -->
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>Book Consultation</h3>
+                            <p>Schedule a free 15-minute call with our Ayurvedic counselor to discuss your health concerns and goals.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>Dosha Assessment</h3>
+                            <p>Our Vaidya performs a comprehensive Prakriti analysis using Nadi Pariksha and detailed health questionnaire.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>Personalized Plan</h3>
+                            <p>Receive a customized treatment plan including herbal medicines, diet, yoga, and therapy schedule.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="step">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h3>Heal & Transform</h3>
+                            <p>Follow your plan with regular check-ins. Track progress and adjust treatment as you heal naturally.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #3 — Between How It Works and Pricing
+        ============================================================ -->
+        <div class="ad-slot" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-content">
+                <p>💊 Ad Space — Organic Herbal Supplements | <a href="#">Get 20% Off</a></p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             PRICING SECTION
+        ============================================================ -->
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Pricing Plans</span>
+                    <h2 class="section-title">Choose Your <span class="gradient-text">Wellness Plan</span></h2>
+                    <p class="section-subtitle">Transparent pricing with no hidden charges. All plans include consultation, diagnosis, and personalized treatment.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Basic Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Shanti</h3>
+                            <p class="plan-subtitle">Basic Wellness</p>
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount">2,999</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>✅ Initial Dosha Assessment</li>
+                            <li>✅ Monthly Consultation (1x)</li>
+                            <li>✅ Personalized Diet Plan</li>
+                            <li>✅ Basic Herbal Supplements</li>
+                            <li>✅ Yoga Video Library Access</li>
+                            <li>❌ Panchakarma Therapy</li>
+                            <li>❌ Abhyanga Massage</li>
+                            <li>❌ Priority Support</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('Shanti', 2999)">Get Started</button>
+                    </div>
+
+                    <!-- Popular Plan -->
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3>Sampoorna</h3>
+                            <p class="plan-subtitle">Complete Wellness</p>
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount">7,999</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>✅ Comprehensive Dosha Analysis</li>
+                            <li>✅ Weekly Consultations (4x)</li>
+                            <li>✅ Custom Diet & Lifestyle Plan</li>
+                            <li>✅ Premium Herbal Medicines</li>
+                            <li>✅ Live Yoga & Meditation Classes</li>
+                            <li>✅ 1 Panchakarma Session</li>
+                            <li>✅ 2 Abhyanga Massages</li>
+                            <li>✅ WhatsApp Support</li>
+                        </ul>
+                        <button class="btn btn-primary btn-full" onclick="openPaymentModal('Sampoorna', 7999)">Get Started</button>
+                    </div>
+
+                    <!-- Premium Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Mukti</h3>
+                            <p class="plan-subtitle">Premium Healing</p>
+                            <div class="price">
+                                <span class="currency">₹</span>
+                                <span class="amount">14,999</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li>✅ Advanced Prakriti + Vikriti Analysis</li>
+                            <li>✅ Unlimited Consultations</li>
+                            <li>✅ Fully Customized Treatment</li>
+                            <li>✅ All Herbal Medicines Included</li>
+                            <li>✅ 1-on-1 Yoga Sessions</li>
+                            <li>✅ Full Panchakarma Program</li>
+                            <li>✅ Weekly Abhyanga + Shirodhara</li>
+                            <li>✅ Dedicated Health Manager</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('Mukti', 14999)">Get Started</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             TESTIMONIALS SECTION
+        ============================================================ -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Patient Stories</span>
+                    <h2 class="section-title">What Our Patients <span class="gradient-text">Say</span></h2>
+                    <p class="section-subtitle">Real stories from real people who transformed their health with SarkarWellness.</p>
+                </div>
+
+                <div class="testimonials-grid">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"After years of struggling with chronic digestive issues, SarkarWellness's Panchakarma program changed my life. Within 3 months, I was completely off allopathic medicines. The Vaidyas are truly knowledgeable and caring."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">RK</div>
+                            <div class="author-info">
+                                <strong>Rajesh Kumar</strong>
+                                <span>Indore • Digestive Health</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"The personalized diet plan and herbal supplements helped me lose 12 kg in 4 months without any side effects. My energy levels are through the roof. Ayurveda truly works!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">PS</div>
+                            <div class="author-info">
+                                <strong>Priya Sharma</strong>
+                                <span>Bhopal • Weight Management</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"I was skeptical about online Ayurvedic consultation, but the video sessions were incredibly thorough. The Nadi Pariksha via video call was surprisingly accurate. Highly recommend!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AM</div>
+                            <div class="author-info">
+                                <strong>Amit Mehta</strong>
+                                <span>Mumbai • Stress & Anxiety</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"My mother's knee pain was so severe she couldn't walk properly. After 2 months of Abhyanga therapy and herbal treatment at SarkarWellness, she's walking pain-free. Thank you!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">SJ</div>
+                            <div class="author-info">
+                                <strong>Sunita Joshi</strong>
+                                <span>Jaipur • Joint Pain</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #4 — Between Testimonials and FAQ
+        ============================================================ -->
+        <div class="ad-slot" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+            <span class="ad-label">Advertisement</span>
+            <div class="ad-content">
+                <p>🌱 Ad Space — Ayurvedic Skincare Range | <a href="#">Shop Now</a></p>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FAQ ACCORDION SECTION
+        ============================================================ -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">FAQ</span>
+                    <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                    <p class="section-subtitle">Find answers to common questions about Ayurvedic treatments and our services.</p>
+                </div>
+
+                <div class="faq-container">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What is Ayurveda and how does it work?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Ayurveda is a 5,000-year-old system of natural healing that originated in India. It works on the principle of balancing three fundamental energies or doshas — Vata (air), Pitta (fire), and Kapha (earth). When these doshas are in balance, the body is healthy. Ayurveda uses herbal medicines, diet, yoga, massage, and lifestyle changes to restore this balance and promote natural healing.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is Panchakarma safe? What should I expect?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, Panchakarma is completely safe when performed by qualified Ayurvedic practitioners. It's a gentle yet powerful detoxification process. You can expect a series of treatments over 7-21 days including oil massages, steam therapy, herbal enemas, and nasal cleansing. Most patients feel deeply relaxed and rejuvenated after the process. Our Vaidyas customize the intensity based on your constitution and health condition.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How long before I see results?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Results vary depending on the condition, its severity, and your commitment to the treatment plan. Many patients report feeling improvements in energy, sleep, and digestion within 2-4 weeks. Chronic conditions may require 3-6 months of consistent treatment. Ayurveda focuses on root-cause healing rather than quick fixes, so the results are sustainable and long-lasting.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I consult online? Is it as effective as in-person?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, we offer comprehensive online consultations via video call. Our Vaidyas use detailed health questionnaires, tongue examination via video, and symptom analysis to provide accurate assessments. While in-person Nadi Pariksha (pulse diagnosis) is ideal, our online consultations have shown excellent results. We also offer follow-up video calls and WhatsApp support to ensure continuous care.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Are the herbal medicines safe? Any side effects?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>All our herbal medicines are prepared using traditional formulations from classical Ayurvedic texts. They are 100% natural, made from herbs, minerals, and plant extracts. When prescribed by our qualified Vaidyas in the correct dosage, they are extremely safe with minimal to no side effects. We source ingredients from certified organic farms and test for heavy metals and contaminants.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Do you accept insurance? What payment methods are available?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We accept all major payment methods including UPI (GPay, PhonePe, Paytm), credit/debit cards, net banking, and cash. While Ayurvedic treatment insurance coverage in India is still evolving, we provide detailed receipts and documentation that you can submit to your insurance provider. We also offer EMI options for premium treatment plans.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             CTA SECTION
+        ============================================================ -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Begin Your Healing Journey?</h2>
+                    <p>Book a free 15-minute consultation with our Ayurvedic experts and take the first step towards natural wellness.</p>
+                    <div class="cta-buttons">
+                        <a href="#pricing" class="btn btn-primary btn-lg">Book Free Consultation</a>
+                        <a href="tel:+919876543210" class="btn btn-outline btn-lg">📞 Call Us</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <span class="logo-icon">🌿</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Wellness</span></span>
+                    </a>
+                    <p class="footer-desc">Authentic Ayurvedic wellness for modern India. Healing naturally since 2009.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="Instagram">📸</a>
+                        <a href="#" aria-label="YouTube">▶️</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#features">Our Services</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#pricing">Pricing Plans</a></li>
+                        <li><a href="#testimonials">Patient Reviews</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services -->
+                <div class="footer-col">
+                    <h4>Treatments</h4>
+                    <ul>
+                        <li><a href="#">Panchakarma</a></li>
+                        <li><a href="#">Abhyanga Massage</a></li>
+                        <li><a href="#">Shirodhara</a></li>
+                        <li><a href="#">Herbal Medicine</a></li>
+                        <li><a href="#">Yoga & Meditation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li>📍 123 Wellness Road, MG Road, Indore, MP 452001</li>
+                        <li>📞 <a href="tel:+919876543210">+91-98765-43210</a></li>
+                        <li>✉️ <a href="mailto:hello@sarkarwellness.in">hello@sarkarwellness.in</a></li>
+                        <li>🕐 Mon-Sun: 8:00 AM - 8:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarWellness. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         UPI PAYMENT MODAL
+    ============================================================ -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Complete Your Payment</h2>
+                <p class="modal-subtitle">Secure UPI payment for your wellness plan</p>
+            </div>
+            <div class="modal-body">
+                <div class="plan-summary">
+                    <div class="plan-info">
+                        <span class="plan-name" id="modalPlanName">Sampoorna Plan</span>
+                        <span class="plan-price" id="modalPlanPrice">₹7,999/month</span>
+                    </div>
+                </div>
+
+                <div class="upi-section">
+                    <h3>Pay via UPI</h3>
+                    <div class="upi-apps">
+                        <button class="upi-app" onclick="selectUPI('gpay')">
+                            <span class="upi-icon">G</span>
+                            <span>Google Pay</span>
+                        </button>
+                        <button class="upi-app" onclick="selectUPI('phonepe')">
+                            <span class="upi-icon">P</span>
+                            <span>PhonePe</span>
+                        </button>
+                        <button class="upi-app" onclick="selectUPI('paytm')">
+                            <span class="upi-icon">₱</span>
+                            <span>Paytm</span>
+                        </button>
+                        <button class="upi-app" onclick="selectUPI('bhim')">
+                            <span class="upi-icon">B</span>
+                            <span>BHIM UPI</span>
+                        </button>
+                    </div>
+
+                    <div class="upi-id-section">
+                        <label for="upiId">Enter UPI ID</label>
+                        <input type="text" id="upiId" placeholder="yourname@upi" class="upi-input">
+                        <p class="upi-help">Example: yourname@paytm, yourname@okicici</p>
+                    </div>
+
+                    <div class="or-divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="qr-section">
+                        <p>Scan QR Code to Pay</p>
+                        <div class="qr-placeholder">
+                            <span>📱</span>
+                            <p>QR Code</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-security">
+                    <span>🔒</span>
+                    <p>Your payment is secured with 256-bit encryption. We never store your UPI details.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn btn-primary" id="payButton" onclick="processPayment()">
+                    Pay <span id="payAmount">₹7,999</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

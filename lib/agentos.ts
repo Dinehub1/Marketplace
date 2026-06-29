@@ -1,0 +1,74 @@
+import { createClient } from "./supabase/server";
+
+export type Agent = {
+  id: string;
+  slug: string;
+  name: string;
+  emoji: string | null;
+  role: string | null;
+  schedule: string | null;
+  description: string | null;
+  status: string;
+  last_run: string | null;
+  sort_order: number;
+};
+
+export type DevTask = {
+  id: string;
+  title: string;
+  status: string;
+  priority: number;
+  assignee: string;
+  brand_id: string | null;
+  created_at: string;
+};
+
+export type PlatformStats = {
+  brands: number;
+  brandsOnline: number;
+  businesses: number;
+  leads: number;
+  payments: number;
+  agents: number;
+  agentsActive: number;
+  tasksQueued: number;
+};
+
+async function count(table: string, filter?: (q: any) => any): Promise<number> {
+  const supabase = await createClient();
+  let q = supabase.from(table).select("*", { count: "exact", head: true });
+  if (filter) q = filter(q);
+  const { count } = await q;
+  return count ?? 0;
+}
+
+export async function getAgents(): Promise<Agent[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("agents").select("*").order("sort_order");
+  return (data as Agent[]) ?? [];
+}
+
+export async function getRecentTasks(limit = 6): Promise<DevTask[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("dev_tasks")
+    .select("id,title,status,priority,assignee,brand_id,created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return (data as DevTask[]) ?? [];
+}
+
+export async function getPlatformStats(): Promise<PlatformStats> {
+  const [brands, brandsOnline, businesses, leads, payments, agents, agentsActive, tasksQueued] =
+    await Promise.all([
+      count("brands"),
+      count("brands", (q) => q.eq("status", "active")),
+      count("businesses"),
+      count("leads"),
+      count("payments"),
+      count("agents"),
+      count("agents", (q) => q.in("status", ["active", "running"])),
+      count("dev_tasks", (q) => q.eq("status", "queued")),
+    ]);
+  return { brands, brandsOnline, businesses, leads, payments, agents, agentsActive, tasksQueued };
+}

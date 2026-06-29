@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+      ============================================================
+      SarkarDost — Your Government Services Companion
+      A citizen-first portal for booking services, managing
+      documents, and tracking applications — all in one place.
+      ============================================================
+    -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title & Meta Description -->
+    <title>SarkarDost — Your Government Services Companion | Book, Track & Pay</title>
+    <meta name="description" content="SarkarDost is your friendly government services companion. Book appointments, manage documents, track applications, and pay fees online — all in one place. Available in Hindi & English.">
+    <meta name="keywords" content="government services, citizen portal, online booking, document assistant, UPI payment, SarkarDost, India">
+    <meta name="author" content="SarkarDost Team">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="SarkarDost — Your Government Services Companion">
+    <meta property="og:description" content="Book appointments, manage documents, track applications, and pay fees online — all in one place.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkardost.in/">
+    <meta property="og:image" content="https://sarkardost.in/assets/og-banner.jpg">
+    <meta property="og:site_name" content="SarkarDost">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarDost — Your Government Services Companion">
+    <meta name="twitter:description" content="Book appointments, manage documents, track applications, and pay fees online.">
+    <meta name="twitter:image" content="https://sarkardost.in/assets/twitter-card.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "GovernmentService",
+        "name": "SarkarDost",
+        "description": "Your friendly government services companion for booking, tracking, and paying for citizen services online.",
+        "url": "https://sarkardost.in/",
+        "logo": "https://sarkardost.in/assets/logo.png",
+        "serviceType": "Citizen Services Portal",
+        "areaServed": {
+            "@type": "Country",
+            "name": "India"
+        },
+        "availableLanguage": ["en", "hi"],
+        "provider": {
+            "@type": "Organization",
+            "name": "SarkarDost",
+            "url": "https://sarkardost.in/"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR",
+            "description": "Free basic plan available"
+        },
+        "sameAs": [
+            "https://twitter.com/sarkardost",
+            "https://facebook.com/sarkardost"
+        ]
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sarkardost.in/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================================
+         SKIP LINK (Accessibility)
+         ============================================================ -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ============================================================
+         NAVIGATION BAR
+         ============================================================ -->
+    <header class="navbar" id="navbar">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo" aria-label="SarkarDost Home">
+                <span class="logo-icon">🤝</span>
+                <span class="logo-text">Sarkar<span class="logo-accent">Dost</span></span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="nav-links" id="nav-links" aria-label="Main navigation">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#testimonials" class="nav-link">Reviews</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </nav>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="theme-icon sun" aria-hidden="true">☀️</span>
+                    <span class="theme-icon moon" aria-hidden="true">🌙</span>
+                </button>
+
+                <!-- Language Toggle -->
+                <button class="lang-toggle" id="lang-toggle" aria-label="Switch language" title="हिंदी / English">
+                    हि
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#pricing" class="btn btn-primary btn-nav">Get Started</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <nav class="mobile-nav-links" aria-label="Mobile navigation">
+                <a href="#features" class="mobile-nav-link">Features</a>
+                <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+                <a href="#pricing" class="mobile-nav-link">Pricing</a>
+                <a href="#testimonials" class="mobile-nav-link">Reviews</a>
+                <a href="#faq" class="mobile-nav-link">FAQ</a>
+                <a href="#pricing" class="btn btn-primary btn-full">Get Started Free</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- ============================================================
+             HERO SECTION
+             ============================================================ -->
+        <section class="hero" id="hero">
+            <div class="hero-bg">
+                <div class="hero-gradient"></div>
+                <div class="hero-pattern"></div>
+            </div>
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge" data-i18n="badge">
+                        🇮🇳 Trusted by 5 Lakh+ Citizens
+                    </div>
+                    <h1 class="hero-title" data-i18n="hero_title">
+                        Your <span class="text-gradient">Friend</span> for Every Government Service
+                    </h1>
+                    <p class="hero-subtitle" data-i18n="hero_subtitle">
+                        Book appointments, manage documents, track applications, and pay fees — all from your phone. SarkarDost makes government services simple, fast, and friendly.
+                    </p>
+                    <div class="hero-cta">
+                        <a href="#pricing" class="btn btn-primary btn-lg">
+                            <span>Start Free</span>
+                            <span class="btn-arrow">→</span>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline btn-lg">
+                            <span class="btn-play" aria-hidden="true">▶</span>
+                            <span>See How It Works</span>
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">5L+</span>
+                            <span class="stat-label">Citizens Served</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Services</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">4.8★</span>
+                            <span class="stat-label">User Rating</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-card">
+                        <div class="hero-card-header">
+                            <div class="hero-card-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="hero-card-title">SarkarDost Dashboard</span>
+                        </div>
+                        <div class="hero-card-body">
+                            <div class="mini-tracker">
+                                <div class="mini-tracker-item">
+                                    <span class="mini-icon">📄</span>
+                                    <div class="mini-info">
+                                        <span class="mini-title">Aadhaar Update</span>
+                                        <span class="mini-status status-progress">In Progress</span>
+                                    </div>
+                                </div>
+                                <div class="mini-tracker-item">
+                                    <span class="mini-icon">🏠</span>
+                                    <div class="mini-info">
+                                        <span class="mini-title">Property Registration</span>
+                                        <span class="mini-status status-done">Completed ✓</span>
+                                    </div>
+                                </div>
+                                <div class="mini-tracker-item">
+                                    <span class="mini-icon">💧</span>
+                                    <div class="mini-info">
+                                        <span class="mini-title">Water Connection</span>
+                                        <span class="mini-status status-pending">Scheduled</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #1 — Below Hero
+             ============================================================ -->
+        <div class="ad-slot container" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span class="ad-text">Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FEATURES SECTION
+             ============================================================ -->
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge" data-i18n="features_badge">Features</span>
+                    <h2 class="section-title" data-i18n="features_title">Everything You Need, <span class="text-gradient">All in One App</span></h2>
+                    <p class="section-subtitle" data-i18n="features_subtitle">From booking appointments to tracking applications — SarkarDost handles it all so you don't have to run from office to office.</p>
+                </div>
+
+                <div class="features-grid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">📅</div>
+                        <h3 class="feature-title">Easy Appointment Booking</h3>
+                        <p class="feature-desc">Book slots at government offices, RTO, passport seva, and more — instantly from your phone.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">📄</div>
+                        <h3 class="feature-title">Document Assistant</h3>
+                        <p class="feature-desc">AI-powered document checker ensures your papers are complete before you visit any office.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">📍</div>
+                        <h3 class="feature-title">Real-Time Tracking</h3>
+                        <p class="feature-desc">Track your application status in real-time. Get notified at every step of the process.</p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">💳</div>
+                        <h3 class="feature-title">UPI Payments</h3>
+                        <p class="feature-desc">Pay fees, fines, and charges directly via UPI — GPay, PhonePe, Paytm, and more.</p>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">🔔</div>
+                        <h3 class="feature-title">Smart Reminders</h3>
+                        <p class="feature-desc">Never miss a deadline. Get reminders for renewals, appointments, and document submissions.</p>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">🌐</div>
+                        <h3 class="feature-title">Hindi & English</h3>
+                        <p class="feature-desc">Use the app in your preferred language. Full support for Hindi and English.</p>
+                    </div>
+
+                    <!-- Feature 7 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">🔒</div>
+                        <h3 class="feature-title">Secure & Private</h3>
+                        <p class="feature-desc">Your data is encrypted and secure. We never share your personal information.</p>
+                    </div>
+
+                    <!-- Feature 8 -->
+                    <div class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">💬</div>
+                        <h3 class="feature-title">Chat Support</h3>
+                        <p class="feature-desc">Stuck somewhere? Our AI chatbot and human support team are available 24/7 to help.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #2 — Between Features & How It Works
+             ============================================================ -->
+        <div class="ad-slot container" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span class="ad-text">Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             HOW IT WORKS SECTION
+             ============================================================ -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge" data-i18n="hiw_badge">How It Works</span>
+                    <h2 class="section-title" data-i18n="hiw_title">Get Started in <span class="text-gradient">3 Simple Steps</span></h2>
+                    <p class="section-subtitle" data-i18n="hiw_subtitle">No more standing in queues or visiting multiple offices. SarkarDost brings government services to your fingertips.</p>
+                </div>
+
+                <div class="steps">
+                    <!-- Step 1 -->
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Choose Your Service</h3>
+                            <p class="step-desc">Browse 50+ government services — from Aadhaar updates to passport applications, property registration to driving license renewals.</p>
+                        </div>
+                        <div class="step-visual">
+                            <div class="step-icon-large">🔍</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Upload & Verify Documents</h3>
+                            <p class="step-desc">Our AI checks your documents for completeness. Fix any issues before you submit — saving you time and multiple visits.</p>
+                        </div>
+                        <div class="step-visual">
+                            <div class="step-icon-large">📤</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3 class="step-title">Book, Pay & Track</h3>
+                            <p class="step-desc">Pay fees via UPI, book your appointment slot, and track your application status in real-time until completion.</p>
+                        </div>
+                        <div class="step-visual">
+                            <div class="step-icon-large">✅</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #3 — Between How It Works & Pricing
+             ============================================================ -->
+        <div class="ad-slot container" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span class="ad-text">Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             PRICING SECTION
+             ============================================================ -->
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge" data-i18n="pricing_badge">Pricing</span>
+                    <h2 class="section-title" data-i18n="pricing_title">Simple, <span class="text-gradient">Transparent</span> Pricing</h2>
+                    <p class="section-subtitle" data-i18n="pricing_subtitle">Start free. Upgrade when you need more. No hidden charges, ever.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Free</h3>
+                            <p class="pricing-desc">Perfect for getting started</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">0</span>
+                            <span class="price-period">/forever</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="pricing-feature included">Up to 3 service requests/month</li>
+                            <li class="pricing-feature included">Basic document checker</li>
+                            <li class="pricing-feature included">Email notifications</li>
+                            <li class="pricing-feature included">Community support</li>
+                            <li class="pricing-feature excluded">Priority processing</li>
+                            <li class="pricing-feature excluded">Dedicated support</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('free')">Get Started Free</button>
+                    </div>
+
+                    <!-- Pro Plan (Popular) -->
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Pro</h3>
+                            <p class="pricing-desc">For regular users</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">99</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="pricing-feature included">Unlimited service requests</li>
+                            <li class="pricing-feature included">Advanced AI document checker</li>
+                            <li class="pricing-feature included">SMS + Email + WhatsApp alerts</li>
+                            <li class="pricing-feature included">Priority processing</li>
+                            <li class="pricing-feature included">Chat support (24/7)</li>
+                            <li class="pricing-feature excluded">Dedicated account manager</li>
+                        </ul>
+                        <button class="btn btn-primary btn-full" onclick="openPaymentModal('pro')">Upgrade to Pro</button>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Enterprise</h3>
+                            <p class="pricing-desc">For businesses & families</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">299</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="pricing-feature included">Everything in Pro</li>
+                            <li class="pricing-feature included">Up to 10 family members</li>
+                            <li class="pricing-feature included">Dedicated account manager</li>
+                            <li class="pricing-feature included">Bulk document processing</li>
+                            <li class="pricing-feature included">API access</li>
+                            <li class="pricing-feature included">Custom integrations</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('enterprise')">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             TESTIMONIALS SECTION
+             ============================================================ -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge" data-i18n="testimonials_badge">Testimonials</span>
+                    <h2 class="section-title" data-i18n="testimonials_title">Loved by <span class="text-gradient">Citizens</span> Across India</h2>
+                    <p class="section-subtitle" data-i18n="testimonials_subtitle">See what our users have to say about their SarkarDost experience.</p>
+                </div>
+
+                <div class="testimonials-carousel" id="testimonials-carousel">
+                    <div class="testimonials-track">
+                        <!-- Testimonial 1 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"SarkarDost saved me 3 trips to the RTO! I booked my driving license renewal, uploaded documents, paid via UPI, and got it done without leaving home. Amazing app!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">RK</div>
+                                <div class="author-info">
+                                    <span class="author-name">Rajesh Kumar</span>
+                                    <span class="author-location">Jaipur, Rajasthan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 2 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"The document checker is a game-changer. It told me exactly what was missing in my passport application. First time my application was accepted without any rejection!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">PS</div>
+                                <div class="author-info">
+                                    <span class="author-name">Priya Sharma</span>
+                                    <span class="author-location">Lucknow, UP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 3 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"I used SarkarDost for my mother's pension application. The Hindi interface made it so easy for her to understand. The support team was very helpful too."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">AM</div>
+                                <div class="author-info">
+                                    <span class="author-name">Amit Mishra</span>
+                                    <span class="author-location">Patna, Bihar</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 4 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars" aria-label="4 star rating">⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"Property registration was always a headache. SarkarDost made it smooth — from document preparation to appointment booking to payment. Highly recommended!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">SJ</div>
+                                <div class="author-info">
+                                    <span class="author-name">Sunita Joshi</span>
+                                    <span class="author-location">Pune, Maharashtra</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Controls -->
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev" id="carousel-prev" aria-label="Previous testimonial">←</button>
+                        <div class="carousel-dots" id="carousel-dots">
+                            <button class="dot active" aria-label="Go to testimonial 1"></button>
+                            <button class="dot" aria-label="Go to testimonial 2"></button>
+                            <button class="dot" aria-label="Go to testimonial 3"></button>
+                            <button class="dot" aria-label="Go to testimonial 4"></button>
+                        </div>
+                        <button class="carousel-btn next" id="carousel-next" aria-label="Next testimonial">→</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #4 — Between Testimonials & FAQ
+             ============================================================ -->
+        <div class="ad-slot container" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span class="ad-text">Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FAQ SECTION
+             ============================================================ -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge" data-i18n="faq_badge">FAQ</span>
+                    <h2 class="section-title" data-i18n="faq_title">Frequently Asked <span class="text-gradient">Questions</span></h2>
+                    <p class="section-subtitle" data-i18n="faq_subtitle">Got questions? We've got answers. Can't find what you're looking for? Chat with us.</p>
+                </div>
+
+                <div class="faq-list" id="faq-list">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is SarkarDost a government app?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>SarkarDost is a private platform that helps citizens access government services more easily. We are not a government entity, but we work closely with various government departments to provide accurate and up-to-date information and services.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Which UPI apps are supported for payment?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We support all major UPI apps including Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, and any other UPI-enabled app. You can also pay via net banking, debit card, or credit card.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How does the document checker work?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Our AI-powered document checker analyzes your uploaded documents against the requirements of the specific service you're applying for. It checks for completeness, format, size, and common errors — then gives you a clear report on what to fix before submission.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I track multiple applications at once?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Absolutely! With the Free plan, you can track up to 3 applications simultaneously. Pro and Enterprise users get unlimited tracking with real-time status updates and notifications.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is my personal data safe with SarkarDost?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, your data security is our top priority. We use bank-grade encryption (AES-256) to protect your data. We never sell or share your personal information with third parties. You can request complete data deletion at any time.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What if my application gets rejected?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>If your application is rejected, our team will help you understand the reason and guide you on how to fix it. Pro and Enterprise users get free re-submission assistance. Our document checker also significantly reduces the chance of rejection.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             CTA SECTION
+             ============================================================ -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-box">
+                    <h2 class="cta-title">Ready to Get Started?</h2>
+                    <p class="cta-text">Join 5 lakh+ citizens who have made government services hassle-free with SarkarDost.</p>
+                    <div class="cta-buttons">
+                        <a href="#pricing" class="btn btn-primary btn-lg">Start Free Today</a>
+                        <a href="#features" class="btn btn-outline btn-lg">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="logo" aria-label="SarkarDost Home">
+                        <span class="logo-icon">🤝</span>
+                        <span class="logo-text">Sarkar<span class="logo-accent">Dost</span></span>
+                    </a>
+                    <p class="footer-desc">Your friendly companion for every government service. Making citizen services simple, fast, and accessible for all.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter">𝕏</a>
+                        <a href="#" aria-label="Facebook">f</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                        <a href="#" aria-label="YouTube">▶</a>
+                    </div>
+                </div>
+
+                <!-- Services Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Aadhaar Services</a></li>
+                        <li><a href="#">Passport Seva</a></li>
+                        <li><a href="#">Driving License</a></li>
+                        <li><a href="#">Property Registration</a></li>
+                        <li><a href="#">PAN Card</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Grievance Redressal</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarDost. All rights reserved. Made with ❤️ in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         UPI PAYMENT MODAL
+         ============================================================ -->
+    <div class="modal-overlay" id="payment-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal">
+            <button class="modal-close" id="modal-close" aria-label="Close payment modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">Complete Your Payment</h3>
+                <p class="modal-subtitle" id="modal-subtitle">Secure UPI payment</p>
+            </div>
+            <div class="modal-body">
+                <!-- Plan Summary -->
+                <div class="payment-summary" id="payment-summary">
+                    <div class="summary-row">
+                        <span>Plan</span>
+                        <strong id="summary-plan">Pro</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Amount</span>
+                        <strong id="summary-amount">₹99/month</strong>
+                    </div>
+                </div>
+
+                <!-- UPI ID Input -->
+                <div class="form-group">
+                    <label for="upi-id" class="form-label">Enter your UPI ID</label>
+                    <input type="text" id="upi-id" class="form-input" placeholder="yourname@upi" autocomplete="off">
+                    <p class="form-hint">Example: yourname@paytm, yourname@okhdfcbank</p>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="divider">
+                    <span>or pay using</span>
+                </div>
+
+                <!-- UPI App Buttons -->
+                <div class="upi-apps">
+                    <button class="upi-btn" onclick="selectUpiApp('gpay')" aria-label="Pay with Google Pay">
+                        <span class="upi-icon">G</span>
+                        <span>Google Pay</span>
+                    </button>
+                    <button class="upi-btn" onclick="selectUpiApp('phonepe')" aria-label="Pay with PhonePe">
+                        <span class="upi-icon">P</span>
+                        <span>PhonePe</span>
+                    </button>
+                    <button class="upi-btn" onclick="selectUpiApp('paytm')" aria-label="Pay with Paytm">
+                        <span class="upi-icon">₱</span>
+                        <span>Paytm</span>
+                    </button>
+                    <button class="upi-btn" onclick="selectUpiApp('bhim')" aria-label="Pay with BHIM">
+                        <span class="upi-icon">B</span>
+                        <span>BHIM</span>
+                    </button>
+                </div>
+
+                <!-- QR Code Placeholder -->
+                <div class="qr-section">
+                    <p class="qr-label">Or scan QR code</p>
+                    <div class="qr-placeholder">
+                        <div class="qr-mock">
+                            <div class="qr-pattern"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline btn-full" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn btn-primary btn-full" id="pay-now-btn" onclick="processPayment()">
+                    Pay Now <span id="pay-amount">₹99</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         JAVASCRIPT
+         ============================================================ -->
+    <script src="app.js"></script>
+</body>
+</html>

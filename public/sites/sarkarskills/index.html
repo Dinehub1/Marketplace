@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+    ============================================================
+    SarkarSkills - AI Skills Marketplace
+    A platform to discover, buy, and sell AI skills and tools.
+    ============================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>SarkarSkills - India's #1 AI Skills Marketplace | Buy & Sell AI Tools</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="SarkarSkills is India's leading AI skills marketplace. Discover, buy, and sell AI tools, prompts, automation scripts, and skills. UPI payments accepted. Start earning from your AI expertise today.">
+
+    <!-- SEO: Keywords -->
+    <meta name="keywords" content="AI skills marketplace, buy AI tools, sell AI skills, AI prompts, automation scripts, UPI payment, Indian AI marketplace, SarkarSkills">
+
+    <!-- SEO: Author -->
+    <meta name="author" content="SarkarSkills">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="SarkarSkills - India's #1 AI Skills Marketplace">
+    <meta property="og:description" content="Discover, buy, and sell AI tools, prompts, automation scripts, and skills. UPI payments accepted.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarskills.in">
+    <meta property="og:image" content="https://sarkarskills.in/assets/og-image.png">
+    <meta property="og:site_name" content="SarkarSkills">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarSkills - India's #1 AI Skills Marketplace">
+    <meta name="twitter:description" content="Buy & sell AI skills with UPI payments. India's leading AI marketplace.">
+    <meta name="twitter:image" content="https://sarkarskills.in/assets/twitter-card.png">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SarkarSkills",
+        "description": "India's #1 AI Skills Marketplace - Buy and sell AI tools, prompts, and automation scripts",
+        "url": "https://sarkarskills.in",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "SarkarSkills",
+            "url": "https://sarkarskills.in"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1250"
+        }
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sarkarskills.in">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ============================================================
+         NAVIGATION BAR
+         ============================================================ -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="nav-logo" aria-label="SarkarSkills Home">
+                <span class="logo-icon">🧠</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Skills</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="toggle-icon sun">☀️</span>
+                    <span class="toggle-icon moon">🌙</span>
+                </button>
+                <a href="#" class="btn btn-ghost">Sign In</a>
+                <a href="#pricing" class="btn btn-primary">Get Started</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                    <span class="hamburger-line"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-nav-links">
+                <li><a href="#features" class="mobile-nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="mobile-nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="mobile-nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="mobile-nav-link">Reviews</a></li>
+                <li><a href="#faq" class="mobile-nav-link">FAQ</a></li>
+            </ul>
+            <div class="mobile-nav-actions">
+                <a href="#" class="btn btn-ghost btn-full">Sign In</a>
+                <a href="#pricing" class="btn btn-primary btn-full">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <main id="main-content">
+
+        <!-- ============================================================
+             HERO SECTION
+             ============================================================ -->
+        <section class="hero" id="hero">
+            <div class="hero-bg-effects">
+                <div class="hero-gradient-orb orb-1"></div>
+                <div class="hero-gradient-orb orb-2"></div>
+                <div class="hero-gradient-orb orb-3"></div>
+            </div>
+            <div class="container">
+                <div class="hero-content">
+                    <!-- Hero Badge -->
+                    <div class="hero-badge" data-animate="fade-down">
+                        <span class="badge-dot"></span>
+                        <span>Trusted by 10,000+ AI Creators across India</span>
+                    </div>
+
+                    <!-- Hero Heading -->
+                    <h1 class="hero-title" data-animate="fade-up">
+                        India's #1 Marketplace for
+                        <span class="gradient-text">AI Skills & Tools</span>
+                    </h1>
+
+                    <!-- Hero Subtitle -->
+                    <p class="hero-subtitle" data-animate="fade-up" data-delay="100">
+                        Buy and sell AI prompts, automation scripts, custom GPTs, and expert skills.
+                        Pay with UPI. Start earning from your AI expertise today.
+                    </p>
+
+                    <!-- Hero CTA Buttons -->
+                    <div class="hero-cta" data-animate="fade-up" data-delay="200">
+                        <a href="#pricing" class="btn btn-primary btn-lg">
+                            <span>Explore Skills</span>
+                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4.167 10h11.666m0 0L10.833 5m5 5L10.833 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-ghost btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M8 7l4 3-4 3V7z" fill="currentColor"/></svg>
+                            <span>Watch Demo</span>
+                        </a>
+                    </div>
+
+                    <!-- Hero Stats -->
+                    <div class="hero-stats" data-animate="fade-up" data-delay="300">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="10000">0</span><span class="stat-suffix">+</span>
+                            <span class="stat-label">Active Creators</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="50000">0</span><span class="stat-suffix">+</span>
+                            <span class="stat-label">Skills Listed</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="4">0</span><span class="stat-suffix">.8★</span>
+                            <span class="stat-label">Average Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Visual / Dashboard Preview -->
+                <div class="hero-visual" data-animate="fade-left" data-delay="400">
+                    <div class="dashboard-preview">
+                        <div class="preview-header">
+                            <div class="preview-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <span class="preview-title">SarkarSkills Dashboard</span>
+                        </div>
+                        <div class="preview-content">
+                            <div class="preview-card">
+                                <div class="preview-card-icon">🤖</div>
+                                <div class="preview-card-info">
+                                    <span class="preview-card-title">ChatGPT Prompt Pack</span>
+                                    <span class="preview-card-price">₹299</span>
+                                </div>
+                                <div class="preview-card-badge">Hot 🔥</div>
+                            </div>
+                            <div class="preview-card">
+                                <div class="preview-card-icon">⚡</div>
+                                <div class="preview-card-info">
+                                    <span class="preview-card-title">Automation Scripts Bundle</span>
+                                    <span class="preview-card-price">₹599</span>
+                                </div>
+                                <div class="preview-card-badge">New ✨</div>
+                            </div>
+                            <div class="preview-card">
+                                <div class="preview-card-icon">🎨</div>
+                                <div class="preview-card-info">
+                                    <span class="preview-card-title">Midjourney Prompts Pro</span>
+                                    <span class="preview-card-price">₹199</span>
+                                </div>
+                                <div class="preview-card-badge">Sale 💸</div>
+                            </div>
+                            <div class="preview-earnings">
+                                <span class="earnings-label">Your Earnings</span>
+                                <span class="earnings-amount">₹47,250</span>
+                                <span class="earnings-change">+12.5% this month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #1 - Below Hero
+             ============================================================ -->
+        <div class="ad-slot" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot-inner">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-placeholder">
+                    <span class="ad-placeholder-text">Ad Space — 728x90 Leaderboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FEATURES SECTION
+             ============================================================ -->
+        <section class="features" id="features">
+            <div class="container">
+                <!-- Section Header -->
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-badge">Features</span>
+                    <h2 class="section-title">Everything You Need to <span class="gradient-text">Master AI</span></h2>
+                    <p class="section-subtitle">From ready-made prompts to custom AI tools, we've got everything to supercharge your productivity.</p>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="features-grid">
+                    <!-- Feature Card 1 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="0">
+                        <div class="feature-icon">🛒</div>
+                        <h3 class="feature-title">Buy AI Skills</h3>
+                        <p class="feature-description">Browse thousands of verified AI prompts, scripts, and tools created by experts. Instant delivery.</p>
+                        <ul class="feature-list">
+                            <li>Verified quality</li>
+                            <li>Instant download</li>
+                            <li>UPI payments</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 2 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="100">
+                        <div class="feature-icon">💰</div>
+                        <h3 class="feature-title">Sell Your Skills</h3>
+                        <p class="feature-description">Turn your AI expertise into income. List your prompts, scripts, or tools and earn from every sale.</p>
+                        <ul class="feature-list">
+                            <li>85% creator revenue</li>
+                            <li>Weekly payouts</li>
+                            <li>Analytics dashboard</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 3 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="200">
+                        <div class="feature-icon">🔒</div>
+                        <h3 class="feature-title">Secure UPI Payments</h3>
+                        <p class="feature-description">Pay and get paid using any UPI app — GPay, PhonePe, Paytm, or bank transfer. 100% secure.</p>
+                        <ul class="feature-list">
+                            <li>All UPI apps supported</li>
+                            <li>Instant settlement</li>
+                            <li>No hidden fees</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 4 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="0">
+                        <div class="feature-icon">⭐</div>
+                        <h3 class="feature-title">Verified Reviews</h3>
+                        <p class="feature-description">Every skill is rated by real buyers. Read honest reviews before you purchase.</p>
+                        <ul class="feature-list">
+                            <li>Real buyer reviews</li>
+                            <li>Star ratings</li>
+                            <li>Video testimonials</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 5 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="100">
+                        <div class="feature-icon">🚀</div>
+                        <h3 class="feature-title">Instant Delivery</h3>
+                        <p class="feature-description">No waiting. Purchase and download your AI skills immediately. Access from any device.</p>
+                        <ul class="feature-list">
+                            <li>Instant access</li>
+                            <li>Cloud storage</li>
+                            <li>Lifetime updates</li>
+                        </ul>
+                    </div>
+
+                    <!-- Feature Card 6 -->
+                    <div class="feature-card" data-animate="fade-up" data-delay="200">
+                        <div class="feature-icon">🎓</div>
+                        <h3 class="feature-title">Learn & Grow</h3>
+                        <p class="feature-description">Access free tutorials, join creator communities, and level up your AI skills.</p>
+                        <ul class="feature-list">
+                            <li>Free tutorials</li>
+                            <li>Creator community</li>
+                            <li>Weekly workshops</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #2 - Between Features and How It Works
+             ============================================================ -->
+        <div class="ad-slot" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot-inner">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-placeholder">
+                    <span class="ad-placeholder-text">Ad Space — 728x90 Leaderboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             HOW IT WORKS SECTION
+             ============================================================ -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <!-- Section Header -->
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-badge">How It Works</span>
+                    <h2 class="section-title">Get Started in <span class="gradient-text">3 Simple Steps</span></h2>
+                    <p class="section-subtitle">Whether you're buying or selling, we've made it incredibly easy.</p>
+                </div>
+
+                <!-- Steps -->
+                <div class="steps-container">
+                    <!-- Step 1 -->
+                    <div class="step-card" data-animate="fade-up" data-delay="0">
+                        <div class="step-number">01</div>
+                        <div class="step-icon">🔍</div>
+                        <h3 class="step-title">Browse Skills</h3>
+                        <p class="step-description">Explore our marketplace of AI prompts, scripts, and tools. Filter by category, price, or rating.</p>
+                        <div class="step-connector" aria-hidden="true"></div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step-card" data-animate="fade-up" data-delay="150">
+                        <div class="step-number">02</div>
+                        <div class="step-icon">💳</div>
+                        <h3 class="step-title">Pay with UPI</h3>
+                        <p class="step-description">Purchase instantly using GPay, PhonePe, Paytm, or any UPI app. Secure and hassle-free.</p>
+                        <div class="step-connector" aria-hidden="true"></div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step-card" data-animate="fade-up" data-delay="300">
+                        <div class="step-number">03</div>
+                        <div class="step-icon">🚀</div>
+                        <h3 class="step-title">Download & Use</h3>
+                        <p class="step-description">Get instant access to your purchase. Download files, copy prompts, and start using immediately.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #3 - Between How It Works and Pricing
+             ============================================================ -->
+        <div class="ad-slot" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot-inner">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-placeholder">
+                    <span class="ad-placeholder-text">Ad Space — 728x90 Leaderboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             PRICING SECTION
+             ============================================================ -->
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <!-- Section Header -->
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-badge">Pricing</span>
+                    <h2 class="section-title">Choose Your <span class="gradient-text">Creator Plan</span></h2>
+                    <p class="section-subtitle">Start free, upgrade when you're ready. No credit card required.</p>
+                </div>
+
+                <!-- Pricing Toggle -->
+                <div class="pricing-toggle" data-animate="fade-up" data-delay="100">
+                    <span class="toggle-label active" data-period="monthly">Monthly</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pricingToggle" aria-label="Toggle annual pricing">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label" data-period="annual">Annual <span class="save-badge">Save 20%</span></span>
+                </div>
+
+                <!-- Pricing Cards -->
+                <div class="pricing-grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card" data-animate="fade-up" data-delay="0">
+                        <div class="pricing-card-header">
+                            <h3 class="plan-name">Starter</h3>
+                            <p class="plan-description">Perfect for exploring the marketplace</p>
+                            <div class="plan-price">
+                                <span class="price-currency">₹</span>
+                                <span class="price-amount" data-monthly="0" data-annual="0">0</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="included">Browse all skills</li>
+                            <li class="included">3 free downloads/month</li>
+                            <li class="included">Community access</li>
+                            <li class="excluded">Sell skills</li>
+                            <li class="excluded">Analytics</li>
+                            <li class="excluded">Priority support</li>
+                        </ul>
+                        <button class="btn btn-ghost btn-full">Get Started Free</button>
+                    </div>
+
+                    <!-- Pro Plan (Popular) -->
+                    <div class="pricing-card popular" data-animate="fade-up" data-delay="150">
+                        <div class="popular-badge">Most Popular 🔥</div>
+                        <div class="pricing-card-header">
+                            <h3 class="plan-name">Pro Creator</h3>
+                            <p class="plan-description">For serious AI skill creators</p>
+                            <div class="plan-price">
+                                <span class="price-currency">₹</span>
+                                <span class="price-amount" data-monthly="499" data-annual="399">499</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="included">Unlimited browsing</li>
+                            <li class="included">Unlimited downloads</li>
+                            <li class="included">Sell up to 50 skills</li>
+                            <li class="included">Analytics dashboard</li>
+                            <li class="included">Priority support</li>
+                            <li class="excluded">Custom storefront</li>
+                        </ul>
+                        <button class="btn btn-primary btn-full" onclick="openUPIModal('Pro Creator', 499)">Upgrade to Pro</button>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card" data-animate="fade-up" data-delay="300">
+                        <div class="pricing-card-header">
+                            <h3 class="plan-name">Enterprise</h3>
+                            <p class="plan-description">For teams and agencies</p>
+                            <div class="plan-price">
+                                <span class="price-currency">₹</span>
+                                <span class="price-amount" data-monthly="1999" data-annual="1599">1999</span>
+                                <span class="price-period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="included">Everything in Pro</li>
+                            <li class="included">Unlimited skill listings</li>
+                            <li class="included">Custom storefront</li>
+                            <li class="included">Team management</li>
+                            <li class="included">API access</li>
+                            <li class="included">Dedicated account manager</li>
+                        </ul>
+                        <button class="btn btn-ghost btn-full" onclick="openUPIModal('Enterprise', 1999)">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             TESTIMONIALS SECTION
+             ============================================================ -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <!-- Section Header -->
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-badge">Testimonials</span>
+                    <h2 class="section-title">Loved by <span class="gradient-text">10,000+ Creators</span></h2>
+                    <p class="section-subtitle">See what our community has to say about SarkarSkills.</p>
+                </div>
+
+                <!-- Testimonials Grid -->
+                <div class="testimonials-grid">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card" data-animate="fade-up" data-delay="0">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"SarkarSkills changed my life! I went from spending hours crafting prompts to earning ₹30,000/month selling them. The UPI payout system is seamless."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍💻</div>
+                            <div class="author-info">
+                                <span class="author-name">Rahul Sharma</span>
+                                <span class="author-role">AI Prompt Creator, Bangalore</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card" data-animate="fade-up" data-delay="150">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"As a student, I found incredible AI tools at affordable prices. The ₹199 prompt pack helped me ace my research paper. Best investment ever!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👩‍🎓</div>
+                            <div class="author-info">
+                                <span class="author-name">Priya Patel</span>
+                                <span class="author-role">Student, Mumbai</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card" data-animate="fade-up" data-delay="300">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"The quality of skills on this marketplace is outstanding. I've automated 80% of my workflow using scripts I bought here. Highly recommended!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">👨‍🔬</div>
+                            <div class="author-info">
+                                <span class="author-name">Amit Kumar</span>
+                                <span class="author-role">Startup Founder, Delhi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             AD SLOT #4 - Between Testimonials and FAQ
+             ============================================================ -->
+        <div class="ad-slot" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot-inner">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-placeholder">
+                    <span class="ad-placeholder-text">Ad Space — 728x90 Leaderboard</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             FAQ SECTION
+             ============================================================ -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <!-- Section Header -->
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-badge">FAQ</span>
+                    <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                    <p class="section-subtitle">Got questions? We've got answers.</p>
+                </div>
+
+                <!-- FAQ Accordion -->
+                <div class="faq-accordion" id="faqAccordion" role="region" aria-label="Frequently asked questions">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="0">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+                            <span class="faq-question-text">How do I sell my AI skills on SarkarSkills?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-1" role="region" aria-hidden="true">
+                            <p>Getting started is easy! Sign up for a free account, choose a creator plan, and click "List a Skill." Upload your AI prompts, scripts, or tools, set your price, and publish. Our team reviews listings within 24 hours. Once approved, your skills are live and ready to sell!</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="50">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+                            <span class="faq-question-text">Which UPI apps are supported for payments?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-2" role="region" aria-hidden="true">
+                            <p>We support all major UPI apps including Google Pay, PhonePe, Paytm, Amazon Pay, BHIM, and any UPI-enabled bank app. Payments are processed instantly and securely through our payment gateway partner.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="100">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+                            <span class="faq-question-text">How much can I earn as a creator?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-3" role="region" aria-hidden="true">
+                            <p>Your earnings depend on the quality and demand of your skills. Top creators earn ₹50,000-₹2,00,000 per month. You keep 85% of every sale — we only take a 15% platform fee. There's no cap on your earnings!</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="150">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+                            <span class="faq-question-text">How do payouts work?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-4" role="region" aria-hidden="true">
+                            <p>Payouts are processed weekly every Friday directly to your bank account via UPI. The minimum payout threshold is ₹500. You can track all your earnings and payouts in real-time from your creator dashboard.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="200">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+                            <span class="faq-question-text">Is there a refund policy?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-5" role="region" aria-hidden="true">
+                            <p>Yes! We offer a 7-day money-back guarantee on all purchases. If you're not satisfied with a skill, simply raise a refund request from your purchase history. Our team reviews and processes refunds within 48 hours.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="250">
+                        <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6">
+                            <span class="faq-question-text">Can I use purchased skills commercially?</span>
+                            <span class="faq-icon" aria-hidden="true">+</span>
+                        </button>
+                        <div class="faq-answer" id="faq-answer-6" role="region" aria-hidden="true">
+                            <p>Yes, all skills purchased on SarkarSkills come with a commercial license. You can use them for personal projects, client work, or within your organization. However, reselling the skills themselves is not permitted.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================
+             CTA SECTION
+             ============================================================ -->
+        <section class="cta-section" id="cta">
+            <div class="container">
+                <div class="cta-content" data-animate="fade-up">
+                    <h2 class="cta-title">Ready to Start Your <span class="gradient-text">AI Journey?</span></h2>
+                    <p class="cta-subtitle">Join 10,000+ creators and learners on India's fastest-growing AI skills marketplace.</p>
+                    <div class="cta-buttons">
+                        <a href="#pricing" class="btn btn-primary btn-lg">Get Started Free</a>
+                        <a href="#" class="btn btn-ghost btn-lg">Talk to Sales</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo">
+                        <span class="logo-icon">🧠</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Skills</span></span>
+                    </a>
+                    <p class="footer-description">India's #1 AI Skills Marketplace. Buy and sell AI tools, prompts, and automation scripts with UPI payments.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                        <a href="#" class="social-link" aria-label="YouTube">▶</a>
+                        <a href="#" class="social-link" aria-label="Instagram">📷</a>
+                    </div>
+                </div>
+
+                <!-- Links Columns -->
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Marketplace</a></li>
+                        <li><a href="#">Creator Tools</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Status</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links-col">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p class="copyright">© 2026 SarkarSkills. All rights reserved. Made with ❤️ in India.</p>
+                <div class="footer-badges">
+                    <span class="badge">🇮🇳 Made in India</span>
+                    <span class="badge">🔒 UPI Secured</span>
+                    <span class="badge">⭐ 4.8 Rating</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================
+         UPI PAYMENT MODAL
+         ============================================================ -->
+    <div class="modal-overlay" id="upiModalOverlay" aria-hidden="true">
+        <div class="modal" id="upiModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Complete Payment</h3>
+                <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Plan Info -->
+                <div class="modal-plan-info">
+                    <span class="modal-plan-name" id="modalPlanName">Pro Creator</span>
+                    <span class="modal-plan-price" id="modalPlanPrice">₹499/month</span>
+                </div>
+
+                <!-- UPI Payment Options -->
+                <div class="upi-options">
+                    <p class="upi-label">Pay using UPI:</p>
+                    <div class="upi-apps">
+                        <button class="upi-app-btn" onclick="selectUPIApp('gpay')" aria-label="Pay with Google Pay">
+                            <span class="upi-icon">GPay</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="selectUPIApp('phonepe')" aria-label="Pay with PhonePe">
+                            <span class="upi-icon">PhonePe</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="selectUPIApp('paytm')" aria-label="Pay with Paytm">
+                            <span class="upi-icon">Paytm</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="selectUPIApp('bhim')" aria-label="Pay with BHIM">
+                            <span class="upi-icon">BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UPI ID Input -->
+                <div class="upi-id-section">
+                    <label for="upiId" class="upi-id-label">Or enter your UPI ID:</label>
+                    <div class="upi-id-input-group">
+                        <input type="text" id="upiId" class="upi-id-input" placeholder="yourname@upi" autocomplete="off">
+                        <button class="btn btn-sm btn-ghost" onclick="verifyUPI()">Verify</button>
+                    </div>
+                    <p class="upi-id-hint">Example: yourname@paytm, yourname@oksbi</p>
+                </div>
+
+                <!-- QR Code Section -->
+                <div class="upi-qr-section">
+                    <p class="qr-label">Or scan QR code:</p>
+                    <div class="qr-placeholder">
+                        <div class="qr-code-mock">
+                            <div class="qr-pattern"></div>
+                        </div>
+                        <p class="qr-hint">Scan with any UPI app</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button class="btn btn-ghost btn-full" onclick="closeUPIModal()">Cancel</button>
+                <button class="btn btn-primary btn-full" id="payButton" onclick="processPayment()">
+                    Pay <span id="payAmount">₹499</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

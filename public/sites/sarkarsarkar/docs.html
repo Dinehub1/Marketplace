@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SarkarSarkar — Document Checklist Page | Required Documents for All Government Services -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Checklist — SarkarSarkar | Required Documents for Govt Services</title>
+  <meta name="description" content="Complete document checklist for all government services. Know exactly which documents you need for Aadhaar, PAN, passport, driving license, GST, and more.">
+  <meta name="keywords" content="document checklist, required documents, Aadhaar documents, PAN documents, passport documents, driving license papers, government forms">
+  <meta name="author" content="SarkarSarkar">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkarsarkar.in/docs.html">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Document Checklist — SarkarSarkar | Required Documents for Govt Services">
+  <meta property="og:description" content="Complete document checklist for all government services. Know exactly which documents you need before applying.">
+  <meta property="og:url" content="https://sarkarsarkar.in/docs.html">
+  <meta property="og:site_name" content="SarkarSarkar">
+  <meta property="og:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Document Checklist — SarkarSarkar | Required Documents">
+  <meta name="twitter:description" content="Know exactly which documents you need for Aadhaar, PAN, passport, driving license, GST, and more.">
+  <meta name="twitter:image" content="https://sarkarsarkar.in/og-image.png">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Document Checklist","description":"Complete document checklist for all government services — Aadhaar, PAN, passport, driving license, GST, and more.","url":"https://sarkarsarkar.in/docs.html"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"SarkarSarkar","url":"https://sarkarsarkar.in","potentialAction":{"@type":"SearchAction","target":"https://sarkarsarkar.in/services.html?q={search_term_string}"}}
+  </script>
+
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* ===== DOCUMENT CHECKLIST PAGE STYLES ===== */
+    .page-hero { padding: 120px 0 60px; background: var(--bg-hero); text-align: center; }
+    .page-hero h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    .docs-section { padding: 60px 0; }
+
+    /* Progress bar */
+    .progress-bar-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 24px; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .progress-label { font-weight: 700; color: var(--text-primary); font-size: 1rem; }
+    .progress-percent { font-weight: 800; color: var(--color-primary); font-size: 1.2rem; }
+    .progress-track { width: 100%; height: 12px; background: var(--bg-tertiary); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--color-primary), var(--color-accent)); border-radius: 999px; transition: width 0.4s ease; width: 0%; }
+    .progress-detail { font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px; text-align: center; }
+
+    /* Service doc cards */
+    .doc-service-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); margin-bottom: 24px; overflow: hidden; transition: var(--transition); max-width: 800px; margin-left: auto; margin-right: auto; }
+    .doc-service-card:hover { box-shadow: var(--shadow-md); }
+
+    .doc-service-header { display: flex; align-items: center; gap: 16px; padding: 20px 24px; cursor: pointer; user-select: none; background: none; border: none; width: 100%; text-align: left; font-family: var(--font-family); }
+    .doc-service-icon { font-size: 2rem; flex-shrink: 0; }
+    .doc-service-title-group { flex: 1; }
+    .doc-service-title { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
+    .doc-service-subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px; }
+    .doc-service-count { font-size: 0.8rem; font-weight: 600; color: var(--color-primary); background: rgba(26,86,219,0.1); padding: 4px 12px; border-radius: 999px; white-space: nowrap; }
+    .doc-service-count.done { background: rgba(16,185,129,0.1); color: var(--color-accent); }
+
+    .doc-chevron { font-size: 1.2rem; color: var(--text-tertiary); transition: transform 0.3s; flex-shrink: 0; }
+    .doc-chevron.open { transform: rotate(180deg); }
+
+    /* Doc list */
+    .doc-list { display: none; padding: 0 24px 24px; border-top: 1px solid var(--border-color); }
+    .doc-list.open { display: block; }
+    .doc-list-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-tertiary); margin: 16px 0 12px; }
+    .doc-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: var(--border-radius-sm); transition: var(--transition-fast); margin-bottom: 4px; }
+    .doc-item:hover { background: var(--bg-secondary); }
+    .doc-checkbox { width: 20px; height: 20px; border: 2px solid var(--border-color); border-radius: 4px; flex-shrink: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: var(--transition-fast); }
+    .doc-checkbox.checked { background: var(--color-accent); border-color: var(--color-accent); }
+    .doc-checkbox.checked::after { content: '\2713'; color: #fff; font-size: 0.75rem; font-weight: 800; }
+    .doc-item-text { flex: 1; }
+    .doc-item-name { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+    .doc-item-name.checked-text { text-decoration: line-through; color: var(--text-tertiary); }
+    .doc-item-desc { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+    .doc-tag { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; align-self: flex-start; margin-top: 2px; flex-shrink: 0; }
+    .doc-tag.mandatory { background: rgba(239,68,68,0.1); color: #dc2626; }
+    .doc-tag.optional { background: rgba(245,158,11,0.1); color: #d97706; }
+    .doc-tag.if-applicable { background: rgba(59,130,246,0.1); color: #2563eb; }
+
+    /* Tips section */
+    .doc-tips { background: var(--bg-secondary); border-radius: var(--border-radius-sm); padding: 12px 16px; margin-top: 16px; }
+    .doc-tips-title { font-weight: 700; font-size: 0.85rem; color: var(--text-primary); margin-bottom: 8px; }
+    .doc-tip-item { font-size: 0.85rem; color: var(--text-secondary); padding: 4px 0; display: flex; gap: 8px; }
+
+    /* Toolbar */
+    .docs-toolbar { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+    .docs-toolbar-btn { padding: 8px 20px; border-radius: var(--border-radius-full); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-secondary); font-weight: 500; cursor: pointer; transition: var(--transition-fast); font-family: var(--font-family); font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+    .docs-toolbar-btn:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    /* Print styles */
+    @media print {
+      .navbar, .docs-toolbar, .progress-bar-container, .doc-chevron, .doc-checkbox, .back-to-top, .ad-slot, .skip-link { display: none !important; }
+      .doc-list { display: block !important; }
+      .page-hero { padding: 40px 0 20px; background: #fff !important; }
+      .page-hero h1 { color: #000 !important; }
+      .page-hero p { color: #444 !important; }
+      .doc-service-card { break-inside: avoid; border: 1px solid #ccc; }
+      .doc-tag { border: 1px solid currentColor; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">&#x1F3DB;&#xFE0F;</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="eligibility.html" class="nav-link">Eligibility</a>
+        <a href="docs.html" class="nav-link active">Documents</a>
+        <a href="tracker.html" class="nav-link">Track Application</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-lang" id="langToggle" aria-label="Toggle language"><span id="langText">&#x939;&#x93F;&#x902;</span></button>
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode"><span class="dark-icon">&#x1F319;</span></button>
+        <a href="dashboard.html" class="btn-nav-cta">Login / Register</a>
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="services.html" class="mobile-link">Services</a>
+      <a href="eligibility.html" class="mobile-link">Eligibility</a>
+      <a href="docs.html" class="mobile-link active">Documents</a>
+      <a href="tracker.html" class="mobile-link">Track Application</a>
+      <a href="dashboard.html" class="mobile-link">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta mobile-cta">Login / Register</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Page Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <h1>&#x1F4CB; Document Checklist</h1>
+        <p>Know exactly which documents you need before applying for any government service. Check them off as you gather them.</p>
+      </div>
+    </section>
+
+    <!-- AD SLOT 1 -->
+    <div class="ad-slot" id="adSlot1"><span class="ad-label">Advertisement</span><div class="ad-content"><p>&#x1F4E2; Ad Space — Your message reaches millions of citizens here</p></div></div>
+
+    <!-- Progress Bar + Toolbar + Cards -->
+    <section class="docs-section">
+      <div class="container">
+        <div class="progress-bar-container">
+          <div class="progress-header">
+            <span class="progress-label">&#x1F4CA; Your Document Progress</span>
+            <span class="progress-percent" id="progressPercent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-detail" id="progressDetail">Check off documents as you gather them</div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="docs-toolbar">
+          <button class="docs-toolbar-btn" id="expandAllBtn">&#x1F4C2; Expand All</button>
+          <button class="docs-toolbar-btn" id="collapseAllBtn">&#x1F4C1; Collapse All</button>
+          <button class="docs-toolbar-btn" id="resetBtn">&#x1F504; Reset All</button>
+          <button class="docs-toolbar-btn" id="printBtn">&#x1F5A8; Print Checklist</button>
+          <button class="docs-toolbar-btn" id="showMandatoryBtn">&#x2B50; Show Only Mandatory</button>
+        </div>
+
+        <!-- AD SLOT 2 -->
+        <div class="ad-slot" id="adSlot2"><span class="ad-label">Advertisement</span><div class="ad-content"><p>&#x1F4E2; Ad Space — Reach 10M+ citizens across India</p></div></div>
+
+        <!-- Document Cards Container -->
+        <div id="docCardsContainer"></div>
+
+        <!-- AD SLOT 3 -->
+        <div class="ad-slot" id="adSlot3"><span class="ad-label">Advertisement</span><div class="ad-content"><p>&#x1F4E2; Ad Space — Premium placement for your brand</p></div></div>
+
+        <!-- AD SLOT 4 -->
+        <div class="ad-slot" id="adSlot4"><span class="ad-label">Advertisement</span><div class="ad-content"><p>&#x1F4E2; Ad Space — Connect with India's largest government services audience</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">&#x1F3DB;&#xFE0F;</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+          <p class="footer-desc">India's most trusted government services portal.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="eligibility.html">Eligibility</a></li>
+            <li><a href="tracker.html">Track Application</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Guides</h4>
+          <ul class="footer-links">
+            <li><a href="docs.html">Document Checklist</a></li>
+            <li><a href="services.html#gst">GST Guide</a></li>
+            <li><a href="services.html#passport">Passport Guide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 SarkarSarkar. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- UPI Payment Modal -->
+  <div class="modal-overlay" id="upiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">&#x1F4B3; Pay via UPI</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="upi-amount">
+          <span class="upi-label">Amount to Pay</span>
+          <span class="upi-value" id="upiAmount">&#x20B9;0</span>
+        </div>
+        <div class="upi-apps">
+          <button class="upi-app" data-app="gpay"><span class="upi-app-icon">G</span><span>Google Pay</span></button>
+          <button class="upi-app" data-app="phonepe"><span class="upi-app-icon">P</span><span>PhonePe</span></button>
+          <button class="upi-app" data-app="paytm"><span class="upi-app-icon">&#x20B9;</span><span>Paytm</span></button>
+          <button class="upi-app" data-app="bhim"><span class="upi-app-icon">B</span><span>BHIM</span></button>
+        </div>
+        <div class="upi-or">or enter UPI ID</div>
+        <form id="upiForm">
+          <div class="form-group"><input type="text" id="upiId" class="form-control" placeholder="yourname@upi" pattern=".+@.+"></div>
+          <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+        </form>
+        <p class="upi-secure">&#x1F512; Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">&#x2191;</button>
+  <script src="app.js"></script>
+  <script>
+    // ===== DOCUMENT CHECKLIST DATA =====
+    var docServices = [
+      {
+        id: 'aadhaar',
+        icon: '\uD83E\uDEAA',
+        title: 'Aadhaar Card',
+        subtitle: 'New enrollment / Update / Link',
+        totalDocs: 7,
+        documents: [
+          { name: 'Proof of Identity (POI)', desc: 'Passport, PAN card, voter ID, driving license, or ration card', tag: 'mandatory' },
+          { name: 'Proof of Address (POA)', desc: 'Passport, bank statement, utility bill (not older than 3 months), or rent agreement', tag: 'mandatory' },
+          { name: 'Proof of Date of Birth', desc: 'Birth certificate, SSC certificate, passport, or PAN card', tag: 'mandatory' },
+          { name: 'Passport-size photograph', desc: 'Recent color photo with white background (for first-time enrollment)', tag: 'mandatory' },
+          { name: 'Biometric data', desc: 'Fingerprint and iris scan done at enrollment center (for first-time enrollment)', tag: 'if-applicable' },
+          { name: 'Aadhaar number (for update)', desc: 'Existing Aadhaar number or Aadhaar letter for update requests', tag: 'if-applicable' },
+          { name: 'Mobile number', desc: 'Active mobile number for OTP verification', tag: 'mandatory' }
+        ],
+        tips: [
+          '\uD83D\uDD50 Aadhaar enrollment is free for all Indian residents',
+          '\uD83D\uDCF1 Visit nearest Aadhaar Seva Kendra — book appointment online via uidai.gov.in',
+          '\uD83D\uDD04 Address update online is free; biometric update costs \u20B950'
+        ]
+      },
+      {
+        id: 'pan',
+        icon: '\uD83D\uDCC4',
+        title: 'PAN Card',
+        subtitle: 'New application / Correction / Reprint',
+        totalDocs: 6,
+        documents: [
+          { name: 'Proof of Identity (POI)', desc: 'Aadhaar card, voter ID, driving license, or passport', tag: 'mandatory' },
+          { name: 'Proof of Address (POA)', desc: 'Aadhaar card, passport, utility bill, or bank statement', tag: 'mandatory' },
+          { name: 'Proof of Date of Birth', desc: 'Birth certificate, Aadhaar, passport, or 10th marksheet', tag: 'mandatory' },
+          { name: 'Passport-size photograph', desc: '2 recent color photographs (for physical application)', tag: 'mandatory' },
+          { name: 'Application form (49A/49AA)', desc: 'Form 49A for Indian citizens, Form 49AA for foreign citizens', tag: 'mandatory' },
+          { name: "Parent's PAN (if minor applicant)", desc: 'PAN card of father/mother/guardian if applicant is below 18', tag: 'if-applicable' }
+        ],
+        tips: [
+          '\uD83D\uDCBB Apply online at onlineservices.nsdl.com or tin.utiitsl.com',
+          '\uD83D\uDCB0 Fee: \u20B9107 for Indian communication address, \u20B9989 for foreign address',
+          '\u26A1 PAN is issued within 48 hours for Aadhaar-based e-KYC applications'
+        ]
+      },
+      {
+        id: 'passport',
+        icon: '\uD83D\uDEC2',
+        title: 'Passport Services',
+        subtitle: 'New / Renewal / Tatkal / Duplicate',
+        totalDocs: 10,
+        documents: [
+          { name: 'Proof of Address', desc: 'Aadhaar card, voter ID, utility bill (last 3 months), or bank passbook', tag: 'mandatory' },
+          { name: 'Proof of Date of Birth', desc: 'Birth certificate, 10th marksheet, Aadhaar, or PAN card', tag: 'mandatory' },
+          { name: 'Passport-size photographs', desc: '4 recent color photos (3.5cm x 4.5cm) with white background', tag: 'mandatory' },
+          { name: 'Old passport (for renewal)', desc: 'Original expired/expiring passport with two photocopies of first & last page', tag: 'if-applicable' },
+          { name: 'Aadhaar card', desc: 'Self-attested photocopy of Aadhaar card', tag: 'mandatory' },
+          { name: 'PAN card', desc: 'Self-attested photocopy (mandatory for adults)', tag: 'mandatory' },
+          { name: 'Voter ID / Election card', desc: 'Self-attested photocopy as additional ID proof', tag: 'optional' },
+          { name: 'Affidavit (if name change)', desc: 'Notarized affidavit + newspaper publication for name change after marriage', tag: 'if-applicable' },
+          { name: 'Marriage certificate / Gazette', desc: 'Required for married women applying with changed surname', tag: 'if-applicable' },
+          { name: 'Annexure (as applicable)', desc: 'Annexure A/B/C/D/E/F depending on applicant category — check website', tag: 'if-applicable' }
+        ],
+        tips: [
+          '\uD83D\uDE80 Tatkal passport available in 1-3 days (additional \u20B92,000 fee)',
+          '\uD83D\uDCC5 Normal passport takes ~30 days; apply at passportseva.gov.in',
+          '\uD83D\uDC76 For minors: both parents\' consent required + family photograph'
+        ]
+      },
+      {
+        id: 'driving',
+        icon: '\uD83D\uDE97',
+        title: 'Driving License',
+        subtitle: "Learner's / Permanent / Renewal / International",
+        totalDocs: 8,
+        documents: [
+          { name: 'Proof of Age', desc: 'Birth certificate, 10th marksheet, Aadhaar, passport, or PAN card', tag: 'mandatory' },
+          { name: 'Proof of Address', desc: 'Aadhaar, voter ID, passport, utility bill (last 3 months), or ration card', tag: 'mandatory' },
+          { name: 'Passport-size photographs', desc: '4 recent color photographs with white background', tag: 'mandatory' },
+          { name: 'Medical certificate (Form 1A)', desc: 'Required for applicants above 50 years or for commercial license', tag: 'if-applicable' },
+          { name: 'Application form (Form 4)', desc: 'Available online at parivahan.gov.in or at RTO office', tag: 'mandatory' },
+          { name: "Learner's license (for permanent)", desc: "Must hold learner's license for at least 30 days before applying for permanent", tag: 'if-applicable' },
+          { name: 'Existing DL (for renewal)', desc: 'Original driving license + photocopy for renewal applications', tag: 'if-applicable' },
+          { name: 'Eyesight test certificate', desc: 'From a registered medical practitioner (for applicants above 40)', tag: 'optional' }
+        ],
+        tips: [
+          '\uD83D\uDCBB Book your driving test slot online at parivahan.gov.in',
+          '\uD83C\uDFE2 Visit nearest RTO office; some states allow online appointment booking',
+          '\u26A1 Learner\'s license test is a simple online MCQ — practice on parivahan.gov.in'
+        ]
+      },
+      {
+        id: 'voter',
+        icon: '\uD83D\uDDF3\uFE0F',
+        title: 'Voter ID / EPIC',
+        subtitle: 'New registration / Correction / Duplicate',
+        totalDocs: 6,
+        documents: [
+          { name: 'Proof of Age', desc: 'Birth certificate, 10th marksheet, Aadhaar, passport, or PAN card (must be 18+)', tag: 'mandatory' },
+          { name: 'Proof of Residential Address', desc: 'Aadhaar, passport, rent agreement, utility bill (last 3 months), or bank passbook', tag: 'mandatory' },
+          { name: 'Passport-size photograph', desc: '1 recent color photograph (for Form 6 physical submission)', tag: 'mandatory' },
+          { name: 'Application Form 6', desc: 'Available online at voters.eci.gov.in or at Electoral Registration Office', tag: 'mandatory' },
+          { name: 'Declaration of nationality', desc: 'Required for first-time applicants — self-declaration form', tag: 'mandatory' },
+          { name: 'Previous EPIC (for duplicate)', desc: 'FIR copy if lost, or old EPIC photocopy for correction', tag: 'if-applicable' }
+        ],
+        tips: [
+          '\uD83C\uDF10 Apply online at voters.eci.gov.in — you can track your application status',
+          '\uD83D\uDCCB Voter ID is free of charge for all eligible Indian citizens',
+          '\uD83D\uDDD3\uFE0F Apply at least 45 days before elections for timely processing'
+        ]
+      },
+      {
+        id: 'gst',
+        icon: '\uD83D\uDCB0',
+        title: 'GST Registration & Filing',
+        subtitle: 'New registration / Amendment / Cancellation',
+        totalDocs: 9,
+        documents: [
+          { name: 'PAN card of business', desc: 'Mandatory — GST is linked to PAN for all registrations', tag: 'mandatory' },
+          { name: 'Aadhaar of authorized signatory', desc: 'For e-signing the GST application', tag: 'mandatory' },
+          { name: 'Business registration proof', desc: 'Partnership deed, incorporation certificate, shop establishment license, or trade license', tag: 'mandatory' },
+          { name: 'Address proof of business premises', desc: 'Electricity bill, rent/lease agreement, property tax receipt, or municipal khata', tag: 'mandatory' },
+          { name: 'Bank account details', desc: 'Cancelled cheque or bank statement/passbook first page (business account)', tag: 'mandatory' },
+          { name: 'Photograph of authorized signatory', desc: 'Passport-size photograph (JPEG, max 100KB)', tag: 'mandatory' },
+          { name: 'Digital Signature Certificate (DSC)', desc: 'Required for companies and LLPs (optional for proprietorship)', tag: 'if-applicable' },
+          { name: 'Letter of Authorization', desc: 'For authorized representative to sign on behalf of the business', tag: 'if-applicable' },
+          { name: 'HSN/SAC code details', desc: 'List of goods/services with HSN or SAC codes your business deals in', tag: 'mandatory' }
+        ],
+        tips: [
+          '\uD83D\uDCBB GST registration is 100% online at gst.gov.in — no physical visit required',
+          '\uD83D\uDCB0 GST registration is free — beware of agents charging \u20B9500-1500',
+          '\u23F0 Registration typically takes 7-15 working days'
+        ]
+      },
+      {
+        id: 'income-tax',
+        icon: '\uD83D\uDCCA',
+        title: 'Income Tax Services',
+        subtitle: 'ITR filing / PAN-Aadhaar linking / Refund',
+        totalDocs: 8,
+        documents: [
+          { name: 'PAN card', desc: 'Linked PAN with Aadhaar (mandatory for ITR filing)', tag: 'mandatory' },
+          { name: 'Aadhaar card', desc: 'Must be linked with PAN for e-verification of ITR', tag: 'mandatory' },
+          { name: 'Form 16 / Form 16A', desc: 'From employer (TDS on salary) or from deductor (on other income)', tag: 'mandatory' },
+          { name: 'Bank account details', desc: 'All active bank account numbers with IFSC code for refund processing', tag: 'mandatory' },
+          { name: 'Bank statements', desc: 'Yearly statements for all accounts — interest earned is taxable', tag: 'mandatory' },
+          { name: 'Investment proofs', desc: 'PPF, ELSS, NSC, insurance premium — for Section 80C/80D claims', tag: 'if-applicable' },
+          { name: 'Home loan certificate', desc: 'From bank for claiming Section 24 interest deduction', tag: 'if-applicable' },
+          { name: 'Capital gains statements', desc: 'From broker/mutual fund for sale of shares, property, or mutual funds', tag: 'if-applicable' }
+        ],
+        tips: [
+          '\uD83D\uDCBB File ITR for free at incometax.gov.in — no need for a CA if income is salary-only',
+          '\u23F0 ITR filing deadline: July 31 for non-audit cases',
+          '\uD83D\uDD17 Link PAN-Aadhaar at incometax.gov.in before filing to avoid rejection'
+        ]
+      },
+      {
+        id: 'ration',
+        icon: '\uD83C\uDF3E',
+        title: 'Ration Card',
+        subtitle: 'New / Addition of member / Duplicate',
+        totalDocs: 7,
+        documents: [
+          { name: 'Proof of Identity', desc: 'Aadhaar card of all family members (mandatory)', tag: 'mandatory' },
+          { name: 'Proof of Address', desc: 'Aadhaar, voter ID, electricity bill, or rent agreement', tag: 'mandatory' },
+          { name: 'Income certificate', desc: 'From Tehsildar / revenue office — determines BPL/APL category', tag: 'mandatory' },
+          { name: 'Family photograph', desc: 'Recent passport-size photo of entire family', tag: 'mandatory' },
+          { name: 'Date of Birth certificates', desc: 'Birth certificates or 10th marksheets for all family members', tag: 'mandatory' },
+          { name: 'Aadhaar seeding', desc: "All family members' Aadhaar must be linked to the ration card", tag: 'mandatory' },
+          { name: 'Previous ration card (for modification)', desc: 'Original card or replacement request with FIR copy if lost', tag: 'if-applicable' }
+        ],
+        tips: [
+          '\uD83D\uDCBB Apply online at your state\'s food civil supplies portal',
+          '\uD83D\uDCCB National Food Security Act (NFSA) beneficiaries get subsidized grains',
+          '\uD83D\uDD04 One Nation One Ration Card (ONORC) allows portability across India'
+        ]
+      }
+    ];
+
+    // ===== State Management =====
+    function loadCheckedState() {
+      try {
+        var saved = localStorage.getItem('sarkarsarkar_checked_docs');
+        return saved ? JSON.parse(saved) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveCheckedState(state) {
+      try {
+        localStorage.setItem('sarkarsarkar_checked_docs', JSON.stringify(state));
+      } catch (e) { /* fail silently */ }
+    }
+
+    var checkedDocs = loadCheckedState();
+    var showOnlyMandatory = false;
+
+    // ===== Render Document Cards =====
+    function renderDocCards() {
+      var container = document.getElementById('docCardsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      docServices.forEach(function(service) {
+        var card = document.createElement('div');
+        card.className = 'doc-service-card';
+        card.setAttribute('data-service-id', service.id);
+
+        var checkedCount = countChecked(service.id);
+        var countClass = (checkedCount === service.totalDocs && service.totalDocs > 0) ? 'done' : '';
+
+        // Header button
+        var header = document.createElement('button');
+        header.className = 'doc-service-header';
+        header.setAttribute('aria-expanded', 'false');
+        header.setAttribute('aria-controls', 'doclist-' + service.id);
+        header.type = 'button';
+        header.innerHTML =
+          '<span class="doc-service-icon">' + service.icon + '</span>' +
+          '<div class="doc-service-title-group">' +
+            '<div class="doc-service-title">' + service.title + '</div>' +
+            '<div class="doc-service-subtitle">' + service.subtitle + '</div>' +
+          '</div>' +
+          '<span class="doc-service-count ' + countClass + '" id="count-' + service.id + '">' + checkedCount + '/' + service.totalDocs + '</span>' +
+          '<span class="doc-chevron" id="chevron-' + service.id + '">&#x25BC;</span>';
+        header.addEventListener('click', function() { toggleList(service.id); });
+
+        // Doc list
+        var list = document.createElement('div');
+        list.className = 'doc-list';
+        list.id = 'doclist-' + service.id;
+
+        // Mandatory docs
+        var mandatoryDocs = [];
+        var otherDocs = [];
+        service.documents.forEach(function(d) {
+          if (d.tag === 'mandatory') mandatoryDocs.push(d);
+          else otherDocs.push(d);
+        });
+
+        if (mandatoryDocs.length > 0) {
+          var mandatoryTitle = document.createElement('div');
+          mandatoryTitle.className = 'doc-list-title';
+          mandatoryTitle.textContent = 'Mandatory Documents';
+          list.appendChild(mandatoryTitle);
+          mandatoryDocs.forEach(function(doc, idx) {
+            list.appendChild(createDocItem(service.id, doc, idx, 'mandatory'));
+          });
+        }
+
+        if (otherDocs.length > 0) {
+          var otherTitle = document.createElement('div');
+          otherTitle.className = 'doc-list-title';
+          otherTitle.textContent = 'Additional / Conditional Documents';
+          list.appendChild(otherTitle);
+          otherDocs.forEach(function(doc, idx) {
+            list.appendChild(createDocItem(service.id, doc, idx, 'other'));
+          });
+        }
+
+        // Tips
+        if (service.tips && service.tips.length > 0) {
+          var tipsDiv = document.createElement('div');
+          tipsDiv.className = 'doc-tips';
+          var tipsTitle = document.createElement('div');
+          tipsTitle.className = 'doc-tips-title';
+          tipsTitle.textContent = '\uD83D\uDCA1 Pro Tips';
+          tipsDiv.appendChild(tipsTitle);
+          service.tips.forEach(function(tip) {
+            var tipItem = document.createElement('div');
+            tipItem.className = 'doc-tip-item';
+            tipItem.textContent = tip;
+            tipsDiv.appendChild(tipItem);
+          });
+          list.appendChild(tipsDiv);
+        }
+
+        card.appendChild(header);
+        card.appendChild(list);
+        container.appendChild(card);
+      });
+
+      updateProgress();
+      applyFilter();
+    }
+
+    function createDocItem(serviceId, doc, docIdx, category) {
+      var key = serviceId + '-' + category + '-' + docIdx;
+      var isChecked = !!checkedDocs[key];
+      var item = document.createElement('label');
+      item.className = 'doc-item';
+      item.setAttribute('data-tag', doc.tag);
+      item.innerHTML =
+        '<div class="doc-checkbox ' + (isChecked ? 'checked' : '') + '" data-key="' + key + '" role="checkbox" aria-checked="' + isChecked + '" tabindex="0"></div>' +
+        '<div class="doc-item-text">' +
+          '<div class="doc-item-name ' + (isChecked ? 'checked-text' : '') + '">' + doc.name + '</div>' +
+          '<div class="doc-item-desc">' + doc.desc + '</div>' +
+        '</div>' +
+        '<span class="doc-tag ' + doc.tag + '">' + formatTag(doc.tag) + '</span>';
+
+      var checkbox = item.querySelector('.doc-checkbox');
+      checkbox.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleCheck(key);
+      });
+      checkbox.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          toggleCheck(key);
+        }
+      });
+
+      return item;
+    }
+
+    function formatTag(tag) {
+      var map = { mandatory: 'Required', optional: 'Optional', 'if-applicable': 'If Applicable' };
+      return map[tag] || tag;
+    }
+
+    function toggleCheck(key) {
+      checkedDocs[key] = !checkedDocs[key];
+      saveCheckedState(checkedDocs);
+
+      var checkbox = document.querySelector('.doc-checkbox[data-key="' + key + '"]');
+      if (checkbox) {
+        var isChecked = !!checkedDocs[key];
+        checkbox.classList.toggle('checked', isChecked);
+        checkbox.setAttribute('aria-checked', isChecked);
+        var nameEl = checkbox.parentElement.querySelector('.doc-item-name');
+        if (nameEl) nameEl.classList.toggle('checked-text', isChecked);
+      }
+
+      updateCountForService(key);
+      updateProgress();
+    }
+
+    function updateCountForService(key) {
+      var parts = key.split('-');
+      var serviceId = parts[0];
+      var service = null;
+      for (var i = 0; i < docServices.length; i++) {
+        if (docServices[i].id === serviceId) { service = docServices[i]; break; }
+      }
+      if (!service) return;
+      var count = countChecked(serviceId);
+      var countEl = document.getElementById('count-' + serviceId);
+      if (countEl) {
+        countEl.textContent = count + '/' + service.totalDocs;
+        countEl.classList.toggle('done', count === service.totalDocs);
+      }
+    }
+
+    function countChecked(serviceId) {
+      var count = 0;
+      var prefix = serviceId + '-';
+      Object.keys(checkedDocs).forEach(function(key) {
+        if (key.indexOf(prefix) === 0 && checkedDocs[key]) count++;
+      });
+      return count;
+    }
+
+    function updateProgress() {
+      var totalDocs = 0;
+      var checkedCount = 0;
+      docServices.forEach(function(service) {
+        totalDocs += service.totalDocs;
+        checkedCount += countChecked(service.id);
+      });
+
+      var percent = totalDocs > 0 ? Math.round((checkedCount / totalDocs) * 100) : 0;
+      var fill = document.getElementById('progressFill');
+      var percentEl = document.getElementById('progressPercent');
+      var detailEl = document.getElementById('progressDetail');
+
+      if (fill) fill.style.width = percent + '%';
+      if (percentEl) percentEl.textContent = percent + '%';
+      if (detailEl) detailEl.textContent = checkedCount + ' of ' + totalDocs + ' documents marked as ready';
+    }
+
+    function toggleList(serviceId) {
+      var list = document.getElementById('doclist-' + serviceId);
+      var chevron = document.getElementById('chevron-' + serviceId);
+      var header = list.parentElement.querySelector('.doc-service-header');
+      var isOpen = list.classList.contains('open');
+      list.classList.toggle('open');
+      if (chevron) chevron.classList.toggle('open');
+      if (header) header.setAttribute('aria-expanded', !isOpen);
+    }
+
+    // ===== Toolbar Actions =====
+    function expandAll() {
+      docServices.forEach(function(s) {
+        var list = document.getElementById('doclist-' + s.id);
+        var chevron = document.getElementById('chevron-' + s.id);
+        var header = list ? list.parentElement.querySelector('.doc-service-header') : null;
+        if (list) list.classList.add('open');
+        if (chevron) chevron.classList.add('open');
+        if (header) header.setAttribute('aria-expanded', 'true');
+      });
+    }
+
+    function collapseAll() {
+      docServices.forEach(function(s) {
+        var list = document.getElementById('doclist-' + s.id);
+        var chevron = document.getElementById('chevron-' + s.id);
+        var header = list ? list.parentElement.querySelector('.doc-service-header') : null;
+        if (list) list.classList.remove('open');
+        if (chevron) chevron.classList.remove('open');
+        if (header) header.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    function resetAll() {
+      if (confirm('Reset all checked items? This will clear your progress.')) {
+        checkedDocs = {};
+        saveCheckedState(checkedDocs);
+        renderDocCards();
+      }
+    }
+
+    function printChecklist() {
+      expandAll();
+      setTimeout(function() { window.print(); }, 300);
+    }
+
+    function toggleMandatoryFilter() {
+      showOnlyMandatory = !showOnlyMandatory;
+      var btn = document.getElementById('showMandatoryBtn');
+      if (btn) {
+        if (showOnlyMandatory) {
+          btn.style.background = 'var(--color-primary)';
+          btn.style.color = '#fff';
+          btn.style.borderColor = 'var(--color-primary)';
+          btn.textContent = '\uD83D\uDCCB Show All Documents';
+        } else {
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.style.borderColor = '';
+          btn.textContent = '\u2B50 Show Only Mandatory';
+        }
+      }
+      applyFilter();
+    }
+
+    function applyFilter() {
+      var items = document.querySelectorAll('.doc-item');
+      items.forEach(function(item) {
+        var tag = item.getAttribute('data-tag');
+        if (showOnlyMandatory && tag !== 'mandatory') {
+          item.style.display = 'none';
+        } else {
+          item.style.display = '';
+        }
+      });
+
+      // Hide section titles if no visible items follow
+      var titles = document.querySelectorAll('.doc-list-title');
+      titles.forEach(function(title) {
+        var next = title.nextElementSibling;
+        var hasVisible = false;
+        while (next && !next.classList.contains('doc-list-title') && !next.classList.contains('doc-tips')) {
+          if (next.classList.contains('doc-item') && next.style.display !== 'none') {
+            hasVisible = true;
+            break;
+          }
+          next = next.nextElementSibling;
+        }
+        title.style.display = hasVisible ? '' : 'none';
+      });
+    }
+
+    // ===== Initialize =====
+    document.addEventListener('DOMContentLoaded', function() {
+      renderDocCards();
+
+      var expandBtn = document.getElementById('expandAllBtn');
+      var collapseBtn = document.getElementById('collapseAllBtn');
+      var resetBtn = document.getElementById('resetBtn');
+      var printBtn = document.getElementById('printBtn');
+      var mandatoryBtn = document.getElementById('showMandatoryBtn');
+
+      if (expandBtn) expandBtn.addEventListener('click', expandAll);
+      if (collapseBtn) collapseBtn.addEventListener('click', collapseAll);
+      if (resetBtn) resetBtn.addEventListener('click', resetAll);
+      if (printBtn) printBtn.addEventListener('click', printChecklist);
+      if (mandatoryBtn) mandatoryBtn.addEventListener('click', toggleMandatoryFilter);
+    });
+  </script>
+</body>
+</html>

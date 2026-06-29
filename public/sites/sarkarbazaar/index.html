@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarBazaar - E-Commerce Marketplace Landing Page
+    A modern, responsive, SEO-optimized marketplace for Indian sellers and buyers.
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- SEO Meta Tags -->
+  <title>SarkarBazaar — India's AI-Powered E-Commerce Marketplace for Local Businesses</title>
+  <meta name="description" content="SarkarBazaar connects Indian buyers with local sellers. AI-powered product discovery, UPI payments, same-day delivery, and 50 lakh+ products across 200+ categories. Start shopping or selling today!">
+  <meta name="keywords" content="SarkarBazaar, e-commerce India, online shopping, local marketplace, UPI payment, sell online India, AI product search">
+  <meta name="author" content="SarkarBazaar">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="SarkarBazaar — India's AI-Powered E-Commerce Marketplace">
+  <meta property="og:description" content="Connect with local sellers, discover 50 lakh+ products, pay via UPI. Same-day delivery across 500+ cities.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarbazaar.in">
+  <meta property="og:image" content="https://sarkarbazaar.in/assets/og-image.jpg">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:site_name" content="SarkarBazaar">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SarkarBazaar — India's AI-Powered Marketplace">
+  <meta name="twitter:description" content="50 lakh+ products, UPI payments, same-day delivery. Shop local, sell global.">
+  <meta name="twitter:image" content="https://sarkarbazaar.in/assets/twitter-card.jpg">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SarkarBazaar",
+    "url": "https://sarkarbazaar.in",
+    "description": "India's AI-powered e-commerce marketplace connecting buyers with local sellers",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://sarkarbazaar.in/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "SarkarBazaar",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://sarkarbazaar.in/assets/logo.png"
+      }
+    },
+    "sameAs": [
+      "https://twitter.com/sarkarbazaar",
+      "https://facebook.com/sarkarbazaar",
+      "https://instagram.com/sarkarbazaar"
+    ]
+  }
+  </script>
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://sarkarbazaar.in">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Favicon placeholder -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+</head>
+<body>
+  <!-- Skip Link (Accessibility) -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- NAVIGATION BAR -->
+  <header class="navbar" role="banner">
+    <div class="container nav-container">
+      <a href="#" class="logo" aria-label="SarkarBazaar Home">
+        <span class="logo-icon">🛒</span>
+        <span class="logo-text">Sarkar<span class="logo-highlight">Bazaar</span></span>
+      </a>
+
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="#categories" class="nav-link">Categories</a>
+        <a href="#products" class="nav-link">Products</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#testimonials" class="nav-link">Reviews</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span class="dark-toggle-icon">🌙</span>
+        </button>
+        <a href="#pricing" class="btn btn-primary btn-nav">Start Selling</a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
+          <span class="hamburger"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+      <a href="#categories" class="mobile-nav-link">Categories</a>
+      <a href="#products" class="mobile-nav-link">Products</a>
+      <a href="#features" class="mobile-nav-link">Features</a>
+      <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+      <a href="#pricing" class="mobile-nav-link">Pricing</a>
+      <a href="#testimonials" class="mobile-nav-link">Reviews</a>
+      <a href="#faq" class="mobile-nav-link">FAQ</a>
+      <a href="#pricing" class="btn btn-primary btn-full">Start Selling</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- HERO SECTION -->
+    <section class="section hero" id="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <span class="hero-badge">🇮🇳 Trusted by 2 Crore+ Indians</span>
+            <h1 class="hero-title">
+              India's <span class="gradient-text">AI-Powered</span> Marketplace for Local Businesses
+            </h1>
+            <p class="hero-subtitle">
+              Discover 50 lakh+ products from verified local sellers. Pay via UPI, get same-day delivery, and support Indian businesses — all in one place.
+            </p>
+            <div class="hero-cta">
+              <a href="#products" class="btn btn-primary btn-lg">Shop Now</a>
+              <a href="#pricing" class="btn btn-outline btn-lg">Become a Seller</a>
+            </div>
+            <div class="hero-trust">
+              <div class="trust-item">
+                <span class="trust-icon">🔒</span>
+                <span class="trust-text">Secure UPI Payments</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-icon">🚚</span>
+                <span class="trust-text">Same-Day Delivery</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-icon">✅</span>
+                <span class="trust-text">Verified Sellers</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-visual">
+            <div class="hero-card hero-card-main">
+              <div class="hero-card-header">
+                <span class="hero-card-dot red"></span>
+                <span class="hero-card-dot yellow"></span>
+                <span class="hero-card-dot green"></span>
+              </div>
+              <div class="hero-card-body">
+                <div class="stat-item">
+                  <span class="stat-number" data-count="50">0</span><span class="stat-suffix">L+</span>
+                  <span class="stat-label">Products</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" data-count="2">0</span><span class="stat-suffix">Cr+</span>
+                  <span class="stat-label">Happy Customers</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" data-count="500">0</span><span class="stat-suffix">+</span>
+                  <span class="stat-label">Cities</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" data-count="200">0</span><span class="stat-suffix">+</span>
+                  <span class="stat-label">Categories</span>
+                </div>
+              </div>
+            </div>
+            <div class="floating-badge badge-1">🔥 Trending</div>
+            <div class="floating-badge badge-2">⭐ 4.8 Rating</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Slot 1 -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-banner">
+        <span class="ad-label">Ad</span>
+        <p>🎉 Grand Launch Offer — Zero Commission for New Sellers! <a href="#pricing">Join Now →</a></p>
+      </div>
+    </div>
+
+    <!-- PRODUCT CATEGORIES SECTION -->
+    <section class="section categories" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Browse Categories</span>
+          <h2 class="section-title">Shop by <span class="gradient-text">Category</span></h2>
+          <p class="section-subtitle">Explore 200+ categories from fashion to electronics, groceries to handicrafts.</p>
+        </div>
+        <div class="categories-grid">
+          <a href="#" class="category-card" aria-label="Electronics category">
+            <div class="category-icon">📱</div>
+            <h3 class="category-name">Electronics</h3>
+            <p class="category-count">12,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Fashion category">
+            <div class="category-icon">👗</div>
+            <h3 class="category-name">Fashion</h3>
+            <p class="category-count">45,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Home and Kitchen category">
+            <div class="category-icon">🏠</div>
+            <h3 class="category-name">Home & Kitchen</h3>
+            <p class="category-count">28,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Groceries category">
+            <div class="category-icon">🥬</div>
+            <h3 class="category-name">Groceries</h3>
+            <p class="category-count">8,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Handicrafts category">
+            <div class="category-icon">🎨</div>
+            <h3 class="category-name">Handicrafts</h3>
+            <p class="category-count">15,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Health and Beauty category">
+            <div class="category-icon">💄</div>
+            <h3 class="category-name">Health & Beauty</h3>
+            <p class="category-count">22,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Books and Stationery category">
+            <div class="category-icon">📚</div>
+            <h3 class="category-name">Books & Stationery</h3>
+            <p class="category-count">18,000+ Products</p>
+          </a>
+          <a href="#" class="category-card" aria-label="Sports and Fitness category">
+            <div class="category-icon">⚽</div>
+            <h3 class="category-name">Sports & Fitness</h3>
+            <p class="category-count">9,000+ Products</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED PRODUCTS SECTION -->
+    <section class="section products" id="products">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Featured Products</span>
+          <h2 class="section-title">Trending <span class="gradient-text">Right Now</span></h2>
+          <p class="section-subtitle">Hand-picked products from top-rated sellers across India.</p>
+        </div>
+        <div class="products-grid">
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">🎧</span>
+              <span class="product-badge badge-bestseller">Bestseller</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Wireless Bluetooth Headphones</h3>
+              <p class="product-seller">by AudioTech India</p>
+              <div class="product-rating">
+                <span class="stars">★★★★☆</span>
+                <span class="rating-count">(2,340)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹1,299</span>
+                <span class="price-original">₹2,499</span>
+                <span class="price-discount">48% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Wireless Bluetooth Headphones to cart">Add to Cart</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">👜</span>
+              <span class="product-badge badge-new">New</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Handcrafted Leather Bag</h3>
+              <p class="product-seller">by Rajasthani Crafts</p>
+              <div class="product-rating">
+                <span class="stars">★★★★★</span>
+                <span class="rating-count">(890)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹2,499</span>
+                <span class="price-original">₹3,999</span>
+                <span class="price-discount">38% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Handcrafted Leather Bag to cart">Add to Cart</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">🍵</span>
+              <span class="product-badge badge-organic">Organic</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Premium Darjeeling Tea (500g)</h3>
+              <p class="product-seller">by Himalayan Gardens</p>
+              <div class="product-rating">
+                <span class="stars">★★★★★</span>
+                <span class="rating-count">(1,560)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹599</span>
+                <span class="price-original">₹899</span>
+                <span class="price-discount">33% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Premium Darjeeling Tea to cart">Add to Cart</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">🪔</span>
+              <span class="product-badge badge-trending">Trending</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Brass Diya Set (Handmade)</h3>
+              <p class="product-seller">by Varanasi Artisans</p>
+              <div class="product-rating">
+                <span class="stars">★★★★☆</span>
+                <span class="rating-count">(3,120)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹449</span>
+                <span class="price-original">₹799</span>
+                <span class="price-discount">44% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Brass Diya Set to cart">Add to Cart</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">⌚</span>
+              <span class="product-badge badge-bestseller">Bestseller</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Smart Watch Pro X</h3>
+              <p class="product-seller">by TechWear India</p>
+              <div class="product-rating">
+                <span class="stars">★★★★☆</span>
+                <span class="rating-count">(4,500)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹3,999</span>
+                <span class="price-original">₹6,999</span>
+                <span class="price-discount">43% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Smart Watch Pro X to cart">Add to Cart</button>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image">
+              <span class="product-emoji">🧴</span>
+              <span class="product-badge badge-organic">Organic</span>
+            </div>
+            <div class="product-info">
+              <h3 class="product-name">Ayurvedic Skincare Combo</h3>
+              <p class="product-seller">by Kerala Naturals</p>
+              <div class="product-rating">
+                <span class="stars">★★★★★</span>
+                <span class="rating-count">(1,890)</span>
+              </div>
+              <div class="product-price">
+                <span class="price-current">₹899</span>
+                <span class="price-original">₹1,499</span>
+                <span class="price-discount">40% off</span>
+              </div>
+              <button class="btn btn-primary btn-sm btn-add-cart" aria-label="Add Ayurvedic Skincare Combo to cart">Add to Cart</button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Slot 2 -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-banner ad-banner-alt">
+        <span class="ad-label">Ad</span>
+        <p>📦 Free Shipping on Orders Above ₹499 — Use Code: <strong>FIRST500</strong></p>
+      </div>
+    </div>
+
+    <!-- FEATURES SECTION -->
+    <section class="section features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Why SarkarBazaar?</span>
+          <h2 class="section-title">Built for <span class="gradient-text">India</span></h2>
+          <p class="section-subtitle">Every feature designed to make buying and selling effortless for Indians.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title">AI Product Search</h3>
+            <p class="feature-desc">Search in Hindi, English, or Hinglish. Our AI understands what you need, even in your local language.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3 class="feature-title">UPI & All Payments</h3>
+            <p class="feature-desc">Pay via Google Pay, PhonePe, Paytm, UPI, cards, or net banking. 100% secure transactions.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3 class="feature-title">Same-Day Delivery</h3>
+            <p class="feature-desc">Get your orders delivered the same day in 500+ cities. Real-time tracking included.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title">Buyer Protection</h3>
+            <p class="feature-desc">100% money-back guarantee. Easy returns within 7 days. Your money is always safe.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Seller Dashboard</h3>
+            <p class="feature-desc">Powerful analytics, inventory management, and AI-powered pricing suggestions for sellers.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3 class="feature-title">Multi-Language Support</h3>
+            <p class="feature-desc">Available in 12 Indian languages. Shop comfortably in your preferred language.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS SECTION -->
+    <section class="section how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Simple Process</span>
+          <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+          <p class="section-subtitle">Start buying or selling in just 4 easy steps.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-icon">🔍</div>
+            <h3 class="step-title">Search & Discover</h3>
+            <p class="step-desc">Browse 50 lakh+ products or use AI search to find exactly what you need.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-icon">🛒</div>
+            <h3 class="step-title">Add to Cart</h3>
+            <p class="step-desc">Pick your favorites, compare prices, and add them to your cart.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-icon">💳</div>
+            <h3 class="step-title">Pay Securely</h3>
+            <p class="step-desc">Pay via UPI, cards, or net banking. All transactions are encrypted and secure.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-icon">📦</div>
+            <h3 class="step-title">Get Delivered</h3>
+            <p class="step-desc">Sit back and relax. Track your order in real-time until it reaches your doorstep.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Slot 3 -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-banner">
+        <span class="ad-label">Ad</span>
+        <p>🏪 Are You a Seller? List Your Products for Free — <a href="#pricing">Register Now →</a></p>
+      </div>
+    </div>
+
+    <!-- PRICING SECTION -->
+    <section class="section pricing" id="pricing">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Pricing Plans</span>
+          <h2 class="section-title">Start <span class="gradient-text">Selling</span> Today</h2>
+          <p class="section-subtitle">Choose a plan that fits your business. Upgrade or downgrade anytime.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Starter</h3>
+              <p class="pricing-desc">Perfect for trying out</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-value">0</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ List up to 50 products</li>
+              <li>✅ Basic seller dashboard</li>
+              <li>✅ UPI payments</li>
+              <li>✅ Email support</li>
+              <li>❌ AI pricing suggestions</li>
+              <li>❌ Priority listing</li>
+            </ul>
+            <button class="btn btn-outline btn-full plan-btn" data-plan="Starter" data-price="0">Get Started</button>
+          </div>
+          <div class="pricing-card pricing-popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3 class="pricing-name">Professional</h3>
+              <p class="pricing-desc">Best for growing businesses</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-value">499</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ List up to 1,000 products</li>
+              <li>✅ Advanced analytics dashboard</li>
+              <li>✅ UPI + all payment methods</li>
+              <li>✅ Priority chat support</li>
+              <li>✅ AI pricing suggestions</li>
+              <li>✅ Priority listing in search</li>
+            </ul>
+            <button class="btn btn-primary btn-full plan-btn" data-plan="Professional" data-price="499">Start Free Trial</button>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Enterprise</h3>
+              <p class="pricing-desc">For large-scale sellers</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-value">1,999</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ Unlimited product listings</li>
+              <li>✅ Full API access</li>
+              <li>✅ Dedicated account manager</li>
+              <li>✅ 24/7 phone support</li>
+              <li>✅ Custom branding</li>
+              <li>✅ Bulk upload tools</li>
+            </ul>
+            <button class="btn btn-outline btn-full plan-btn" data-plan="Enterprise" data-price="1999">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="section testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Customer Reviews</span>
+          <h2 class="section-title">What Our <span class="gradient-text">Users Say</span></h2>
+          <p class="section-subtitle">Real stories from buyers and sellers across India.</p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"SarkarBazaar changed how I shop for my family. The AI search understands my Hindi queries perfectly, and same-day delivery is a game-changer!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">P</div>
+              <div class="author-info">
+                <span class="author-name">Priya Sharma</span>
+                <span class="author-role">Buyer, Delhi</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"As a small handicraft seller from Jaipur, SarkarBazaar helped me reach customers across India. My sales increased 300% in just 2 months!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">R</div>
+              <div class="author-info">
+                <span class="author-name">Rajesh Kumar</span>
+                <span class="author-role">Seller, Jaipur</span>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★☆</div>
+            <p class="testimonial-text">"The UPI payment integration is seamless. I love that I can pay directly from my preferred app. The buyer protection gives me confidence to shop more."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">A</div>
+              <div class="author-info">
+                <span class="author-name">Ananya Patel</span>
+                <span class="author-role">Buyer, Mumbai</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad Slot 4 -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-banner ad-banner-alt">
+        <span class="ad-label">Ad</span>
+        <p>🎁 Refer a Friend & Get ₹200 Off on Your Next Order! <a href="#">Share Now →</a></p>
+      </div>
+    </div>
+
+    <!-- FAQ SECTION -->
+    <section class="section faq" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+          <p class="section-subtitle">Everything you need to know about SarkarBazaar.</p>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How do I start selling on SarkarBazaar?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Getting started is easy! Click "Start Selling," choose your plan, upload your KYC documents, and list your products. Our team will verify your account within 24 hours. You can start with the free Starter plan and upgrade as you grow.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>What payment methods are supported?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We support all major payment methods including UPI (Google Pay, PhonePe, Paytm), credit/debit cards, net banking, EMI options, and cash on delivery. All transactions are secured with 256-bit SSL encryption.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How does same-day delivery work?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>For orders placed before 12 PM in supported cities, we partner with local logistics providers to deliver your products the same day. You'll receive real-time tracking updates via SMS and email. Same-day delivery is free for orders above ₹999.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>What is the return and refund policy?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We offer a 7-day easy return policy for most categories. If you're not satisfied with your purchase, initiate a return from your order page. Once we receive the product, your refund will be processed within 3-5 business days to your original payment method.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Is there a mobile app available?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! Our mobile app is available for both Android and iOS. It includes all website features plus exclusive app-only deals, push notifications for price drops, and an augmented reality feature to preview products in your space before buying.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2 class="cta-title">Ready to Transform Your Shopping Experience?</h2>
+          <p class="cta-text">Join 2 crore+ Indians who trust SarkarBazaar for their daily needs.</p>
+          <div class="cta-actions">
+            <a href="#products" class="btn btn-primary btn-lg">Start Shopping</a>
+            <a href="#pricing" class="btn btn-outline btn-lg">Become a Seller</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="#" class="logo" aria-label="SarkarBazaar Home">
+            <span class="logo-icon">🛒</span>
+            <span class="logo-text">Sarkar<span class="logo-highlight">Bazaar</span></span>
+          </a>
+          <p class="footer-desc">India's AI-powered marketplace connecting buyers with local sellers. Shop local, sell global.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">📘</a>
+            <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+            <a href="#" class="social-link" aria-label="Instagram">📸</a>
+            <a href="#" class="social-link" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Returns & Refunds</a></li>
+            <li><a href="#">Track Order</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Seller Agreement</a></li>
+            <li><a href="#">Grievance Officer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SarkarBazaar. All rights reserved. Made with ❤️ in India.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- UPI PAYMENT MODAL -->
+  <div class="modal-overlay" id="paymentModal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle">Complete Payment</h2>
+        <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="payment-summary">
+          <div class="summary-row">
+            <span>Plan:</span>
+            <strong id="summaryPlan">Professional</strong>
+          </div>
+          <div class="summary-row">
+            <span>Amount:</span>
+            <strong id="summaryAmount">₹499/month</strong>
+          </div>
+        </div>
+        <div class="payment-tabs">
+          <button class="payment-tab active" data-tab="upi" aria-selected="true">
+            <span class="tab-icon">📱</span> UPI
+          </button>
+          <button class="payment-tab" data-tab="card" aria-selected="false">
+            <span class="tab-icon">💳</span> Card
+          </button>
+          <button class="payment-tab" data-tab="netbanking" aria-selected="false">
+            <span class="tab-icon">🏦</span> Net Banking
+          </button>
+        </div>
+        <div class="payment-content active" id="upiContent">
+          <div class="upi-apps">
+            <button class="upi-app" aria-label="Pay with Google Pay"><span class="upi-app-icon">G</span> Google Pay</button>
+            <button class="upi-app" aria-label="Pay with PhonePe"><span class="upi-app-icon">P</span> PhonePe</button>
+            <button class="upi-app" aria-label="Pay with Paytm"><span class="upi-app-icon">₱</span> Paytm</button>
+            <button class="upi-app" aria-label="Pay with any UPI"><span class="upi-app-icon">U</span> Other UPI</button>
+          </div>
+          <div class="form-group">
+            <label for="upiId">Enter UPI ID</label>
+            <input type="text" id="upiId" placeholder="yourname@upi" class="form-input">
+          </div>
+        </div>
+        <div class="payment-content" id="cardContent">
+          <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" class="form-input" maxlength="19">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cardExpiry">Expiry</label>
+              <input type="text" id="cardExpiry" placeholder="MM/YY" class="form-input" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label for="cardCvv">CVV</label>
+              <input type="password" id="cardCvv" placeholder="123" class="form-input" maxlength="3">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input type="text" id="cardName" placeholder="Name on card" class="form-input">
+          </div>
+        </div>
+        <div class="payment-content" id="netbankingContent">
+          <div class="bank-list">
+            <button class="bank-option" aria-label="State Bank of India">SBI</button>
+            <button class="bank-option" aria-label="HDFC Bank">HDFC</button>
+            <button class="bank-option" aria-label="ICICI Bank">ICICI</button>
+            <button class="bank-option" aria-label="Axis Bank">Axis</button>
+            <button class="bank-option" aria-label="Kotak Bank">Kotak</button>
+            <button class="bank-option" aria-label="Other banks">Other</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full btn-pay" id="payButton">
+          Pay <span id="payAmount">₹499</span>
+        </button>
+        <p class="payment-secure">🔒 Your payment is secured with 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

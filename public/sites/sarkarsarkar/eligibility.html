@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SarkarSarkar — Eligibility Checker Page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Eligibility — SarkarSarkar | Government Services</title>
+  <meta name="description" content="Check your eligibility for government services instantly. Aadhaar, PAN, passport, driving license, voter ID, ration card, and more.">
+  <meta name="keywords" content="eligibility checker, government services eligibility, Aadhaar eligibility, PAN eligibility, passport eligibility">
+  <meta name="author" content="SarkarSarkar">
+  <meta property="og:title" content="Check Eligibility — SarkarSarkar">
+  <meta property="og:description" content="Check your eligibility for government services instantly.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarsarkar.in/eligibility.html">
+  <meta property="og:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="SarkarSarkar">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Check Eligibility — SarkarSarkar">
+  <meta name="twitter:description" content="Check your eligibility for government services instantly.">
+  <meta name="twitter:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkarsarkar.in/eligibility.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Eligibility Checker","description":"Check eligibility for government services","url":"https://sarkarsarkar.in/eligibility.html"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"SarkarSarkar","url":"https://sarkarsarkar.in","potentialAction":{"@type":"SearchAction","target":"https://sarkarsarkar.in/services.html?q={search_term_string}"}}
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-hero { padding: 120px 0 60px; background: var(--bg-hero); text-align: center; }
+    .page-hero h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .eligibility-page { padding: 60px 0; }
+    .checker-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .checker-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 28px; transition: var(--transition); }
+    .checker-card:hover { box-shadow: var(--shadow-lg); }
+    .checker-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .checker-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 16px; }
+    .result-box { margin-top: 12px; padding: 12px; border-radius: var(--border-radius-sm); display: none; font-size: 0.9rem; }
+    .result-box.show { display: block; }
+    .result-box.eligible { background: #ecfdf5; border: 1px solid #10b981; color: #065f46; }
+    .result-box.not-eligible { background: #fef2f2; border: 1px solid #ef4444; color: #991b1b; }
+    [data-theme="dark"] .result-box.eligible { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    [data-theme="dark"] .result-box.not-eligible { background: rgba(239,68,68,0.15); color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="eligibility.html" class="nav-link active">Eligibility</a>
+        <a href="docs.html" class="nav-link">Documents</a>
+        <a href="tracker.html" class="nav-link">Track Application</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-lang" id="langToggle" aria-label="Toggle language"><span id="langText">हिं</span></button>
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode"><span class="dark-icon">🌙</span></button>
+        <a href="dashboard.html" class="btn-nav-cta">Login / Register</a>
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="services.html" class="mobile-link">Services</a>
+      <a href="eligibility.html" class="mobile-link active">Eligibility</a>
+      <a href="docs.html" class="mobile-link">Documents</a>
+      <a href="tracker.html" class="mobile-link">Track Application</a>
+      <a href="dashboard.html" class="mobile-link">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta mobile-cta">Login / Register</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Eligibility Checker</h1>
+        <p>Check if you qualify for any government service in seconds</p>
+      </div>
+    </section>
+
+    <!-- AD SLOT 1 -->
+    <div class="ad-slot" id="adSlot1"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Your message reaches millions of citizens here</p></div></div>
+
+    <section class="eligibility-page">
+      <div class="container">
+        <div class="checker-grid" id="checkerGrid">
+          <!-- Checker cards will be generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- AD SLOT 2 -->
+    <div class="ad-slot" id="adSlot2"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Reach 10M+ citizens across India</p></div></div>
+
+    <!-- AD SLOT 3 -->
+    <div class="ad-slot" id="adSlot3"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Premium placement for your brand</p></div></div>
+
+    <!-- AD SLOT 4 -->
+    <div class="ad-slot" id="adSlot4"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Connect with India's largest government services audience</p></div></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+          <p class="footer-desc">India's most trusted government services portal.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="tracker.html">Track Application</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Accessibility</a></li>
+            <li><a href="#">Sitemap</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 SarkarSarkar. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- ===== UPI PAYMENT MODAL ===== -->
+  <div class="modal-overlay" id="upiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 Pay via UPI</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="upi-amount">
+          <span class="upi-label">Amount to Pay</span>
+          <span class="upi-value" id="upiAmount">₹0</span>
+        </div>
+        <div class="upi-apps">
+          <button class="upi-app" data-app="gpay"><span class="upi-app-icon">G</span><span>Google Pay</span></button>
+          <button class="upi-app" data-app="phonepe"><span class="upi-app-icon">P</span><span>PhonePe</span></button>
+          <button class="upi-app" data-app="paytm"><span class="upi-app-icon">₹</span><span>Paytm</span></button>
+          <button class="upi-app" data-app="bhim"><span class="upi-app-icon">B</span><span>BHIM</span></button>
+        </div>
+        <div class="upi-or">or enter UPI ID</div>
+        <form id="upiForm">
+          <div class="form-group"><input type="text" id="upiId" class="form-control" placeholder="yourname@upi" pattern=".+@.+"></div>
+          <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+        </form>
+        <p class="upi-secure">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <script src="app.js"></script>
+  <script>
+    // Eligibility checker data and rendering
+    var services = [
+      { id: 'aadhaar', icon: '🪪', name: 'Aadhaar Card', desc: 'Unique identity number for all Indian residents.', minAge: 0, requirement: 'Indian resident' },
+      { id: 'pan', icon: '📄', name: 'PAN Card', desc: 'Permanent Account Number for tax purposes.', minAge: 0, requirement: 'Valid identity proof' },
+      { id: 'passport', icon: '🛂', name: 'Passport', desc: 'International travel document.', minAge: 0, requirement: 'Indian citizen' },
+      { id: 'driving', icon: '🚗', name: 'Driving License', desc: 'License to drive motor vehicles.', minAge: 18, requirement: 'Minimum age: 18 years' },
+      { id: 'voter', icon: '🗳️', name: 'Voter ID', desc: 'Electoral registration card.', minAge: 18, requirement: 'Minimum age: 18 years, Indian citizen' },
+      { id: 'ration', icon: '🌾', name: 'Ration Card', desc: 'Subsidized food grain eligibility.', minAge: 0, requirement: 'Indian resident with valid address' },
+    ];
+
+    var grid = document.getElementById('checkerGrid');
+    services.forEach(function(svc) {
+      var card = document.createElement('div');
+      card.className = 'checker-card';
+      card.innerHTML =
+        '<h3>' + svc.icon + ' ' + svc.name + '</h3>' +
+        '<p>' + svc.desc + '</p>' +
+        '<p style="font-size:0.85rem;color:var(--text-tertiary);"><strong>Requirement:</strong> ' + svc.requirement + '</p>' +
+        '<div class="form-group">' +
+          '<label>Your Age</label>' +
+          '<input type="number" class="form-control eligibility-age" placeholder="Enter age" min="1" max="120" data-service="' + svc.id + '">' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block eligibility-check-btn" data-service-id="' + svc.id + '" data-min-age="' + svc.minAge + '" data-service-name="' + svc.name.replace(/'/g, "\\'") + '">Check Eligibility</button>' +
+        '<div class="result-box" id="result-' + svc.id + '"></div>';
+      grid.appendChild(card);
+    });
+
+    // Event delegation for eligibility check buttons
+    grid.addEventListener('click', function(e) {
+      var btn = e.target.closest('.eligibility-check-btn');
+      if (!btn) return;
+      var id = btn.getAttribute('data-service-id');
+      var minAge = parseInt(btn.getAttribute('data-min-age'));
+      var name = btn.getAttribute('data-service-name');
+      checkEligibility(id, minAge, name);
+    });
+
+    function checkEligibility(id, minAge, name) {
+      var input = document.querySelector('input[data-service="' + id + '"]');
+      var age = parseInt(input.value);
+      var result = document.getElementById('result-' + id);
+
+      if (isNaN(age) || age < 1) {
+        result.className = 'result-box show not-eligible';
+        result.innerHTML = '<strong>⚠️</strong> Please enter a valid age.';
+        return;
+      }
+
+      result.classList.add('show');
+      if (age >= minAge) {
+        result.className = 'result-box show eligible';
+        result.innerHTML = '<strong>✅ Eligible!</strong> You qualify for ' + name + '. <a href="services.html#' + id + '">Apply now →</a>';
+      } else {
+        result.className = 'result-box show not-eligible';
+        result.innerHTML = '<strong>❌ Not Eligible.</strong> Minimum age for ' + name + ' is ' + minAge + ' years.';
+      }
+    }
+  </script>
+</body>
+</html>

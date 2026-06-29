@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SikshaHub - Online Learning Platform | Learn Anything, Anywhere</title>
+    <meta name="description" content="SikshaHub is India's leading online learning platform. Access 10,000+ courses in programming, business, design, and more. Learn from industry experts with live classes, doubt resolution, and career support.">
+    <meta name="keywords" content="online learning, online courses, education platform, programming courses, skill development, e-learning India">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sikshahub.in/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SikshaHub - Learn Anything, Anywhere">
+    <meta property="og:description" content="India's leading online learning platform with 10,000+ courses from industry experts.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sikshahub.in/">
+    <meta property="og:image" content="https://sikshahub.in/og-image.jpg">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SikshaHub - Learn Anything, Anywhere">
+    <meta name="twitter:description" content="India's leading online learning platform with 10,000+ courses from industry experts.">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "SikshaHub",
+        "url": "https://sikshahub.in/",
+        "description": "India's leading online learning platform with 10,000+ courses in programming, business, design, and more.",
+        "sameAs": [],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-1800-123-4567",
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Hindi"]
+        }
+    }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container nav-container">
+            <a href="#" class="nav-logo" aria-label="SikshaHub Home">
+                <i class="fas fa-graduation-cap"></i>
+                <span>SikshaHub</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" id="navMenu" role="menubar">
+                <li role="none"><a href="#courses" class="nav-link" role="menuitem">Courses</a></li>
+                <li role="none"><a href="#features" class="nav-link" role="menuitem">Features</a></li>
+                <li role="none"><a href="#mentors" class="nav-link" role="menuitem">Mentors</a></li>
+                <li role="none"><a href="#pricing" class="nav-link" role="menuitem">Pricing</a></li>
+                <li role="none"><a href="#testimonials" class="nav-link" role="menuitem">Reviews</a></li>
+                <li role="none"><a href="#faq" class="nav-link" role="menuitem">FAQ</a></li>
+                <li role="none"><a href="#contact" class="nav-link btn-nav" role="menuitem">Get Started</a></li>
+            </ul>
+            <button class="btn-theme" id="themeToggle" aria-label="Toggle dark mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <header class="hero" id="hero">
+        <div class="hero-bg-shapes" aria-hidden="true">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">🎓 India's #1 Learning Platform</span>
+                <h1 class="hero-title">Learn Anything,<br><span class="gradient-text">Anywhere</span></h1>
+                <p class="hero-subtitle">Access 10,000+ courses from industry experts. Live classes, instant doubt resolution, and career support — all at affordable prices.</p>
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Start Learning Free
+                    </a>
+                    <a href="#courses" class="btn btn-outline btn-lg">
+                        <i class="fas fa-play-circle"></i> Browse Courses
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="10000">0</span>+
+                        <span class="stat-label">Courses</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="500000">0</span>+
+                        <span class="stat-label">Students</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="200">0</span>+
+                        <span class="stat-label">Expert Mentors</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="95">0</span>%
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-card">
+                    <div class="card-avatar"><i class="fas fa-user-graduate"></i></div>
+                    <div class="card-info">
+                        <p class="card-name">Priya Sharma</p>
+                        <p class="card-course">Full Stack Development</p>
+                    </div>
+                    <div class="card-badge">Placed @ Google</div>
+                </div>
+                <div class="hero-float hero-float-1">
+                    <i class="fas fa-code"></i> Python
+                </div>
+                <div class="hero-float hero-float-2">
+                    <i class="fas fa-paint-brush"></i> UI/UX
+                </div>
+                <div class="hero-float hero-float-3">
+                    <i class="fas fa-chart-line"></i> Data Science
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== AD SLOT 1 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="container">
+            <span class="ad-label">Ad</span>
+            <p class="ad-placeholder">Advertisement Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ========== COURSE CATEGORIES ========== -->
+    <section class="section courses" id="courses" aria-labelledby="courses-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Popular Categories</span>
+                <h2 id="courses-heading" class="section-title">Explore Top <span class="gradient-text">Courses</span></h2>
+                <p class="section-subtitle">Choose from 50+ categories tailored to your career goals</p>
+            </div>
+            <div class="courses-grid">
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-code"></i></div>
+                    <h3>Programming & Development</h3>
+                    <p>Python, JavaScript, Java, React, Node.js, and more</p>
+                    <span class="course-count">2,400+ Courses</span>
+                </article>
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Data Science & AI</h3>
+                    <p>Machine Learning, Deep Learning, NLP, Computer Vision</p>
+                    <span class="course-count">1,800+ Courses</span>
+                </article>
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-palette"></i></div>
+                    <h3>Design & Creative Arts</h3>
+                    <p>UI/UX, Graphic Design, Video Editing, Animation</p>
+                    <span class="course-count">1,200+ Courses</span>
+                </article>
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-briefcase"></i></div>
+                    <h3>Business & Marketing</h3>
+                    <p>Digital Marketing, SEO, Business Analytics, Finance</p>
+                    <span class="course-count">1,500+ Courses</span>
+                </article>
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-language"></i></div>
+                    <h3>Language Learning</h3>
+                    <p>English, German, Spanish, Japanese, Korean</p>
+                    <span class="course-count">800+ Courses</span>
+                </article>
+                <article class="course-card" tabindex="0">
+                    <div class="course-icon"><i class="fas fa-heartbeat"></i></div>
+                    <h3>Health & Wellness</h3>
+                    <p>Yoga, Nutrition, Mental Health, Fitness Training</p>
+                    <span class="course-count">600+ Courses</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="container">
+            <span class="ad-label">Ad</span>
+            <p class="ad-placeholder">Advertisement Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <section class="section features" id="features" aria-labelledby="features-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Why SikshaHub?</span>
+                <h2 id="features-heading" class="section-title">Powerful <span class="gradient-text">Features</span> for Learners</h2>
+                <p class="section-subtitle">Everything you need to upskill and advance your career</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-video"></i></div>
+                    <h3>Live Interactive Classes</h3>
+                    <p>Real-time sessions with expert instructors. Ask questions, get instant answers, and collaborate with peers.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                    <h3>AI-Powered Learning Path</h3>
+                    <p>Our AI analyzes your goals and creates a personalized curriculum that adapts to your pace and progress.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+                    <h3>Verified Certifications</h3>
+                    <p>Earn industry-recognized certificates for every course completion. Share on LinkedIn instantly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-comments"></i></div>
+                    <h3>24/7 Doubt Resolution</h3>
+                    <p>Get your questions answered anytime by expert mentors and AI-powered instant doubt clearing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Learn on Any Device</h3>
+                    <p>Seamless experience across mobile, tablet, and desktop. Download lessons for offline viewing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h3>Community & Networking</h3>
+                    <p>Join study groups, participate in hackathons, and connect with 5 lakh+ learners across India.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section class="section steps-section" id="steps" aria-labelledby="steps-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Simple Process</span>
+                <h2 id="steps-heading" class="section-title">How It <span class="gradient-text">Works</span></h2>
+                <p class="section-subtitle">Start your learning journey in 4 easy steps</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+                    <h3>Create Free Account</h3>
+                    <p>Sign up with your email or phone. No credit card required to start.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon"><i class="fas fa-search"></i></div>
+                    <h3>Browse & Choose Courses</h3>
+                    <p>Explore our catalog of 10,000+ courses. Use filters to find the perfect match.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon"><i class="fas fa-play"></i></div>
+                    <h3>Learn with Live Classes</h3>
+                    <p>Attend live sessions, watch recordings, complete assignments and projects.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-icon"><i class="fas fa-award"></i></div>
+                    <h3>Get Certified & Placed</h3>
+                    <p>Earn certificates and get placement assistance from our partner companies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="container">
+            <span class="ad-label">Ad</span>
+            <p class="ad-placeholder">Advertisement Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ========== MENTORS SECTION ========== -->
+    <section class="section mentors" id="mentors" aria-labelledby="mentors-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Learn from the Best</span>
+                <h2 id="mentors-heading" class="section-title">Our Expert <span class="gradient-text">Mentors</span></h2>
+                <p class="section-subtitle">Industry professionals from top companies teaching you real-world skills</p>
+            </div>
+            <div class="mentors-grid">
+                <div class="mentor-card">
+                    <div class="mentor-avatar"><i class="fas fa-user-tie"></i></div>
+                    <h3>Dr. Rajesh Kumar</h3>
+                    <p class="mentor-role">Data Science Lead, Google</p>
+                    <p class="mentor-exp">15+ years in AI & ML</p>
+                    <div class="mentor-rating"><i class="fas fa-star"></i> 4.9 (2,340 reviews)</div>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar"><i class="fas fa-user-tie"></i></div>
+                    <h3>Ananya Desai</h3>
+                    <p class="mentor-role">Senior UX Designer, Microsoft</p>
+                    <p class="mentor-exp">12+ years in Design</p>
+                    <div class="mentor-rating"><i class="fas fa-star"></i> 4.8 (1,890 reviews)</div>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar"><i class="fas fa-user-tie"></i></div>
+                    <h3>Vikram Singh</h3>
+                    <p class="mentor-role">CTO, Razorpay</p>
+                    <p class="mentor-exp">18+ years in Full Stack</p>
+                    <div class="mentor-rating"><i class="fas fa-star"></i> 4.9 (3,120 reviews)</div>
+                </div>
+                <div class="mentor-card">
+                    <div class="mentor-avatar"><i class="fas fa-user-tie"></i></div>
+                    <h3>Priya Mehta</h3>
+                    <p class="mentor-role">Marketing Head, Zoho</p>
+                    <p class="mentor-exp">10+ years in Growth</p>
+                    <div class="mentor-rating"><i class="fas fa-star"></i> 4.7 (1,560 reviews)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING SECTION ========== -->
+    <section class="section pricing" id="pricing" aria-labelledby="pricing-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Affordable Plans</span>
+                <h2 id="pricing-heading" class="section-title">Choose Your <span class="gradient-text">Plan</span></h2>
+                <p class="section-subtitle">Start free, upgrade when you're ready. Cancel anytime.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <p class="pricing-desc">Perfect for exploring</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">&#8377;0</span>
+                        <span class="price-period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 5 Free Courses</li>
+                        <li><i class="fas fa-check"></i> Community Access</li>
+                        <li><i class="fas fa-check"></i> Basic Doubt Support</li>
+                        <li><i class="fas fa-times"></i> Live Classes</li>
+                        <li><i class="fas fa-times"></i> Certificates</li>
+                        <li><i class="fas fa-times"></i> Placement Support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openPaymentModal('Free')">Get Started Free</button>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <p class="pricing-desc">Best for serious learners</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">&#8377;999</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> All 10,000+ Courses</li>
+                        <li><i class="fas fa-check"></i> Live Interactive Classes</li>
+                        <li><i class="fas fa-check"></i> 24/7 Doubt Resolution</li>
+                        <li><i class="fas fa-check"></i> Verified Certificates</li>
+                        <li><i class="fas fa-check"></i> Download for Offline</li>
+                        <li><i class="fas fa-times"></i> Placement Support</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="openPaymentModal('Pro')">Subscribe to Pro</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Career</h3>
+                        <p class="pricing-desc">For job placement guarantee</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-amount">&#8377;2,499</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> All 10,000+ Courses</li>
+                        <li><i class="fas fa-check"></i> Live Interactive Classes</li>
+                        <li><i class="fas fa-check"></i> 1-on-1 Mentorship</li>
+                        <li><i class="fas fa-check"></i> Verified Certificates</li>
+                        <li><i class="fas fa-check"></i> Resume & Interview Prep</li>
+                        <li><i class="fas fa-check"></i> Guaranteed Placement</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openPaymentModal('Career')">Go Career</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="section testimonials" id="testimonials" aria-labelledby="testimonials-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Student Stories</span>
+                <h2 id="testimonials-heading" class="section-title">What Our <span class="gradient-text">Students</span> Say</h2>
+                <p class="section-subtitle">Real stories from learners who transformed their careers</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"SikshaHub changed my life! I went from a non-tech background to landing a Data Science role at Flipkart in just 8 months. The mentors are incredibly supportive."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div>
+                            <p class="author-name">Amit Patel</p>
+                            <p class="author-role">Data Scientist, Flipkart</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"The live classes are amazing! You can ask questions in real-time and the projects give you practical experience. Best investment I've made for my career."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div>
+                            <p class="author-name">Sneha Reddy</p>
+                            <p class="author-role">Full Stack Developer, Infosys</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"I tried many platforms but SikshaHub's AI-powered learning path kept me motivated. The progress tracking and weekly goals made learning a habit."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar"><i class="fas fa-user"></i></div>
+                        <div>
+                            <p class="author-name">Rahul Sharma</p>
+                            <p class="author-role">UX Designer, TCS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="container">
+            <span class="ad-label">Ad</span>
+            <p class="ad-placeholder">Advertisement Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ========== FAQ SECTION ========== -->
+    <section class="section faq" id="faq" aria-labelledby="faq-heading">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Got Questions?</span>
+                <h2 id="faq-heading" class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="section-subtitle">Everything you need to know about SikshaHub</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is there a free trial available?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! You get 5 free courses and community access forever — no credit card required. You can explore the platform and try sample lessons from any paid course before subscribing.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>What payment methods do you accept?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We accept UPI (GPay, PhonePe, Paytm), credit/debit cards (Visa, Mastercard, RuPay), net banking (all major banks), and EMI options. All payments are 100% secure with Razorpay encryption.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Can I download courses for offline viewing?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, Pro and Career plan subscribers can download video lessons, PDFs, and assignments for offline viewing on the mobile app. Downloads expire when your subscription ends.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Do you offer placement assistance?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our Career plan includes guaranteed placement support with resume building, mock interviews, and direct referrals to our 500+ hiring partner companies including Flipkart, TCS, Infosys, and Razorpay.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>What if I'm not satisfied with a course?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We offer a 7-day money-back guarantee on all paid plans. If you're not satisfied, contact our support team for a full refund — no questions asked.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section class="section cta-section" id="contact">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your Learning Journey?</h2>
+                <p>Join 5 lakh+ students who are already learning and growing their careers with SikshaHub.</p>
+                <div class="cta-form">
+                    <input type="email" placeholder="Enter your email address" aria-label="Email address" required>
+                    <button class="btn btn-primary btn-lg" onclick="openPaymentModal('Pro')">
+                        <i class="fas fa-rocket"></i> Get Started Free
+                    </button>
+                </div>
+                <p class="cta-note">No credit card required. Cancel anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>SikshaHub</span>
+                    </a>
+                    <p>India's leading online learning platform. Empowering millions to learn, grow, and succeed.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Courses</h4>
+                    <ul>
+                        <li><a href="#">Programming</a></li>
+                        <li><a href="#">Data Science</a></li>
+                        <li><a href="#">Design</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">Languages</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Grievances</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SikshaHub. All rights reserved. Made with <i class="fas fa-heart" style="color: #ef4444;"></i> in India</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closePaymentModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Complete Your Subscription</h2>
+                <p class="modal-plan" id="modalPlanName">Pro Plan</p>
+            </div>
+            <div class="modal-body">
+                <div class="payment-tabs">
+                    <button class="tab-btn active" data-tab="upi" onclick="switchTab('upi')">
+                        <i class="fas fa-mobile-alt"></i> UPI
+                    </button>
+                    <button class="tab-btn" data-tab="card" onclick="switchTab('card')">
+                        <i class="fas fa-credit-card"></i> Card
+                    </button>
+                    <button class="tab-btn" data-tab="netbanking" onclick="switchTab('netbanking')">
+                        <i class="fas fa-university"></i> Net Banking
+                    </button>
+                </div>
+                <div class="tab-content active" id="tab-upi">
+                    <div class="upi-form">
+                        <label for="upiId">Enter UPI ID</label>
+                        <input type="text" id="upiId" placeholder="yourname@upi" aria-label="UPI ID">
+                        <div class="upi-apps">
+                            <span>Pay with:</span>
+                            <i class="fab fa-google-pay"></i>
+                            <i class="fab fa-cc-amazon-pay"></i>
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-card">
+                    <div class="card-form">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" aria-label="Card Number">
+                        <div class="card-row">
+                            <div>
+                                <label for="cardExpiry">Expiry</label>
+                                <input type="text" id="cardExpiry" placeholder="MM/YY" aria-label="Expiry Date">
+                            </div>
+                            <div>
+                                <label for="cardCvv">CVV</label>
+                                <input type="text" id="cardCvv" placeholder="123" aria-label="CVV">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content" id="tab-netbanking">
+                    <div class="netbanking-form">
+                        <label for="bankSelect">Select Bank</label>
+                        <select id="bankSelect" aria-label="Select your bank">
+                            <option value="">Choose your bank</option>
+                            <option value="sbi">State Bank of India</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="kotak">Kotak Mahindra</option>
+                            <option value="pnb">Punjab National Bank</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block btn-pay" onclick="processPayment()">
+                    <i class="fas fa-lock"></i> Pay <span id="payAmount">&#8377;999</span>
+                </button>
+                <p class="secure-note"><i class="fas fa-shield-alt"></i> 100% Secure Payment powered by Razorpay</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

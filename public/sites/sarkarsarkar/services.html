@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SarkarSarkar — Services Page | All Government Services Listing -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Government Services — SarkarSarkar | Apply Online</title>
+  <meta name="description" content="Browse 500+ government services. Apply for Aadhaar, PAN, passport, driving license, GST, income tax, voter ID, and more — all online.">
+  <meta name="keywords" content="government services India, apply online, Aadhaar, PAN, passport, GST, income tax">
+  <meta name="author" content="SarkarSarkar">
+  <meta property="og:title" content="All Government Services — SarkarSarkar">
+  <meta property="og:description" content="Browse 500+ government services. Apply online from home.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarsarkar.in/services.html">
+  <meta property="og:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="SarkarSarkar">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="All Government Services — SarkarSarkar">
+  <meta name="twitter:description" content="Browse 500+ government services. Apply online from home.">
+  <meta name="twitter:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkarsarkar.in/services.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"ItemList","name":"Government Services","itemListElement":[{"@type":"ListItem","position":1,"name":"Aadhaar Card","url":"https://sarkarsarkar.in/services.html#aadhaar"},{"@type":"ListItem","position":2,"name":"PAN Card","url":"https://sarkarsarkar.in/services.html#pan"},{"@type":"ListItem","position":3,"name":"Passport","url":"https://sarkarsarkar.in/services.html#passport"}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"SarkarSarkar","url":"https://sarkarsarkar.in","potentialAction":{"@type":"SearchAction","target":"https://sarkarsarkar.in/services.html?q={search_term_string}"}}
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Services page specific styles */
+    .page-hero { padding: 120px 0 60px; background: var(--bg-hero); text-align: center; }
+    .page-hero h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .services-list { padding: 60px 0; }
+    .service-detail-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 32px; margin-bottom: 24px; transition: var(--transition); }
+    .service-detail-card:hover { box-shadow: var(--shadow-lg); }
+    .service-detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .service-detail-icon { font-size: 2.5rem; }
+    .service-detail-title { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); }
+    .service-detail-desc { color: var(--text-secondary); line-height: 1.7; margin-bottom: 16px; }
+    .service-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+    .service-meta-item { font-size: 0.9rem; color: var(--text-secondary); }
+    .service-meta-item strong { color: var(--text-primary); }
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; justify-content: center; }
+    .filter-btn { padding: 8px 20px; border-radius: var(--border-radius-full); border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-secondary); font-weight: 500; cursor: pointer; transition: var(--transition-fast); font-family: var(--font-family); }
+    .filter-btn.active, .filter-btn:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    /* UPI Modal Styles */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--bg-card); border-radius: var(--border-radius-lg);
+      width: 90%; max-width: 420px; box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.3s ease;
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; border-bottom: 1px solid var(--border-color);
+    }
+    .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: var(--bg-tertiary); color: var(--text-secondary);
+      font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-body { padding: 24px; }
+    .upi-amount { text-align: center; margin-bottom: 24px; }
+    .upi-label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 4px; }
+    .upi-value { font-size: 2rem; font-weight: 800; color: var(--color-primary); }
+    .upi-apps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .upi-app {
+      display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+      border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);
+      background: var(--bg-primary); cursor: pointer; transition: var(--transition-fast);
+      font-weight: 600; color: var(--text-primary); font-family: var(--font-family);
+    }
+    .upi-app:hover { border-color: var(--color-primary); background: var(--bg-tertiary); }
+    .upi-app-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--color-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.85rem; flex-shrink: 0;
+    }
+    .upi-or { text-align: center; font-size: 0.85rem; color: var(--text-tertiary); margin-bottom: 16px; position: relative; }
+    .upi-or::before, .upi-or::after {
+      content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border-color);
+    }
+    .upi-or::before { left: 0; }
+    .upi-or::after { right: 0; }
+    .upi-secure { text-align: center; font-size: 0.8rem; color: var(--text-tertiary); margin-top: 16px; }
+
+    /* QR Code & Copy UPI Enhancements */
+    .upi-qr-container {
+      text-align: center; margin-bottom: 16px; padding: 12px;
+      background: var(--bg-primary); border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-color);
+    }
+    .upi-qr-canvas {
+      width: 120px; height: 120px; margin: 0 auto 8px;
+      background: #fff; border-radius: 8px; padding: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .upi-qr-canvas svg { width: 100%; height: 100%; }
+    .upi-qr-label { font-size: 0.75rem; color: var(--text-tertiary); margin-bottom: 8px; }
+    .upi-copy-row {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    }
+    .upi-copy-row .form-group { flex: 1; margin-bottom: 0; }
+    .btn-copy-upi {
+      padding: 10px 16px; border-radius: var(--border-radius-sm);
+      border: 1px solid var(--color-primary); background: var(--bg-primary);
+      color: var(--color-primary); font-weight: 600; font-size: 0.85rem;
+      cursor: pointer; transition: var(--transition-fast); font-family: var(--font-family);
+      white-space: nowrap; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-copy-upi:hover { background: var(--color-primary); color: #fff; }
+    .btn-copy-upi.copied { background: var(--color-success, #10b981); border-color: var(--color-success, #10b981); color: #fff; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation (same as index) -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🏛️</span>
+        <span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link active">Services</a>
+        <a href="eligibility.html" class="nav-link">Eligibility</a>
+        <a href="docs.html" class="nav-link">Documents</a>
+        <a href="tracker.html" class="nav-link">Track Application</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-lang" id="langToggle" aria-label="Toggle language"><span id="langText">हिं</span></button>
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode"><span class="dark-icon">🌙</span></button>
+        <a href="dashboard.html" class="btn-nav-cta">Login / Register</a>
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="services.html" class="mobile-link active">Services</a>
+      <a href="eligibility.html" class="mobile-link">Eligibility</a>
+      <a href="docs.html" class="mobile-link">Documents</a>
+      <a href="tracker.html" class="mobile-link">Track Application</a>
+      <a href="dashboard.html" class="mobile-link">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta mobile-cta">Login / Register</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Page Hero -->
+    <section class="page-hero">
+      <div class="container">
+        <h1>All Government Services</h1>
+        <p>Browse and apply for 500+ services from the comfort of your home</p>
+      </div>
+    </section>
+
+    <!-- AD SLOT 1 -->
+    <div class="ad-slot" id="adSlot1"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Your message reaches millions of citizens here</p></div></div>
+
+    <!-- Services List -->
+    <section class="services-list">
+      <div class="container">
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all">All Services</button>
+          <button class="filter-btn" data-filter="identity">Identity</button>
+          <button class="filter-btn" data-filter="tax">Tax & Finance</button>
+          <button class="filter-btn" data-filter="travel">Travel</button>
+          <button class="filter-btn" data-filter="transport">Transport</button>
+          <button class="filter-btn" data-filter="social">Social Welfare</button>
+        </div>
+
+        <!-- Aadhaar -->
+        <div class="service-detail-card" id="aadhaar" data-category="identity">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">🪪</span>
+            <div>
+              <h2 class="service-detail-title">Aadhaar Services</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Aadhaar is a 12-digit unique identity number issued by UIDAI. Use it for identity verification, government subsidies, and more.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> ₹50 (update)</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 7-10 days</span>
+            <span class="service-meta-item"><strong>Documents:</strong> POI, POA</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(50)">Apply Now — Pay ₹50</button>
+        </div>
+
+        <!-- PAN Card -->
+        <div class="service-detail-card" id="pan" data-category="identity">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">📄</span>
+            <div>
+              <h2 class="service-detail-title">PAN Card</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Permanent Account Number (PAN) is a 10-character alphanumeric identifier issued by the Income Tax Department. Mandatory for financial transactions.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> ₹107 (Indian) / ₹989 (NRI)</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 15-20 days</span>
+            <span class="service-meta-item"><strong>Documents:</strong> POI, POA, Photo</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(107)">Apply Now — Pay ₹107</button>
+        </div>
+
+        <!-- AD SLOT 2 -->
+        <div class="ad-slot" id="adSlot2"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Reach 10M+ citizens across India</p></div></div>
+
+        <!-- Passport -->
+        <div class="service-detail-card" id="passport" data-category="travel">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">🛂</span>
+            <div>
+              <h2 class="service-detail-title">Passport Services</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Apply for a new passport, renewal, tatkal service, or police verification. Get your passport in as fast as 1 day with tatkal.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> ₹1,500 (normal) / ₹3,500 (tatkal)</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 30 days / 1-3 days (tatkal)</span>
+            <span class="service-meta-item"><strong>Documents:</strong> Aadhaar, Address Proof</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(1500)">Apply Now — Pay ₹1,500</button>
+        </div>
+
+        <!-- Driving License -->
+        <div class="service-detail-card" id="driving" data-category="transport">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">🚗</span>
+            <div>
+              <h2 class="service-detail-title">Driving License</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Apply for a new learner's license, permanent driving license, renewal, or international driving permit.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> ₹200 - ₹1,000</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 7-15 days</span>
+            <span class="service-meta-item"><strong>Documents:</strong> Age proof, Address proof</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(500)">Apply Now — Pay ₹500</button>
+        </div>
+
+        <!-- GST -->
+        <div class="service-detail-card" id="gst" data-category="tax">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">💰</span>
+            <div>
+              <h2 class="service-detail-title">GST Registration & Filing</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Register for GST, file returns, apply for amendments, or cancel your GST registration. All GST services online.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> Free (registration)</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 7-15 days</span>
+            <span class="service-meta-item"><strong>Documents:</strong> PAN, Aadhaar, Business proof</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(0)">Register Now — Free</button>
+        </div>
+
+        <!-- AD SLOT 3 -->
+        <div class="ad-slot" id="adSlot3"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Premium placement for your brand</p></div></div>
+
+        <!-- Income Tax -->
+        <div class="service-detail-card" id="income-tax" data-category="tax">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">📊</span>
+            <div>
+              <h2 class="service-detail-title">Income Tax Services</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">File ITR, check refund status, link PAN-Aadhaar, view Form 26AS, and manage all income tax related services.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> Free</span>
+            <span class="service-meta-item"><strong>Processing:</strong> Instant - 30 days (refund)</span>
+            <span class="service-meta-item"><strong>Documents:</strong> PAN, Aadhaar, Form 16</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(0)">File ITR — Free</button>
+        </div>
+
+        <!-- Voter ID -->
+        <div class="service-detail-card" id="voter" data-category="identity">
+          <div class="service-detail-header">
+            <span class="service-detail-icon">🗳️</span>
+            <div>
+              <h2 class="service-detail-title">Voter ID / EPIC</h2>
+            </div>
+          </div>
+          <p class="service-detail-desc">Register as a new voter, update details, or download your EPIC card. Exercise your democratic right.</p>
+          <div class="service-meta">
+            <span class="service-meta-item"><strong>Fee:</strong> Free</span>
+            <span class="service-meta-item"><strong>Processing:</strong> 30-45 days</span>
+            <span class="service-meta-item"><strong>Documents:</strong> Age proof, Address proof, Photo</span>
+          </div>
+          <button class="btn btn-primary" onclick="openUPIModal(0)">Apply Now — Free</button>
+        </div>
+
+        <!-- AD SLOT 4 -->
+        <div class="ad-slot" id="adSlot4"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Connect with India's largest government services audience</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+          <p class="footer-desc">India's most trusted government services portal.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="eligibility.html">Eligibility</a></li>
+            <li><a href="tracker.html">Track Application</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Services</h4>
+          <ul class="footer-links">
+            <li><a href="#aadhaar">Aadhaar</a></li>
+            <li><a href="#pan">PAN Card</a></li>
+            <li><a href="#passport">Passport</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 SarkarSarkar. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- UPI Payment Modal -->
+  <div class="modal-overlay" id="upiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 Pay via UPI</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="upi-amount">
+          <span class="upi-label">Amount to Pay</span>
+          <span class="upi-value" id="upiAmount">₹500</span>
+        </div>
+        <!-- QR Code for UPI Payment -->
+        <div class="upi-qr-container">
+          <div class="upi-qr-canvas" id="upiQR">
+            <!-- SVG QR placeholder — generates a simple pattern -->
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100" height="100" fill="#fff"/>
+              <rect x="10" y="10" width="25" height="25" fill="#1a56db"/>
+              <rect x="15" y="15" width="15" height="15" fill="#fff"/>
+              <rect x="20" y="20" width="5" height="5" fill="#1a56db"/>
+              <rect x="65" y="10" width="25" height="25" fill="#1a56db"/>
+              <rect x="70" y="15" width="15" height="15" fill="#fff"/>
+              <rect x="75" y="20" width="5" height="5" fill="#1a56db"/>
+              <rect x="10" y="65" width="25" height="25" fill="#1a56db"/>
+              <rect x="15" y="70" width="15" height="15" fill="#fff"/>
+              <rect x="20" y="75" width="5" height="5" fill="#1a56db"/>
+              <rect x="40" y="10" width="5" height="5" fill="#1a56db"/>
+              <rect x="50" y="10" width="5" height="5" fill="#1a56db"/>
+              <rect x="40" y="20" width="5" height="5" fill="#1a56db"/>
+              <rect x="45" y="25" width="5" height="5" fill="#1a56db"/>
+              <rect x="40" y="40" width="20" height="20" fill="#1a56db"/>
+              <rect x="45" y="45" width="10" height="10" fill="#fff"/>
+              <rect x="50" y="50" width="5" height="5" fill="#1a56db"/>
+              <rect x="10" y="45" width="5" height="5" fill="#1a56db"/>
+              <rect x="20" y="40" width="5" height="5" fill="#1a56db"/>
+              <rect x="30" y="45" width="5" height="5" fill="#1a56db"/>
+              <rect x="65" y="40" width="5" height="5" fill="#1a56db"/>
+              <rect x="75" y="45" width="5" height="5" fill="#1a56db"/>
+              <rect x="85" y="40" width="5" height="5" fill="#1a56db"/>
+              <rect x="70" y="55" width="5" height="5" fill="#1a56db"/>
+              <rect x="80" y="60" width="5" height="5" fill="#1a56db"/>
+              <rect x="65" y="70" width="5" height="5" fill="#1a56db"/>
+              <rect x="75" y="75" width="5" height="5" fill="#1a56db"/>
+              <rect x="85" y="70" width="5" height="5" fill="#1a56db"/>
+              <rect x="70" y="85" width="5" height="5" fill="#1a56db"/>
+              <rect x="80" y="80" width="10" height="10" fill="#1a56db"/>
+            </svg>
+          </div>
+          <p class="upi-qr-label">Scan to pay with any UPI app</p>
+        </div>
+        <div class="upi-apps">
+          <button class="upi-app" data-app="gpay"><span class="upi-app-icon">G</span><span>Google Pay</span></button>
+          <button class="upi-app" data-app="phonepe"><span class="upi-app-icon">P</span><span>PhonePe</span></button>
+          <button class="upi-app" data-app="paytm"><span class="upi-app-icon">₹</span><span>Paytm</span></button>
+          <button class="upi-app" data-app="bhim"><span class="upi-app-icon">B</span><span>BHIM</span></button>
+        </div>
+        <div class="upi-or">or enter UPI ID</div>
+        <form id="upiForm">
+          <!-- Copy UPI ID row -->
+          <div class="upi-copy-row">
+            <div class="form-group">
+              <input type="text" id="upiId" class="form-control" placeholder="yourname@upi" value="sarkarsarkar@upi" pattern=".+@.+">
+            </div>
+            <button type="button" class="btn-copy-upi" id="copyUpiBtn" aria-label="Copy UPI ID">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+        </form>
+        <p class="upi-secure">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <script src="app.js"></script>
+  <script>
+    // Services page filter — category-based filtering
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+        this.classList.add('active');
+        var filter = this.getAttribute('data-filter');
+        document.querySelectorAll('.service-detail-card').forEach(function(card) {
+          if (filter === 'all' || card.getAttribute('data-category') === filter) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Copy UPI ID to clipboard
+    var copyBtn = document.getElementById('copyUpiBtn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function() {
+        var upiInput = document.getElementById('upiId');
+        if (!upiInput) return;
+        var upiId = upiInput.value || upiInput.textContent || 'sarkarsarkar@upi';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(upiId).then(function() {
+            showCopySuccess();
+          }).catch(function() {
+            fallbackCopy(upiId);
+          });
+        } else {
+          fallbackCopy(upiId);
+        }
+        function showCopySuccess() {
+          copyBtn.classList.add('copied');
+          copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+          setTimeout(function() {
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
+          }, 2000);
+        }
+        function fallbackCopy(text) {
+          var ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); showCopySuccess(); } catch(e) {}
+          document.body.removeChild(ta);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

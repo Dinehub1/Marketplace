@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarDukaan — Local Business Directory Platform v1.0
+    Built by Loop Agent | ZOO Company
+    Features: Hero, Features Grid, How It Works, Pricing with UPI Modal,
+    Testimonials Carousel, FAQ Accordion, Dark Mode, Mobile-First Responsive,
+    SEO Meta Tags, Schema.org JSON-LD, Open Graph, 4 Ad Slots
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ===== SEO Meta Tags ===== -->
+  <title>SarkarDukaan — Local Business Directory | Find & Grow Your Business</title>
+  <meta name="description" content="Discover local businesses, list your shop, and grow your customer base. SarkarDukaan connects 50,000+ businesses with millions of customers across India. Free listing available.">
+  <meta name="keywords" content="local business directory, business listing, Indore businesses, shop near me, SarkarDukaan, free business listing, UPI payments">
+  <meta name="author" content="SarkarDukaan">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkardukaan.in">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SarkarDukaan — Local Business Directory">
+  <meta property="og:description" content="Discover local businesses, list your shop, and grow your customer base. 50,000+ businesses listed.">
+  <meta property="og:url" content="https://sarkardukaan.in">
+  <meta property="og:site_name" content="SarkarDukaan">
+  <meta property="og:image" content="https://sarkardukaan.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SarkarDukaan — Local Business Directory">
+  <meta name="twitter:description" content="Discover local businesses, list your shop, and grow your customer base.">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "SarkarDukaan",
+    "url": "https://sarkardukaan.in",
+    "description": "Local business directory platform connecting businesses with customers across India.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN",
+      "addressLocality": "Indore"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-1800-123-4567",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Hindi"]
+    },
+    "sameAs": [
+      "https://twitter.com/sarkardukaan",
+      "https://facebook.com/sarkardukaan"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How do I list my business on SarkarDukaan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Click 'List Your Business', fill in your shop details, upload photos, and submit. Your listing goes live within 24 hours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is business listing free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Basic listing is completely free. Premium plans with featured placement and analytics start at ₹299/month."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I accept payments through SarkarDukaan?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We support UPI (GPay, PhonePe, Paytm), credit/debit cards, and net banking. Payments are settled within 24 hours."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I track customer inquiries?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, our Business Dashboard shows all customer inquiries, call clicks, direction requests, and website visits in real-time."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ===== Stylesheet ===== -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ===== Skip to Content (Accessibility) ===== -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ===== Navigation Bar ===== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">Sarkar<span class="logo-highlight">Dukaan</span></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-links" id="navLinks">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#testimonials" class="nav-link">Reviews</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Dark Mode Toggle -->
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode">
+          <span class="dark-icon">🌙</span>
+        </button>
+        <!-- CTA Button -->
+        <button class="btn-nav-cta" id="openPricing">List Your Business</button>
+        <!-- Mobile Menu Toggle -->
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#features" class="mobile-link">Features</a>
+      <a href="#how-it-works" class="mobile-link">How It Works</a>
+      <a href="#pricing" class="mobile-link">Pricing</a>
+      <a href="#testimonials" class="mobile-link">Reviews</a>
+      <a href="#faq" class="mobile-link">FAQ</a>
+      <button class="btn-nav-cta mobile-cta" id="openPricingMobile">List Your Business</button>
+    </div>
+  </header>
+
+  <!-- ===== Main Content ===== -->
+  <main id="main-content">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">🇮🇳 India's #1 Local Business Directory</div>
+          <h1 class="hero-title">
+            <span class="hero-title-line">Find & Grow</span>
+            <span class="hero-title-line hero-title-highlight">Your Local Business</span>
+          </h1>
+          <p class="hero-subtitle">Connect with millions of customers. List your shop for free, accept UPI payments, and watch your business grow — all from one platform.</p>
+          <div class="hero-cta-group">
+            <button class="btn btn-primary btn-lg" id="heroListBtn">
+              <span>List Your Business — Free</span>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <a href="#how-it-works" class="btn btn-outline btn-lg">
+              <span>📖 How It Works</span>
+            </a>
+          </div>
+          <!-- Quick Stats -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number" data-target="50">0</span><span class="stat-suffix">K+</span>
+              <span class="stat-label">Businesses</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="2">0</span><span class="stat-suffix">M+</span>
+              <span class="stat-label">Monthly Visitors</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="100">0</span><span class="stat-suffix">+</span>
+              <span class="stat-label">Cities</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="4.8" data-decimal="true">0</span><span class="stat-suffix">★</span>
+              <span class="stat-label">Rating</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 1: Below Hero ===== -->
+    <div class="ad-slot ad-slot-hero" id="adSlot1" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <p>📢 Your ad here — Reach 2M+ local customers. <a href="#pricing">Advertise with us →</a></p>
+      </div>
+    </div>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Features</span>
+          <h2 class="section-title">Everything Your Business Needs</h2>
+          <p class="section-subtitle">From free listing to advanced analytics — we've got you covered.</p>
+        </div>
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h3 class="feature-title">Free Business Listing</h3>
+            <p class="feature-desc">Create a complete business profile with photos, hours, contact info, and description — absolutely free.</p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3 class="feature-title">UPI Payments</h3>
+            <p class="feature-desc">Accept payments via GPay, PhonePe, Paytm, and all UPI apps. Instant settlement to your bank account.</p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Business Analytics</h3>
+            <p class="feature-desc">Track views, calls, direction requests, and customer inquiries in real-time from your dashboard.</p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h3 class="feature-title">SEO Boost</h3>
+            <p class="feature-desc">Your listing is optimized for Google Search, Maps, and voice search. Get found by local customers.</p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon">⭐</div>
+            <h3 class="feature-title">Review Management</h3>
+            <p class="feature-desc">Collect and respond to customer reviews. Build trust and improve your online reputation.</p>
+          </div>
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3 class="feature-title">Mobile Dashboard</h3>
+            <p class="feature-desc">Manage your business on the go. Update info, respond to inquiries, and track performance from your phone.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 2: Between Features & How It Works ===== -->
+    <div class="ad-slot" id="adSlot2" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <p>🚀 Get Featured Listing — 10x more visibility. <a href="#pricing">Upgrade now →</a></p>
+      </div>
+    </div>
+
+    <!-- ===== HOW IT WORKS SECTION ===== -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">How It Works</span>
+          <h2 class="section-title">Get Started in 3 Simple Steps</h2>
+          <p class="section-subtitle">From listing to your first customer in under 10 minutes.</p>
+        </div>
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-icon">📝</div>
+            <h3 class="step-title">Create Your Listing</h3>
+            <p class="step-desc">Add your business name, category, address, phone, photos, and description. Takes just 5 minutes.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-icon">✅</div>
+            <h3 class="step-title">Get Verified</h3>
+            <p class="step-desc">Our team verifies your business within 24 hours. Get a verified badge to build customer trust.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-icon">🚀</div>
+            <h3 class="step-title">Start Getting Customers</h3>
+            <p class="step-desc">Your listing goes live! Customers can find you, call you, get directions, and pay you online.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRICING SECTION ===== -->
+    <section class="pricing" id="pricing">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Pricing</span>
+          <h2 class="section-title">Simple, Transparent Pricing</h2>
+          <p class="section-subtitle">Start free. Upgrade when you're ready to grow.</p>
+        </div>
+        <div class="pricing-grid">
+          <!-- Free Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Free</h3>
+              <div class="pricing-price">
+                <span class="price-currency">₹</span>
+                <span class="price-amount">0</span>
+                <span class="price-period">/forever</span>
+              </div>
+              <p class="pricing-desc">Perfect for getting started</p>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ Basic business listing</li>
+              <li>✅ Up to 5 photos</li>
+              <li>✅ Contact information</li>
+              <li>✅ Business hours</li>
+              <li>✅ Customer reviews</li>
+              <li>❌ Featured placement</li>
+              <li>❌ Analytics dashboard</li>
+              <li>❌ UPI payment collection</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="showToast('Free listing coming soon!')">Get Started Free</button>
+          </div>
+
+          <!-- Pro Plan (Popular) -->
+          <div class="pricing-card popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3 class="pricing-name">Pro</h3>
+              <div class="pricing-price">
+                <span class="price-currency">₹</span>
+                <span class="price-amount">299</span>
+                <span class="price-period">/month</span>
+              </div>
+              <p class="pricing-desc">Best for growing businesses</p>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ Everything in Free</li>
+              <li>✅ Featured placement</li>
+              <li>✅ Up to 20 photos</li>
+              <li>✅ Analytics dashboard</li>
+              <li>✅ UPI payment collection</li>
+              <li>✅ Review responses</li>
+              <li>✅ Priority support</li>
+              <li>❌ API access</li>
+            </ul>
+            <button class="btn btn-primary btn-full" onclick="openUPIModal(299, 'Pro')">Upgrade to Pro</button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Enterprise</h3>
+              <div class="pricing-price">
+                <span class="price-currency">₹</span>
+                <span class="price-amount">999</span>
+                <span class="price-period">/month</span>
+              </div>
+              <p class="pricing-desc">For multi-location businesses</p>
+            </div>
+            <ul class="pricing-features">
+              <li>✅ Everything in Pro</li>
+              <li>✅ Unlimited photos</li>
+              <li>✅ API access</li>
+              <li>✅ Multi-location support</li>
+              <li>✅ Dedicated account manager</li>
+              <li>✅ Custom branding</li>
+              <li>✅ Advanced analytics</li>
+              <li>✅ Same-day settlement</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="openUPIModal(999, 'Enterprise')">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 3: Between Pricing & Testimonials ===== -->
+    <div class="ad-slot" id="adSlot3" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <p>🏆 Join 50,000+ businesses already growing with SarkarDukaan. <a href="#pricing">List now →</a></p>
+      </div>
+    </div>
+
+    <!-- ===== TESTIMONIALS SECTION ===== -->
+    <section class="testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Testimonials</span>
+          <h2 class="section-title">Loved by Business Owners</h2>
+          <p class="section-subtitle">See what our merchants have to say.</p>
+        </div>
+        <div class="testimonials-carousel" id="testimonialCarousel">
+          <div class="testimonial-track" id="testimonialTrack">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+              <p class="testimonial-text">"SarkarDukaan changed my business! Within 2 weeks of listing, I got 50+ new customers. The UPI payment feature is a game-changer."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">RK</div>
+                <div class="author-info">
+                  <span class="author-name">Rajesh Kumar</span>
+                  <span class="author-business">Kumar Sweets, Indore</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+              <p class="testimonial-text">"I was skeptical at first, but the free listing brought me real customers. Upgraded to Pro and my revenue increased by 40% in 3 months."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">PS</div>
+                <div class="author-info">
+                  <span class="author-name">Priya Sharma</span>
+                  <span class="author-business">Sharma Boutique, Bhopal</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 3 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+              <p class="testimonial-text">"The analytics dashboard shows me exactly where my customers come from. I can now make data-driven decisions for my restaurant."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">AM</div>
+                <div class="author-info">
+                  <span class="author-name">Amit Mishra</span>
+                  <span class="author-business">Mishra Dhaba, Ujjain</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 4 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+              <p class="testimonial-text">"Best platform for small businesses. The team is super helpful and the UPI settlement is lightning fast. Highly recommended!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">SJ</div>
+                <div class="author-info">
+                  <span class="author-name">Sunita Joshi</span>
+                  <span class="author-business">Joshi Electronics, Dewas</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Carousel Controls -->
+          <div class="carousel-controls">
+            <button class="carousel-btn prev" id="testimonialPrev" aria-label="Previous testimonial">←</button>
+            <div class="carousel-dots" id="testimonialDots"></div>
+            <button class="carousel-btn next" id="testimonialNext" aria-label="Next testimonial">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ SECTION ===== -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">FAQ</span>
+          <h2 class="section-title">Frequently Asked Questions</h2>
+          <p class="section-subtitle">Everything you need to know about SarkarDukaan.</p>
+        </div>
+        <div class="faq-list" id="faqList">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How do I list my business on SarkarDukaan?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Click the "List Your Business" button, fill in your shop details (name, category, address, phone, hours), upload photos, and submit. Your listing goes live within 24 hours after verification.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 2 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Is business listing really free?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! Basic listing is completely free — no hidden charges. You get a business profile, up to 5 photos, contact info, and customer reviews. Premium plans with advanced features start at ₹299/month.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 3 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How do UPI payments work?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Customers can pay you directly through your SarkarDukaan listing using any UPI app (GPay, PhonePe, Paytm, etc.). Funds are settled to your bank account within 24 hours. A small 1% transaction fee applies.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 4 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>Can I edit my listing after publishing?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Absolutely! Log into your Business Dashboard anytime to update your photos, hours, description, offers, and contact information. Changes are reflected within 1 hour.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 5 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>How do I get more customers?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Optimize your listing with great photos and detailed descriptions. Upgrade to Pro for featured placement. Respond to reviews promptly. Share your listing on WhatsApp and social media. Our SEO ensures you rank high in local searches.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 6 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>What cities do you cover?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We currently cover 100+ cities across India including Indore, Bhopal, Ujjain, Dewas, Mumbai, Delhi, Bangalore, and more. New cities are added every month. Check our website for the full list.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 4: Between FAQ & Footer ===== -->
+    <div class="ad-slot" id="adSlot4" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <p>📱 Download the SarkarDukaan app — Manage your business on the go. <a href="#">Coming soon on Play Store →</a></p>
+      </div>
+    </div>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section" id="cta">
+      <div class="container">
+        <div class="cta-content">
+          <h2 class="cta-title">Ready to Grow Your Business?</h2>
+          <p class="cta-subtitle">Join 50,000+ businesses already on SarkarDukaan. List for free today.</p>
+          <div class="cta-buttons">
+            <button class="btn btn-primary btn-lg" id="ctaListBtn">
+              <span>List Your Business — Free</span>
+            </button>
+            <a href="#pricing" class="btn btn-outline btn-lg">
+              <span>View Pricing</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Column -->
+        <div class="footer-col">
+          <a href="index.html" class="footer-logo">
+            <span class="logo-icon">🏪</span>
+            <span class="logo-text">Sarkar<span class="logo-highlight">Dukaan</span></span>
+          </a>
+          <p class="footer-desc">India's #1 local business directory. Connecting businesses with customers since 2024.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Twitter">𝕏</a>
+            <a href="#" aria-label="Facebook">f</a>
+            <a href="#" aria-label="Instagram">📷</a>
+            <a href="#" aria-label="YouTube">▶</a>
+          </div>
+        </div>
+        <!-- Quick Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <!-- For Businesses -->
+        <div class="footer-col">
+          <h4 class="footer-heading">For Businesses</h4>
+          <ul class="footer-links">
+            <li><a href="#">List Your Business</a></li>
+            <li><a href="#">Business Dashboard</a></li>
+            <li><a href="#">Advertise</a></li>
+            <li><a href="#">API Documentation</a></li>
+            <li><a href="#">Partner Program</a></li>
+          </ul>
+        </div>
+        <!-- Support -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 SarkarDukaan. All rights reserved. Made with ❤️ in India.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== UPI PAYMENT MODAL ===== -->
+  <div class="modal-overlay" id="upiModalOverlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-labelledby="upiModalTitle" aria-modal="true">
+      <button class="modal-close" id="upiModalClose" aria-label="Close modal">&times;</button>
+      <div class="modal-header">
+        <h2 id="upiModalTitle">Complete Your Payment</h2>
+        <p class="modal-subtitle">Secure UPI payment for <span id="planName">Pro</span> plan</p>
+      </div>
+      <div class="modal-body">
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <div class="order-row">
+            <span>Plan</span>
+            <span id="orderPlan">Pro</span>
+          </div>
+          <div class="order-row">
+            <span>Amount</span>
+            <span id="orderAmount">₹299/month</span>
+          </div>
+          <div class="order-row order-total">
+            <span>Total</span>
+            <span id="orderTotal">₹299</span>
+          </div>
+        </div>
+        <!-- UPI Options -->
+        <div class="upi-options">
+          <h3>Pay using UPI</h3>
+          <div class="upi-apps">
+            <button class="upi-app" data-app="gpay">
+              <span class="upi-icon">G</span>
+              <span>Google Pay</span>
+            </button>
+            <button class="upi-app" data-app="phonepe">
+              <span class="upi-icon">P</span>
+              <span>PhonePe</span>
+            </button>
+            <button class="upi-app" data-app="paytm">
+              <span class="upi-icon">₹</span>
+              <span>Paytm</span>
+            </button>
+            <button class="upi-app" data-app="bhim">
+              <span class="upi-icon">B</span>
+              <span>BHIM</span>
+            </button>
+          </div>
+          <!-- UPI ID Input -->
+          <div class="upi-id-input">
+            <label for="upiId">Or enter UPI ID manually</label>
+            <input type="text" id="upiId" placeholder="yourname@upi" autocomplete="off">
+          </div>
+          <button class="btn btn-primary btn-full" id="payNowBtn">
+            <span>Pay ₹<span id="payAmount">299</span></span>
+          </button>
+        </div>
+        <!-- Security Note -->
+        <p class="security-note">🔒 Your payment is secured with 256-bit SSL encryption. Powered by NPCI.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Toast Notification Container ===== -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- ===== JavaScript ===== -->
+  <script src="app.js"></script>
+</body>
+</html>

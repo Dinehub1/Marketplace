@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        FollowUp CRM - Lead Management & Sales Pipeline
+        A modern, mobile-first CRM for small businesses and sales teams.
+        Built with vanilla HTML5, CSS3 (Flexbox/Grid), vanilla JavaScript.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>FollowUp CRM - Smart Lead Management & Sales Pipeline Software</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="FollowUp CRM is a powerful lead management and sales pipeline tool for Indian businesses. Track leads, manage follow-ups, and close more deals.">
+
+    <!-- SEO: Additional Meta Tags -->
+    <meta name="keywords" content="CRM, lead management, sales pipeline, follow-up tracker, deal management, Indian CRM, small business CRM">
+    <meta name="author" content="FollowUp CRM">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://followupcrm.in/index.html">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- SEO: Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="FollowUp CRM - Smart Lead Management & Sales Pipeline">
+    <meta property="og:description" content="Track leads, manage follow-ups, visualize your pipeline, and close more deals. Built for Indian small businesses.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://followupcrm.in">
+    <meta property="og:image" content="https://followupcrm.in/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="FollowUp CRM">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- SEO: Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FollowUp CRM - Smart Lead Management & Sales Pipeline">
+    <meta name="twitter:description" content="Track leads, manage follow-ups, visualize your pipeline, and close more deals. Built for Indian small businesses.">
+    <meta name="twitter:image" content="https://followupcrm.in/og-image.png">
+
+    <!-- SEO: Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "FollowUp CRM",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "description": "Smart lead management and sales pipeline CRM for Indian small businesses.",
+        "url": "https://followupcrm.in",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "2500"
+        }
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ========== SKIP TO CONTENT (Accessibility) ========== -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="nav-logo" aria-label="FollowUp CRM Home">
+                <i class="fas fa-bolt" aria-hidden="true"></i>
+                <span>Follow<span class="logo-accent">Up</span> <small style="font-size:0.6em;color:var(--text-muted);font-weight:400">CRM</small></span>
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="navMenu" role="menubar">
+                <li role="none"><a href="#dashboard" role="menuitem" class="nav-link active">Dashboard</a></li>
+                <li role="none"><a href="#leads" role="menuitem" class="nav-link">Leads</a></li>
+                <li role="none"><a href="#pipeline" role="menuitem" class="nav-link">Pipeline</a></li>
+                <li role="none"><a href="#calendar" role="menuitem" class="nav-link">Calendar</a></li>
+                <li role="none"><a href="#analytics" role="menuitem" class="nav-link">Analytics</a></li>
+                <li role="none"><a href="pricing.html" role="menuitem" class="nav-link">Pricing</a></li>
+                <li role="none"><a href="#testimonials" role="menuitem" class="nav-link">Testimonials</a></li>
+                <li role="none"><a href="#faq" role="menuitem" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <button class="btn btn-primary btn-nav" id="navAddLead">
+                    <i class="fas fa-plus" aria-hidden="true"></i> Add Lead
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <header class="hero-section" id="hero">
+        <div class="container">
+            <h1 class="hero-title">
+                Never Lose a<br>
+                <span class="gradient-text">Lead Again</span>
+            </h1>
+            <p class="hero-subtitle">
+                FollowUp CRM helps Indian small businesses track every lead, never miss a follow-up, and close more deals — with a beautiful, simple pipeline dashboard.
+            </p>
+            <div class="hero-cta">
+                <button class="btn btn-primary btn-lg" id="openAddLead">
+                    <i class="fas fa-rocket" aria-hidden="true"></i> Start Free Trial
+                </button>
+                <a href="#dashboard" class="btn btn-outline btn-lg">
+                    <i class="fas fa-eye" aria-hidden="true"></i> View Demo
+                </a>
+            </div>
+            <div class="hero-stats" aria-label="Platform statistics">
+                <div class="stat-item">
+                    <span class="stat-number" data-target="5000">0</span>
+                    <span class="stat-label">Sales Teams</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="2">0</span><span class="stat-suffix">L+</span>
+                    <span class="stat-label">Leads Tracked</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" data-target="48">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">More Deals Closed</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== AD SLOT 1 - Top Banner ========== -->
+    <div class="ad-slot" aria-label="Advertisement" role="complementary">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space — 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main id="main-content">
+
+        <!-- ========== DASHBOARD / SUMMARY SECTION ========== -->
+        <section class="summary-section" id="dashboard" aria-labelledby="dashboard-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="dashboard-title" class="section-title">Your Sales <span class="gradient-text">Overview</span></h2>
+                    <p class="section-subtitle">Real-time snapshot of your entire sales pipeline</p>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="card-icon icon-blue"><i class="fas fa-users" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="totalLeads">0</div>
+                            <div class="card-label">Total Leads</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon icon-red"><i class="fas fa-fire" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="hotLeads">0</div>
+                            <div class="card-label">Hot Leads</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon icon-orange"><i class="fas fa-clock" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="pendingFollowups">0</div>
+                            <div class="card-label">Pending Follow-ups</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon icon-danger"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="overdueFollowups">0</div>
+                            <div class="card-label">Overdue Follow-ups</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon icon-green"><i class="fas fa-check-circle" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="closedDeals">0</div>
+                            <div class="card-label">Closed Deals</div>
+                        </div>
+                    </div>
+                    <div class="summary-card summary-card-revenue">
+                        <div class="card-icon icon-purple"><i class="fas fa-rupee-sign" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="totalRevenue">Rs.0</div>
+                            <div class="card-label">Pipeline Value</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-icon icon-teal"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
+                        <div>
+                            <div class="card-value" id="avgDealSize">Rs.0</div>
+                            <div class="card-label">Avg Deal Size</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== LEADS SECTION ========== -->
+        <section class="leads-section" id="leads" aria-labelledby="leads-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="leads-title" class="section-title">Lead <span class="gradient-text">Management</span></h2>
+                    <p class="section-subtitle">Search, filter, sort, and manage all your leads in one place</p>
+                </div>
+
+                <!-- Toolbar: Search, Filter, Sort -->
+                <div class="filter-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input type="search" id="leadSearch" placeholder="Search leads by name, email, company..." aria-label="Search leads">
+                    </div>
+                    <select id="leadFilter" class="filter-select" aria-label="Filter by status">
+                        <option value="all">All Status</option>
+                        <option value="cold">Cold</option>
+                        <option value="warm">Warm</option>
+                        <option value="hot">Hot</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                    <select id="leadSourceFilter" class="filter-select" aria-label="Filter by source">
+                        <option value="all">All Sources</option>
+                        <option value="website">Website</option>
+                        <option value="referral">Referral</option>
+                        <option value="social">Social Media</option>
+                        <option value="email">Email Campaign</option>
+                        <option value="cold-call">Cold Call</option>
+                        <option value="event">Event / Trade Show</option>
+                        <option value="ads">Paid Ads</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select id="leadSort" class="filter-select" aria-label="Sort leads">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">By Name</option>
+                        <option value="value">By Value</option>
+                    </select>
+                    <button class="btn btn-outline" id="openImportLeads">
+                        <i class="fas fa-file-csv" aria-hidden="true"></i> Import CSV
+                    </button>
+                    <button class="btn btn-outline" id="exportCsvBtn">
+                        <i class="fas fa-download" aria-hidden="true"></i> Export CSV
+                    </button>
+                    <button class="btn btn-primary" id="openAddLeadFilter">
+                        <i class="fas fa-plus" aria-hidden="true"></i> Add Lead
+                    </button>
+                </div>
+
+                <!-- Results count + Clear filters -->
+                <div class="leads-toolbar-bottom" id="leadsToolbarBottom">
+                    <span class="leads-count" id="leadsCount"></span>
+                    <button class="btn btn-sm btn-outline" id="clearFiltersBtn" style="display:none">
+                        <i class="fas fa-times-circle"></i> Clear Filters
+                    </button>
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div class="leads-empty-state" id="leadsEmptyState" style="display:none">
+                    <div class="empty-state-icon"><i class="fas fa-search"></i></div>
+                    <h3>No leads found</h3>
+                    <p>We couldn't find any leads matching your current filters. Try adjusting your search or filter criteria.</p>
+                    <button class="btn btn-outline" id="emptyClearFiltersBtn">
+                        <i class="fas fa-times-circle"></i> Clear All Filters
+                    </button>
+                </div>
+
+                <!-- Desktop: Leads Table -->
+                <div class="leads-table-wrapper" id="leadsTableWrapper">
+                    <table class="leads-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Lead</th>
+                                <th scope="col">Company</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Follow-up</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadsTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile: Leads Cards -->
+                <div class="leads-cards" id="leadsCards">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 2 - Between Leads & Pipeline ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 728x90</span>
+            </div>
+        </div>
+
+        <!-- ========== PIPELINE SECTION ========== -->
+        <section class="pipeline-section" id="pipeline" aria-labelledby="pipeline-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="pipeline-title" class="section-title">Sales <span class="gradient-text">Pipeline</span></h2>
+                    <p class="section-subtitle">Visual Kanban board of your deal stages</p>
+                </div>
+
+                <div class="pipeline-board-container">
+                    <div class="pipeline-scroll-hint" aria-hidden="true">
+                        <i class="fas fa-chevron-right"></i> Swipe to see more stages
+                    </div>
+                    <div class="pipeline-board" id="pipelineBoard" role="list" aria-label="Sales pipeline stages">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CALENDAR SECTION ========== -->
+        <section class="calendar-section" id="calendar" aria-labelledby="calendar-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="calendar-title" class="section-title">Follow-up <span class="gradient-text">Calendar</span></h2>
+                    <p class="section-subtitle">Never miss a follow-up appointment</p>
+                </div>
+
+                <div class="calendar-layout">
+                    <!-- Calendar Grid -->
+                    <div class="calendar-mini">
+                        <div class="calendar-header">
+                            <button class="cal-nav" id="calPrev" aria-label="Previous month">
+                                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                            </button>
+                            <span class="cal-month" id="calMonth">June 2026</span>
+                            <button class="cal-nav" id="calNext" aria-label="Next month">
+                                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="cal-grid" id="calGrid" role="grid" aria-label="Calendar">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Follow-ups -->
+                    <div class="followup-list">
+                        <div class="followup-title"><i class="fas fa-bell" aria-hidden="true"></i> Upcoming Follow-ups</div>
+                        <div id="followupItems">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 3 - Between Calendar & Analytics ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 728x90</span>
+            </div>
+        </div>
+
+        <!-- ========== ANALYTICS SECTION ========== -->
+        <section class="analytics-section" id="analytics" aria-labelledby="analytics-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="analytics-title" class="section-title">Sales <span class="gradient-text">Analytics</span></h2>
+                    <p class="section-subtitle">Data-driven insights to improve your sales performance</p>
+                </div>
+
+                <div class="analytics-grid">
+                    <!-- Funnel Chart -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-title"><i class="fas fa-filter" aria-hidden="true"></i> Sales Funnel</div>
+                        <div class="funnel-chart" id="funnelChart">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Revenue Chart -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-title"><i class="fas fa-chart-bar" aria-hidden="true"></i> Revenue Trend</div>
+                        <div class="bar-chart" id="revenueChart">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Lead Sources -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-title"><i class="fas fa-chart-pie" aria-hidden="true"></i> Lead Sources</div>
+                        <div class="donut-chart" id="sourceChart">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Team Performance -->
+                    <div class="analytics-card">
+                        <div class="analytics-card-title"><i class="fas fa-trophy" aria-hidden="true"></i> Team Performance</div>
+                        <div class="team-list" id="teamList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== PRICING SECTION ========== -->
+        <section class="pricing-section" id="pricing" aria-labelledby="pricing-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="pricing-title" class="section-title">Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+                    <p class="section-subtitle">Start free. Scale as you grow. No hidden charges.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="plan-name">Starter</div>
+                            <div class="plan-price">
+                                <span class="currency">Rs.</span><span class="amount">0</span>
+                                <span class="period">/month</span>
+                            </div>
+                            <div class="plan-desc">Perfect for solo entrepreneurs</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Up to 100 leads</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Basic pipeline view</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Follow-up reminders</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Email support</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" data-plan="free">Get Started Free</button>
+                    </div>
+
+                    <!-- Pro Plan (Featured) -->
+                    <div class="pricing-card featured">
+                        <div class="pricing-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <div class="plan-name">Pro</div>
+                            <div class="plan-price">
+                                <span class="currency">Rs.</span><span class="amount">499</span>
+                                <span class="period">/month</span>
+                            </div>
+                            <div class="plan-desc">For growing sales teams</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited leads</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Advanced pipeline & Kanban</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Calendar & follow-up scheduling</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Analytics & reports</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Team collaboration (up to 5)</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Priority support</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block" data-plan="pro">Start Pro Trial</button>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <div class="plan-name">Enterprise</div>
+                            <div class="plan-price">
+                                <span class="currency">Rs.</span><span class="amount">1,999</span>
+                                <span class="period">/month</span>
+                            </div>
+                            <div class="plan-desc">For large organizations</div>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Everything in Pro</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited team members</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Custom integrations & API</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Dedicated account manager</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> SLA guarantee</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> On-premise deployment option</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" data-plan="enterprise">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TESTIMONIALS SECTION ========== -->
+        <section class="testimonials-section" id="testimonials" aria-labelledby="testimonials-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="testimonials-title" class="section-title">Loved by <span class="gradient-text">Sales Teams</span></h2>
+                    <p class="section-subtitle">See what our customers say about FollowUp CRM</p>
+                </div>
+
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"FollowUp CRM transformed our sales process. We went from tracking leads in spreadsheets to having a real-time pipeline view. Our team closed 40% more deals in just 3 months!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">RK</div>
+                            <div>
+                                <strong>Rahul Kapoor</strong>
+                                <span>Sales Director, TechVentures India</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The follow-up calendar is a game-changer. We never miss a callback now. The mobile view is perfect for our field sales team. Best CRM for Indian small businesses, hands down."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">PS</div>
+                            <div>
+                                <strong>Priya Sharma</strong>
+                                <span>CEO, GrowthHackers</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-stars" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                        </div>
+                        <p class="testimonial-text">"The Kanban pipeline view alone is worth the price. Our team collaboration improved dramatically, and the analytics help us identify bottlenecks instantly. Highly recommended!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AJ</div>
+                            <div>
+                                <strong>Amit Joshi</strong>
+                                <span>Head of Sales, StartupHub</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 4 - Between Pricing & FAQ ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 300x250 Rectangle</span>
+            </div>
+        </div>
+
+        <!-- ========== FAQ SECTION ========== -->
+        <section class="faq-section" id="faq" aria-labelledby="faq-title">
+            <div class="container">
+                <div class="section-header">
+                    <h2 id="faq-title" class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                </div>
+
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is FollowUp CRM really free to start?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! Our Starter plan is completely free forever — up to 100 leads with basic pipeline, follow-up reminders, and email support. No credit card required.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I import my existing leads from Excel or another CRM?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Absolutely. FollowUp CRM supports CSV import. Go to Leads → Import, upload your Excel/CSV file, map the columns, and your leads will be imported instantly.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How does the follow-up reminder work?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>When you set a follow-up date on a lead, it appears on your calendar dashboard. You'll see upcoming follow-ups in the sidebar, and the calendar highlights dates with scheduled follow-ups.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is my data secure?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes. All data is encrypted in transit and at rest. We use industry-standard security practices and regular security audits. Your leads and customer data are never shared with third parties.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I use FollowUp CRM on my phone?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! FollowUp CRM is fully responsive and works beautifully on mobile phones and tablets. The mobile view shows lead cards instead of a table for easy browsing on small screens.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CTA SECTION ========== -->
+        <section class="cta-section" aria-labelledby="cta-title">
+            <div class="container">
+                <div class="cta-content">
+                    <h2 id="cta-title">Ready to Close More Deals?</h2>
+                    <p>Join 5,000+ sales teams who use FollowUp CRM to never lose a lead again. Start your free trial today — no credit card needed.</p>
+                    <div class="cta-form">
+                        <label for="ctaEmail" class="sr-only">Email address</label>
+                        <input type="email" id="ctaEmail" placeholder="Enter your work email" aria-label="Work email address">
+                        <button class="btn btn-lg" id="ctaSubmit" style="background:var(--text-primary);color:white">
+                            <i class="fas fa-paper-plane" aria-hidden="true"></i> Get Started Free
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========== AD SLOT 5 - Before Footer ========== -->
+    <div class="ad-slot" aria-label="Advertisement" role="complementary">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space — 728x90</span>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="nav-logo">
+                        <i class="fas fa-bolt" aria-hidden="true"></i>
+                        <span>Follow<span class="logo-accent">Up</span></span>
+                    </a>
+                    <p class="footer-desc">Smart lead management and sales pipeline CRM built for Indian small businesses. Never lose a lead again.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#leads">Lead Management</a></li>
+                        <li><a href="#pipeline">Pipeline</a></li>
+                        <li><a href="#calendar">Calendar</a></li>
+                        <li><a href="#analytics">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Data Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FollowUp CRM. All rights reserved. Made with <i class="fas fa-heart" aria-hidden="true" style="color:var(--danger);"></i> in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== LEAD MODAL ========== -->
+    <div class="modal-overlay" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Add New Lead</div>
+                <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="leadForm" novalidate>
+                    <input type="hidden" id="leadId" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadName">Full Name <span style="color:var(--danger)">*</span></label>
+                            <input type="text" id="leadName" placeholder="e.g., Rahul Kumar" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadEmail">Email <span style="color:var(--danger)">*</span></label>
+                            <input type="email" id="leadEmail" placeholder="e.g., rahul@company.in" required aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadPhone">Phone</label>
+                            <input type="tel" id="leadPhone" placeholder="e.g., +91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label for="leadCompany">Company</label>
+                            <input type="text" id="leadCompany" placeholder="e.g., TechVentures">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadSource">Lead Source</label>
+                            <select id="leadSource">
+                                <option value="">Select source...</option>
+                                <option value="website">Website</option>
+                                <option value="referral">Referral</option>
+                                <option value="social">Social Media</option>
+                                <option value="email">Email Campaign</option>
+                                <option value="cold-call">Cold Call</option>
+                                <option value="event">Event / Trade Show</option>
+                                <option value="ads">Paid Ads</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadStatus">Status <span style="color:var(--danger)">*</span></label>
+                            <select id="leadStatus" required aria-required="true">
+                                <option value="cold">Cold</option>
+                                <option value="warm">Warm</option>
+                                <option value="hot">Hot</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="leadValue">Deal Value (Rs.)</label>
+                            <input type="number" id="leadValue" placeholder="e.g., 150000" min="0" step="1000">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="leadFollowup">Follow-up Date</label>
+                            <input type="date" id="leadFollowup">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="leadNotes">Notes</label>
+                        <textarea id="leadNotes" rows="3" placeholder="Add any relevant notes about this lead..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save" aria-hidden="true"></i> Save Lead
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LEAD DETAIL MODAL ========== -->
+    <div class="modal-overlay" id="leadDetailModal" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="detailModalTitle">Lead Details</div>
+                <button class="modal-close" id="detailModalClose" aria-label="Close detail view">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Lead Header Card -->
+                <div class="detail-header">
+                    <div class="detail-avatar" id="detailAvatar">RK</div>
+                    <div class="detail-header-info">
+                        <h3 class="detail-name" id="detailName">Rahul Kumar</h3>
+                        <p class="detail-company" id="detailCompany">TechVentures</p>
+                        <span class="status-badge" id="detailStatusBadge">Hot</span>
+                    </div>
+                </div>
+
+                <!-- Detail Grid -->
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-item-label"><i class="fas fa-envelope"></i> Email</div>
+                        <div class="detail-item-value" id="detailEmail">rahul@techventures.in</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-label"><i class="fas fa-phone"></i> Phone</div>
+                        <div class="detail-item-value" id="detailPhone">+91 98765 43210</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-label"><i class="fas fa-bullhorn"></i> Lead Source</div>
+                        <div class="detail-item-value" id="detailSource">Website</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-label"><i class="fas fa-rupee-sign"></i> Deal Value</div>
+                        <div class="detail-item-value detail-value-highlight" id="detailValue">Rs.1,50,000</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-item-label"><i class="fas fa-calendar-alt"></i> Follow-up Date</div>
+                        <div class="detail-item-value" id="detailFollowup">15 Jul 2026</div>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div class="detail-notes">
+                    <div class="detail-item-label"><i class="fas fa-sticky-note"></i> Notes</div>
+                    <p class="detail-notes-text" id="detailNotes">No notes for this lead.</p>
+                </div>
+
+                <!-- Activity Timeline Section -->
+                <div class="detail-timeline">
+                    <div class="detail-item-label"><i class="fas fa-history"></i> Activity Timeline</div>
+                    <div class="timeline-container" id="detailTimeline">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Export Timeline Button -->
+                <div class="detail-export" style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;">
+                    <button class="btn btn-outline" id="detailExportTimeline">
+                        <i class="fas fa-download"></i> Export Timeline CSV
+                    </button>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="detail-actions">
+                    <button class="btn btn-outline" id="detailEditBtn">
+                        <i class="fas fa-edit"></i> Edit Lead
+                    </button>
+                    <button class="btn btn-danger" id="detailDeleteBtn">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="paymentModalTitle">Upgrade Your Plan</div>
+                <button class="modal-close" id="paymentClose" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Plan Summary -->
+                <div class="payment-summary">
+                    <div class="summary-row">
+                        <span>Selected Plan</span>
+                        <strong id="payPlanName">Pro</strong>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <strong id="payAmount">Rs.499/month</strong>
+                    </div>
+                </div>
+
+                <!-- UPI ID Display & Copy -->
+                <div class="upi-id-display">
+                    <div class="upi-id-label">UPI ID</div>
+                    <div class="upi-id-row">
+                        <code id="upiIdDisplay">followupcrm@paytm</code>
+                        <button class="btn btn-sm btn-outline" id="copyUpiBtn" aria-label="Copy UPI ID">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code -->
+                <div class="upi-qr">
+                    <div class="qr-placeholder">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Scan QR to Pay</span>
+                    </div>
+                </div>
+
+                <!-- Payment Method Tabs -->
+                <div class="payment-tabs" role="tablist">
+                    <button class="payment-tab active" data-tab="upi" role="tab" aria-selected="true" aria-controls="upiContent">
+                        <i class="fas fa-mobile-alt" aria-hidden="true"></i> UPI
+                    </button>
+                    <button class="payment-tab" data-tab="card" role="tab" aria-selected="false" aria-controls="cardContent">
+                        <i class="fas fa-credit-card" aria-hidden="true"></i> Card
+                    </button>
+                    <button class="payment-tab" data-tab="netbanking" role="tab" aria-selected="false" aria-controls="netbankingContent">
+                        <i class="fas fa-university" aria-hidden="true"></i> Net Banking
+                    </button>
+                </div>
+
+                <!-- UPI Payment Content -->
+                <div class="payment-content active" id="upiContent" role="tabpanel">
+                    <div class="upi-providers">
+                        <button class="upi-provider" onclick="window.open('phonepe://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">📱</span> PhonePe
+                        </button>
+                        <button class="upi-provider" onclick="window.open('paytmmp://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">💙</span> Paytm
+                        </button>
+                        <button class="upi-provider" onclick="window.open('upi://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">🔵</span> Google Pay
+                        </button>
+                        <button class="upi-provider" onclick="window.open('upi://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">🏦</span> BHIM
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Payment Content -->
+                <div class="payment-content" id="cardContent" role="tabpanel">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiry">Expiry</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" inputmode="numeric">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvv">CVV</label>
+                            <input type="password" id="cardCvv" placeholder="123" maxlength="4" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Name on Card</label>
+                        <input type="text" id="cardName" placeholder="As printed on card">
+                    </div>
+                </div>
+
+                <!-- Net Banking Content -->
+                <div class="payment-content" id="netbankingContent" role="tabpanel">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem;font-weight:600;color:var(--text-secondary)">Select your bank:</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="sbi"> SBI
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="hdfc"> HDFC
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="icici"> ICICI
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="axis"> Axis
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="kotak"> Kotak
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="pnb"> PNB
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:1.5rem">
+                    <button class="btn btn-primary btn-block btn-lg" id="payNowBtn">
+                        <i class="fas fa-lock" aria-hidden="true"></i> Pay Rs.499 Securely
+                    </button>
+                    <p class="payment-secure">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i> 256-bit SSL encrypted payment
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ========== CSV IMPORT MODAL ========== -->
+    <div class="modal-overlay" id="importModal" role="dialog" aria-modal="true" aria-labelledby="importModalTitle" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="importModalTitle">Import Leads from CSV</div>
+                <button class="modal-close" id="importClose" aria-label="Close import modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Step 1: Upload -->
+                <div id="importStep1" class="import-step active">
+                    <div class="import-upload-area" id="importDropZone">
+                        <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                        <p class="upload-text">Drag & drop your CSV file here</p>
+                        <p class="upload-subtext">or click to browse</p>
+                        <input type="file" id="csvFileInput" accept=".csv,.txt" aria-label="Upload CSV file">
+                        <button class="btn btn-outline" id="csvBrowseBtn" type="button">
+                            <i class="fas fa-folder-open"></i> Browse Files
+                        </button>
+                    </div>
+                    <div class="import-help">
+                        <p><strong>Expected columns:</strong> name, email, phone, company, source, status, value, followup, notes</p>
+                        <p><strong>Status values:</strong> cold, warm, hot, closed</p>
+                        <p><strong>Date format:</strong> YYYY-MM-DD</p>
+                        <a href="#" id="downloadSampleCsv" class="sample-link"><i class="fas fa-download"></i> Download sample CSV template</a>
+                    </div>
+                </div>
+
+                <!-- Step 2: Preview & Map -->
+                <div id="importStep2" class="import-step">
+                    <div class="import-preview-header">
+                        <p class="import-preview-count"><strong id="previewCount">0</strong> leads found</p>
+                        <div class="import-skip-row">
+                            <label>
+                                <input type="checkbox" id="skipHeaderRow" checked> First row is header
+                            </label>
+                        </div>
+                    </div>
+                    <div class="import-preview-table-wrapper">
+                        <table class="import-preview-table" id="importPreviewTable">
+                            <thead id="importPreviewHead"></thead>
+                            <tbody id="importPreviewBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="import-column-map" id="importColumnMap">
+                        <p class="map-title">Map columns to lead fields:</p>
+                        <div class="map-grid" id="mapGrid"></div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Results -->
+                <div id="importStep3" class="import-step">
+                    <div class="import-results" id="importResults">
+                        <div class="result-icon success"><i class="fas fa-check-circle"></i></div>
+                        <h3 id="resultTitle">Import Successful!</h3>
+                        <p id="resultMessage">0 leads imported successfully.</p>
+                    </div>
+                </div>
+
+                <!-- Import Actions -->
+                <div class="form-actions" id="importActions">
+                    <button type="button" class="btn btn-outline" id="importCancelBtn">Cancel</button>
+                    <button type="button" class="btn btn-outline" id="importBackBtn" style="display:none"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button type="button" class="btn btn-primary" id="importProceedBtn" style="display:none"><i class="fas fa-file-import"></i> Import Leads</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FLOATING ACTION BUTTON (Mobile) ========== -->
+    <button class="fab-add-lead" id="fabAddLead" aria-label="Add new lead">
+        <i class="fas fa-plus" aria-hidden="true"></i>
+    </button>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script src="app.js"></script>
+</body>
+</html>

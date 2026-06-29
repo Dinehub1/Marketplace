@@ -1,0 +1,71 @@
+import { NextRequest, NextResponse } from "next/server";
+import { SITE_FOLDERS } from "./lib/site-folders";
+
+const ADMIN_HOSTS = ["dashboard.cashcard.live", "admin.cashcard.live"];
+
+// All dynamic app routes that should be handled by the brand router.
+// Everything else on a brand subdomain falls through to the static site.
+const APP_PATHS = [
+  "/login", "/register", "/signup", "/forgot-password", "/reset-password",
+  "/dashboard", "/profile", "/settings",
+  "/notifications", "/orders", "/bookings",
+  "/business-dashboard",
+  "/about", "/services", "/products", "/pricing", "/features",
+  "/marketplace", "/listings",
+  "/blog", "/news", "/careers", "/jobs",
+  "/contact", "/faq", "/faqs", "/testimonials", "/reviews",
+  "/gallery", "/portfolio",
+  "/book", "/booking", "/schedule",
+  "/quote", "/request-quote",
+  "/checkout", "/pay",
+  "/support", "/help", "/chat", "/ai-assistant",
+  "/privacy", "/privacy-policy", "/terms", "/terms-conditions",
+];
+
+export function middleware(request: NextRequest) {
+  const host = request.headers.get("host") ?? "";
+  const hostname = host.split(":")[0].toLowerCase();
+  const pathname = request.nextUrl.pathname;
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/favicon.ico") ||
+    pathname.startsWith("/sites/")
+  ) {
+    return NextResponse.next();
+  }
+
+  const parts = hostname.split(".");
+  let brandSlug: string | null = null;
+
+  if (parts.length >= 3) {
+    const root = parts[parts.length - 2];
+    const tld = parts[parts.length - 1];
+    const subdomain = parts[0];
+    if (root === "cashcard" && tld === "live") {
+      if (subdomain !== "www" && subdomain !== "dashboard" && subdomain.length > 0 && !ADMIN_HOSTS.includes(hostname)) {
+        brandSlug = subdomain.toLowerCase();
+      }
+    }
+  }
+
+  if (!brandSlug) return NextResponse.next();
+
+  const isAppPath = APP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  if (isAppPath || !SITE_FOLDERS.has(brandSlug)) {
+    const url = request.nextUrl.clone();
+    url.searchParams.set("__brand_path", pathname);
+    url.pathname = `/brand-router/${brandSlug}`;
+    return NextResponse.rewrite(url);
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = pathname === "/" ? `/sites/${brandSlug}/index.html` : `/sites/${brandSlug}${pathname}`;
+  url.searchParams.delete("__brand_path");
+  return NextResponse.rewrite(url);
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image).*)"],
+};

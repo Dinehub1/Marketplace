@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarDukaan — Seller Dashboard Page v1.0
+    Built by Loop Agent | ZOO Company
+    Features: Dashboard stats, listing management table, review management,
+    analytics charts (CSS-based), recent activity, mobile-first responsive,
+    SEO meta tags, Schema.org JSON-LD, Open Graph
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ===== SEO Meta Tags ===== -->
+  <title>Seller Dashboard — SarkarDukaan | Manage Your Business</title>
+  <meta name="description" content="Manage your business on SarkarDukaan. View analytics, update your listing, respond to reviews, and track your growth — all from one dashboard.">
+  <meta name="keywords" content="seller dashboard, business management, analytics, reviews, SarkarDukaan seller, business listing management">
+  <meta name="author" content="SarkarDukaan">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://sarkardukaan.in/seller-dashboard.html">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Seller Dashboard — SarkarDukaan">
+  <meta property="og:description" content="Manage your business on SarkarDukaan. View analytics, update listings, and respond to reviews.">
+  <meta property="og:url" content="https://sarkardukaan.in/seller-dashboard.html">
+  <meta property="og:site_name" content="SarkarDukaan">
+  <meta property="og:image" content="https://sarkardukaan.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Seller Dashboard — SarkarDukaan">
+  <meta name="twitter:description" content="Manage your business on SarkarDukaan.">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SarkarDukaan Seller Dashboard",
+    "description": "Manage your business listing, view analytics, and respond to reviews.",
+    "url": "https://sarkardukaan.in/seller-dashboard.html",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web"
+  }
+  </script>
+
+  <!-- ===== Stylesheet ===== -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ===== Page-Specific Styles ===== -->
+  <style>
+    /* Dashboard Layout */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: calc(100vh - 72px);
+    }
+    @media (min-width: 768px) {
+      .dashboard-layout { grid-template-columns: 240px 1fr; }
+    }
+
+    /* Sidebar */
+    .dash-sidebar {
+      background: var(--bg-card);
+      border-right: 1px solid rgba(0,0,0,0.06);
+      padding: 1.5rem 0;
+    }
+    .dash-sidebar .brand {
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 1rem;
+    }
+    .dash-sidebar .brand a {
+      text-decoration: none;
+      color: var(--text-primary);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .dash-nav {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .dash-nav li a {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+    .dash-nav li a:hover,
+    .dash-nav li a.active {
+      background: var(--bg-tertiary);
+      color: var(--color-primary);
+      border-left-color: var(--color-primary);
+    }
+
+    /* Main Content */
+    .dash-main {
+      padding: 2rem 1.5rem;
+      background: var(--bg-secondary);
+    }
+    .dash-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .dash-header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .dash-header .btn-new {
+      padding: 0.625rem 1.25rem;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 768px) {
+      .stats-row { grid-template-columns: repeat(4, 1fr); }
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .stat-card .label {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+    .stat-card .value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .stat-card .change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+    .stat-card .change.up { color: #10b981; }
+    .stat-card .change.down { color: #ef4444; }
+
+    /* Dashboard Grid */
+    .dash-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    @media (min-width: 1024px) {
+      .dash-grid { grid-template-columns: 2fr 1fr; }
+    }
+
+    /* Card */
+    .dash-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .dash-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .dash-card-header h3 {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 1.1rem;
+    }
+    .dash-card-header a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    /* Analytics Chart (CSS Bar Chart) */
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.5rem;
+      height: 200px;
+      padding: 1rem 0;
+    }
+    .chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .chart-bar {
+      width: 100%;
+      max-width: 40px;
+      background: linear-gradient(180deg, #7c3aed, #a78bfa);
+      border-radius: 0.375rem 0.375rem 0 0;
+      transition: height 0.5s ease;
+      min-height: 8px;
+    }
+    .chart-label {
+      font-size: 0.7rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+    }
+    .chart-value {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* Listing Table */
+    .listing-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .listing-table th {
+      text-align: left;
+      padding: 0.75rem;
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-bottom: 2px solid var(--bg-tertiary);
+    }
+    .listing-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--bg-tertiary);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    .listing-table td strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .listing-table .status-badge {
+      padding: 0.25rem 0.625rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .status-badge.active { background: #dcfce7; color: #16a34a; }
+    .status-badge.pending { background: #fef3c7; color: #d97706; }
+    .status-badge.suspended { background: #fee2e2; color: #dc2626; }
+
+    /* Review List */
+    .review-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+    .review-item:last-child { border-bottom: none; }
+    .review-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .review-content { flex: 1; }
+    .review-content h4 {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .review-content .stars { color: #f59e0b; font-size: 0.8rem; }
+    .review-content p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      line-height: 1.5;
+    }
+    .review-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .review-actions button {
+      padding: 0.375rem 0.75rem;
+      border: none;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-reply { background: var(--bg-tertiary); color: var(--text-primary); }
+    .btn-resolve { background: #dcfce7; color: #16a34a; }
+
+    /* Activity Feed */
+    .activity-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--bg-tertiary);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 0.375rem;
+      flex-shrink: 0;
+    }
+    .activity-dot.blue { background: #7c3aed; }
+    .activity-dot.green { background: #10b981; }
+    .activity-dot.yellow { background: #f59e0b; }
+    .activity-dot.red { background: #ef4444; }
+    .activity-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .activity-text strong { color: var(--text-primary); }
+    .activity-time {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      margin-top: 0.125rem;
+    }
+
+    /* Mobile sidebar toggle */
+    .sidebar-toggle {
+      display: block;
+      padding: 0.5rem 1rem;
+      background: var(--bg-tertiary);
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 768px) {
+      .sidebar-toggle { display: none; }
+    }
+    @media (max-width: 767px) {
+      .dash-sidebar { display: none; }
+      .dash-sidebar.open { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== TOP NAV BAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">Sarkar<span class="logo-accent">Dukaan</span></span>
+      </a>
+      <div class="nav-actions">
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+          <span class="dark-icon">🌙</span>
+        </button>
+        <span style="color:var(--text-secondary);font-size:0.875rem;font-weight:600;">👤 Rajesh Sharma</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== DASHBOARD LAYOUT ===== -->
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="brand">
+        <a href="index.html">🏪 SarkarDukaan</a>
+      </div>
+      <ul class="dash-nav">
+        <li><a href="#" class="active">📊 Dashboard</a></li>
+        <li><a href="#">🏪 My Listings</a></li>
+        <li><a href="#">⭐ Reviews</a></li>
+        <li><a href="#">📈 Analytics</a></li>
+        <li><a href="#">💰 Payments</a></li>
+        <li><a href="#">📢 Promotions</a></li>
+        <li><a href="#">⚙️ Settings</a></li>
+        <li><a href="index.html">🏠 Back to Site</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+      <div class="dash-header">
+        <h1>📊 Dashboard Overview</h1>
+        <button class="btn-new">+ New Listing</button>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="label">Total Views</div>
+          <div class="value">12,847</div>
+          <div class="change up">↑ 23% vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Profile Visits</div>
+          <div class="value">3,421</div>
+          <div class="change up">↑ 18% vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Customer Calls</div>
+          <div class="value">892</div>
+          <div class="change up">↑ 31% vs last month</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Avg. Rating</div>
+          <div class="value">4.5</div>
+          <div class="change up">↑ 0.2 vs last month</div>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid: Chart + Reviews -->
+      <div class="dash-grid">
+        <!-- Analytics Chart -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>📈 Monthly Views</h3>
+            <a href="#">View Details →</a>
+          </div>
+          <div class="chart-container" id="viewsChart">
+            <!-- Bars generated by JS -->
+          </div>
+        </div>
+
+        <!-- Recent Reviews -->
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>⭐ Recent Reviews</h3>
+            <a href="#">View All →</a>
+          </div>
+          <div class="review-item">
+            <div class="review-avatar">👨</div>
+            <div class="review-content">
+              <h4>Amit Kumar</h4>
+              <div class="stars">★★★★★</div>
+              <p>Great service! Found exactly what I needed. Highly recommended.</p>
+              <div class="review-actions">
+                <button class="btn-reply">Reply</button>
+                <button class="btn-resolve">Resolve</button>
+              </div>
+            </div>
+          </div>
+          <div class="review-item">
+            <div class="review-avatar">👩</div>
+            <div class="review-content">
+              <h4>Priya Singh</h4>
+              <div class="stars">★★★★☆</div>
+              <p>Good products but delivery was a bit slow. Otherwise satisfied.</p>
+              <div class="review-actions">
+                <button class="btn-reply">Reply</button>
+                <button class="btn-resolve">Resolve</button>
+              </div>
+            </div>
+          </div>
+          <div class="review-item">
+            <div class="review-avatar">👴</div>
+            <div class="review-content">
+              <h4>Ramesh Ji</h4>
+              <div class="stars">★★★★★</div>
+              <p>Bahut achha kaam karte hain. Mandir ke liye saman yahan se hi lunga.</p>
+              <div class="review-actions">
+                <button class="btn-reply">Reply</button>
+                <button class="btn-resolve">Resolve</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Listing Management Table -->
+      <div class="dash-card" style="margin-bottom:2rem;">
+        <div class="dash-card-header">
+          <h3>🏪 My Business Listings</h3>
+          <a href="#">Manage All →</a>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="listing-table">
+            <thead>
+              <tr>
+                <th>Business Name</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Views</th>
+                <th>Rating</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Sharma Electronics</strong></td>
+                <td>Electronics</td>
+                <td><span class="status-badge active">Active</span></td>
+                <td>4,521</td>
+                <td>⭐ 4.5</td>
+                <td><a href="#" style="color:var(--color-primary);text-decoration:none;font-weight:600;">Edit</a></td>
+              </tr>
+              <tr>
+                <td><strong>Sharma Mobile Care</strong></td>
+                <td>Mobile Repair</td>
+                <td><span class="status-badge active">Active</span></td>
+                <td>2,187</td>
+                <td>⭐ 4.3</td>
+                <td><a href="#" style="color:var(--color-primary);text-decoration:none;font-weight:600;">Edit</a></td>
+              </tr>
+              <tr>
+                <td><strong>Sharma Home Appliances</strong></td>
+                <td>Appliances</td>
+                <td><span class="status-badge pending">Pending</span></td>
+                <td>0</td>
+                <td>—</td>
+                <td><a href="#" style="color:var(--color-primary);text-decoration:none;font-weight:600;">Edit</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <h3>🔔 Recent Activity</h3>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot green"></div>
+          <div>
+            <div class="activity-text"><strong>New review</strong> received from Amit Kumar — ★★★★★</div>
+            <div class="activity-time">2 minutes ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot blue"></div>
+          <div>
+            <div class="activity-text"><strong>Profile viewed</strong> by 47 new visitors today</div>
+            <div class="activity-time">15 minutes ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot yellow"></div>
+          <div>
+            <div class="activity-text"><strong>Listing update</strong> — Sharma Electronics description updated</div>
+            <div class="activity-time">1 hour ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot green"></div>
+          <div>
+            <div class="activity-text"><strong>Payment received</strong> — ₹499 for Premium plan renewal</div>
+            <div class="activity-time">3 hours ago</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot red"></div>
+          <div>
+            <div class="activity-text"><strong>Review flagged</strong> — A review was flagged for moderation</div>
+            <div class="activity-time">5 hours ago</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ===== SHARED JAVASCRIPT ===== -->
+  <script src="app.js"></script>
+  <script>
+    // Generate CSS bar chart for monthly views
+    const chartData = [
+      { month: 'Jan', value: 65 },
+      { month: 'Feb', value: 45 },
+      { month: 'Mar', value: 78 },
+      { month: 'Apr', value: 62 },
+      { month: 'May', value: 88 },
+      { month: 'Jun', value: 95 },
+      { month: 'Jul', value: 72 },
+      { month: 'Aug', value: 85 },
+      { month: 'Sep', value: 68 },
+      { month: 'Oct', value: 92 },
+      { month: 'Nov', value: 78 },
+      { month: 'Dec', value: 100 },
+    ];
+    const chartContainer = document.getElementById('viewsChart');
+    if (chartContainer) {
+      chartData.forEach(d => {
+        const group = document.createElement('div');
+        group.className = 'chart-bar-group';
+        group.innerHTML = `
+          <div class="chart-value">${d.value > 90 ? '🔥' : ''}</div>
+          <div class="chart-bar" style="height:${d.value}%"></div>
+          <div class="chart-label">${d.month}</div>
+        `;
+        chartContainer.appendChild(group);
+      });
+    }
+
+    // Sidebar navigation
+    document.querySelectorAll('.dash-nav a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.dash-nav a').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# FollowUp CRM - robots.txt
+# https://followupcrm.in/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://followupcrm.in/sitemap.xml
+
+# Crawl-delay for respectful bots
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 1

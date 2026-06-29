@@ -1,0 +1,13 @@
+# robots.txt for PaisaFlow
+# https://paisaflow.in/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://paisaflow.in/sitemap.xml
+
+# Disallow common non-content paths (for future use)
+# Disallow: /api/
+# Disallow: /admin/
+# Disallow: /private/

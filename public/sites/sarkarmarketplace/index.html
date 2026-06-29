@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        Sarkar AI — AI-Powered Business Directory
+        Modern, responsive landing page with AI search, category explorer, and smart features.
+        Built with HTML5, CSS3 (Flexbox/Grid), vanilla JavaScript.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>Sarkar AI — AI-Powered Business Directory | Find Any Business Instantly</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="Sarkar AI is India's smartest business directory. AI-powered search, auto-categorization, sentiment analysis, and instant business discovery. Find restaurants, doctors, salons, and more in seconds.">
+
+    <!-- SEO: Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="Sarkar AI — AI-Powered Business Directory">
+    <meta property="og:description" content="Find any business instantly with AI. Smart search, auto-categorization, and real-time recommendations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarai.in">
+    <meta property="og:image" content="https://sarkarai.in/og-image.png">
+    <meta property="og:site_name" content="Sarkar AI">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- SEO: Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Sarkar AI — AI-Powered Business Directory">
+    <meta name="twitter:description" content="Find any business instantly with AI-powered search and recommendations.">
+    <meta name="twitter:image" content="https://sarkarai.in/twitter-card.png">
+
+    <!-- SEO: Additional Meta Tags -->
+    <meta name="keywords" content="business directory, AI search, local business, India, Sarkar AI, smart recommendations, UPI payments">
+    <meta name="author" content="Sarkar AI">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sarkarai.in">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- SEO: Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Sarkar AI",
+        "url": "https://sarkarai.in",
+        "logo": "https://sarkarai.in/logo.png",
+        "description": "India's smartest AI-powered business directory with intelligent search and auto-categorization.",
+        "sameAs": [
+            "https://twitter.com/sarkarai",
+            "https://facebook.com/sarkarai",
+            "https://linkedin.com/company/sarkarai"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-1800-987-6543",
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Hindi"]
+        }
+    }
+    </script>
+
+    <!-- Schema.org: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Sarkar AI",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Android, iOS, Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "250000"
+        }
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- QR Code Library (lightweight, ~30KB) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight"> AI</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#list-business">List Business</a></li>
+                <li><a href="#testimonials">Reviews</a></li>
+            </ul>
+
+            <!-- Desktop CTA Buttons -->
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="theme-icon" id="themeIcon">🌙</span>
+                </button>
+                <button class="btn btn-ghost" onclick="openLoginModal()">Log In</button>
+                <button class="btn btn-primary" onclick="openSignupModal()">Get Started</button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero" id="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="hero-badge">⚡ Powered by GPT-Level AI</span>
+                <h1 class="hero-title">
+                    Find Any Business<br>
+                    <span class="gradient-text">In <span id="typingText"></span><span class="cursor">|</span></span>
+                </h1>
+                <p class="hero-subtitle">
+                    India's smartest AI-powered business directory. Search in Hindi, English, or Hinglish — our AI understands intent, sentiment, and location to give you perfect results.
+                </p>
+
+                <!-- AI Search Bar -->
+                <div class="ai-search-bar">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="aiSearchInput" class="ai-search-input" placeholder="Try: 'best dhaba near Delhi' or 'lady doctor in Mumbai'" autocomplete="off">
+                        <button class="voice-search-btn" aria-label="Voice search">🎤</button>
+                    </div>
+                    <button class="btn btn-primary btn-search" onclick="performAiSearch()">Ask AI</button>
+                </div>
+                <div class="search-suggestions">
+                    <span class="suggestion-label">Trending:</span>
+                    <span class="suggestion-tag" onclick="setSearch('AC repair near me')">AC repair near me</span>
+                    <span class="suggestion-tag" onclick="setSearch('Biryani in Hyderabad')">Biryani in Hyderabad</span>
+                    <span class="suggestion-tag" onclick="setSearch('Cheapest petrol pump')">Cheapest petrol pump</span>
+                </div>
+
+                <!-- ========== RECENT SEARCHES ========== -->
+                <!-- Shows user's recent search queries from localStorage -->
+                <div class="recent-searches" id="recentSearches" style="display: none;">
+                    <div class="recent-searches-header">
+                        <div>
+                            <span class="recent-searches-label">🕐 Recent Searches</span>
+                            <span class="recent-searches-count" id="recentSearchesCount"></span>
+                        </div>
+                        <button class="recent-searches-clear" id="recentSearchesClear" onclick="clearRecentSearches()" aria-label="Clear all recent searches">
+                            ✕ Clear all
+                        </button>
+                    </div>
+                    <div class="recent-searches-list" id="recentSearchesList" role="list" aria-label="Recent search queries">
+                        <!-- Chips injected by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" data-target="50" data-suffix="L+">0</span>
+                        <span class="stat-label">Businesses</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="1000" data-suffix="+">0</span>
+                        <span class="stat-label">Categories</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="98" data-suffix="%">0</span>
+                        <span class="stat-label">AI Accuracy</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="2" data-suffix="Cr+">0</span>
+                        <span class="stat-label">Searches/Month</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- AI Visualization -->
+                <div class="ai-visual">
+                    <div class="ai-brain">
+                        <div class="brain-core">🧠</div>
+                        <div class="brain-pulse"></div>
+                    </div>
+                    <div class="ai-cards">
+                        <div class="ai-card ai-card-1">
+                            <span class="card-emoji">🍽️</span>
+                            <span class="card-text">42 Restaurants</span>
+                        </div>
+                        <div class="ai-card ai-card-2">
+                            <span class="card-emoji">👨‍⚕️</span>
+                            <span class="card-text">18 Doctors</span>
+                        </div>
+                        <div class="ai-card ai-card-3">
+                            <span class="card-emoji">🏪</span>
+                            <span class="card-text">156 Shops</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Background Decoration -->
+        <div class="hero-bg-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+            <div class="circle circle-4"></div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 1 - Top Banner ========== -->
+    <div class="ad-slot ad-slot-top" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== TRUSTED BY / LOGOS SECTION ========== -->
+    <section class="trusted-by">
+        <div class="container">
+            <p class="trusted-label">Trusted by leading Indian businesses and institutions</p>
+            <div class="logo-strip">
+                <div class="logo-item">🏛️ Municipal Corp</div>
+                <div class="logo-item">🏪 Reliance Retail</div>
+                <div class="logo-item">🏥 Apollo Hospitals</div>
+                <div class="logo-item">🎓 DigiSchool</div>
+                <div class="logo-item">🏦 SBI</div>
+                <div class="logo-item">🛒 DMart</div>
+                <div class="logo-item">🍕 Domino's</div>
+                <div class="logo-item">🏨 OYO</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AI FEATURES SECTION ========== -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">AI Features</span>
+                <h2 class="section-title">Smart Technology That <span class="gradient-text">Understands India</span></h2>
+                <p class="section-subtitle">Our proprietary AI engine handles India's linguistic diversity, local context, and business complexity.</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1: NLP Search -->
+                <div class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3 class="feature-title">Bhasha NLP Search</h3>
+                    <p class="feature-description">Search in Hindi, Tamil, Bengali, or Hinglish. Our AI understands "paas wala dhaba" just as well as "nearby restaurant."</p>
+                    <div class="feature-tag">15+ Indian Languages</div>
+                </div>
+
+                <!-- Feature 2: Auto Categorization -->
+                <div class="feature-card">
+                    <div class="feature-icon">🏷️</div>
+                    <h3 class="feature-title">Auto-Categorization</h3>
+                    <p class="feature-description">AI automatically classifies businesses into 1000+ categories. No manual tagging needed — just list and we handle the rest.</p>
+                    <div class="feature-tag">1000+ Categories</div>
+                </div>
+
+                <!-- Feature 3: Sentiment Analysis -->
+                <div class="feature-card">
+                    <div class="feature-icon">😊</div>
+                    <h3 class="feature-title">Sentiment Analysis</h3>
+                    <p class="feature-description">We analyze reviews in any Indian language to give businesses an AI-powered reputation score. Fake review detection included.</p>
+                    <div class="feature-tag">95% Fake Review Detection</div>
+                </div>
+
+                <!-- Feature 4: Smart Recommendations -->
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Smart Recommendations</h3>
+                    <p class="feature-description">Based on time, location, weather, and your preferences. Suggest monsoon cafés when it's raining, late-night pharmacies at 2 AM.</p>
+                    <div class="feature-tag">Context-Aware</div>
+                </div>
+
+                <!-- Feature 5: Voice Search -->
+                <div class="feature-card">
+                    <div class="feature-icon">🎙️</div>
+                    <h3 class="feature-title">Voice-First Search</h3>
+                    <p class="feature-description">Speak naturally in any Indian language. Our AI transcribes, translates, and searches in real-time. Perfect for Indian users.</p>
+                    <div class="feature-tag">Works Offline Mode</div>
+                </div>
+
+                <!-- Feature 6: AI Insights -->
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">AI Insights Dashboard</h3>
+                    <p class="feature-description">For business owners: know your customers better. Track sentiment trends, competitor analysis, and market opportunities.</p>
+                    <div class="feature-tag">Real-Time Analytics</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 - Between Sections ========== -->
+    <div class="ad-slot ad-slot-features" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90</span>
+        </div>
+    </div>
+
+    <!-- ========== CATEGORIES EXPLORER ========== -->
+    <section class="categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Explore</span>
+                <h2 class="section-title">Browse by <span class="gradient-text">Category</span></h2>
+                <p class="section-subtitle">AI-organized categories covering every business in India</p>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card" data-category="food">
+                    <div class="category-icon">🍽️</div>
+                    <h3 class="category-name">Food & Dining</h3>
+                    <p class="category-count">12.5L businesses</p>
+                    <div class="category-examples">Restaurants • Dhabas • Cafes • Bakeries • Street Food</div>
+                </div>
+                <div class="category-card" data-category="health">
+                    <div class="category-icon">🏥</div>
+                    <h3 class="category-name">Healthcare</h3>
+                    <p class="category-count">8.2L businesses</p>
+                    <div class="category-examples">Hospitals • Clinics • Pharmacies • Labs • Dentists</div>
+                </div>
+                <div class="category-card" data-category="retail">
+                    <div class="category-icon">🛍️</div>
+                    <h3 class="category-name">Shopping & Retail</h3>
+                    <p class="category-count">15.7L businesses</p>
+                    <div class="category-examples">Clothing • Electronics • Grocery • Jewelry • Furniture</div>
+                </div>
+                <div class="category-card" data-category="services">
+                    <div class="category-icon">🔧</div>
+                    <h3 class="category-name">Home Services</h3>
+                    <p class="category-count">6.8L businesses</p>
+                    <div class="category-examples">Plumbers • Electricians • AC Repair • Cleaning • Carpenters</div>
+                </div>
+                <div class="category-card" data-category="education">
+                    <div class="category-icon">📚</div>
+                    <h3 class="category-name">Education</h3>
+                    <p class="category-count">4.3L businesses</p>
+                    <div class="category-examples">Schools • Coaching • Tuitions • Online Courses • Libraries</div>
+                </div>
+                <div class="category-card" data-category="beauty">
+                    <div class="category-icon">💇</div>
+                    <h3 class="category-name">Beauty & Wellness</h3>
+                    <p class="category-count">3.9L businesses</p>
+                    <div class="category-examples">Salons • Spas • Gyms • Yoga • Skin Care</div>
+                </div>
+                <div class="category-card" data-category="auto">
+                    <div class="category-icon">🚗</div>
+                    <h3 class="category-name">Automotive</h3>
+                    <p class="category-count">5.1L businesses</p>
+                    <div class="category-examples">Mechanics • Car Wash • Spare Parts • Dealers • Insurance</div>
+                </div>
+                <div class="category-card" data-category="travel">
+                    <div class="category-icon">✈️</div>
+                    <h3 class="category-name">Travel & Hotels</h3>
+                    <p class="category-count">2.8L businesses</p>
+                    <div class="category-examples">Hotels • Travel Agencies • Taxis • Tours • Homestays</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS SECTION ========== -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">How It Works</span>
+                <h2 class="section-title">From Search to <span class="gradient-text">Discovery in Seconds</span></h2>
+                <p class="section-subtitle">Our AI engine does the heavy lifting so you can find what you need instantly.</p>
+            </div>
+
+            <div class="steps-container">
+                <!-- Step 1 -->
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Ask in Your Language</h3>
+                        <p class="step-description">Type or speak in Hindi, English, Tamil, or any Indian language. Use natural phrases like "bhookh lagi hai, kuch tasty milega paas mein?"</p>
+                    </div>
+                    <div class="step-visual">🗣️</div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">AI Understands Intent</h3>
+                        <p class="step-description">Our NLP engine parses your query, detects language, understands context (time, location, weather), and identifies what you really want.</p>
+                    </div>
+                    <div class="step-visual">🧠</div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Smart Results</h3>
+                        <p class="step-description">Get ranked, personalized results with AI scores, sentiment analysis, distance, and your past preferences all factored in.</p>
+                    </div>
+                    <div class="step-visual">🎯</div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Connect & Pay</h3>
+                        <p class="step-description">Call, navigate, book appointments, or pay via UPI — all within the same interface. No app switching needed.</p>
+                    </div>
+                    <div class="step-visual">💳</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 - Between Sections ========== -->
+    <div class="ad-slot ad-slot-pricing" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 300x250 Rectangle</span>
+        </div>
+    </div>
+
+    <!-- ========== LIST YOUR BUSINESS SECTION ========== -->
+    <section class="list-business" id="list-business">
+        <div class="container">
+            <div class="lb-header">
+                <span class="section-badge">For Businesses</span>
+                <h2 class="section-title">List Your Business <span class="gradient-text">&mdash; Get Found Instantly</span></h2>
+                <p class="section-subtitle">Join 50 lakh+ businesses already on Sarkar AI. Free listing, AI-powered visibility, and real-time customer insights.</p>
+            </div>
+
+            <div class="lb-content">
+                <!-- Left: Benefits -->
+                <div class="lb-benefits">
+                    <div class="lb-benefit">
+                        <div class="lb-benefit-icon">&#128640;</div>
+                        <div class="lb-benefit-text">
+                            <h4>Instant Visibility</h4>
+                            <p>Appear in AI search results within 24 hours. No waiting, no manual approvals.</p>
+                        </div>
+                    </div>
+                    <div class="lb-benefit">
+                        <div class="lb-benefit-icon">&#129302;</div>
+                        <div class="lb-benefit-text">
+                            <h4>AI-Powered Insights</h4>
+                            <p>Know what customers love. Get sentiment analysis, competitor tracking, and market trends.</p>
+                        </div>
+                    </div>
+                    <div class="lb-benefit">
+                        <div class="lb-benefit-icon">&#128176;</div>
+                        <div class="lb-benefit-text">
+                            <h4>Free to Start</h4>
+                            <p>Basic listing is free forever. Upgrade only when you need advanced analytics.</p>
+                        </div>
+                    </div>
+                    <div class="lb-benefit">
+                        <div class="lb-benefit-icon">&#128241;</div>
+                        <div class="lb-benefit-text">
+                            <h4>Voice &amp; Hindi Search</h4>
+                            <p>Get discovered when customers search in their language &#8212; Hindi, Tamil, Hinglish, and more.</p>
+                        </div>
+                    </div>
+
+                    <!-- Trust strip -->
+                    <div class="lb-trust-strip">
+                        <div class="lb-trust-item">
+                            <span class="lb-trust-number">50L+</span>
+                            <span class="lb-trust-label">Businesses Listed</span>
+                        </div>
+                        <div class="lb-trust-item">
+                            <span class="lb-trust-number">2Cr+</span>
+                            <span class="lb-trust-label">Monthly Searches</span>
+                        </div>
+                        <div class="lb-trust-item">
+                            <span class="lb-trust-number">4.8&#9733;</span>
+                            <span class="lb-trust-label">Average Rating</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Lead Capture Form -->
+                <div class="lb-form-card">
+                    <div class="lb-form-header">
+                        <h3>Start Your Free Listing</h3>
+                        <p>Fill in your details and we&#8217;ll get you online in 24 hours.</p>
+                    </div>
+                    <form id="listBusinessForm" onsubmit="processListBusiness(event)">
+                        <div class="form-group">
+                            <label for="lbBusinessName" class="form-label">Business Name *</label>
+                            <input type="text" id="lbBusinessName" class="form-input" placeholder="e.g., Sharma Sweets &amp; Restaurant" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lbCategory" class="form-label">Category *</label>
+                                <select id="lbCategory" class="form-input form-select" required>
+                                    <option value="" disabled selected>Select category</option>
+                                    <option value="food">&#127869; Food &amp; Dining</option>
+                                    <option value="health">&#127973; Healthcare</option>
+                                    <option value="retail">&#128717; Shopping &amp; Retail</option>
+                                    <option value="services">&#128295; Home Services</option>
+                                    <option value="education">&#128218; Education</option>
+                                    <option value="beauty">&#128135; Beauty &amp; Wellness</option>
+                                    <option value="auto">&#128663; Automotive</option>
+                                    <option value="travel">&#128747; Travel &amp; Hotels</option>
+                                    <option value="other">&#128203; Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="lbCity" class="form-label">City *</label>
+                                <input type="text" id="lbCity" class="form-input" placeholder="e.g., Mumbai" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="lbOwnerName" class="form-label">Owner Name *</label>
+                                <input type="text" id="lbOwnerName" class="form-input" placeholder="Your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lbMobile" class="form-label">Mobile Number *</label>
+                                <div class="mobile-input-wrapper">
+                                    <span class="mobile-prefix">+91</span>
+                                    <input type="tel" id="lbMobile" class="form-input mobile-input-with-prefix" placeholder="98765 43210" maxlength="11" inputmode="numeric" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lbEmail" class="form-label">Email (Optional)</label>
+                            <input type="email" id="lbEmail" class="form-input" placeholder="you@business.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="lbPlan" class="form-label">Interested Plan</label>
+                            <select id="lbPlan" class="form-input form-select">
+                                <option value="free" selected>Free &#8212; Basic Listing</option>
+                                <option value="pro">Business Pro &#8212; &#8377;499/month</option>
+                                <option value="enterprise">Enterprise &#8212; &#8377;2,999/month</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <span class="btn-icon">&#128640;</span> Submit Listing Request
+                        </button>
+                        <p class="lb-form-note">By submitting, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. We&#8217;ll contact you within 24 hours.</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== PRICING SECTION ========== -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing</span>
+                <h2 class="section-title">Plans That <span class="gradient-text">Scale With You</span></h2>
+                <p class="section-subtitle">Free for users. Businesses choose from flexible plans.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Free</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹0</span>
+                            <span class="price-period">/forever</span>
+                        </div>
+                        <p class="pricing-tagline">For everyone in India</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Unlimited AI searches</li>
+                        <li>✓ Voice search in all languages</li>
+                        <li>✓ Business details & photos</li>
+                        <li>✓ Call & navigate</li>
+                        <li>✓ UPI payments</li>
+                        <li>✓ Community reviews</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openSignupModal()">Start Free</button>
+                </div>
+
+                <!-- Pro Plan (Featured) -->
+                <div class="pricing-card pricing-card-featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Business Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹499</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-tagline">For growing businesses</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Free</li>
+                        <li>✓ AI Insights Dashboard</li>
+                        <li>✓ Sentiment monitoring</li>
+                        <li>✓ Competitor analysis</li>
+                        <li>✓ Priority listing</li>
+                        <li>✓ Verified badge</li>
+                        <li>✓ WhatsApp integration</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="openUpiModal()">Upgrade to Pro</button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Enterprise</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹2,999</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-tagline">For chains & franchises</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Pro</li>
+                        <li>✓ Multi-location management</li>
+                        <li>✓ API access</li>
+                        <li>✓ Custom AI model training</li>
+                        <li>✓ White-label options</li>
+                        <li>✓ Dedicated account manager</li>
+                        <li>✓ SLA guarantee</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openSignupModal()">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS SECTION ========== -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Reviews</span>
+                <h2 class="section-title">Loved by <span class="gradient-text">Millions</span></h2>
+                <p class="section-subtitle">See what users and businesses say about Sarkar AI.</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"I searched 'achha khana paas mein' in Hindi and it actually understood! Found amazing local restaurants Google would never show. Sarkar AI is magic."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <span class="author-name">Priya Sharma</span>
+                            <span class="author-role">User, Jaipur</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"As a salon owner, the AI Insights Dashboard helped me understand what customers love about my business. My footfall increased 40% after I acted on the recommendations."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RJ</div>
+                        <div class="author-info">
+                            <span class="author-name">Rekha Joshi</span>
+                            <span class="author-role">Salon Owner, Pune</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"The sentiment analysis is incredible. It caught fake reviews on my competitor's listing and highlighted what customers actually care about. Game-changer for small businesses."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AK</div>
+                        <div class="author-info">
+                            <span class="author-name">Arjun Kapoor</span>
+                            <span class="author-role">Restaurant Owner, Mumbai</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Discover Smarter?</h2>
+                <p class="cta-subtitle">Join 2 crore+ Indians who use Sarkar AI to find, choose, and connect with businesses.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-white btn-lg" onclick="openUpiModal()">
+                        <span class="btn-icon">⚡</span>
+                        Try Sarkar AI Free
+                    </button>
+                    <button class="btn btn-ghost-light btn-lg" onclick="scrollToSection('pricing')">
+                        View Pricing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 - Before Footer ========== -->
+    <div class="ad-slot ad-slot-footer" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Footer Banner</span>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Footer Brand -->
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">🤖</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight"> AI</span></span>
+                    </a>
+                    <p class="footer-description">India's smartest AI-powered business directory. Find any business, in any language, instantly.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                        <a href="#" class="social-link" aria-label="Facebook">f</a>
+                        <a href="#" class="social-link" aria-label="Instagram">📷</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                    </div>
+                </div>
+
+                <!-- Footer Links: Product -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Product</h4>
+                    <ul>
+                        <li><a href="#features">AI Features</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Mobile App</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Company -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Support -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#list-business">List Your Business</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; <span id="footerYear"></span> Sarkar AI Technologies Pvt. Ltd. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="upiModal" role="dialog" aria-modal="true" aria-labelledby="upiModalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closeUpiModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="upiModalTitle">💳 Pay with UPI</h3>
+                <p class="modal-subtitle">Upgrade your business plan securely via UPI</p>
+            </div>
+            <div class="modal-body">
+                <!-- Payee UPI ID -->
+                <div class="upi-payee-card">
+                    <div class="upi-payee-label">Pay to UPI ID</div>
+                    <div class="upi-payee-id-row">
+                        <span class="upi-payee-id" id="payeeUpiId">sarkarai@hdfcbank</span>
+                        <button class="upi-copy-btn" onclick="copyPayeeUPI()" aria-label="Copy UPI ID">
+                            <span id="copyIcon">📋</span> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UPI App Selector -->
+                <div class="upi-app-selector">
+                    <p class="upi-app-label">Choose your UPI app:</p>
+                    <div class="upi-app-grid">
+                        <button class="upi-app-btn" onclick="openUpiApp('gpay')" aria-label="Pay with Google Pay">
+                            <span class="upi-app-icon">🟦</span>
+                            <span class="upi-app-name">Google Pay</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('phonepe')" aria-label="Pay with PhonePe">
+                            <span class="upi-app-icon">🟪</span>
+                            <span class="upi-app-name">PhonePe</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('paytm')" aria-label="Pay with Paytm">
+                            <span class="upi-app-icon">🔵</span>
+                            <span class="upi-app-name">Paytm</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('bhim')" aria-label="Pay with BHIM">
+                            <span class="upi-app-icon">🟦</span>
+                            <span class="upi-app-name">BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="modal-divider">
+                    <span>OR Enter Details</span>
+                </div>
+
+                <!-- UPI Form -->
+                <form id="upiForm" onsubmit="processUpiPayment(event)">
+                    <div class="form-group">
+                        <label for="upiId" class="form-label">Your UPI ID</label>
+                        <input type="text" id="upiId" class="form-input" placeholder="yourname@upi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="upiAmount" class="form-label">Amount (₹)</label>
+                        <input type="number" id="upiAmount" class="form-input" placeholder="Enter amount" min="1" max="100000" value="499" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="upiNote" class="form-label">Note (Optional)</label>
+                        <input type="text" id="upiNote" class="form-input" placeholder="e.g., Business Pro subscription">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <span class="btn-icon">⚡</span> Pay Now
+                    </button>
+                </form>
+
+                <!-- QR Code Section -->
+                <div class="modal-divider">
+                    <span>OR Scan QR Code to Pay</span>
+                </div>
+
+                <div class="qr-section">
+                    <canvas id="upiQrCanvas" width="180" height="180" class="qr-canvas" aria-label="UPI payment QR code" role="img"></canvas>
+                    <p class="qr-text">Open any UPI app and scan this QR code to pay</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SIGNUP MODAL ========== -->
+    <div class="modal-overlay" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupModalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closeSignupModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="signupModalTitle">Get Started with Sarkar AI</h3>
+                <p class="modal-subtitle">Free forever for users. Business plans available.</p>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm" onsubmit="processSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName" class="form-label">Full Name</label>
+                        <input type="text" id="signupName" class="form-input" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupMobile" class="form-label">Mobile Number</label>
+                        <div class="mobile-input-wrapper">
+                            <span class="mobile-prefix">+91</span>
+                            <input type="tel" id="signupMobile" class="form-input mobile-input-with-prefix" placeholder="98765 43210" maxlength="11" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail" class="form-label">Email (Optional)</label>
+                        <input type="email" id="signupEmail" class="form-input" placeholder="you@example.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Free Account</button>
+                </form>
+                <p class="modal-footer-text">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LOGIN MODAL ========== -->
+    <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closeLoginModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="loginModalTitle">Welcome Back</h3>
+                <p class="modal-subtitle">Log in to your Sarkar AI account</p>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" onsubmit="processLogin(event)">
+                    <div class="form-group">
+                        <label for="loginMobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="loginMobile" class="form-input" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPin" class="form-label">4-Digit PIN</label>
+                        <input type="password" id="loginPin" class="form-input" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </form>
+                <p class="modal-footer-text"><a href="#">Forgot PIN?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SUCCESS TOAST ========== -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage">Success!</span>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <!-- ========== META & SEO ========== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SarkarGhar - Find government schemes you're eligible for. Search 500+ central & state schemes, check eligibility, track applications, and get AI-powered recommendations. Free scheme finder portal.">
+  <meta name="keywords" content="government schemes, scheme finder, eligibility checker, SarkarGhar, central government schemes, state schemes, subsidy, pension, education scheme, health scheme">
+  <meta name="author" content="SarkarGhar">
+  <meta name="robots" content="index, follow">
+  <title>SarkarGhar - Government Scheme Finder & Eligibility Portal</title>
+
+  <!-- ========== Open Graph ========== -->
+  <meta property="og:title" content="SarkarGhar - Government Scheme Finder & Eligibility Portal">
+  <meta property="og:description" content="Find government schemes you're eligible for. Search 500+ central & state schemes, check eligibility, track applications, and get AI-powered recommendations.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkargahar.gov.in">
+  <meta property="og:image" content="https://sarkargahar.gov.in/og-image.png">
+  <meta property="og:site_name" content="SarkarGhar">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ========== Twitter Card ========== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SarkarGhar - Government Scheme Finder">
+  <meta name="twitter:description" content="Find government schemes you're eligible for. Search 500+ schemes with AI-powered recommendations.">
+
+  <!-- ========== Schema.org JSON-LD ========== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "GovernmentService",
+    "name": "SarkarGhar",
+    "description": "Government Scheme Finder & Eligibility Portal - Search 500+ central and state government schemes",
+    "url": "https://sarkargahar.gov.in",
+    "serviceType": "Scheme Finder",
+    "areaServed": "India",
+    "availableLanguage": ["English", "Hindi"],
+    "provider": {
+      "@type": "Organization",
+      "name": "SarkarGhar",
+      "url": "https://sarkargahar.gov.in"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://sarkargahar.gov.in/search?q={search_term}",
+      "query-input": "required name=search_term"
+    }
+  }
+  </script>
+
+  <!-- ========== Canonical ========== -->
+  <link rel="canonical" href="https://sarkargahar.gov.in">
+
+  <!-- ========== Styles ========== -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ========== SKIP LINK (Accessibility) ========== -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <a href="#" class="nav-logo" aria-label="SarkarGhar Home">
+        <span class="logo-icon">🏛️</span>
+        <span class="logo-text">Sarkar<span class="logo-accent">Ghar</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero" class="nav-link active">Home</a></li>
+        <li><a href="#categories" class="nav-link">Categories</a></li>
+        <li><a href="#schemes" class="nav-link">Schemes</a></li>
+        <li><a href="#eligibility" class="nav-link">Check Eligibility</a></li>
+        <li><a href="#tracker" class="nav-link">Track Application</a></li>
+        <li><a href="#pricing" class="nav-link">Premium</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <button class="btn btn-primary btn-nav" id="navCta">Get Started</button>
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="main-content">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge">🇮🇳 Trusted by 25 Lakh+ Families</div>
+          <h1 class="hero-title">Find Government <span class="gradient-text">Schemes</span> You're Eligible For</h1>
+          <p class="hero-subtitle">Search 500+ central & state government schemes. Check eligibility in 60 seconds. Track applications in real-time. Get AI-powered recommendations.</p>
+
+          <!-- Hero Search Bar -->
+          <div class="hero-search" role="search">
+            <div class="search-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" id="heroSearch" placeholder="Search schemes by name, category, or benefit..." aria-label="Search government schemes">
+              <button class="btn btn-primary btn-search" id="heroSearchBtn">Search</button>
+            </div>
+            <div class="search-suggestions" id="searchSuggestions"></div>
+          </div>
+
+          <!-- Quick Tags -->
+          <div class="quick-tags">
+            <span class="quick-tag-label">Popular:</span>
+            <button class="quick-tag" data-query="PM Kisan">PM Kisan</button>
+            <button class="quick-tag" data-query="Ayushman Bharat">Ayushman Bharat</button>
+            <button class="quick-tag" data-query="Education Scholarship">Education Scholarship</button>
+            <button class="quick-tag" data-query="Housing">Housing Scheme</button>
+            <button class="quick-tag" data-query="Pension">Pension Yojana</button>
+          </div>
+
+          <!-- Hero Stats -->
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number" data-count="500">0</span><span class="stat-suffix">+</span>
+              <span class="stat-label">Schemes Listed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-count="25">0</span><span class="stat-suffix">L+</span>
+              <span class="stat-label">Families Helped</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-count="3800">0</span><span class="stat-suffix">Cr+</span>
+              <span class="stat-label">Benefits Disbursed</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-count="98">0</span><span class="stat-suffix">%</span>
+              <span class="stat-label">Success Rate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 1 ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span class="ad-label">Ad</span>
+        <p>Advertisement Space — 728x90 Leaderboard</p>
+      </div>
+    </div>
+
+    <!-- ===== CATEGORIES SECTION ===== -->
+    <section class="section categories" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Browse by Category</span>
+          <h2 class="section-title">Scheme <span class="gradient-text">Categories</span></h2>
+          <p class="section-subtitle">Explore government schemes across 8 major categories. Find the right scheme for your needs.</p>
+        </div>
+        <div class="categories-grid" id="categoriesGrid">
+          <!-- Category cards generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURED SCHEMES ===== -->
+    <section class="section schemes" id="schemes">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Popular Schemes</span>
+          <h2 class="section-title">Featured <span class="gradient-text">Government Schemes</span></h2>
+          <p class="section-subtitle">Most applied schemes this month. Check eligibility and apply directly.</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs" role="tablist">
+          <button class="filter-tab active" data-filter="all" role="tab">All Schemes</button>
+          <button class="filter-tab" data-filter="agriculture" role="tab">Agriculture</button>
+          <button class="filter-tab" data-filter="education" role="tab">Education</button>
+          <button class="filter-tab" data-filter="health" role="tab">Health</button>
+          <button class="filter-tab" data-filter="housing" role="tab">Housing</button>
+          <button class="filter-tab" data-filter="pension" role="tab">Pension</button>
+          <button class="filter-tab" data-filter="women" role="tab">Women & Child</button>
+        </div>
+
+        <div class="schemes-grid" id="schemesGrid">
+          <!-- Scheme cards generated by JS -->
+        </div>
+
+        <div class="section-cta">
+          <button class="btn btn-outline" id="loadMoreSchemes">Load More Schemes →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 2 ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span class="ad-label">Ad</span>
+        <p>Advertisement Space — 728x90 Leaderboard</p>
+      </div>
+    </div>
+
+    <!-- ===== ELIGIBILITY CHECKER ===== -->
+    <section class="section eligibility" id="eligibility">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Eligibility Checker</span>
+          <h2 class="section-title">Check Your <span class="gradient-text">Eligibility</span></h2>
+          <p class="section-subtitle">Answer a few questions to find schemes you qualify for. Takes less than 60 seconds.</p>
+        </div>
+
+        <div class="eligibility-wrapper">
+          <!-- Progress Bar -->
+          <div class="eligibility-progress" id="eligibilityProgress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-steps">
+              <span class="progress-step active" data-step="1">Category</span>
+              <span class="progress-step" data-step="2">Age</span>
+              <span class="progress-step" data-step="3">Income</span>
+              <span class="progress-step" data-step="4">Location</span>
+              <span class="progress-step" data-step="5">Results</span>
+            </div>
+          </div>
+
+          <!-- Multi-step Form -->
+          <form class="eligibility-form" id="eligibilityForm" onsubmit="return false;">
+            <!-- Step 1: Category -->
+            <div class="form-step active" data-step="1">
+              <h3>What type of scheme are you looking for?</h3>
+              <div class="option-grid">
+                <label class="option-card">
+                  <input type="radio" name="category" value="agriculture">
+                  <span class="option-icon">🌾</span>
+                  <span class="option-label">Agriculture</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="category" value="education">
+                  <span class="option-icon">📚</span>
+                  <span class="option-label">Education</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="category" value="health">
+                  <span class="option-icon">🏥</span>
+                  <span class="option-label">Health</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="category" value="housing">
+                  <span class="option-icon">🏠</span>
+                  <span class="option-label">Housing</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="category" value="pension">
+                  <span class="option-icon">👴</span>
+                  <span class="option-label">Pension</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="category" value="women">
+                  <span class="option-icon">👩</span>
+                  <span class="option-label">Women & Child</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 2: Age Group -->
+            <div class="form-step" data-step="2">
+              <h3>What is your age group?</h3>
+              <div class="option-grid">
+                <label class="option-card">
+                  <input type="radio" name="age" value="below18">
+                  <span class="option-icon">👶</span>
+                  <span class="option-label">Below 18</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="age" value="18to35">
+                  <span class="option-icon">🧑</span>
+                  <span class="option-label">18 - 35</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="age" value="36to50">
+                  <span class="option-icon">👨</span>
+                  <span class="option-label">36 - 50</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="age" value="above50">
+                  <span class="option-icon">👴</span>
+                  <span class="option-label">Above 50</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 3: Income -->
+            <div class="form-step" data-step="3">
+              <h3>Annual family income?</h3>
+              <div class="option-grid">
+                <label class="option-card">
+                  <input type="radio" name="income" value="bpl">
+                  <span class="option-icon">💰</span>
+                  <span class="option-label">Below ₹1 Lakh (BPL)</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="income" value="low">
+                  <span class="option-icon">💵</span>
+                  <span class="option-label">₹1 - 3 Lakh</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="income" value="middle">
+                  <span class="option-icon">💳</span>
+                  <span class="option-label">₹3 - 8 Lakh</span>
+                </label>
+                <label class="option-card">
+                  <input type="radio" name="income" value="high">
+                  <span class="option-icon">🏦</span>
+                  <span class="option-label">Above ₹8 Lakh</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 4: Location -->
+            <div class="form-step" data-step="4">
+              <h3>Select your state/UT</h3>
+              <select class="form-select" id="stateSelect" name="state">
+                <option value="">-- Select State --</option>
+                <option value="up">Uttar Pradesh</option>
+                <option value="mh">Maharashtra</option>
+                <option value="br">Bihar</option>
+                <option value="mp">Madhya Pradesh</option>
+                <option value="rj">Rajasthan</option>
+                <option value="tn">Tamil Nadu</option>
+                <option value="ka">Karnataka</option>
+                <option value="gj">Gujarat</option>
+                <option value="wb">West Bengal</option>
+                <option value="ap">Andhra Pradesh</option>
+                <option value="tg">Telangana</option>
+                <option value="kl">Kerala</option>
+                <option value="od">Odisha</option>
+                <option value="jh">Jharkhand</option>
+                <option value="cg">Chhattisgarh</option>
+                <option value="pb">Punjab</option>
+                <option value="hr">Haryana</option>
+                <option value="hp">Himachal Pradesh</option>
+                <option value="uk">Uttarakhand</option>
+                <option value="as">Assam</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Step 5: Results -->
+            <div class="form-step" data-step="5">
+              <div class="results-container" id="eligibilityResults">
+                <!-- Results populated by JS -->
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="form-nav">
+              <button type="button" class="btn btn-outline btn-prev" id="prevStep" disabled>← Previous</button>
+              <button type="button" class="btn btn-primary btn-next" id="nextStep">Next →</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AI RECOMMENDATION QUIZ ===== -->
+    <section class="section ai-quiz" id="aiQuiz">
+      <div class="container">
+        <div class="ai-quiz-wrapper">
+          <div class="ai-quiz-content">
+            <span class="section-badge">AI-Powered</span>
+            <h2>Get <span class="gradient-text">AI Recommendations</span></h2>
+            <p>Our AI analyzes your profile and recommends the best government schemes tailored specifically for you. Get personalized scheme matches in seconds.</p>
+            <ul class="ai-features">
+              <li>🤖 Smart profile analysis</li>
+              <li>📊 95% accuracy in matching</li>
+              <li>⚡ Results in under 30 seconds</li>
+              <li>🔒 100% private & secure</li>
+            </ul>
+            <button class="btn btn-primary btn-lg" id="startAiQuiz">Start AI Quiz 🚀</button>
+          </div>
+          <div class="ai-quiz-visual">
+            <div class="ai-card">
+              <div class="ai-card-header">
+                <span class="ai-dot"></span>
+                <span class="ai-dot"></span>
+                <span class="ai-dot"></span>
+              </div>
+              <div class="ai-card-body">
+                <div class="ai-typing">
+                  <span class="ai-typing-text" id="aiTypingText"></span>
+                  <span class="ai-cursor">|</span>
+                </div>
+                <div class="ai-suggestions" id="aiSuggestions">
+                  <div class="ai-suggestion">PM Kisan Samman Nidhi</div>
+                  <div class="ai-suggestion">Ayushman Bharat Yojana</div>
+                  <div class="ai-suggestion">PM Awas Yojana</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 3 ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span class="ad-label">Ad</span>
+        <p>Advertisement Space — 728x90 Leaderboard</p>
+      </div>
+    </div>
+
+    <!-- ===== APPLICATION TRACKER ===== -->
+    <section class="section tracker" id="tracker">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Application Tracker</span>
+          <h2 class="section-title">Track Your <span class="gradient-text">Application</span></h2>
+          <p class="section-subtitle">Enter your ARN (Application Reference Number) to check the status of your scheme application.</p>
+        </div>
+        <div class="tracker-wrapper">
+          <div class="tracker-search">
+            <input type="text" class="tracker-input" id="trackerInput" placeholder="Enter ARN (e.g., SG-2024-12345678)" aria-label="Application Reference Number">
+            <button class="btn btn-primary" id="trackBtn">Track Status</button>
+          </div>
+          <div class="tracker-result" id="trackerResult">
+            <!-- Tracker result populated by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS ===== -->
+    <section class="section testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Success Stories</span>
+          <h2 class="section-title">What People <span class="gradient-text">Say About Us</span></h2>
+          <p class="section-subtitle">Real stories from families who found the right scheme through SarkarGhar.</p>
+        </div>
+        <div class="testimonials-grid" id="testimonialsGrid">
+          <!-- Testimonials generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRICING / PREMIUM ===== -->
+    <section class="section pricing" id="pricing">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Premium Assistance</span>
+          <h2 class="section-title">Get <span class="gradient-text">Expert Help</span></h2>
+          <p class="section-subtitle">Our experts will help you apply for schemes with end-to-end assistance.</p>
+        </div>
+        <div class="pricing-grid" id="pricingGrid">
+          <!-- Pricing cards generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 4 ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span class="ad-label">Ad</span>
+        <p>Advertisement Space — 728x90 Leaderboard</p>
+      </div>
+    </div>
+
+    <!-- ===== FAQ ACCORDION ===== -->
+    <section class="section faq" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">FAQ</span>
+          <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+          <p class="section-subtitle">Find answers to common questions about government schemes and our platform.</p>
+        </div>
+        <div class="faq-list" id="faqList">
+          <!-- FAQ items generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Ready to Find Your Scheme?</h2>
+          <p>Join 25 lakh+ families who have found the right government scheme through SarkarGhar. Start your search today — it's completely free!</p>
+          <div class="cta-actions">
+            <button class="btn btn-primary btn-lg" id="ctaSearch">Search Schemes 🔍</button>
+            <button class="btn btn-outline btn-lg" id="ctaEligibility">Check Eligibility ✓</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">🏛️</span>
+            <span class="logo-text">Sarkar<span class="logo-accent">Ghar</span></span>
+          </a>
+          <p>Your trusted portal for finding government schemes. We help millions of families access the benefits they deserve.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook">📘</a>
+            <a href="#" aria-label="Twitter">🐦</a>
+            <a href="#" aria-label="YouTube">📺</a>
+            <a href="#" aria-label="Instagram">📷</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#schemes">All Schemes</a></li>
+            <li><a href="#eligibility">Eligibility Checker</a></li>
+            <li><a href="#tracker">Track Application</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Popular Schemes</h4>
+          <ul>
+            <li><a href="#">PM Kisan Samman Nidhi</a></li>
+            <li><a href="#">Ayushman Bharat</a></li>
+            <li><a href="#">PM Awas Yojana</a></li>
+            <li><a href="#">Sukanya Samriddhi Yojana</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 SarkarGhar. All rights reserved. | Made with ❤️ for Bharat</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== SCHEME DETAIL MODAL ========== -->
+  <div class="modal-overlay" id="schemeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <button class="modal-close" id="modalClose" aria-label="Close modal">✕</button>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== UPI PAYMENT MODAL ========== -->
+  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+    <div class="modal modal-payment">
+      <button class="modal-close" id="paymentModalClose" aria-label="Close payment modal">✕</button>
+      <div class="modal-body">
+        <h2 id="paymentModalTitle">Complete Payment</h2>
+        <div class="payment-plan-info" id="paymentPlanInfo"></div>
+
+        <!-- Payment Tabs -->
+        <div class="payment-tabs" role="tablist">
+          <button class="payment-tab active" data-tab="upi" role="tab">UPI</button>
+          <button class="payment-tab" data-tab="card" role="tab">Card</button>
+          <button class="payment-tab" data-tab="netbanking" role="tab">Net Banking</button>
+        </div>
+
+        <!-- UPI Tab -->
+        <div class="payment-tab-content active" data-content="upi">
+          <div class="upi-apps">
+            <button class="upi-app" data-app="gpay">GPay</button>
+            <button class="upi-app" data-app="phonepe">PhonePe</button>
+            <button class="upi-app" data-app="paytm">Paytm</button>
+            <button class="upi-app" data-app="bhim">BHIM</button>
+          </div>
+          <div class="form-group">
+            <label for="upiId">UPI ID</label>
+            <input type="text" id="upiId" placeholder="yourname@upi" class="form-input">
+          </div>
+        </div>
+
+        <!-- Card Tab -->
+        <div class="payment-tab-content" data-content="card">
+          <div class="form-group">
+            <label for="cardNumber">Card Number</label>
+            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" class="form-input" maxlength="19">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cardExpiry">Expiry</label>
+              <input type="text" id="cardExpiry" placeholder="MM/YY" class="form-input" maxlength="5">
+            </div>
+            <div class="form-group">
+              <label for="cardCvv">CVV</label>
+              <input type="password" id="cardCvv" placeholder="123" class="form-input" maxlength="3">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="cardName">Cardholder Name</label>
+            <input type="text" id="cardName" placeholder="Name on card" class="form-input">
+          </div>
+        </div>
+
+        <!-- Net Banking Tab -->
+        <div class="payment-tab-content" data-content="netbanking">
+          <div class="bank-list">
+            <button class="bank-option" data-bank="sbi">State Bank of India</button>
+            <button class="bank-option" data-bank="hdfc">HDFC Bank</button>
+            <button class="bank-option" data-bank="icici">ICICI Bank</button>
+            <button class="bank-option" data-bank="pnb">Punjab National Bank</button>
+            <button class="bank-option" data-bank="bob">Bank of Baroda</button>
+            <button class="bank-option" data-bank="axis">Axis Bank</button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block btn-pay" id="payNowBtn">Pay Now ₹<span id="payAmount">0</span></button>
+        <p class="payment-secure">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== AI QUIZ MODAL ========== -->
+  <div class="modal-overlay" id="aiQuizModal" role="dialog" aria-modal="true" aria-labelledby="aiQuizTitle">
+    <div class="modal modal-ai-quiz">
+      <button class="modal-close" id="aiQuizClose" aria-label="Close AI quiz">✕</button>
+      <div class="modal-body">
+        <h2 id="aiQuizTitle">🤖 AI Scheme Recommender</h2>
+        <div class="ai-quiz-form" id="aiQuizForm">
+          <!-- AI Quiz steps populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BACK TO TOP ========== -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">↑</button>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<!--
+  ============================================================
+  SarkarFood — India's Smart Food Delivery Aggregator
+  A complete, mobile-first responsive landing page with:
+  Hero, Features, Categories, How It Works, Testimonials,
+  Pricing with UPI Payment Modal, FAQ Accordion, Dark Mode,
+  4 Ad Slots, SEO meta tags, Schema.org JSON-LD, Open Graph.
+  Built with HTML5, CSS3 (Flexbox/Grid), vanilla JavaScript.
+  ============================================================
+-->
+<head>
+  <!-- ========== META & VIEWPORT ========== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ========== SEO: TITLE & META DESCRIPTION ========== -->
+  <title>SarkarFood — Order Food Online from 10,000+ Restaurants | Fast Delivery</title>
+  <meta name="description" content="SarkarFood delivers food from 10,000+ restaurants across India. Order biryani, pizza, thali, street food & more. UPI payments, live tracking, 30-min delivery guarantee. Order now!">
+  <meta name="keywords" content="food delivery, order food online, restaurant near me, biryani delivery, pizza delivery, SarkarFood, UPI payment, quick delivery India">
+  <meta name="author" content="SarkarFood">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkarfood.in">
+
+  <!-- ========== OPEN GRAPH TAGS ========== -->
+  <meta property="og:title" content="SarkarFood — Order Food Online from 10,000+ Restaurants">
+  <meta property="og:description" content="Delicious food delivered in 30 minutes. 10,000+ restaurants, UPI payments, live order tracking. Order now!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarfood.in">
+  <meta property="og:image" content="https://sarkarfood.in/assets/og-image.jpg">
+  <meta property="og:site_name" content="SarkarFood">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ========== TWITTER CARD ========== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SarkarFood — Order Food Online | 30-Min Delivery">
+  <meta name="twitter:description" content="10,000+ restaurants. UPI payments. Live tracking. Order now!">
+  <meta name="twitter:image" content="https://sarkarfood.in/assets/twitter-card.jpg">
+
+  <!-- ========== SCHEMA.ORG JSON-LD ========== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "SarkarFood",
+    "description": "India's smart food delivery aggregator with 10,000+ restaurants, UPI payments, and 30-minute delivery guarantee.",
+    "url": "https://sarkarfood.in",
+    "logo": "https://sarkarfood.in/assets/logo.png",
+    "priceRange": "₹₹",
+    "servesCuisine": ["Indian", "Chinese", "Italian", "Street Food", "South Indian", "Mughlai"],
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "IN",
+      "addressLocality": "New Delhi"
+    },
+    "sameAs": [
+      "https://twitter.com/sarkarfood",
+      "https://instagram.com/sarkarfood",
+      "https://facebook.com/sarkarfood"
+    ],
+    "potentialAction": {
+      "@type": "OrderAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://sarkarfood.in/order"
+      }
+    }
+  }
+  </script>
+
+  <!-- ========== PRECONNECT FOR PERFORMANCE ========== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ========== STYLESHEET ========== -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- ========== SKIP LINK (Accessibility) ========== -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ========== NAVIGATION ========== -->
+  <header class="navbar" id="navbar" role="banner">
+    <div class="container nav-container">
+      <!-- Logo -->
+      <a href="#" class="logo" aria-label="SarkarFood Home">
+        <span class="logo-icon">🍛</span>
+        <span class="logo-text">Sarkar<span class="logo-highlight">Food</span></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#categories" class="nav-link">Categories</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#testimonials" class="nav-link">Reviews</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Dark Mode Toggle -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span class="theme-icon sun">☀️</span>
+          <span class="theme-icon moon">🌙</span>
+        </button>
+        <a href="#pricing" class="btn btn-primary btn-nav">Order Now</a>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <nav class="mobile-nav-links" aria-label="Mobile navigation">
+        <a href="#features" class="mobile-nav-link">Features</a>
+        <a href="#categories" class="mobile-nav-link">Categories</a>
+        <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+        <a href="#testimonials" class="mobile-nav-link">Reviews</a>
+        <a href="#pricing" class="mobile-nav-link">Pricing</a>
+        <a href="#faq" class="mobile-nav-link">FAQ</a>
+        <a href="#pricing" class="btn btn-primary btn-full">Order Now</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="main-content">
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="container hero-container">
+        <div class="hero-content">
+          <span class="hero-badge">🚀 Now delivering in 500+ cities</span>
+          <h1 class="hero-title">
+            Delicious Food,<br>
+            <span class="gradient-text">Delivered Fast.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Order from 10,000+ restaurants across India. From biryani to burgers, thali to pizza — get it delivered to your doorstep in 30 minutes. Pay with UPI, cash, or card.
+          </p>
+          <div class="hero-cta">
+            <a href="#pricing" class="btn btn-primary btn-lg">
+              <span>Order Now</span>
+              <span class="btn-arrow">→</span>
+            </a>
+            <a href="#how-it-works" class="btn btn-outline btn-lg">
+              <span>▶</span> See How It Works
+            </a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <span class="stat-number" data-count="10000">10,000+</span>
+              <span class="stat-label">Restaurants</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-count="500">500+</span>
+              <span class="stat-label">Cities</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-count="20">20L+</span>
+              <span class="stat-label">Happy Customers</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number">30<span class="stat-unit">min</span></span>
+              <span class="stat-label">Avg. Delivery</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-image-wrapper">
+            <div class="hero-card hero-card-main">
+              <div class="hero-card-emoji">🍕</div>
+              <div class="hero-card-text">
+                <strong>Your order is on the way!</strong>
+                <span>Estimated arrival: 12 mins</span>
+              </div>
+            </div>
+            <div class="hero-card hero-card-float">
+              <div class="hero-card-emoji">⭐</div>
+              <div class="hero-card-text">
+                <strong>4.8 Rating</strong>
+                <span>50,000+ reviews</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== AD SLOT 1 (Below Hero) ========== -->
+    <div class="ad-slot container" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+      <div class="ad-banner">
+        <span class="ad-label">Ad</span>
+        <p>🍔 <strong>Flat 50% OFF</strong> on your first order! Use code: <code>FIRST50</code> | Free delivery on orders above ₹299</p>
+      </div>
+    </div>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <section class="section features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Why SarkarFood?</span>
+          <h2 class="section-title">Everything You Need for <span class="gradient-text">Hassle-Free</span> Food Delivery</h2>
+          <p class="section-subtitle">We've built the best food delivery experience with features that matter to you.</p>
+        </div>
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3 class="feature-title">30-Min Delivery</h3>
+            <p class="feature-desc">AI-powered route optimization ensures your food arrives hot and fresh within 30 minutes, or your next order is free.</p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon">💳</div>
+            <h3 class="feature-title">Easy UPI Payments</h3>
+            <p class="feature-desc">Pay seamlessly with Google Pay, PhonePe, Paytm, or any UPI app. Cash on delivery also available.</p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h3 class="feature-title">Live Order Tracking</h3>
+            <p class="feature-desc">Track your order in real-time from restaurant to your doorstep. Know exactly when your food arrives.</p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title">AI Recommendations</h3>
+            <p class="feature-desc">Our AI learns your taste and suggests dishes you'll love. Discover new restaurants and cuisines effortlessly.</p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title">Hygiene Certified</h3>
+            <p class="feature-desc">All partner restaurants are FSSAI certified and regularly audited for food safety and hygiene standards.</p>
+          </div>
+          <!-- Feature 6 -->
+          <div class="feature-card">
+            <div class="feature-icon">🎁</div>
+            <h3 class="feature-title">Rewards & Cashback</h3>
+            <p class="feature-desc">Earn SarkarCoins on every order. Redeem for discounts, free delivery, and exclusive partner offers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CATEGORIES SECTION ========== -->
+    <section class="section categories" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Explore Cuisines</span>
+          <h2 class="section-title">What Are You <span class="gradient-text">Craving</span> Today?</h2>
+          <p class="section-subtitle">From local street food to international cuisines — we've got it all.</p>
+        </div>
+        <div class="categories-grid">
+          <a href="#" class="category-card" aria-label="Biryani">
+            <span class="category-emoji">🍚</span>
+            <span class="category-name">Biryani</span>
+            <span class="category-count">2,500+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Pizza">
+            <span class="category-emoji">🍕</span>
+            <span class="category-name">Pizza</span>
+            <span class="category-count">1,800+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Chinese">
+            <span class="category-emoji">🥡</span>
+            <span class="category-name">Chinese</span>
+            <span class="category-count">3,200+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="South Indian">
+            <span class="category-emoji">🥘</span>
+            <span class="category-name">South Indian</span>
+            <span class="category-count">2,100+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Thali">
+            <span class="category-emoji">🍱</span>
+            <span class="category-name">Thali</span>
+            <span class="category-count">1,500+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Street Food">
+            <span class="category-emoji">🌮</span>
+            <span class="category-name">Street Food</span>
+            <span class="category-count">4,000+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Desserts">
+            <span class="category-emoji">🍰</span>
+            <span class="category-name">Desserts</span>
+            <span class="category-count">1,200+ options</span>
+          </a>
+          <a href="#" class="category-card" aria-label="Healthy">
+            <span class="category-emoji">🥗</span>
+            <span class="category-name">Healthy</span>
+            <span class="category-count">900+ options</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 (Between Categories & How It Works) ========== -->
+    <div class="ad-slot container" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+      <div class="ad-banner ad-banner-alt">
+        <span class="ad-label">Ad</span>
+        <p>🎉 <strong>Weekend Special:</strong> Get FREE delivery on all orders above ₹199 | Valid Sat-Sun only | No code needed!</p>
+      </div>
+    </div>
+
+    <!-- ========== HOW IT WORKS SECTION ========== -->
+    <section class="section how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Simple Process</span>
+          <h2 class="section-title">How <span class="gradient-text">SarkarFood</span> Works</h2>
+          <p class="section-subtitle">Getting your favorite food delivered is just 4 easy steps away.</p>
+        </div>
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-icon">📍</div>
+            <h3 class="step-title">Set Your Location</h3>
+            <p class="step-desc">Enter your delivery address or use GPS to automatically detect your location and find nearby restaurants.</p>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-icon">🍽️</div>
+            <h3 class="step-title">Choose Your Food</h3>
+            <p class="step-desc">Browse menus from 10,000+ restaurants. Filter by cuisine, price, rating, or dietary preferences.</p>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-icon">💳</div>
+            <h3 class="step-title">Pay Securely</h3>
+            <p class="step-desc">Pay with UPI, debit/credit card, net banking, or choose cash on delivery. 100% secure payments.</p>
+          </div>
+          <!-- Step 4 -->
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-icon">🚴</div>
+            <h3 class="step-title">Enjoy Your Meal</h3>
+            <p class="step-desc">Track your order live and get it delivered hot & fresh within 30 minutes. Rate and review your experience.</p>
+          </div>
+        </div>
+        <!-- Connector line for desktop -->
+        <div class="steps-connector" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS SECTION ========== -->
+    <section class="section testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Customer Love</span>
+          <h2 class="section-title">What Our <span class="gradient-text">Customers</span> Say</h2>
+          <p class="section-subtitle">Join 20 lakh+ happy customers who trust SarkarFood for their daily meals.</p>
+        </div>
+        <div class="testimonials-grid">
+          <!-- Testimonial 1 -->
+          <div class="testimonial-card">
+            <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"Best food delivery app in my city! The 30-minute guarantee actually works. I've ordered 50+ times and they've never been late."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">RK</div>
+              <div class="author-info">
+                <strong class="author-name">Rahul Kumar</strong>
+                <span class="author-location">Delhi NCR</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 2 -->
+          <div class="testimonial-card">
+            <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</p>
+            <p class="testimonial-text">"The AI recommendations are spot on! It suggested a hidden gem of a biryani place near me that I never knew existed. Amazing discovery!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">PS</div>
+              <div class="author-info">
+                <strong class="author-name">Priya Sharma</strong>
+                <span class="author-location">Mumbai</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 3 -->
+          <div class="testimonial-card">
+            <div class="testimonial-stars" aria-label="4 out of 5 stars">⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"UPI payment is so smooth. I just scan the QR and pay. The live tracking feature is addictive — I keep watching my rider come closer!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">AV</div>
+              <div class="author-info">
+                <strong class="author-name">Amit Verma</strong>
+                <span class="author-location">Bangalore</span>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 4 -->
+          <div class="testimonial-card">
+            <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+            <p class="testimonial-text">"As a college student, the student discounts and SarkarCoins rewards are a lifesaver. I save at least ₹500 every month on food orders."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar">ND</div>
+              <div class="author-info">
+                <strong class="author-name">Neha Desai</strong>
+                <span class="author-location">Pune</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 (Between Testimonials & Pricing) ========== -->
+    <div class="ad-slot container" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+      <div class="ad-banner">
+        <span class="ad-label">Ad</span>
+        <p>📱 <strong>Download the App!</strong> Get extra 20% off on app orders | Available on Play Store & App Store | Free delivery for app users</p>
+      </div>
+    </div>
+
+    <!-- ========== PRICING SECTION ========== -->
+    <section class="section pricing" id="pricing">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Pricing Plans</span>
+          <h2 class="section-title">Choose Your <span class="gradient-text">Plan</span></h2>
+          <p class="section-subtitle">Free delivery, exclusive discounts, and priority support with SarkarFood Premium.</p>
+        </div>
+        <div class="pricing-grid">
+          <!-- Free Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Free</h3>
+              <p class="pricing-desc">Perfect for occasional orders</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-amount">0</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature">✅ Access to all restaurants</li>
+              <li class="pricing-feature">✅ Standard delivery (30-45 min)</li>
+              <li class="pricing-feature">✅ UPI & cash payments</li>
+              <li class="pricing-feature">✅ Live order tracking</li>
+              <li class="pricing-feature">✅ Basic customer support</li>
+              <li class="pricing-feature pricing-feature-disabled">❌ Free delivery</li>
+              <li class="pricing-feature pricing-feature-disabled">❌ Priority support</li>
+              <li class="pricing-feature pricing-feature-disabled">❌ Exclusive discounts</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="openPaymentModal('free')">Get Started Free</button>
+          </div>
+
+          <!-- Pro Plan (Popular) -->
+          <div class="pricing-card pricing-card-popular">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3 class="pricing-name">Pro</h3>
+              <p class="pricing-desc">Best for regular foodies</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-amount">99</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature">✅ Everything in Free</li>
+              <li class="pricing-feature">✅ Free delivery on all orders</li>
+              <li class="pricing-feature">✅ Express delivery (20-30 min)</li>
+              <li class="pricing-feature">✅ 10% off on every order</li>
+              <li class="pricing-feature">✅ Priority customer support</li>
+              <li class="pricing-feature">✅ Early access to new restaurants</li>
+              <li class="pricing-feature pricing-feature-disabled">❌ Exclusive partner deals</li>
+              <li class="pricing-feature pricing-feature-disabled">❌ Family sharing</li>
+            </ul>
+            <button class="btn btn-primary btn-full" onclick="openPaymentModal('pro')">Subscribe — ₹99/mo</button>
+          </div>
+
+          <!-- Family Plan -->
+          <div class="pricing-card">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Family</h3>
+              <p class="pricing-desc">For families & groups</p>
+            </div>
+            <div class="pricing-price">
+              <span class="price-currency">₹</span>
+              <span class="price-amount">249</span>
+              <span class="price-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature">✅ Everything in Pro</li>
+              <li class="pricing-feature">✅ Free express delivery</li>
+              <li class="pricing-feature">✅ 20% off on every order</li>
+              <li class="pricing-feature">✅ Up to 5 family members</li>
+              <li class="pricing-feature">✅ Exclusive partner deals</li>
+              <li class="pricing-feature">✅ Dedicated account manager</li>
+              <li class="pricing-feature">✅ Group ordering feature</li>
+              <li class="pricing-feature">✅ Monthly surprise gifts</li>
+            </ul>
+            <button class="btn btn-outline btn-full" onclick="openPaymentModal('family')">Subscribe — ₹249/mo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 (Between Pricing & FAQ) ========== -->
+    <div class="ad-slot container" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+      <div class="ad-banner ad-banner-alt">
+        <span class="ad-label">Ad</span>
+        <p>🏪 <strong>Restaurant Partner?</strong> Join 10,000+ restaurants on SarkarFood | Zero commission for first 3 months | <a href="#" style="color:inherit;text-decoration:underline;">Register now →</a></p>
+      </div>
+    </div>
+
+    <!-- ========== FAQ SECTION ========== -->
+    <section class="section faq" id="faq">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-badge">Got Questions?</span>
+          <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+          <p class="section-subtitle">Everything you need to know about SarkarFood.</p>
+        </div>
+        <div class="faq-grid">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+              <span>How does the 30-minute delivery guarantee work?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-1" aria-hidden="true">
+              <p>Our AI-powered logistics system optimizes routes in real-time. If your order doesn't arrive within 30 minutes of the estimated time, you get a full delivery fee refund plus a ₹50 SarkarCoins credit. The guarantee applies to all Pro and Family plan members, and Free users in select cities.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 2 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+              <span>Which UPI apps do you accept for payment?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-2" aria-hidden="true">
+              <p>We accept all UPI apps including Google Pay, PhonePe, Paytm, BHIM, Amazon Pay, and any NPCI-compliant UPI app. You can also pay with debit/credit cards (Visa, Mastercard, RuPay), net banking, or choose cash on delivery for orders under ₹2,000.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 3 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+              <span>Can I cancel my order after placing it?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-3" aria-hidden="true">
+              <p>Yes, you can cancel your order within 60 seconds of placing it for a full refund. After that, cancellation depends on whether the restaurant has started preparing your food. If the rider has already picked up the order, cancellation may not be possible. Refunds are processed within 24-48 hours.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 4 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+              <span>How do I earn and redeem SarkarCoins?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-4" aria-hidden="true">
+              <p>Earn 1 SarkarCoin for every ₹100 spent. Pro members earn 2x coins, and Family members earn 3x coins. 100 SarkarCoins = ₹10 discount. Coins can be redeemed on any order and never expire for active users. Bonus coins are awarded for referrals, reviews, and completing your profile.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 5 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+              <span>Is there a minimum order value for free delivery?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-5" aria-hidden="true">
+              <p>For Free plan users, free delivery is available on orders above ₹499. Pro and Family plan members enjoy free delivery on all orders with no minimum value. During special promotions, free delivery thresholds may be lower for all users.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 6 -->
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-6">
+              <span>How can I become a restaurant partner?</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-answer" id="faq-answer-6" aria-hidden="true">
+              <p>Visit our Restaurant Partner page and fill out the registration form. Our team will contact you within 24 hours. New partners get zero commission for the first 3 months, free menu photography, and dedicated onboarding support. We currently partner with restaurants across 500+ cities in India.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2 class="cta-title">Hungry? Let's Fix That. 🍕</h2>
+          <p class="cta-text">Join 20 lakh+ food lovers. Order from 10,000+ restaurants. Get 50% off your first order.</p>
+          <div class="cta-actions">
+            <a href="#pricing" class="btn btn-white btn-lg">Order Now — It's Free</a>
+          </div>
+          <p class="cta-small">Use code <strong>FIRST50</strong> for 50% off up to ₹150</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Column -->
+        <div class="footer-col footer-brand">
+          <a href="#" class="logo" aria-label="SarkarFood Home">
+            <span class="logo-icon">🍛</span>
+            <span class="logo-text">Sarkar<span class="logo-highlight">Food</span></span>
+          </a>
+          <p class="footer-desc">India's smartest food delivery aggregator. 10,000+ restaurants, 500+ cities, 30-minute delivery guarantee.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+            <a href="#" class="social-link" aria-label="Instagram">📷</a>
+            <a href="#" class="social-link" aria-label="Facebook">📘</a>
+            <a href="#" class="social-link" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+        <!-- Company Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Company</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">About Us</a></li>
+            <li><a href="#" class="footer-link">Careers</a></li>
+            <li><a href="#" class="footer-link">Blog</a></li>
+            <li><a href="#" class="footer-link">Press</a></li>
+            <li><a href="#" class="footer-link">Investor Relations</a></li>
+          </ul>
+        </div>
+        <!-- For You Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">For You</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Help Center</a></li>
+            <li><a href="#" class="footer-link">Track Order</a></li>
+            <li><a href="#" class="footer-link">Gift Cards</a></li>
+            <li><a href="#" class="footer-link">Refer & Earn</a></li>
+            <li><a href="#" class="footer-link">Student Discounts</a></li>
+          </ul>
+        </div>
+        <!-- Partners Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Partners</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Add Your Restaurant</a></li>
+            <li><a href="#" class="footer-link">Become a Rider</a></li>
+            <li><a href="#" class="footer-link">Affiliate Program</a></li>
+            <li><a href="#" class="footer-link">API for Business</a></li>
+          </ul>
+        </div>
+        <!-- Legal Links -->
+        <div class="footer-col">
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">Terms of Service</a></li>
+            <li><a href="#" class="footer-link">Privacy Policy</a></li>
+            <li><a href="#" class="footer-link">Cookie Policy</a></li>
+            <li><a href="#" class="footer-link">Refund Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 SarkarFood. All rights reserved. Made with ❤️ in India.</p>
+        <p class="footer-disclaimer">SarkarFood is a product of ZOO Company. All trademarks belong to their respective owners.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== UPI PAYMENT MODAL ========== -->
+  <div class="modal-overlay" id="paymentModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Complete Your Payment</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Plan Summary -->
+        <div class="plan-summary" id="planSummary">
+          <div class="plan-summary-row">
+            <span>Plan</span>
+            <strong id="summaryPlan">Pro</strong>
+          </div>
+          <div class="plan-summary-row">
+            <span>Amount</span>
+            <strong id="summaryAmount">₹99</strong>
+          </div>
+          <div class="plan-summary-row">
+            <span>Billing</span>
+            <strong>Monthly</strong>
+          </div>
+        </div>
+
+        <!-- UPI Payment Options -->
+        <div class="upi-section">
+          <h4 class="upi-title">Pay via UPI</h4>
+          <div class="upi-apps">
+            <button class="upi-app" onclick="selectUPI('gpay')" aria-label="Google Pay">
+              <span class="upi-app-icon">GPay</span>
+            </button>
+            <button class="upi-app" onclick="selectUPI('phonepe')" aria-label="PhonePe">
+              <span class="upi-app-icon">PhonePe</span>
+            </button>
+            <button class="upi-app" onclick="selectUPI('paytm')" aria-label="Paytm">
+              <span class="upi-app-icon">Paytm</span>
+            </button>
+            <button class="upi-app" onclick="selectUPI('bhim')" aria-label="BHIM">
+              <span class="upi-app-icon">BHIM</span>
+            </button>
+          </div>
+
+          <!-- UPI ID Input -->
+          <div class="upi-id-section">
+            <label for="upiId" class="upi-label">Or enter your UPI ID</label>
+            <div class="upi-input-group">
+              <input type="text" id="upiId" class="upi-input" placeholder="yourname@upi" autocomplete="off">
+              <button class="btn btn-primary btn-sm" id="upiVerifyBtn">Verify & Pay</button>
+            </div>
+            <p class="upi-help">Example: yourname@paytm, yourname@okicici</p>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="modal-divider">
+          <span>or pay with</span>
+        </div>
+
+        <!-- Other Payment Methods -->
+        <div class="other-payments">
+          <button class="payment-method" onclick="selectPayment('card')">
+            <span class="payment-icon">💳</span>
+            <span>Credit / Debit Card</span>
+          </button>
+          <button class="payment-method" onclick="selectPayment('netbanking')">
+            <span class="payment-icon">🏦</span>
+            <span>Net Banking</span>
+          </button>
+          <button class="payment-method" onclick="selectPayment('wallet')">
+            <span class="payment-icon">👛</span>
+            <span>Wallets</span>
+          </button>
+        </div>
+
+        <!-- Security Note -->
+        <div class="payment-security">
+          <span>🔒</span>
+          <p>Your payment is secured with 256-bit SSL encryption. We never store your payment details.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BACK TO TOP BUTTON ========== -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">↑</button>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script src="app.js"></script>
+</body>
+</html>

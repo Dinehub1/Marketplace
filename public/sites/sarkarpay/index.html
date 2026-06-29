@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarPay — UPI Payment Gateway Landing Page
+    Built by Loop Agent | ZOO Company
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- SEO Meta Tags -->
+  <title>SarkarPay — India's Fastest UPI Payment Gateway | Zero-Fee Digital Payments</title>
+  <meta name="description" content="SarkarPay is India's fastest UPI payment gateway for businesses. Accept UPI, cards, net banking with 0% setup fee. Instant settlement, 99.9% uptime. Start accepting payments today.">
+  <meta name="keywords" content="UPI payment gateway, digital payments India, UPI for business, payment gateway, SarkarPay, online payments, BHIM UPI, QR code payments">
+  <meta name="author" content="SarkarPay">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SarkarPay — India's Fastest UPI Payment Gateway">
+  <meta property="og:description" content="Accept UPI, cards, net banking with 0% setup fee. Instant settlement, 99.9% uptime.">
+  <meta property="og:url" content="https://sarkarpay.in">
+  <meta property="og:site_name" content="SarkarPay">
+  <meta property="og:image" content="https://sarkarpay.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SarkarPay — India's Fastest UPI Payment Gateway">
+  <meta name="twitter:description" content="Accept UPI, cards, net banking with 0% setup fee. Instant settlement.">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SarkarPay",
+    "url": "https://sarkarpay.in",
+    "logo": "https://sarkarpay.in/logo.png",
+    "description": "India's fastest UPI payment gateway for businesses",
+    "foundingDate": "2024",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-80-SARKAR-PAY",
+      "contactType": "customer service",
+      "availableLanguage": ["English", "Hindi"]
+    },
+    "sameAs": [
+      "https://twitter.com/sarkarpay",
+      "https://linkedin.com/company/sarkarpay",
+      "https://instagram.com/sarkarpay"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "SarkarPay",
+    "url": "https://sarkarpay.in",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://sarkarpay.in/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://sarkarpay.in">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💳</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ============================================
+       NAVIGATION BAR
+       ============================================ -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="nav-container">
+      <!-- Logo -->
+      <a href="#" class="nav-logo" aria-label="SarkarPay Home">
+        <span class="logo-icon">💳</span>
+        <span class="logo-text">Sarkar<span class="logo-highlight">Pay</span></span>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#features" class="nav-link">Features</a></li>
+        <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+        <li><a href="#pricing" class="nav-link">Pricing</a></li>
+        <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="#pricing" class="btn btn-nav">Start Free</a>
+        <!-- Mobile Menu Toggle -->
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <ul class="mobile-links">
+        <li><a href="#features" class="mobile-link">Features</a></li>
+        <li><a href="#how-it-works" class="mobile-link">How It Works</a></li>
+        <li><a href="#pricing" class="mobile-link">Pricing</a></li>
+        <li><a href="#testimonials" class="mobile-link">Testimonials</a></li>
+        <li><a href="#faq" class="mobile-link">FAQ</a></li>
+        <li><a href="#pricing" class="btn btn-mobile">Start Free</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       HERO SECTION
+       ============================================ -->
+  <header class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-gradient"></div>
+      <div class="hero-particles" id="heroParticles"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <!-- Hero Badge -->
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Trusted by 50,000+ Businesses Across India</span>
+        </div>
+
+        <!-- Hero Heading -->
+        <h1 class="hero-title">
+          India's Fastest<br>
+          <span class="gradient-text">UPI Payment Gateway</span>
+        </h1>
+
+        <!-- Hero Subtitle -->
+        <p class="hero-subtitle">
+          Accept UPI, cards, and net banking payments with <strong>zero setup fee</strong>.
+          Instant settlements, 99.9% uptime, and enterprise-grade security.
+          Start accepting payments in under 5 minutes.
+        </p>
+
+        <!-- Hero CTA Buttons -->
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" id="heroCtaBtn">
+            <span>Start Accepting Payments</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <a href="#how-it-works" class="btn btn-outline btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>See How It Works</span>
+          </a>
+        </div>
+
+        <!-- Hero Stats -->
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number" data-target="50">50</span><span class="stat-suffix">K+</span>
+            <span class="stat-label">Businesses</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="2">2</span><span class="stat-suffix">Cr+</span>
+            <span class="stat-label">Transactions/Month</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="99">99</span><span class="stat-suffix">.9%</span>
+            <span class="stat-label">Uptime</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="0">0</span><span class="stat-suffix">%</span>
+            <span class="stat-label">Setup Fee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual — Payment Card Mockup -->
+      <div class="hero-visual">
+        <div class="payment-card" id="paymentCard">
+          <div class="card-chip"></div>
+          <div class="card-network">VISA</div>
+          <div class="card-number">•••• •••• •••• 4242</div>
+          <div class="card-bottom">
+            <span class="card-holder">SARKARPAY</span>
+            <span class="card-expiry">12/28</span>
+          </div>
+        </div>
+        <!-- Floating UPI Icons -->
+        <div class="floating-icon icon-upi" style="top:10%;right:5%">
+          <span>📱</span>
+          <small>UPI</small>
+        </div>
+        <div class="floating-icon icon-qr" style="bottom:15%;left:0%">
+          <span>🔲</span>
+          <small>QR Code</small>
+        </div>
+        <div class="floating-icon icon-link" style="top:50%;right:-5%">
+          <span>🔗</span>
+          <small>Payment Link</small>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================================
+       TRUSTED BY / LOGO STRIP
+       ============================================ -->
+  <section class="logo-strip">
+    <div class="container">
+      <p class="strip-label">Trusted by leading businesses</p>
+      <div class="logo-grid">
+        <div class="logo-item">🏪 Kirana Store</div>
+        <div class="logo-item">🛒 Flipkart</div>
+        <div class="logo-item">🍕 Zomato</div>
+        <div class="logo-item">🚗 Ola</div>
+        <div class="logo-item">📱 Paytm</div>
+        <div class="logo-item">🏦 SBI</div>
+        <div class="logo-item">💊 PharmEasy</div>
+        <div class="logo-item">📦 Amazon</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       AD SLOT 1 — Top Banner
+       ============================================ -->
+  <div class="ad-slot" role="complementary" aria-label="Advertisement">
+    <div class="ad-banner">
+      <span class="ad-label">Ad</span>
+      <p>🚀 <strong>New:</strong> SarkarPay now supports UPI Autopay! Set up recurring payments effortlessly. <a href="#pricing">Learn More →</a></p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       FEATURES SECTION
+       ============================================ -->
+  <section class="features" id="features">
+    <div class="container">
+      <!-- Section Header -->
+      <div class="section-header">
+        <span class="section-tag">Features</span>
+        <h2 class="section-title">Everything You Need to <span class="gradient-text">Accept Payments</span></h2>
+        <p class="section-desc">A complete payment toolkit designed for Indian businesses — from street shops to enterprises.</p>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="features-grid">
+        <!-- Feature 1: UPI Payments -->
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>UPI Payments</h3>
+          <p>Accept payments via Google Pay, PhonePe, Paytm, BHIM, and 500+ UPI apps. Instant confirmation, zero delay.</p>
+          <ul class="feature-list">
+            <li>All UPI apps supported</li>
+            <li>Static & dynamic QR codes</li>
+            <li>UPI Intent flow</li>
+          </ul>
+        </div>
+
+        <!-- Feature 2: Instant Settlement -->
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Instant Settlement</h3>
+          <p>Get your money in your bank account within seconds. No more waiting for T+1 or T+2 settlements.</p>
+          <ul class="feature-list">
+            <li>Real-time settlement</li>
+            <li>24/7 including holidays</li>
+            <li>Direct to bank account</li>
+          </ul>
+        </div>
+
+        <!-- Feature 3: Payment Links -->
+        <div class="feature-card">
+          <div class="feature-icon">🔗</div>
+          <h3>Payment Links</h3>
+          <p>Share payment links via WhatsApp, SMS, or email. Collect payments without a website or app.</p>
+          <ul class="feature-list">
+            <li>Custom branded links</li>
+            <li>Expiry & amount control</li>
+            <li>Auto-reminders</li>
+          </ul>
+        </div>
+
+        <!-- Feature 4: Smart Dashboard -->
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Smart Dashboard</h3>
+          <p>Track every transaction, refund, and settlement in real-time. Export reports with one click.</p>
+          <ul class="feature-list">
+            <li>Real-time analytics</li>
+            <li>CSV/PDF export</li>
+            <li>Custom date filters</li>
+          </ul>
+        </div>
+
+        <!-- Feature 5: Developer API -->
+        <div class="feature-card">
+          <div class="feature-icon">🛠️</div>
+          <h3>Developer API</h3>
+          <p>RESTful APIs with SDKs for Node.js, Python, PHP, Java, and more. Sandbox environment included.</p>
+          <ul class="feature-list">
+            <li>REST API + Webhooks</li>
+            <li>Multi-language SDKs</li>
+            <li>Sandbox testing</li>
+          </ul>
+        </div>
+
+        <!-- Feature 6: Security -->
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Bank-Grade Security</h3>
+          <p>PCI DSS Level 1 certified. 256-bit encryption, 3D Secure 2.0, and fraud detection built-in.</p>
+          <ul class="feature-list">
+            <li>PCI DSS Level 1</li>
+            <li>3D Secure 2.0</li>
+            <li>AI fraud detection</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       AD SLOT 2 — Mid-Features
+       ============================================ -->
+  <div class="ad-slot" role="complementary" aria-label="Advertisement">
+    <div class="ad-banner ad-banner-alt">
+      <span class="ad-label">Ad</span>
+      <p>💡 <strong>Pro Tip:</strong> Use SarkarPay Payment Links to collect payments on WhatsApp — no website needed! <a href="#features">Explore Features →</a></p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       HOW IT WORKS SECTION
+       ============================================ -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">How It Works</span>
+        <h2 class="section-title">Start Accepting Payments in <span class="gradient-text">3 Simple Steps</span></h2>
+        <p class="section-desc">No coding required. Get started in under 5 minutes.</p>
+      </div>
+
+      <div class="steps-grid">
+        <!-- Step 1 -->
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <div class="step-icon">📝</div>
+          <h3>Sign Up Free</h3>
+          <p>Create your SarkarPay account with just your mobile number and PAN. No documents needed for signup.</p>
+        </div>
+
+        <!-- Step Connector -->
+        <div class="step-connector" aria-hidden="true">
+          <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h36M28 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <div class="step-icon">🔗</div>
+          <h3>Integrate</h3>
+          <p>Copy-paste our code snippet, use our no-code plugins, or connect via API. Works with any platform.</p>
+        </div>
+
+        <!-- Step Connector -->
+        <div class="step-connector" aria-hidden="true">
+          <svg width="40" height="24" viewBox="0 0 40 24"><path d="M0 12h36M28 4l8 8-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <div class="step-icon">💰</div>
+          <h3>Get Paid</h3>
+          <p>Start accepting payments instantly. Money settles directly to your bank account in real-time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       PRICING SECTION
+       ============================================ -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pricing</span>
+        <h2 class="section-title">Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+        <p class="section-desc">No hidden fees. No setup charges. Pay only when you get paid.</p>
+      </div>
+
+      <!-- Pricing Toggle -->
+      <div class="pricing-toggle" role="group" aria-label="Pricing frequency">
+        <button class="toggle-btn active" data-period="monthly">Monthly</button>
+        <button class="toggle-btn" data-period="yearly">Yearly <span class="save-badge">Save 20%</span></button>
+      </div>
+
+      <!-- Pricing Cards -->
+      <div class="pricing-grid">
+        <!-- Starter Plan -->
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Starter</h3>
+            <p class="pricing-desc">Perfect for small businesses and freelancers</p>
+          </div>
+          <div class="pricing-amount">
+            <span class="currency">₹</span>
+            <span class="price" data-monthly="0" data-yearly="0">0</span>
+            <span class="period">/month</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Unlimited UPI payments</li>
+            <li>✅ Payment links</li>
+            <li>✅ Basic dashboard</li>
+            <li>✅ Email support</li>
+            <li>✅ 2.0% per transaction</li>
+            <li class="disabled">❌ Priority support</li>
+            <li class="disabled">❌ Custom branding</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="openPaymentModal('starter')">Get Started Free</button>
+        </div>
+
+        <!-- Growth Plan (Popular) -->
+        <div class="pricing-card popular">
+          <div class="popular-badge">Most Popular</div>
+          <div class="pricing-header">
+            <h3>Growth</h3>
+            <p class="pricing-desc">For growing businesses with higher volume</p>
+          </div>
+          <div class="pricing-amount">
+            <span class="currency">₹</span>
+            <span class="price" data-monthly="499" data-yearly="399">499</span>
+            <span class="period">/month</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Everything in Starter</li>
+            <li>✅ Card & net banking</li>
+            <li>✅ Advanced analytics</li>
+            <li>✅ Priority support</li>
+            <li>✅ Custom branding</li>
+            <li>✅ 1.5% per transaction</li>
+            <li class="disabled">❌ Dedicated account manager</li>
+          </ul>
+          <button class="btn btn-primary btn-full" onclick="openPaymentModal('growth')">Start 14-Day Trial</button>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Enterprise</h3>
+            <p class="pricing-desc">For large businesses with custom needs</p>
+          </div>
+          <div class="pricing-amount">
+            <span class="currency">₹</span>
+            <span class="price" data-monthly="1999" data-yearly="1599">1,999</span>
+            <span class="period">/month</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Everything in Growth</li>
+            <li>✅ Dedicated account manager</li>
+            <li>✅ Custom integration</li>
+            <li>✅ SLA guarantee</li>
+            <li>✅ 1.0% per transaction</li>
+            <li>✅ Volume discounts</li>
+            <li>✅ White-label solution</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="openPaymentModal('enterprise')">Contact Sales</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       AD SLOT 3 — Mid-Pricing
+       ============================================ -->
+  <div class="ad-slot" role="complementary" aria-label="Advertisement">
+    <div class="ad-banner">
+      <span class="ad-label">Ad</span>
+      <p>🎯 <strong>Enterprise?</strong> Get custom pricing with volume discounts, dedicated support, and SLA guarantees. <a href="#pricing">Talk to Sales →</a></p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       TESTIMONIALS SECTION
+       ============================================ -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Testimonials</span>
+        <h2 class="section-title">Loved by <span class="gradient-text">Businesses</span> Across India</h2>
+        <p class="section-desc">See what our merchants have to say about SarkarPay.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <!-- Testimonial 1 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"SarkarPay transformed our kirana store. We went from cash-only to accepting UPI from every customer. Sales increased by 40% in just 2 months!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨‍💼</div>
+            <div class="author-info">
+              <strong>Rajesh Kumar</strong>
+              <span>Owner, Kumar Kirana Store, Delhi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 2 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"The API integration was incredibly smooth. We integrated SarkarPay into our SaaS platform in just 2 hours. The documentation is world-class."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👩‍💻</div>
+            <div class="author-info">
+              <strong>Priya Sharma</strong>
+              <span>CTO, TechVentures Pvt Ltd, Bangalore</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonial 3 -->
+        <div class="testimonial-card">
+          <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"Instant settlement is a game-changer. We used to wait 2 days for payments. Now we get money in seconds. Cash flow has never been better."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">👨‍🔧</div>
+            <div class="author-info">
+              <strong>Amit Patel</strong>
+              <span>Founder, AutoParts Online, Mumbai</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FAQ SECTION
+       ============================================ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">FAQ</span>
+        <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+        <p class="section-desc">Everything you need to know about SarkarPay.</p>
+      </div>
+
+      <div class="faq-list">
+        <!-- FAQ Item 1 -->
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>How quickly can I start accepting payments?</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>You can start accepting payments in under 5 minutes! Simply sign up, complete your KYC (which takes less than 2 minutes), and integrate our payment button or API. For no-code solutions, just create a payment link and share it with your customers.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 2 -->
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>What payment methods do you support?</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>We support all major payment methods: UPI (Google Pay, PhonePe, Paytm, BHIM, and 500+ apps), credit/debit cards (Visa, Mastercard, RuPay, Amex), net banking (50+ banks), wallets, and EMI options. We also support international cards for cross-border payments.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 3 -->
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>What are the transaction fees?</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Our Starter plan has 2.0% per transaction with no monthly fee. Growth plan is ₹499/month + 1.5% per transaction. Enterprise plan is ₹1,999/month + 1.0% per transaction with volume discounts available. There are no hidden charges, setup fees, or annual maintenance costs.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 4 -->
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>How does instant settlement work?</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Unlike traditional payment gateways that settle in T+1 or T+2 days, SarkarPay settles your payments instantly to your registered bank account. This works 24/7 including weekends and bank holidays. You can also schedule settlements at your preferred time.</p>
+          </div>
+        </div>
+
+        <!-- FAQ Item 5 -->
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Is my data secure with SarkarPay?</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely. We are PCI DSS Level 1 certified — the highest level of payment security certification. All data is encrypted with 256-bit SSL. We support 3D Secure 2.0 for card payments and have AI-powered fraud detection that monitors every transaction in real-time. We never store sensitive card data on our servers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       AD SLOT 4 — Pre-Footer
+       ============================================ -->
+  <div class="ad-slot" role="complementary" aria-label="Advertisement">
+    <div class="ad-banner ad-banner-alt">
+      <span class="ad-label">Ad</span>
+      <p>📢 <strong>Webinar:</strong> "Scaling Your Business with Digital Payments" — Join us live on June 30th. <a href="#hero">Register Free →</a></p>
+    </div>
+  </div>
+
+  <!-- ============================================
+       CTA SECTION
+       ============================================ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Ready to Accept Payments?</h2>
+        <p>Join 50,000+ businesses already using SarkarPay. Start free, no credit card required.</p>
+        <div class="cta-buttons">
+          <button class="btn btn-primary btn-lg" id="ctaSignupBtn">
+            <span>Start Accepting Payments — It's Free</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+        <p class="cta-note">✅ No setup fee &nbsp; ✅ No monthly charges for Starter &nbsp; ✅ Cancel anytime</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Brand Column -->
+        <div class="footer-col">
+          <a href="#" class="footer-logo">
+            <span class="logo-icon">💳</span>
+            <span class="logo-text">Sarkar<span class="logo-highlight">Pay</span></span>
+          </a>
+          <p class="footer-desc">India's fastest UPI payment gateway. Empowering businesses to accept digital payments seamlessly.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Twitter">𝕏</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+            <a href="#" aria-label="Instagram">📷</a>
+            <a href="#" aria-label="YouTube">▶️</a>
+          </div>
+        </div>
+
+        <!-- Product Links -->
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#">API Docs</a></li>
+            <li><a href="#">Integrations</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+
+        <!-- Company Links -->
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Press Kit</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal Links -->
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Refund Policy</a></li>
+            <li><a href="#">PCI Compliance</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+      <div class="footer-bottom">
+        <p>&copy; 2026 SarkarPay. All rights reserved. Built with ❤️ in India.</p>
+        <p class="footer-rbi">RBI Authorized Payment Aggregator | License No. PA/2024/001</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       UPI PAYMENT MODAL
+       ============================================ -->
+  <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h2 id="modalTitle">Complete Your Payment</h2>
+        <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Payment Tabs -->
+        <div class="payment-tabs" role="tablist">
+          <button class="tab-btn active" role="tab" aria-selected="true" data-tab="upi" id="tabUpi">
+            <span>📱</span> UPI
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="card" id="tabCard">
+            <span>💳</span> Card
+          </button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-tab="netbanking" id="tabNetbanking">
+            <span>🏦</span> Net Banking
+          </button>
+        </div>
+
+        <!-- UPI Tab Content -->
+        <div class="tab-content active" id="contentUpi" role="tabpanel">
+          <div class="upi-section">
+            <div class="upi-apps">
+              <button class="upi-app" aria-label="Pay with Google Pay">
+                <span class="upi-icon">GPay</span>
+                <small>Google Pay</small>
+              </button>
+              <button class="upi-app" aria-label="Pay with PhonePe">
+                <span class="upi-icon">PP</span>
+                <small>PhonePe</small>
+              </button>
+              <button class="upi-app" aria-label="Pay with Paytm">
+                <span class="upi-icon">PTM</span>
+                <small>Paytm</small>
+              </button>
+              <button class="upi-app" aria-label="Pay with BHIM">
+                <span class="upi-icon">BHIM</span>
+                <small>BHIM</small>
+              </button>
+            </div>
+            <div class="upi-or"><span>OR</span></div>
+            <div class="form-group">
+              <label for="upiId">Enter UPI ID</label>
+              <input type="text" id="upiId" placeholder="yourname@upi" autocomplete="off">
+            </div>
+            <button class="btn btn-primary btn-full" id="upiPayBtn">Pay Now</button>
+          </div>
+        </div>
+
+        <!-- Card Tab Content -->
+        <div class="tab-content" id="contentCard" role="tabpanel">
+          <div class="card-section">
+            <div class="form-group">
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardExpiry">Expiry</label>
+                <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+              </div>
+              <div class="form-group">
+                <label for="cardCvv">CVV</label>
+                <input type="password" id="cardCvv" placeholder="•••" maxlength="4" autocomplete="cc-csc">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cardName">Cardholder Name</label>
+              <input type="text" id="cardName" placeholder="Name on card" autocomplete="cc-name">
+            </div>
+            <button class="btn btn-primary btn-full" id="cardPayBtn">Pay Now</button>
+          </div>
+        </div>
+
+        <!-- Net Banking Tab Content -->
+        <div class="tab-content" id="contentNetbanking" role="tabpanel">
+          <div class="netbanking-section">
+            <p class="section-note">Select your bank to continue:</p>
+            <div class="bank-list">
+              <button class="bank-option">State Bank of India</button>
+              <button class="bank-option">HDFC Bank</button>
+              <button class="bank-option">ICICI Bank</button>
+              <button class="bank-option">Axis Bank</button>
+              <button class="bank-option">Kotak Mahindra Bank</button>
+              <button class="bank-option">Punjab National Bank</button>
+              <button class="bank-option">Bank of Baroda</button>
+              <button class="bank-option">IndusInd Bank</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <p class="secure-note">🔒 Your payment is secured with 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Success Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon">✅</span>
+    <span class="toast-message">Payment successful! Welcome to SarkarPay.</span>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+    ============================================
+    SarkarLegal - Legal Services Portal
+    Your trusted partner for all legal needs
+    ============================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>SarkarLegal - Expert Legal Services Portal | Trusted Lawyers & Legal Aid</title>
+    <meta name="description" content="SarkarLegal connects you with verified lawyers, provides legal document templates, free legal aid, case tracking, and expert consultation. Get legal help today!">
+    <meta name="keywords" content="legal services, lawyer, legal aid, case tracking, legal documents, consultation, law firm, legal help">
+    <meta name="author" content="SarkarLegal">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="SarkarLegal - Expert Legal Services Portal">
+    <meta property="og:description" content="Connect with verified lawyers, get free legal aid, track your case, and access legal documents. Your trusted legal partner.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarlegal.in">
+    <meta property="og:image" content="https://sarkarlegal.in/assets/og-image.jpg">
+    <meta property="og:site_name" content="SarkarLegal">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarLegal - Expert Legal Services Portal">
+    <meta name="twitter:description" content="Connect with verified lawyers, get free legal aid, track your case, and access legal documents.">
+    <meta name="twitter:image" content="https://sarkarlegal.in/assets/twitter-card.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        "name": "SarkarLegal",
+        "description": "Expert legal services portal connecting clients with verified lawyers",
+        "url": "https://sarkarlegal.in",
+        "logo": "https://sarkarlegal.in/assets/logo.png",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "123 Legal Lane, Connaught Place",
+            "addressLocality": "New Delhi",
+            "addressRegion": "Delhi",
+            "postalCode": "110001",
+            "addressCountry": "IN"
+        },
+        "telephone": "+91-11-1234-5678",
+        "priceRange": "₹500 - ₹50000",
+        "openingHours": "Mo-Fr 09:00-18:00",
+        "sameAs": [
+            "https://twitter.com/sarkarlegal",
+            "https://facebook.com/sarkarlegal",
+            "https://linkedin.com/company/sarkarlegal"
+        ],
+        "areaServed": {
+            "@type": "Country",
+            "name": "India"
+        },
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Legal Services",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Legal Consultation"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Document Drafting"
+                    }
+                },
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Service",
+                        "name": "Case Representation"
+                    }
+                }
+            ]
+        }
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sarkarlegal.in">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================
+         NAVIGATION BAR
+         ============================================ -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="container nav-container">
+            <a href="#" class="logo" aria-label="SarkarLegal Home">
+                <span class="logo-icon">⚖️</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Legal</span></span>
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="nav-link active">Home</a></li>
+                <li><a href="#features" class="nav-link">Services</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                <a href="#pricing" class="btn btn-primary btn-nav">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================
+         HERO SECTION
+         ============================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <div class="hero-gradient"></div>
+            <div class="hero-pattern"></div>
+        </div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">🏛️ Trusted by 50,000+ Clients</span>
+                <h1 class="hero-title">
+                    Expert Legal Services
+                    <span class="hero-title-highlight">At Your Fingertips</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Connect with verified lawyers, get free legal aid, track your case in real-time,
+                    and access thousands of legal document templates. Justice made accessible.
+                </p>
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn btn-primary btn-lg">
+                        <span>Find a Lawyer</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-outline btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                        <span>Watch Demo</span>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" data-count="50000">0</span><span class="stat-suffix">+</span>
+                        <span class="stat-label">Happy Clients</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-count="2500">0</span><span class="stat-suffix">+</span>
+                        <span class="stat-label">Verified Lawyers</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-count="98">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="hero-card-header">
+                        <div class="hero-card-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="hero-card-title">Case Tracker</span>
+                    </div>
+                    <div class="hero-card-body">
+                        <div class="case-item">
+                            <div class="case-icon">📋</div>
+                            <div class="case-info">
+                                <span class="case-title">Property Dispute #4521</span>
+                                <span class="case-status status-active">In Progress</span>
+                            </div>
+                        </div>
+                        <div class="case-item">
+                            <div class="case-icon">✅</div>
+                            <div class="case-info">
+                                <span class="case-title">Divorce Filing #3290</span>
+                                <span class="case-status status-done">Completed</span>
+                            </div>
+                        </div>
+                        <div class="case-item">
+                            <div class="case-icon">⏳</div>
+                            <div class="case-info">
+                                <span class="case-title">RTI Application #7812</span>
+                                <span class="case-status status-pending">Under Review</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+            <div class="scroll-mouse">
+                <div class="scroll-wheel"></div>
+            </div>
+            <span>Scroll to explore</span>
+        </div>
+    </section>
+
+    <!-- ============================================
+         AD SLOT #1 - Below Hero
+         ============================================ -->
+    <div class="ad-slot container" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+        <div class="ad-banner">
+            <span class="ad-label">Ad</span>
+            <div class="ad-content">
+                <span class="ad-text">📢 Legal Aid Camp - Free Consultation This Weekend!</span>
+                <a href="#" class="ad-cta">Register Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         FEATURES SECTION
+         ============================================ -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Services</span>
+                <h2 class="section-title">Comprehensive Legal <span class="highlight">Solutions</span></h2>
+                <p class="section-subtitle">From consultation to courtroom representation, we've got every legal need covered</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">👨‍⚖️</div>
+                    <h3 class="feature-title">Verified Lawyers</h3>
+                    <p class="feature-desc">Connect with 2500+ verified and experienced lawyers across all practice areas including criminal, civil, family, and corporate law.</p>
+                    <a href="#" class="feature-link">Find a Lawyer →</a>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card" data-aos="fade-up" data-delay="100">
+                    <div class="feature-icon">📄</div>
+                    <h3 class="feature-title">Document Templates</h3>
+                    <p class="feature-desc">Access 10,000+ legally vetted document templates. From NDAs to rental agreements, get professional templates instantly.</p>
+                    <a href="#" class="feature-link">Browse Templates →</a>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card" data-aos="fade-up" data-delay="200">
+                    <div class="feature-icon">🆓</div>
+                    <h3 class="feature-title">Free Legal Aid</h3>
+                    <p class="feature-desc">Eligible for free legal aid? Our platform connects you with pro-bono lawyers and government legal aid services seamlessly.</p>
+                    <a href="#" class="feature-link">Check Eligibility →</a>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card" data-aos="fade-up" data-delay="300">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Case Tracker</h3>
+                    <p class="feature-desc">Track your case status in real-time. Get notifications for every update, hearing date, and document submission.</p>
+                    <a href="#" class="feature-link">Track Case →</a>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card" data-aos="fade-up" data-delay="400">
+                    <div class="feature-icon">💬</div>
+                    <h3 class="feature-title">24/7 Chat Support</h3>
+                    <p class="feature-desc">Get instant legal guidance through our AI-powered chat support. Available round the clock for emergency legal queries.</p>
+                    <a href="#" class="feature-link">Start Chat →</a>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card" data-aos="fade-up" data-delay="500">
+                    <div class="feature-icon">🏛️</div>
+                    <h3 class="feature-title">Court Representation</h3>
+                    <p class="feature-desc">Get expert representation in any court across India. Our lawyers have experience in district courts to the Supreme Court.</p>
+                    <a href="#" class="feature-link">Hire Now →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         AD SLOT #2 - Between Features & How It Works
+         ============================================ -->
+    <div class="ad-slot container" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+        <div class="ad-banner ad-banner-alt">
+            <span class="ad-label">Ad</span>
+            <div class="ad-content">
+                <span class="ad-text">🎓 Legal Workshop - Learn Your Rights! Free Webinar Every Saturday</span>
+                <a href="#" class="ad-cta">Join Free</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         HOW IT WORKS SECTION
+         ============================================ -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Simple Process</span>
+                <h2 class="section-title">How It <span class="highlight">Works</span></h2>
+                <p class="section-subtitle">Get legal help in just 4 simple steps</p>
+            </div>
+
+            <div class="steps-container">
+                <!-- Step 1 -->
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-icon">📝</div>
+                        <h3 class="step-title">Describe Your Case</h3>
+                        <p class="step-desc">Fill in a simple form describing your legal issue. Our AI will categorize it and suggest the best legal approach.</p>
+                    </div>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-icon">🔍</div>
+                        <h3 class="step-title">Get Matched</h3>
+                        <p class="step-desc">Our system matches you with the most suitable lawyers based on expertise, location, budget, and availability.</p>
+                    </div>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-icon">📞</div>
+                        <h3 class="step-title">Consult & Hire</h3>
+                        <p class="step-desc">Schedule a free initial consultation. Review lawyer profiles, ratings, and case history before making your decision.</p>
+                    </div>
+                    <div class="step-connector"></div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-icon">✅</div>
+                        <h3 class="step-title">Track & Resolve</h3>
+                        <p class="step-desc">Monitor your case progress in real-time. Get updates, submit documents, and communicate securely through our platform.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         PRICING SECTION
+         ============================================ -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing Plans</span>
+                <h2 class="section-title">Affordable Legal <span class="highlight">Plans</span></h2>
+                <p class="section-subtitle">Transparent pricing with no hidden fees. Pay only for what you need.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Starter</h3>
+                        <p class="pricing-desc">For basic legal queries</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">0</span>
+                        <span class="price-period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="pricing-feature included">✓ AI Legal Chat Support</li>
+                        <li class="pricing-feature included">✓ 5 Document Templates/month</li>
+                        <li class="pricing-feature included">✓ Legal Aid Eligibility Check</li>
+                        <li class="pricing-feature excluded">✗ Lawyer Consultation</li>
+                        <li class="pricing-feature excluded">✗ Case Tracking</li>
+                        <li class="pricing-feature excluded">✗ Priority Support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full" onclick="openPaymentModal('starter', 0)">Get Started Free</button>
+                </div>
+
+                <!-- Pro Plan (Popular) -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Professional</h3>
+                        <p class="pricing-desc">For individuals & small businesses</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">999</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="pricing-feature included">✓ Everything in Starter</li>
+                        <li class="pricing-feature included">✓ 3 Lawyer Consultations/month</li>
+                        <li class="pricing-feature included">✓ Unlimited Document Templates</li>
+                        <li class="pricing-feature included">✓ Real-time Case Tracking</li>
+                        <li class="pricing-feature included">✓ Priority Email Support</li>
+                        <li class="pricing-feature excluded">✗ Court Representation</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full" onclick="openPaymentModal('professional', 999)">Subscribe Now</button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Enterprise</h3>
+                        <p class="pricing-desc">For businesses & organizations</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">4,999</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li class="pricing-feature included">✓ Everything in Professional</li>
+                        <li class="pricing-feature included">✓ Unlimited Consultations</li>
+                        <li class="pricing-feature included">✓ Court Representation</li>
+                        <li class="pricing-feature included">✓ Dedicated Account Manager</li>
+                        <li class="pricing-feature included">✓ 24/7 Phone Support</li>
+                        <li class="pricing-feature included">✓ Custom Legal Workflows</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full" onclick="openPaymentModal('enterprise', 4999)">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         AD SLOT #3 - Between Pricing & Testimonials
+         ============================================ -->
+    <div class="ad-slot container" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+        <div class="ad-banner">
+            <span class="ad-label">Ad</span>
+            <div class="ad-content">
+                <span class="ad-text">⚖️ New: Get Your Legal Notice Drafted in 24 Hours - Starting at ₹499</span>
+                <a href="#" class="ad-cta">Order Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         TESTIMONIALS SECTION
+         ============================================ -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Client Reviews</span>
+                <h2 class="section-title">What Our Clients <span class="highlight">Say</span></h2>
+                <p class="section-subtitle">Real stories from real people who found justice through SarkarLegal</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"SarkarLegal helped me resolve my property dispute in just 3 months. The lawyer I was matched with was incredibly knowledgeable and kept me updated throughout."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div class="author-info">
+                            <span class="author-name">Rajesh Kumar</span>
+                            <span class="author-role">Property Dispute Client</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"As a small business owner, I needed regular legal advice but couldn't afford a full-time lawyer. The Professional plan is perfect for my needs. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <span class="author-name">Priya Sharma</span>
+                            <span class="author-role">Small Business Owner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"The free legal aid service connected me with an amazing lawyer who helped me file my case without any charges. SarkarLegal truly makes justice accessible to everyone."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AM</div>
+                        <div class="author-info">
+                            <span class="author-name">Amit Mishra</span>
+                            <span class="author-role">Legal Aid Beneficiary</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FAQ SECTION
+         ============================================ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FAQ</span>
+                <h2 class="section-title">Frequently Asked <span class="highlight">Questions</span></h2>
+                <p class="section-subtitle">Find answers to common questions about our legal services</p>
+            </div>
+
+            <div class="faq-container">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>How does SarkarLegal match me with the right lawyer?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI-powered matching system analyzes your case details, location, budget, and preferred language to connect you with the most suitable lawyers. We consider the lawyer's expertise area, success rate, client reviews, and availability to ensure the best match.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is the first consultation really free?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! Every lawyer on our platform offers a free initial consultation of up to 30 minutes. This helps you understand your legal options and decide if the lawyer is the right fit for your case — with no obligation to continue.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>How does the case tracking feature work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Once you hire a lawyer through our platform, you get access to a real-time case dashboard. You can see case milestones, upcoming hearing dates, document submissions, and communicate securely with your lawyer. You'll receive SMS and email notifications for every update.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Who is eligible for free legal aid?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>As per the Legal Services Authorities Act, 1987, free legal aid is available to women, children, SC/ST members, industrial workers, victims of trafficking, persons with disabilities, and those with annual income below ₹3 lakh. Our eligibility checker can instantly verify your qualification.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>What payment methods do you accept?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We accept all major payment methods including UPI (Google Pay, PhonePe, Paytm), credit/debit cards, net banking, and EMI options. All payments are processed through secure, PCI-DSS compliant payment gateways.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Can I switch lawyers if I'm not satisfied?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! If you're not satisfied with your current lawyer, you can request a switch at any time. Our support team will help you find a replacement lawyer within 24 hours. Your case documents and history are seamlessly transferred.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         AD SLOT #4 - Between FAQ & Footer
+         ============================================ -->
+    <div class="ad-slot container" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+        <div class="ad-banner ad-banner-alt">
+            <span class="ad-label">Ad</span>
+            <div class="ad-content">
+                <span class="ad-text">📱 Download the SarkarLegal App - Get Legal Help On The Go!</span>
+                <a href="#" class="ad-cta">Download Free</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         CTA SECTION
+         ============================================ -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Get Legal Help?</h2>
+                <p class="cta-subtitle">Join 50,000+ clients who trust SarkarLegal for their legal needs. Start with a free consultation today.</p>
+                <div class="cta-buttons">
+                    <a href="#pricing" class="btn btn-primary btn-lg">Find Your Lawyer</a>
+                    <a href="tel:+911112345678" class="btn btn-outline btn-lg">📞 Call Us</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">⚖️</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Legal</span></span>
+                    </a>
+                    <p class="footer-desc">Making legal services accessible, affordable, and transparent for every Indian. Your right to justice, simplified.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">📘</a>
+                        <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
+                        <a href="#" class="social-link" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <!-- Services Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Find a Lawyer</a></li>
+                        <li><a href="#">Legal Documents</a></li>
+                        <li><a href="#">Free Legal Aid</a></li>
+                        <li><a href="#">Case Tracking</a></li>
+                        <li><a href="#">Legal Consultation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                        <li><a href="#">Grievance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarLegal. All rights reserved. | Registered under the Legal Services Authorities Act, 1987</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================
+         UPI PAYMENT MODAL
+         ============================================ -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Complete Your Payment</h3>
+                <button class="modal-close" onclick="closePaymentModal()" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-plan-info">
+                    <span class="payment-plan-label">Selected Plan:</span>
+                    <span class="payment-plan-name" id="selectedPlanName">Professional</span>
+                </div>
+                <div class="payment-amount">
+                    <span class="payment-amount-currency">₹</span>
+                    <span class="payment-amount-value" id="selectedPlanAmount">999</span>
+                    <span class="payment-amount-period">/month</span>
+                </div>
+
+                <!-- UPI Payment Options -->
+                <div class="payment-methods">
+                    <h4 class="payment-methods-title">Pay via UPI</h4>
+
+                    <!-- UPI ID Input -->
+                    <div class="upi-section">
+                        <label class="upi-label" for="upiId">Enter UPI ID</label>
+                        <div class="upi-input-group">
+                            <input type="text" id="upiId" class="upi-input" placeholder="yourname@upi" autocomplete="off">
+                            <button class="btn btn-primary btn-upi" onclick="verifyUpi()">Verify & Pay</button>
+                        </div>
+                        <p class="upi-hint">Example: yourname@paytm, yourname@okicici</p>
+                    </div>
+
+                    <!-- OR Divider -->
+                    <div class="payment-divider">
+                        <span>or pay using</span>
+                    </div>
+
+                    <!-- UPI App Buttons -->
+                    <div class="upi-apps">
+                        <button class="upi-app-btn" onclick="payWithApp('gpay')">
+                            <span class="upi-app-icon">🟢</span>
+                            <span>Google Pay</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="payWithApp('phonepe')">
+                            <span class="upi-app-icon">🟣</span>
+                            <span>PhonePe</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="payWithApp('paytm')">
+                            <span class="upi-app-icon">🔵</span>
+                            <span>Paytm</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="payWithApp('bhim')">
+                            <span class="upi-app-icon">🇮🇳</span>
+                            <span>BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Security Note -->
+                <div class="payment-security">
+                    <span>🔒</span>
+                    <span>Your payment is secured with 256-bit SSL encryption</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+      ============================================================
+      SarkarFinance — Personal Finance Tracker Landing Page
+      Mobile-first responsive design with SEO optimization
+      ============================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title & Meta Description -->
+    <title>SarkarFinance — Smart Personal Finance Tracker for India | Budget, Save, Invest</title>
+    <meta name="description" content="SarkarFinance helps Indians track expenses, set budgets, save smarter, and invest wisely. UPI-powered, AI-driven insights, 100% free. Start your financial journey today!">
+    <meta name="keywords" content="personal finance India, budget tracker, expense tracker, UPI payments, savings app, investment tracker, SarkarFinance">
+    <meta name="author" content="SarkarFinance">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SarkarFinance — Smart Personal Finance Tracker for India">
+    <meta property="og:description" content="Track expenses, set budgets, save smarter, and invest wisely. UPI-powered, AI-driven insights, 100% free.">
+    <meta property="og:url" content="https://sarkarfinance.in">
+    <meta property="og:site_name" content="SarkarFinance">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarFinance — Smart Personal Finance Tracker">
+    <meta name="twitter:description" content="Track expenses, set budgets, save smarter, and invest wisely. UPI-powered, AI-driven insights, 100% free.">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "SarkarFinance",
+        "description": "Smart personal finance tracker for Indians — track expenses, set budgets, save smarter, and invest wisely.",
+        "url": "https://sarkarfinance.in",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "creator": {
+            "@type": "Organization",
+            "name": "SarkarFinance",
+            "url": "https://sarkarfinance.in"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "12500"
+        }
+    }
+    </script>
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://sarkarfinance.in">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Favicon placeholder -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+</head>
+<body>
+    <!-- ============================================================
+         NAVIGATION BAR — Fixed top nav with mobile hamburger
+         ============================================================ -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" aria-label="SarkarFinance Home">
+                <span class="logo-icon">💰</span>
+                <span class="logo-text">Sarkar<span class="logo-accent">Finance</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#testimonials">Reviews</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions: Dark Mode + CTA -->
+            <div class="nav-actions">
+                <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="toggle-icon">🌙</span>
+                </button>
+                <a href="#pricing" class="btn btn-nav">Get Started</a>
+
+                <!-- Hamburger for mobile -->
+                <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#testimonials">Reviews</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+         HERO SECTION — Eye-catching intro with CTA
+         ============================================================ -->
+    <header class="hero" id="hero">
+        <div class="hero-bg-pattern" aria-hidden="true"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">🇮🇳 Made for India</div>
+                <h1 class="hero-title">
+                    Take Control of Your
+                    <span class="gradient-text">Money</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Track expenses, set budgets, save smarter, and invest wisely — all in one app.
+                    Powered by AI, trusted by <strong>5 Lakh+</strong> Indians.
+                </p>
+                <div class="hero-cta">
+                    <a href="#pricing" class="btn btn-primary btn-lg">
+                        Start Free
+                        <span class="btn-arrow">→</span>
+                    </a>
+                    <a href="#how-it-works" class="btn btn-ghost btn-lg">
+                        See How It Works
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="500000">0</span><span class="stat-suffix">+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="250">0</span><span class="stat-suffix">Cr+</span>
+                        <span class="stat-label">₹ Tracked</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="48">0</span><span class="stat-suffix">.2</span>
+                        <span class="stat-label">★ Rating</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-card">
+                    <div class="card-header">
+                        <span class="card-dot red"></span>
+                        <span class="card-dot yellow"></span>
+                        <span class="card-dot green"></span>
+                        <span class="card-title">Monthly Overview</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-balance">
+                            <span class="balance-label">Total Balance</span>
+                            <span class="balance-amount">₹1,24,580</span>
+                        </div>
+                        <div class="card-bars">
+                            <div class="bar" style="--height: 60%"><span>Jan</span></div>
+                            <div class="bar" style="--height: 80%"><span>Feb</span></div>
+                            <div class="bar" style="--height: 45%"><span>Mar</span></div>
+                            <div class="bar" style="--height: 90%"><span>Apr</span></div>
+                            <div class="bar active" style="--height: 75%"><span>May</span></div>
+                            <div class="bar" style="--height: 55%"><span>Jun</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         AD SLOT 1 — Below hero
+         ================================================= === -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FEATURES SECTION — 6-card grid of key features
+         ============================================================ -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Everything You Need to <span class="gradient-text">Master Your Money</span></h2>
+                <p class="section-subtitle">Powerful tools designed for the Indian financial ecosystem</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1: Smart Expense Tracking -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">📊</div>
+                    <h3>Smart Expense Tracking</h3>
+                    <p>Auto-categorize expenses from UPI, cards, and cash. AI learns your spending patterns and gives personalized insights.</p>
+                </div>
+
+                <!-- Feature 2: Budget Planner -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Budget Planner</h3>
+                    <p>Set monthly budgets by category. Get real-time alerts when you're overspending. 50/30/20 rule built in.</p>
+                </div>
+
+                <!-- Feature 3: UPI Integration -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">📱</div>
+                    <h3>UPI-Powered</h3>
+                    <p>Seamlessly connect with Google Pay, PhonePe, Paytm, and all UPI apps. Track every rupee automatically.</p>
+                </div>
+
+                <!-- Feature 4: Investment Tracker -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">📈</div>
+                    <h3>Investment Tracker</h3>
+                    <p>Track mutual funds, stocks, FD, PPF, NPS, and gold. Real-time NAV updates and portfolio analysis.</p>
+                </div>
+
+                <!-- Feature 5: Bill Reminders -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Bill Reminders</h3>
+                    <p>Never miss a due date. Get smart reminders for EMIs, credit cards, insurance, and utility bills.</p>
+                </div>
+
+                <!-- Feature 6: AI Insights -->
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Money Coach</h3>
+                    <p>Get personalized saving tips, tax-saving suggestions, and spending insights powered by AI.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         AD SLOT 2 — Between features and how-it-works
+         ============================================================ -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         HOW IT WORKS — 4-step process
+         ============================================================ -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">How It Works</span>
+                <h2 class="section-title">Start in <span class="gradient-text">3 Simple Steps</span></h2>
+                <p class="section-subtitle">From setup to savings in under 5 minutes</p>
+            </div>
+
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">📲</div>
+                    <h3>Download & Sign Up</h3>
+                    <p>Create your free account with just your mobile number. Aadhaar-based eKYC for premium features.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🔗</div>
+                    <h3>Link Your Accounts</h3>
+                    <p>Securely connect your bank accounts, UPI apps, and investment platforms. Bank-grade 256-bit encryption.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">✨</div>
+                    <h3>Track & Save</h3>
+                    <p>AI automatically categorizes expenses, sets budgets, and gives you actionable saving tips daily.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">🏆</div>
+                    <h3>Grow Wealth</h3>
+                    <p>Follow AI recommendations, track investments, and watch your wealth grow month after month.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         AD SLOT 3 — Between how-it-works and pricing
+         ============================================================ -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PRICING SECTION — 3-tier pricing with UPI payment modal
+         ============================================================ -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing</span>
+                <h2 class="section-title">Simple, <span class="gradient-text">Transparent</span> Pricing</h2>
+                <p class="section-subtitle">Start free. Upgrade when you need more power.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Tier -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="plan-name">Starter</h3>
+                        <div class="plan-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">0</span>
+                            <span class="period">/forever</span>
+                        </div>
+                        <p class="plan-desc">Perfect for getting started</p>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✅ Expense tracking</li>
+                        <li>✅ 3 budget categories</li>
+                        <li>✅ Basic reports</li>
+                        <li>✅ Bill reminders</li>
+                        <li>❌ AI insights</li>
+                        <li>❌ Investment tracking</li>
+                        <li>❌ Priority support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full" onclick="openPaymentModal('starter', 0)">Get Started Free</button>
+                </div>
+
+                <!-- Pro Tier (Popular) -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="plan-name">Pro</h3>
+                        <div class="plan-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">199</span>
+                            <span class="period">/year</span>
+                        </div>
+                        <p class="plan-desc">Best for serious savers</p>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✅ Unlimited expense tracking</li>
+                        <li>✅ Unlimited budgets</li>
+                        <li>✅ Advanced reports & charts</li>
+                        <li>✅ Bill reminders</li>
+                        <li>✅ AI Money Coach</li>
+                        <li>✅ Investment tracking</li>
+                        <li>✅ Priority email support</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full" onclick="openPaymentModal('pro', 199)">Upgrade to Pro</button>
+                </div>
+
+                <!-- Premium Tier -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="plan-name">Premium</h3>
+                        <div class="plan-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">499</span>
+                            <span class="period">/year</span>
+                        </div>
+                        <p class="plan-desc">For wealth builders</p>
+                    </div>
+                    <ul class="plan-features">
+                        <li>✅ Everything in Pro</li>
+                        <li>✅ Tax planning tools</li>
+                        <li>✅ Family accounts (5 members)</li>
+                        <li>✅ Export to Excel/PDF</li>
+                        <li>✅ API access</li>
+                        <li>✅ Dedicated account manager</li>
+                        <li>✅ 24/7 phone support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full" onclick="openPaymentModal('premium', 499)">Go Premium</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         UPI PAYMENT MODAL
+         ============================================================ -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closePaymentModal()" aria-label="Close payment modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="modalTitle">Complete Your Payment</h2>
+                <p class="modal-subtitle">Secure UPI payment</p>
+            </div>
+            <div class="modal-body">
+                <div class="payment-amount">
+                    <span class="payment-label">Amount</span>
+                    <span class="payment-value" id="paymentAmount">₹199</span>
+                </div>
+                <div class="payment-plan" id="paymentPlan">Pro Plan — Yearly</div>
+
+                <!-- UPI ID Input -->
+                <div class="upi-section">
+                    <label for="upiId" class="upi-label">Enter UPI ID</label>
+                    <div class="upi-input-group">
+                        <input type="text" id="upiId" placeholder="yourname@upi" class="upi-input" aria-label="UPI ID">
+                    </div>
+                    <p class="upi-hint">Example: yourname@paytm, yourname@ybl, yourname@oksbi</p>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="upi-divider">
+                    <span>or pay via</span>
+                </div>
+
+                <!-- UPI App Buttons -->
+                <div class="upi-apps">
+                    <button class="upi-app-btn" onclick="selectUpiApp('gpay')" aria-label="Pay with Google Pay">
+                        <span class="upi-icon">G</span> Google Pay
+                    </button>
+                    <button class="upi-app-btn" onclick="selectUpiApp('phonepe')" aria-label="Pay with PhonePe">
+                        <span class="upi-icon">P</span> PhonePe
+                    </button>
+                    <button class="upi-app-btn" onclick="selectUpiApp('paytm')" aria-label="Pay with Paytm">
+                        <span class="upi-icon">₱</span> Paytm
+                    </button>
+                    <button class="upi-app-btn" onclick="selectUpiApp('bhim')" aria-label="Pay with BHIM">
+                        <span class="upi-icon">B</span> BHIM
+                    </button>
+                </div>
+
+                <!-- QR Code Placeholder -->
+                <div class="upi-qr">
+                    <div class="qr-placeholder">
+                        <span>📷</span>
+                        <p>Scan QR to pay</p>
+                    </div>
+                </div>
+
+                <!-- Pay Button -->
+                <button class="btn btn-primary btn-full btn-pay" id="payButton" onclick="processPayment()">
+                    Pay Now — <span id="payButtonText">₹199</span>
+                </button>
+
+                <p class="payment-secure">🔒 256-bit SSL encrypted. Your data is safe.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         TESTIMONIALS SECTION
+         ============================================================ -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Testimonials</span>
+                <h2 class="section-title">Loved by <span class="gradient-text">5 Lakh+</span> Users</h2>
+                <p class="section-subtitle">Real stories from real people managing their money better</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"SarkarFinance changed how I manage money. The AI insights helped me save ₹8,000/month without even trying!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div class="author-info">
+                            <span class="author-name">Rajesh Kumar</span>
+                            <span class="author-role">Software Engineer, Bangalore</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"The UPI tracking is seamless. I can see every rupee I spend across GPay, PhonePe, and my bank. Game changer!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <span class="author-name">Priya Sharma</span>
+                            <span class="author-role">Doctor, Delhi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Investment tracking in one place — mutual funds, PPF, FD. The tax saving suggestions alone are worth the Pro plan."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AM</div>
+                        <div class="author-info">
+                            <span class="author-name">Amit Mehta</span>
+                            <span class="author-role">CA, Mumbai</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         AD SLOT 4 — Between testimonials and FAQ
+         ============================================================ -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FAQ ACCORDION SECTION
+         ============================================================ -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FAQ</span>
+                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="section-subtitle">Everything you need to know about SarkarFinance</p>
+            </div>
+
+            <div class="faq-list">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>Is SarkarFinance really free?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! The Starter plan is completely forever free. You get expense tracking, 3 budget categories, basic reports, and bill reminders at no cost. We also offer Pro (₹199/year) and Premium (₹499/year) plans with advanced features.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>How does UPI integration work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We use secure bank-grade APIs to read transaction data from your UPI apps. We never store your UPI PIN or bank credentials. All data is encrypted with 256-bit SSL and stored securely on Indian servers.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>Can I track investments like mutual funds and stocks?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! Pro and Premium plans include investment tracking for mutual funds (with live NAV), stocks, FD, PPF, NPS, gold, and more. Get portfolio analysis, XIRR calculations, and tax reports.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>Is my financial data safe?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Your security is our #1 priority. We use 256-bit encryption, never share your data with third parties, and comply with RBI guidelines. We're also ISO 27001 certified and undergo regular security audits.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>Can I use it with my family?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! The Premium plan includes family accounts for up to 5 members. Each member gets their own dashboard while you can view consolidated family finances. Perfect for joint financial planning.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                        <span>How do I cancel my subscription?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>You can cancel anytime from the app settings. No questions asked. If you cancel within 14 days, you get a full refund. After cancellation, you'll continue to have access until the end of your billing period.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         CTA SECTION — Final call to action
+         ============================================================ -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Take Control of Your Money?</h2>
+                <p>Join 5 Lakh+ Indians who are saving smarter with SarkarFinance. Start free today — no credit card needed.</p>
+                <a href="#pricing" class="btn btn-primary btn-lg">
+                    Get Started Free
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <span class="logo-icon">💰</span>
+                        <span class="logo-text">Sarkar<span class="logo-accent">Finance</span></span>
+                    </a>
+                    <p class="footer-desc">Smart personal finance tracker for India. Track, save, and grow your wealth with AI-powered insights.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter">𝕏</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                        <a href="#" aria-label="YouTube">▶️</a>
+                        <a href="#" aria-label="LinkedIn">💼</a>
+                    </div>
+                </div>
+
+                <!-- Product Links -->
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Links -->
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Links -->
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">RBI Compliance</a></li>
+                        <li><a href="#">Grievance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarFinance. All rights reserved. Made with ❤️ in India.</p>
+                <p class="footer-rbi">Registered with RBI as a Account Aggregator (AA) provider. License No. RBI/AA/2026/001</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

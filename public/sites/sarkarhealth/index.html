@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SarkarHealth - India's Leading Telemedicine Platform. Consult doctors online, book health checkups, order medicines, and access AI-powered healthcare. Available 24/7 with 500+ specialist doctors.">
+    <meta name="keywords" content="telemedicine, online doctor consultation, healthcare India, specialist doctors, online medicine order, health checkup booking, telehealth, virtual doctor, medical consultation online">
+    <meta name="author" content="SarkarHealth">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="SarkarHealth - Online Doctor Consultation | India's Leading Telemedicine Platform">
+    <meta property="og:description" content="Consult 500+ specialist doctors online from anywhere in India. Get prescriptions, health checkup bookings, and medicine delivery at your doorstep.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarhealth.in">
+    <meta property="og:image" content="https://sarkarhealth.in/og-image.jpg">
+    <meta property="og:locale" content="en_IN">
+    <meta property="og:site_name" content="SarkarHealth">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarHealth - Online Doctor Consultation">
+    <meta name="twitter:description" content="Consult 500+ specialist doctors online. Get AI-powered health assessments and medicine delivery.">
+    <meta name="twitter:image" content="https://sarkarhealth.in/twitter-card.jpg">
+    
+    <title>SarkarHealth - Online Doctor Consultation | Best Telemedicine Platform in India</title>
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalBusiness",
+        "name": "SarkarHealth",
+        "description": "India's leading telemedicine platform connecting patients with verified specialist doctors for online consultations, health assessments, and medicine delivery.",
+        "url": "https://sarkarhealth.in",
+        "logo": "https://sarkarhealth.in/logo.png",
+        "image": "https://sarkarhealth.in/og-image.jpg",
+        "telephone": "+91-1800-123-4567",
+        "priceRange": "₹199 - ₹999",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "42 Tower B, Electronic City",
+            "addressLocality": "Bangalore",
+            "addressRegion": "Karnataka",
+            "postalCode": "560100",
+            "addressCountry": "IN"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "12.9716",
+            "longitude": "77.5946"
+        },
+        "openingHoursSpecification": [{
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            "opens": "00:00",
+            "closes": "23:59"
+        }],
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "125430"
+        },
+        "medicalSpecialty": ["Cardiology", "Dermatology", "Pediatrics", "Orthopedics", "Neurology", "Psychiatry", "Gynecology", "General Medicine"],
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Doctor Consultations",
+            "itemListElement": [
+                { "@type": "Offer", "itemOffered": { "@type": "MedicalProcedure", "name": "General Consultation" }, "price": "299", "priceCurrency": "INR" },
+                { "@type": "Offer", "itemOffered": { "@type": "MedicalProcedure", "name": "Specialist Consultation" }, "price": "599", "priceCurrency": "INR" },
+                { "@type": "Offer", "itemOffered": { "@type": "MedicalProcedure", "name": "Emergency Consultation" }, "price": "999", "priceCurrency": "INR" }
+            ]
+        }
+    }
+    </script>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ========== SKIP NAV (Accessibility) ========== -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" aria-label="SarkarHealth Home">
+                <i class="fas fa-heartbeat" aria-hidden="true"></i>
+                <span>Sarkar<strong>Health</strong></span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" role="menubar">
+                <li role="none"><a href="#hero" role="menuitem" class="nav-link">Home</a></li>
+                <li role="none"><a href="#specialties" role="menuitem" class="nav-link">Specialties</a></li>
+                <li role="none"><a href="#how-it-works" role="menuitem" class="nav-link">How It Works</a></li>
+                <li role="none"><a href="#testimonials" role="menuitem" class="nav-link">Reviews</a></li>
+                <li role="none"><a href="#pricing" role="menuitem" class="nav-link">Pricing</a></li>
+                <li role="none"><a href="#faq" role="menuitem" class="nav-link">FAQ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <a href="#consultation" class="btn btn-primary btn-nav">Consult Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <!-- ========== HERO SECTION ========== -->
+        <section class="hero" id="hero">
+            <div class="hero-bg">
+                <div class="hero-pulse"></div>
+                <div class="hero-pulse hero-pulse-2"></div>
+            </div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <span class="hero-badge" aria-label="Trusted by millions">
+                            <i class="fas fa-shield-halved" aria-hidden="true"></i>
+                            Trusted by 12 Lakh+ Families
+                        </span>
+                        <h1 class="hero-title">
+                            Your Health, <br>
+                            <span class="hero-highlight">Our Priority</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            Consult verified specialist doctors from the comfort of your home. 
+                            AI-powered health assessments, instant prescriptions, and medicine delivery — all in one place.
+                        </p>
+                        <!-- Search Bar -->
+                        <div class="hero-search" role="search" aria-label="Search doctors and specialties">
+                            <i class="fas fa-search search-icon" aria-hidden="true"></i>
+                            <input type="text" class="search-input" placeholder="Search doctors, symptoms, specialties..." aria-label="Search for doctors or specialties">
+                            <button class="btn btn-search" aria-label="Search">
+                                <span>Find Doctor</span>
+                                <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                        <div class="hero-stats" aria-label="Platform statistics">
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="500">0</span><span class="stat-suffix">+</span>
+                                <span class="stat-label">Doctors</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="125000">0</span><span class="stat-suffix">+</span>
+                                <span class="stat-label">Consultations</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="15">0</span><span class="stat-suffix">min</span>
+                                <span class="stat-label">Avg Wait</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="hero-card">
+                            <div class="hero-card-header">
+                                <div class="doctor-avatar">
+                                    <i class="fas fa-user-md" aria-hidden="true"></i>
+                                </div>
+                                <div class="doctor-info-card">
+                                    <h3>Dr. Priya Sharma</h3>
+                                    <p>Cardiologist • 15 yrs exp</p>
+                                    <span class="availability-badge online">Available Now</span>
+                                </div>
+                            </div>
+                            <div class="quick-consultation-form">
+                                <label for="symptom-input">Describe your concern:</label>
+                                <input type="text" id="symptom-input" placeholder="e.g., fever, chest pain...">
+                                <button class="btn btn-primary btn-block" onclick="document.getElementById('consultation').scrollIntoView({behavior:'smooth'})">
+                                    ₹299 Consult Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 1 ========== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span>Ad Space</span>
+                <small>970x90 Leaderboard</small>
+            </div>
+        </div>
+
+        <!-- ========== SPECIALTIES SECTION ========== -->
+        <section class="section specialties" id="specialties">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Specialties</span>
+                    <h2 class="section-title">Consult <span class="text-accent">Top Specialists</span></h2>
+                    <p class="section-subtitle">Choose from 50+ medical specialties. Our verified doctors are available 24/7.</p>
+                </div>
+                <div class="specialties-grid" role="list">
+                    <!-- Specialty Cards generated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== HOW IT WORKS ========== -->
+        <section class="section how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Simple Process</span>
+                    <h2 class="section-title">How <span class="text-accent">SarkarHealth</span> Works</h2>
+                    <p class="section-subtitle">Get expert medical care in just 4 easy steps</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-icon"><i class="fas fa-user-md-woman" aria-hidden="true"></i></div>
+                        <h3>Choose Doctor</h3>
+                        <p>Browse 500+ verified specialists by specialty, experience, and patient ratings.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-icon"><i class="fas fa-calendar-check" aria-hidden="true"></i></div>
+                        <h3>Book Slot</h3>
+                        <p>Pick your preferred time slot. Pay just ₹299 for a general consultation.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-icon"><i class="fas fa-video" aria-hidden="true"></i></div>
+                        <h3>Video Call</h3>
+                        <p>Connect via HD video call. Screen sharing for reports available.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <div class="step-icon"><i class="fas fa-prescription-bottle-medical" aria-hidden="true"></i></div>
+                        <h3>Get Prescription</h3>
+                        <p>Receive digital prescription instantly. Order medicines for doorstep delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 2 ========== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span>Ad Space</span>
+                <small>728x90 Banner</small>
+            </div>
+        </div>
+
+        <!-- ========== AI HEALTH CHECK ========== -->
+        <section class="section ai-health" id="ai-health">
+            <div class="container">
+                <div class="ai-health-wrapper">
+                    <div class="ai-health-content">
+                        <span class="section-badge">AI-Powered</span>
+                        <h2>Free AI <span class="text-accent">Symptom Checker</span></h2>
+                        <p>Describe your symptoms and get instant AI-powered health assessment with possible conditions and recommended specialists.</p>
+                        <form class="symptom-form" aria-label="AI Symptom Checker">
+                            <label for="symptom-checker">Enter your symptoms:</label>
+                            <textarea id="symptom-checker" rows="3" placeholder="I have a headache, mild fever, and body ache since yesterday..." aria-label="Describe your symptoms"></textarea>
+                            <button type="button" class="btn btn-primary" onclick="runSymptomCheck()">
+                                <i class="fas fa-brain" aria-hidden="true"></i>
+                                Check My Symptoms
+                            </button>
+                        </form>
+                    </div>
+                    <div class="ai-health-result" id="symptom-result" aria-live="polite">
+                        <!-- Results populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TESTIMONIALS ========== -->
+        <section class="section testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Patient Stories</span>
+                    <h2 class="section-title">Trusted by <span class="text-accent">Thousands</span></h2>
+                    <p class="section-subtitle">Real stories from real patients across India</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </div>
+                        <p class="testimonial-text">"Dr. Gupta was exceptional! Diagnosed my condition in just 10 minutes over video call. Got my prescription instantly and medicines delivered the next morning."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">RK</div>
+                            <div>
+                                <strong>Rajesh Kumar</strong>
+                                <span>Bangalore, consulted for Diabetes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star-half-stroke" aria-hidden="true"></i>
+                        </div>
+                        <p class="testimonial-text">"As a new mom, finding time to visit a doctor was impossible. SarkarHealth's pediatric consultations saved me so much stress. Highly recommend!"</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">PS</div>
+                            <div>
+                                <strong>Priya Singh</strong>
+                                <span>Mumbai, consulted Pediatrics</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating" aria-label="5 out of 5 stars">
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                            <i class="fas fa-star" aria-hidden="true"></i>
+                        </div>
+                        <p class="testimonial-text">"The AI symptom checker was surprisingly accurate! It recommended the right specialist and I got treated quickly. Best ₹299 I've ever spent."</p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AM</div>
+                            <div>
+                                <strong>Amit Mehta</strong>
+                                <span>Delhi, consulted Dermatology</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 3 ========== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span>Ad Space</span>
+                <small>300x250 Rectangle</small>
+            </div>
+        </div>
+
+        <!-- ========== PRICING SECTION ========== -->
+        <section class="section pricing" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Affordable Care</span>
+                    <h2 class="section-title">Simple <span class="text-accent">Pricing</span></h2>
+                    <p class="section-subtitle">Transparent pricing. No hidden charges. Pay only for what you need.</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>General</h3>
+                            <p>For common health concerns</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">299</span>
+                            <span class="period">/ consultation</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 15-min video consultation</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> General physician</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Digital prescription</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 3-day follow-up chat</li>
+                            <li><i class="fas fa-times" aria-hidden="true"></i> Report sharing</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" onclick="openPaymentModal('General Consultation', 299)">Book Now</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3>Specialist</h3>
+                            <p>For expert medical opinion</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">599</span>
+                            <span class="period">/ consultation</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 30-min video consultation</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Specialist doctor</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Digital prescription</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 7-day follow-up chat</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Report sharing included</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block" onclick="openPaymentModal('Specialist Consultation', 599)">Book Now</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Premium</h3>
+                            <p>For comprehensive care</p>
+                        </div>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">999</span>
+                            <span class="period">/ consultation</span>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 45-min video consultation</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Senior specialist</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Detailed prescription</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 14-day follow-up</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> AI health report</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" onclick="openPaymentModal('Premium Consultation', 999)">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CONSULTATION BOOKING ========== -->
+        <section class="section consultation" id="consultation">
+            <div class="container">
+                <div class="consultation-wrapper">
+                    <div class="consultation-info">
+                        <span class="section-badge">Book Appointment</span>
+                        <h2>Start Your <span class="text-accent">Online Consultation</span></h2>
+                        <p>Fill the form below and get connected to a verified doctor within 15 minutes.</p>
+                        <ul class="consultation-benefits">
+                            <li><i class="fas fa-check-circle" aria-hidden="true"></i> Verified & licensed doctors only</li>
+                            <li><i class="fas fa-check-circle" aria-hidden="true"></i> End-to-end encrypted video calls</li>
+                            <li><i class="fas fa-check-circle" aria-hidden="true"></i> 100% money-back guarantee</li>
+                            <li><i class="fas fa-check-circle" aria-hidden="true"></i> Available pan-India</li>
+                        </ul>
+                    </div>
+                    <form class="consultation-form" id="booking-form" aria-label="Book a consultation">
+                        <div class="form-group">
+                            <label for="patient-name">Full Name <span class="required">*</span></label>
+                            <input type="text" id="patient-name" required placeholder="Enter your full name" aria-required="true">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="patient-phone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="patient-phone" required placeholder="+91 XXXXX XXXXX" pattern="[0-9+\- ]{10,15}" aria-required="true">
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-age">Age</label>
+                                <input type="number" id="patient-age" placeholder="Age" min="1" max="120">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="consult-specialty">Preferred Specialty</label>
+                            <select id="consult-specialty" aria-label="Select specialty">
+                                <option value="">Select a specialty</option>
+                                <option value="general">General Medicine</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="dermatology">Dermatology</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="psychiatry">Psychiatry</option>
+                                <option value="gynecology">Gynecology</option>
+                                <option value="neurology">Neurology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="consult-symptoms">Describe Your Problem <span class="required">*</span></label>
+                            <textarea id="consult-symptoms" rows="3" required placeholder="Briefly describe your symptoms..." aria-required="true"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                            Book Consultation — ₹299
+                        </button>
+                        <p class="form-note">
+                            <i class="fas fa-lock" aria-hidden="true"></i>
+                            Your data is encrypted and never shared. <a href="#">Privacy Policy</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FAQ SECTION ========== -->
+        <section class="section faq" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Got Questions?</span>
+                    <h2 class="section-title">Frequently Asked <span class="text-accent">Questions</span></h2>
+                </div>
+                <div class="faq-list" role="list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How does an online consultation work?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <p>After booking, you'll receive a video call link via SMS and email. Connect at your scheduled time to consult with a verified doctor. The consultation lasts 15-45 minutes depending on your plan. You receive a digital prescription immediately after.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Are the doctors verified and licensed?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <p>Absolutely! Every doctor on SarkarHealth goes through rigorous verification including medical license validation, degree verification, and background checks. We only onboard doctors with valid NMC/State Medical Council registration.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What payment methods do you accept?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <p>We accept UPI (GPay, PhonePe, Paytm), credit/debit cards, net banking, and wallets. You can also pay after the consultation if you choose the pay-later option for ₹0 upfront.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I get medicines delivered to my location?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <p>Yes! After your consultation, you can order prescribed medicines directly from SarkarHealth. We deliver to 18,000+ pin codes across India with same-day delivery available in major cities.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is my medical data safe and private?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer" role="region">
+                            <p>Your medical data is AES-256 encrypted and stored on HIPAA-compliant servers in India. We never share your data with third parties. You can request data deletion at any time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 4 ========== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-placeholder">
+                <span>Ad Space</span>
+                <small>300x250 Rectangle</small>
+            </div>
+        </div>
+
+        <!-- ========== CTA SECTION ========== -->
+        <section class="section cta" id="cta">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Take Care of Your Health?</h2>
+                    <p>Join 12 lakh+ families who trust SarkarHealth for their medical needs.</p>
+                    <a href="#consultation" class="btn btn-white btn-lg">
+                        <i class="fas fa-video" aria-hidden="true"></i>
+                        Start Free Consultation
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="nav-logo">
+                        <i class="fas fa-heartbeat" aria-hidden="true"></i>
+                        <span>Sarkar<strong>Health</strong></span>
+                    </a>
+                    <p>India's most trusted telemedicine platform. Making quality healthcare accessible to every Indian.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        <li><a href="#">Video Consultation</a></li>
+                        <li><a href="#">Medicine Delivery</a></li>
+                        <li><a href="#">Health Checkups</a></li>
+                        <li><a href="#">Lab Tests</a></li>
+                        <li><a href="#">Mental Health</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Specialties</h4>
+                    <ul>
+                        <li><a href="#">Cardiology</a></li>
+                        <li><a href="#">Dermatology</a></li>
+                        <li><a href="#">Pediatrics</a></li>
+                        <li><a href="#">Orthopedics</a></li>
+                        <li><a href="#">Gynecology</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">For Doctors</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">HIPAA Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarHealth. All rights reserved.</p>
+                <p>Made with <i class="fas fa-heart" aria-hidden="true" style="color: var(--color-danger);"></i> for India's Health</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-modal-title">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="payment-modal-title">Complete Payment</h3>
+                <button class="modal-close" aria-label="Close payment modal" onclick="closePaymentModal()">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-summary">
+                    <p class="payment-plan" id="payment-plan-name">Consultation</p>
+                    <p class="payment-amount" id="payment-amount-display">₹299</p>
+                </div>
+                
+                <!-- Payment Method Tabs -->
+                <div class="payment-tabs" role="tablist">
+                    <button class="payment-tab active" role="tab" aria-selected="true" data-method="upi" onclick="switchPaymentTab('upi')">
+                        <i class="fas fa-mobile-screen" aria-hidden="true"></i> UPI
+                    </button>
+                    <button class="payment-tab" role="tab" aria-selected="false" data-method="card" onclick="switchPaymentTab('card')">
+                        <i class="fas fa-credit-card" aria-hidden="true"></i> Card
+                    </button>
+                    <button class="payment-tab" role="tab" aria-selected="false" data-method="netbanking" onclick="switchPaymentTab('netbanking')">
+                        <i class="fas fa-building-columns" aria-hidden="true"></i> Net Banking
+                    </button>
+                </div>
+
+                <!-- UPI Payment -->
+                <div class="payment-method active" id="upi-panel" role="tabpanel">
+                    <div class="upi-input-group">
+                        <label for="upi-id">Enter UPI ID:</label>
+                        <input type="text" id="upi-id" placeholder="yourname@upi" aria-label="Enter your UPI ID">
+                    </div>
+                    <div class="upi-apps">
+                        <span>Or pay via:</span>
+                        <div class="upi-app-icons">
+                            <button class="upi-app-btn" aria-label="Pay with Google Pay">
+                                <i class="fab fa-google-pay" aria-hidden="true"></i> GPay
+                            </button>
+                            <button class="upi-app-btn" aria-label="Pay with PhonePe">
+                                <i class="fas fa-phone-volume" aria-hidden="true"></i> PhonePe
+                            </button>
+                            <button class="upi-app-btn" aria-label="Pay with Paytm">
+                                <i class="fas fa-wallet" aria-hidden="true"></i> Paytm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Payment -->
+                <div class="payment-method" id="card-panel" role="tabpanel">
+                    <div class="card-form">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="card-expiry">Expiry</label>
+                                <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-cvv">CVV</label>
+                                <input type="password" id="card-cvv" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Net Banking -->
+                <div class="payment-method" id="netbanking-panel" role="tabpanel">
+                    <div class="netbanking-options">
+                        <label class="netbanking-radio">
+                            <input type="radio" name="bank" value="sbi" checked>
+                            <span>State Bank of India</span>
+                        </label>
+                        <label class="netbanking-radio">
+                            <input type="radio" name="bank" value="hdfc">
+                            <span>HDFC Bank</span>
+                        </label>
+                        <label class="netbanking-radio">
+                            <input type="radio" name="bank" value="icici">
+                            <span>ICICI Bank</span>
+                        </label>
+                        <label class="netbanking-radio">
+                            <input type="radio" name="bank" value="axis">
+                            <span>Axis Bank</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg" onclick="processPayment()" id="pay-button">
+                    Pay <span id="pay-button-amount">₹299</span>
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                </button>
+                <p class="payment-secure-note">
+                    <i class="fas fa-shield-halved" aria-hidden="true"></i>
+                    256-bit SSL encrypted. Powered by SarkarPay.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== BACK TO TOP ========== -->
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+        <i class="fas fa-chevron-up" aria-hidden="true"></i>
+    </button>
+
+    <script src="app.js"></script>
+</body>
+</html>

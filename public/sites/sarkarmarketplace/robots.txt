@@ -1,0 +1,19 @@
+# Sarkar AI — robots.txt
+# https://sarkarai.in/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# Sitemap
+Sitemap: https://sarkarai.in/sitemap.xml
+
+# Crawl-delay for respectful bots
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: Bingbot
+Crawl-delay: 1

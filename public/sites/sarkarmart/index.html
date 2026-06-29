@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!-- ============================================ -->
+    <!-- SarkarMart - E-Commerce Marketplace          -->
+    <!-- Mobile-first responsive landing page         -->
+    <!-- with SEO, Schema.org, Open Graph, UPI       -->
+    <!-- ============================================ -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- SEO Meta Tags -->
+    <title>SarkarMart - India's Trusted E-Commerce Marketplace | Shop Smart, Save More</title>
+    <meta name="description" content="SarkarMart is India's trusted e-commerce marketplace. Shop from millions of products across electronics, fashion, groceries, and more. UPI payments, fast delivery, easy returns.">
+    <meta name="keywords" content="SarkarMart, e-commerce, online shopping, India, UPI payment, marketplace, buy online, electronics, fashion, groceries">
+    <meta name="author" content="SarkarMart">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sarkarmart.in/">
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="SarkarMart - India's Trusted E-Commerce Marketplace">
+    <meta property="og:description" content="Shop from millions of products. UPI payments, fast delivery, easy returns. Join 10 million+ happy customers.">
+    <meta property="og:url" content="https://sarkarmart.in/">
+    <meta property="og:site_name" content="SarkarMart">
+    <meta property="og:image" content="https://sarkarmart.in/assets/og-banner.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarMart - India's Trusted E-Commerce Marketplace">
+    <meta name="twitter:description" content="Shop from millions of products. UPI payments, fast delivery, easy returns.">
+    <meta name="twitter:image" content="https://sarkarmart.in/assets/og-banner.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SarkarMart",
+        "url": "https://sarkarmart.in/",
+        "description": "India's trusted e-commerce marketplace with millions of products",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sarkarmart.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "SarkarMart",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://sarkarmart.in/assets/logo.png"
+            }
+        },
+        "sameAs": [
+            "https://twitter.com/sarkarmart",
+            "https://facebook.com/sarkarmart",
+            "https://instagram.com/sarkarmart"
+        ]
+    }
+    </script>
+
+    <!-- Product Schema for featured items -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Featured Products",
+        "itemListElement": [
+            {
+                "@type": "Product",
+                "name": "Smartphones & Accessories",
+                "offers": {
+                    "@type": "Offer",
+                    "priceCurrency": "INR",
+                    "price": "4999"
+                }
+            },
+            {
+                "@type": "Product",
+                "name": "Fashion & Lifestyle",
+                "offers": {
+                    "@type": "Offer",
+                    "priceCurrency": "INR",
+                    "price": "299"
+                }
+            },
+            {
+                "@type": "Product",
+                "name": "Home & Kitchen",
+                "offers": {
+                    "@type": "Offer",
+                    "priceCurrency": "INR",
+                    "price": "999"
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "How do I pay on SarkarMart?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "SarkarMart supports UPI, credit/debit cards, net banking, and cash on delivery. UPI payments are instant and secure."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the return policy?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "We offer a 7-day easy return policy on most products. Initiate a return from your orders page and we'll pick it up for free."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How fast is delivery?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Most orders are delivered within 2-5 business days. Prime members get same-day and next-day delivery in select cities."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- SKIP LINK (Accessibility)                    -->
+    <!-- ============================================ -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ============================================ -->
+    <!-- NAVIGATION BAR                               -->
+    <!-- ============================================ -->
+    <header class="navbar" role="banner">
+        <div class="container navbar__inner">
+            <!-- Logo -->
+            <a href="/" class="navbar__logo" aria-label="SarkarMart Home">
+                <span class="navbar__logo-icon">🛒</span>
+                <span class="navbar__logo-text">Sarkar<span class="text-primary">Mart</span></span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="navbar__nav" role="navigation" aria-label="Main navigation">
+                <a href="#features" class="navbar__link">Features</a>
+                <a href="#categories" class="navbar__link">Categories</a>
+                <a href="#how-it-works" class="navbar__link">How It Works</a>
+                <a href="#pricing" class="navbar__link">Pricing</a>
+                <a href="#testimonials" class="navbar__link">Reviews</a>
+                <a href="#faq" class="navbar__link">FAQ</a>
+            </nav>
+
+            <!-- Navbar Actions -->
+            <div class="navbar__actions">
+                <!-- Dark Mode Toggle -->
+                <button class="btn-icon" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="icon-sun">☀️</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#pricing" class="btn btn--primary btn--sm navbar__cta">Start Shopping</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="navbar__hamburger" id="mobileMenuToggle" aria-label="Open menu" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="navbar__mobile" id="mobileMenu" aria-hidden="true">
+            <nav class="navbar__mobile-nav" aria-label="Mobile navigation">
+                <a href="#features" class="navbar__mobile-link">Features</a>
+                <a href="#categories" class="navbar__mobile-link">Categories</a>
+                <a href="#how-it-works" class="navbar__mobile-link">How It Works</a>
+                <a href="#pricing" class="navbar__mobile-link">Pricing</a>
+                <a href="#testimonials" class="navbar__mobile-link">Reviews</a>
+                <a href="#faq" class="navbar__mobile-link">FAQ</a>
+                <a href="#pricing" class="btn btn--primary navbar__mobile-cta">Start Shopping</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- ======================================== -->
+        <!-- HERO SECTION                              -->
+        <!-- ======================================== -->
+        <section class="hero" id="hero">
+            <div class="container">
+                <div class="hero__content">
+                    <div class="hero__badge">🎉 Grand Launch — Up to 70% Off</div>
+                    <h1 class="hero__title">India's Most Trusted <span class="text-gradient">E-Commerce</span> Marketplace</h1>
+                    <p class="hero__subtitle">Shop from 50+ million products across 500+ categories. Pay with UPI, get fast delivery, and enjoy easy returns. Join 10 million+ happy customers today.</p>
+
+                    <!-- Search Bar -->
+                    <div class="hero__search">
+                        <input type="text" class="hero__search-input" placeholder="Search for products, brands, and more..." aria-label="Search products">
+                        <button class="btn btn--primary hero__search-btn" aria-label="Search">
+                            🔍 Search
+                        </button>
+                    </div>
+
+                    <!-- Trust Badges -->
+                    <div class="hero__trust">
+                        <div class="hero__trust-item">
+                            <span class="hero__trust-icon">📦</span>
+                            <span>Free Delivery</span>
+                        </div>
+                        <div class="hero__trust-item">
+                            <span class="hero__trust-icon">💳</span>
+                            <span>UPI Payments</span>
+                        </div>
+                        <div class="hero__trust-item">
+                            <span class="hero__trust-icon">🔄</span>
+                            <span>Easy Returns</span>
+                        </div>
+                        <div class="hero__trust-item">
+                            <span class="hero__trust-icon">🔒</span>
+                            <span>Secure Shopping</span>
+                        </div>
+                    </div>
+
+                    <!-- CTA Buttons -->
+                    <div class="hero__cta-group">
+                        <a href="#categories" class="btn btn--primary btn--lg">Shop Now</a>
+                        <a href="#how-it-works" class="btn btn--outline btn--lg">How It Works</a>
+                    </div>
+                </div>
+
+                <!-- Hero Visual -->
+                <div class="hero__visual">
+                    <div class="hero__card">
+                        <div class="hero__card-header">
+                            <span class="hero__card-dot"></span>
+                            <span class="hero__card-dot"></span>
+                            <span class="hero__card-dot"></span>
+                        </div>
+                        <div class="hero__card-body">
+                            <div class="hero__stat">
+                                <span class="hero__stat-number">10M+</span>
+                                <span class="hero__stat-label">Happy Customers</span>
+                            </div>
+                            <div class="hero__stat">
+                                <span class="hero__stat-number">50M+</span>
+                                <span class="hero__stat-label">Products</span>
+                            </div>
+                            <div class="hero__stat">
+                                <span class="hero__stat-number">500+</span>
+                                <span class="hero__stat-label">Categories</span>
+                            </div>
+                            <div class="hero__stat">
+                                <span class="hero__stat-number">4.8★</span>
+                                <span class="hero__stat-label">App Rating</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- AD SLOT 1 (Below Hero)                    -->
+        <!-- ======================================== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot__inner">
+                <span class="ad-slot__label">Ad</span>
+                <div class="ad-slot__content">
+                    <p>📢 <strong>Grand Sale!</strong> Get up to 70% off on Electronics, Fashion & More. Use code <strong>SARKAR70</strong>. Limited time offer!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- FEATURES SECTION                          -->
+        <!-- ======================================== -->
+        <section class="section features" id="features">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Why SarkarMart?</span>
+                    <h2 class="section__title">Features That Make Us <span class="text-primary">#1</span></h2>
+                    <p class="section__subtitle">We're not just another marketplace. We're built for India, by Indians, with features that matter to you.</p>
+                </div>
+
+                <div class="grid grid--4 features__grid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">💳</div>
+                        <h3 class="feature-card__title">UPI Payments</h3>
+                        <p class="feature-card__desc">Pay instantly with any UPI app — GPay, PhonePe, Paytm, BHIM. No wallet top-up needed.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🚚</div>
+                        <h3 class="feature-card__title">Fast Delivery</h3>
+                        <p class="feature-card__desc">Same-day delivery in metro cities. Next-day delivery across 500+ cities in India.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🔄</div>
+                        <h3 class="feature-card__title">7-Day Easy Returns</h3>
+                        <p class="feature-card__desc">Not satisfied? Return within 7 days. Free pickup from your doorstep. No questions asked.</p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🔒</div>
+                        <h3 class="feature-card__title">Secure Shopping</h3>
+                        <p class="feature-card__desc">256-bit SSL encryption. Your data and payments are always safe with us.</p>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🏷️</div>
+                        <h3 class="feature-card__title">Best Prices</h3>
+                        <p class="feature-card__desc">Price match guarantee. If you find it cheaper elsewhere, we'll beat it by 5%.</p>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🎁</div>
+                        <h3 class="feature-card__title">Daily Deals</h3>
+                        <p class="feature-card__desc">New deals every day. Lightning deals, festive sales, and exclusive member discounts.</p>
+                    </div>
+
+                    <!-- Feature 7 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">📱</div>
+                        <h3 class="feature-card__title">Mobile First</h3>
+                        <p class="feature-card__desc">Optimized for mobile shopping. Smooth, fast, and works even on 3G connections.</p>
+                    </div>
+
+                    <!-- Feature 8 -->
+                    <div class="feature-card">
+                        <div class="feature-card__icon">🎧</div>
+                        <h3 class="feature-card__title">24/7 Support</h3>
+                        <p class="feature-card__desc">Chat, call, or email — our support team is available round the clock in Hindi & English.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- CATEGORIES SECTION                         -->
+        <!-- ======================================== -->
+        <section class="section categories" id="categories">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Shop by Category</span>
+                    <h2 class="section__title">Browse <span class="text-primary">500+ Categories</span></h2>
+                    <p class="section__subtitle">From electronics to groceries, find everything you need in one place.</p>
+                </div>
+
+                <div class="grid grid--5 categories__grid">
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">📱</span>
+                        <span class="category-card__name">Electronics</span>
+                        <span class="category-card__count">2M+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">👗</span>
+                        <span class="category-card__name">Fashion</span>
+                        <span class="category-card__count">5M+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">🏠</span>
+                        <span class="category-card__name">Home & Living</span>
+                        <span class="category-card__count">1M+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">🛒</span>
+                        <span class="category-card__name">Groceries</span>
+                        <span class="category-card__count">50K+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">💄</span>
+                        <span class="category-card__name">Beauty</span>
+                        <span class="category-card__count">500K+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">🏋️</span>
+                        <span class="category-card__name">Sports</span>
+                        <span class="category-card__count">300K+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">📚</span>
+                        <span class="category-card__name">Books</span>
+                        <span class="category-card__count">2M+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">🧸</span>
+                        <span class="category-card__name">Toys & Kids</span>
+                        <span class="category-card__count">400K+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">🚗</span>
+                        <span class="category-card__name">Auto Parts</span>
+                        <span class="category-card__count">200K+ products</span>
+                    </a>
+                    <a href="#" class="category-card">
+                        <span class="category-card__icon">💊</span>
+                        <span class="category-card__name">Health</span>
+                        <span class="category-card__count">100K+ products</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- AD SLOT 2 (Between Categories & How)      -->
+        <!-- ======================================== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot__inner">
+                <span class="ad-slot__label">Ad</span>
+                <div class="ad-slot__content">
+                    <p>🏷️ <strong>SarkarMart Prime</strong> — Unlimited free delivery, early access to deals & exclusive offers. Starting at ₹99/month!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- HOW IT WORKS SECTION                      -->
+        <!-- ======================================== -->
+        <section class="section how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Simple Process</span>
+                    <h2 class="section__title">How <span class="text-primary">SarkarMart</span> Works</h2>
+                    <p class="section__subtitle">From browsing to delivery in 4 simple steps.</p>
+                </div>
+
+                <div class="steps">
+                    <div class="step">
+                        <div class="step__number">1</div>
+                        <div class="step__icon">🔍</div>
+                        <h3 class="step__title">Search & Browse</h3>
+                        <p class="step__desc">Find what you love from millions of products. Use filters, compare prices, and read reviews.</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step__number">2</div>
+                        <div class="step__icon">🛒</div>
+                        <h3 class="step__title">Add to Cart</h3>
+                        <p class="step__desc">Add items to your cart. Review your selections, apply coupons, and proceed to checkout.</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step__number">3</div>
+                        <div class="step__icon">💳</div>
+                        <h3 class="step__title">Pay with UPI</h3>
+                        <p class="step__desc">Pay securely with UPI, cards, or COD. Instant confirmation and order tracking.</p>
+                    </div>
+
+                    <div class="step">
+                        <div class="step__number">4</div>
+                        <div class="step__icon">📦</div>
+                        <h3 class="step__title">Get Delivered</h3>
+                        <p class="step__desc">Sit back and relax. Track your order in real-time. Get it delivered to your doorstep.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- PRICING SECTION                           -->
+        <!-- ======================================== -->
+        <section class="section pricing" id="pricing">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Pricing Plans</span>
+                    <h2 class="section__title">Choose Your <span class="text-primary">SarkarMart</span> Plan</h2>
+                    <p class="section__subtitle">Free to start. Upgrade for more benefits.</p>
+                </div>
+
+                <div class="grid grid--3 pricing__grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Free</h3>
+                            <p class="pricing-card__desc">Perfect for casual shoppers</p>
+                            <div class="pricing-card__price">
+                                <span class="pricing-card__amount">₹0</span>
+                                <span class="pricing-card__period">/forever</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-card__features">
+                            <li class="pricing-card__feature">✅ Browse all products</li>
+                            <li class="pricing-card__feature">✅ UPI & COD payments</li>
+                            <li class="pricing-card__feature">✅ Standard delivery (5-7 days)</li>
+                            <li class="pricing-card__feature">✅ 7-day easy returns</li>
+                            <li class="pricing-card__feature">✅ Email support</li>
+                            <li class="pricing-card__feature">❌ Free delivery</li>
+                            <li class="pricing-card__feature">❌ Early deal access</li>
+                        </ul>
+                        <button class="btn btn--outline btn--full" onclick="openPaymentModal('free')">Get Started Free</button>
+                    </div>
+
+                    <!-- Prime Plan (Popular) -->
+                    <div class="pricing-card pricing-card--popular">
+                        <div class="pricing-card__badge">Most Popular</div>
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Prime</h3>
+                            <p class="pricing-card__desc">Best value for regular shoppers</p>
+                            <div class="pricing-card__price">
+                                <span class="pricing-card__amount">₹99</span>
+                                <span class="pricing-card__period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-card__features">
+                            <li class="pricing-card__feature">✅ Everything in Free</li>
+                            <li class="pricing-card__feature">✅ Unlimited free delivery</li>
+                            <li class="pricing-card__feature">✅ Next-day delivery</li>
+                            <li class="pricing-card__feature">✅ Early access to deals</li>
+                            <li class="pricing-card__feature">✅ Priority customer support</li>
+                            <li class="pricing-card__feature">✅ Exclusive Prime discounts</li>
+                            <li class="pricing-card__feature">❌ Same-day delivery</li>
+                        </ul>
+                        <button class="btn btn--primary btn--full" onclick="openPaymentModal('prime')">Start Prime — ₹99/mo</button>
+                    </div>
+
+                    <!-- Business Plan -->
+                    <div class="pricing-card">
+                        <div class="pricing-card__header">
+                            <h3 class="pricing-card__name">Business</h3>
+                            <p class="pricing-card__desc">For businesses & bulk buyers</p>
+                            <div class="pricing-card__price">
+                                <span class="pricing-card__amount">₹499</span>
+                                <span class="pricing-card__period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-card__features">
+                            <li class="pricing-card__feature">✅ Everything in Prime</li>
+                            <li class="pricing-card__feature">✅ Same-day delivery</li>
+                            <li class="pricing-card__feature">✅ Bulk order discounts</li>
+                            <li class="pricing-card__feature">✅ Dedicated account manager</li>
+                            <li class="pricing-card__feature">✅ GST invoicing</li>
+                            <li class="pricing-card__feature">✅ API access</li>
+                            <li class="pricing-card__feature">✅ 24/7 phone support</li>
+                        </ul>
+                        <button class="btn btn--outline btn--full" onclick="openPaymentModal('business')">Start Business — ₹499/mo</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- AD SLOT 3 (Between Pricing & Testimonials) -->
+        <!-- ======================================== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot__inner">
+                <span class="ad-slot__label">Ad</span>
+                <div class="ad-slot__content">
+                    <p>📱 <strong>Download the SarkarMart App</strong> — Get app-only deals, push notifications for price drops & a smoother shopping experience. Available on Android & iOS.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- TESTIMONIALS SECTION                      -->
+        <!-- ======================================== -->
+        <section class="section testimonials" id="testimonials">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Customer Reviews</span>
+                    <h2 class="section__title">Loved by <span class="text-primary">10 Million+</span> Customers</h2>
+                    <p class="section__subtitle">Don't just take our word for it. Here's what our customers say.</p>
+                </div>
+
+                <div class="grid grid--3 testimonials__grid">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"SarkarMart has changed how I shop online. UPI payments are instant, delivery is super fast, and the return process is hassle-free. Highly recommended!"</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">P</div>
+                            <div>
+                                <div class="testimonial-card__name">Priya Sharma</div>
+                                <div class="testimonial-card__role">Mumbai, Maharashtra</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"The prices are genuinely the best I've found online. The price match guarantee actually works! I saved ₹2,000 on my last laptop purchase."</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">R</div>
+                            <div>
+                                <div class="testimonial-card__name">Rahul Verma</div>
+                                <div class="testimonial-card__role">Delhi, NCR</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"As a small business owner, SarkarMart Business plan is a game-changer. Bulk discounts, GST invoicing, and dedicated support — everything I need."</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">A</div>
+                            <div>
+                                <div class="testimonial-card__name">Anita Patel</div>
+                                <div class="testimonial-card__role">Ahmedabad, Gujarat</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"The daily deals are amazing! I got a ₹15,000 phone for ₹9,999 during the flash sale. The app is smooth and works even on my old phone."</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">V</div>
+                            <div>
+                                <div class="testimonial-card__name">Vikram Singh</div>
+                                <div class="testimonial-card__role">Bangalore, Karnataka</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 5 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"Customer support is top-notch. I had an issue with a delivery and they resolved it within 2 hours via chat. The Hindi support option is great!"</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">S</div>
+                            <div>
+                                <div class="testimonial-card__name">Sunita Devi</div>
+                                <div class="testimonial-card__role">Patna, Bihar</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Testimonial 6 -->
+                    <div class="testimonial-card">
+                        <div class="testimonial-card__stars">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-card__text">"Prime membership is worth every rupee. Free next-day delivery on everything, plus the exclusive discounts save me thousands every month."</p>
+                        <div class="testimonial-card__author">
+                            <div class="testimonial-card__avatar">K</div>
+                            <div>
+                                <div class="testimonial-card__name">Karthik R</div>
+                                <div class="testimonial-card__role">Chennai, Tamil Nadu</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- FAQ SECTION                               -->
+        <!-- ======================================== -->
+        <section class="section faq" id="faq">
+            <div class="container">
+                <div class="section__header">
+                    <span class="section__badge">Got Questions?</span>
+                    <h2 class="section__title">Frequently Asked <span class="text-primary">Questions</span></h2>
+                    <p class="section__subtitle">Find answers to common questions about SarkarMart.</p>
+                </div>
+
+                <div class="faq__list">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>How do I pay on SarkarMart?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>SarkarMart supports multiple payment methods including UPI (GPay, PhonePe, Paytm, BHIM), credit/debit cards, net banking, and cash on delivery. UPI payments are instant and secure. Simply select your preferred payment method at checkout.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>What is the return policy?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>We offer a 7-day easy return policy on most products. Go to your Orders page, select the item you want to return, choose a reason, and schedule a free pickup. Your refund will be processed within 24-48 hours of receiving the returned item.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>How fast is delivery?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>Delivery times vary by plan and location. Free members get standard delivery in 5-7 business days. Prime members get next-day delivery across 500+ cities. Business members get same-day delivery in select metro cities. You can track your order in real-time from the Orders page.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>Is SarkarMart available in my city?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>SarkarMart delivers to 10,000+ pin codes across India. We cover all major cities, tier-2 and tier-3 towns. Enter your pin code on any product page to check delivery availability and estimated delivery date for your location.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>How do I cancel my order?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>You can cancel your order before it is shipped. Go to Orders → Select the order → Click "Cancel Order". If the order is already shipped, you can refuse delivery or initiate a return after receiving it. The refund will be processed to your original payment method.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq__item">
+                        <button class="faq__question" aria-expanded="false">
+                            <span>What is SarkarMart Prime?</span>
+                            <span class="faq__icon">+</span>
+                        </button>
+                        <div class="faq__answer">
+                            <p>SarkarMart Prime is our premium membership at just ₹99/month. Benefits include unlimited free delivery, next-day delivery, early access to deals and sales, exclusive Prime-only discounts, and priority customer support. Try it free for 30 days!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================== -->
+        <!-- AD SLOT 4 (Above Footer)                  -->
+        <!-- ======================================== -->
+        <div class="ad-slot" role="complementary" aria-label="Advertisement">
+            <div class="ad-slot__inner">
+                <span class="ad-slot__label">Ad</span>
+                <div class="ad-slot__content">
+                    <p>🎓 <strong>SarkarMart Seller Program</strong> — Start selling on SarkarMart today! Zero listing fees, reach 10M+ customers, and grow your business. Register now at seller.sarkarmart.in</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- CTA BANNER                                 -->
+        <!-- ======================================== -->
+        <section class="cta-banner">
+            <div class="container">
+                <div class="cta-banner__inner">
+                    <h2 class="cta-banner__title">Ready to Start Shopping?</h2>
+                    <p class="cta-banner__text">Join 10 million+ happy customers. Get ₹500 off on your first order with code <strong>WELCOME500</strong>.</p>
+                    <div class="cta-banner__buttons">
+                        <a href="#categories" class="btn btn--white btn--lg">Shop Now</a>
+                        <a href="#pricing" class="btn btn--outline-white btn--lg">View Plans</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================ -->
+    <!-- FOOTER                                       -->
+    <!-- ============================================ -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__grid">
+                <!-- Brand Column -->
+                <div class="footer__col">
+                    <a href="/" class="footer__logo">
+                        <span>🛒</span> Sarkar<span class="text-primary">Mart</span>
+                    </a>
+                    <p class="footer__desc">India's most trusted e-commerce marketplace. Shop from 50+ million products with UPI payments, fast delivery, and easy returns.</p>
+                    <div class="footer__social">
+                        <a href="#" class="footer__social-link" aria-label="Facebook">📘</a>
+                        <a href="#" class="footer__social-link" aria-label="Twitter">🐦</a>
+                        <a href="#" class="footer__social-link" aria-label="Instagram">📸</a>
+                        <a href="#" class="footer__social-link" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer__col">
+                    <h4 class="footer__heading">Quick Links</h4>
+                    <ul class="footer__links">
+                        <li><a href="#features" class="footer__link">Features</a></li>
+                        <li><a href="#categories" class="footer__link">Categories</a></li>
+                        <li><a href="#how-it-works" class="footer__link">How It Works</a></li>
+                        <li><a href="#pricing" class="footer__link">Pricing</a></li>
+                        <li><a href="#testimonials" class="footer__link">Reviews</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="footer__col">
+                    <h4 class="footer__heading">Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="#" class="footer__link">Help Center</a></li>
+                        <li><a href="#" class="footer__link">Track Order</a></li>
+                        <li><a href="#" class="footer__link">Returns & Refunds</a></li>
+                        <li><a href="#" class="footer__link">Shipping Info</a></li>
+                        <li><a href="#faq" class="footer__link">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div class="footer__col">
+                    <h4 class="footer__heading">Company</h4>
+                    <ul class="footer__links">
+                        <li><a href="#" class="footer__link">About Us</a></li>
+                        <li><a href="#" class="footer__link">Careers</a></li>
+                        <li><a href="#" class="footer__link">Seller Program</a></li>
+                        <li><a href="#" class="footer__link">Blog</a></li>
+                        <li><a href="#" class="footer__link">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer__col">
+                    <h4 class="footer__heading">Contact Us</h4>
+                    <ul class="footer__links">
+                        <li><a href="mailto:support@sarkarmart.in" class="footer__link">📧 support@sarkarmart.in</a></li>
+                        <li><a href="tel:+911800123456" class="footer__link">📞 1800-123-456</a></li>
+                        <li><a href="#" class="footer__link">💬 Live Chat (24/7)</a></li>
+                        <li><a href="#" class="footer__link">📍 New Delhi, India</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer__bottom">
+                <p class="footer__copyright">© 2026 SarkarMart. All rights reserved.</p>
+                <div class="footer__legal">
+                    <a href="#" class="footer__legal-link">Privacy Policy</a>
+                    <a href="#" class="footer__legal-link">Terms of Service</a>
+                    <a href="#" class="footer__legal-link">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================ -->
+    <!-- UPI PAYMENT MODAL                            -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="paymentModal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="UPI Payment">
+        <div class="modal">
+            <!-- Modal Header -->
+            <div class="modal__header">
+                <h3 class="modal__title">Pay with UPI</h3>
+                <button class="modal__close" onclick="closePaymentModal()" aria-label="Close payment modal">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal__body">
+                <!-- Plan Summary -->
+                <div class="modal__plan" id="modalPlanSummary">
+                    <div class="modal__plan-name" id="modalPlanName">Prime Plan</div>
+                    <div class="modal__plan-price" id="modalPlanPrice">₹99/month</div>
+                </div>
+
+                <!-- UPI ID Input -->
+                <div class="modal__field">
+                    <label class="modal__label" for="upiId">Enter your UPI ID</label>
+                    <input type="text" class="modal__input" id="upiId" placeholder="yourname@upi" aria-describedby="upiHelp">
+                    <p class="modal__help" id="upiHelp">Example: yourname@paytm, yourname@okhdfcbank</p>
+                </div>
+
+                <!-- OR Divider -->
+                <div class="modal__divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- UPI Apps -->
+                <div class="modal__upi-apps">
+                    <p class="modal__label">Pay using UPI App</p>
+                    <div class="modal__upi-grid">
+                        <button class="modal__upi-app" onclick="payWithApp('gpay')">
+                            <span class="modal__upi-icon">G</span>
+                            <span>Google Pay</span>
+                        </button>
+                        <button class="modal__upi-app" onclick="payWithApp('phonepe')">
+                            <span class="modal__upi-icon">P</span>
+                            <span>PhonePe</span>
+                        </button>
+                        <button class="modal__upi-app" onclick="payWithApp('paytm')">
+                            <span class="modal__upi-icon">₹</span>
+                            <span>Paytm</span>
+                        </button>
+                        <button class="modal__upi-app" onclick="payWithApp('bhim')">
+                            <span class="modal__upi-icon">B</span>
+                            <span>BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code Placeholder -->
+                <div class="modal__qr">
+                    <p class="modal__label">Scan QR Code</p>
+                    <div class="modal__qr-placeholder">
+                        <span>📱</span>
+                        <p>Scan with any UPI app to pay</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal__footer">
+                <button class="btn btn--outline btn--full" onclick="closePaymentModal()">Cancel</button>
+                <button class="btn btn--primary btn--full" onclick="processPayment()">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT                                   -->
+    <!-- ============================================ -->
+    <script src="app.js"></script>
+</body>
+</html>

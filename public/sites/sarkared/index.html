@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SarkarEd - AI-Powered Education Portal | Learn, Grow, Succeed</title>
+    <meta name="description" content="SarkarEd is India's AI-powered education portal offering personalized learning paths, live classes, skill assessments, and government scholarship finder. Start learning today!">
+    <meta name="keywords" content="education portal, online learning, AI tutor, skill development, government scholarships, live classes, India education">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sarkared.gov.in/">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SarkarEd - AI-Powered Education Portal">
+    <meta property="og:description" content="Personalized learning paths, live classes, skill assessments, and government scholarship finder. Start learning today!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkared.gov.in/">
+    <meta property="og:image" content="https://sarkared.gov.in/og-image.png">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarEd - AI-Powered Education">
+    <meta name="twitter:description" content="Personalized learning paths, live classes, skill assessments, and government scholarship finder.">
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "SarkarEd",
+        "description": "AI-powered education portal offering personalized learning paths, live classes, skill assessments, and government scholarship finder.",
+        "url": "https://sarkared.gov.in/",
+        "areaServed": {
+            "@type": "Country",
+            "name": "India"
+        },
+        "sameAs": [
+            "https://twitter.com/sarkared",
+            "https://facebook.com/sarkared"
+        ],
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sarkared.gov.in/courses?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ==================== -->
+    <!-- NAVIGATION BAR       -->
+    <!-- ==================== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Sarkar<span class="logo-accent">Ed</span></span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#hero" class="nav-link active">Home</a></li>
+                <li><a href="#courses" class="nav-link">Courses</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#scholarships" class="nav-link">Scholarships</a></li>
+                <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+                <a href="#" class="btn btn-primary btn-nav" id="loginBtn">
+                    <i class="fas fa-user"></i> Login
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== -->
+    <!-- HERO SECTION         -->
+    <!-- ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg-animation">
+            <div class="floating-shape shape-1"></div>
+            <div class="floating-shape shape-2"></div>
+            <div class="floating-shape shape-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-sparkles"></i> AI-Powered Learning Platform
+                </div>
+                <h1 class="hero-title">
+                    Learn Smarter with
+                    <span class="gradient-text">AI-Powered</span>
+                    Education
+                </h1>
+                <p class="hero-subtitle">
+                    Personalized learning paths, live expert classes, skill assessments, and government scholarship finder — all in one platform. Join 5 lakh+ learners across India.
+                </p>
+
+                <!-- AI Search Bar -->
+                <div class="hero-search">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="heroSearchInput" placeholder="What do you want to learn today?" aria-label="Search courses">
+                        <button class="btn btn-primary btn-search" id="heroSearchBtn">
+                            <i class="fas fa-wand-magic-sparkles"></i> AI Search
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions">
+                        <span class="suggestion-tag">UPSC Preparation</span>
+                        <span class="suggestion-tag">Python Programming</span>
+                        <span class="suggestion-tag">Digital Marketing</span>
+                        <span class="suggestion-tag">Government Exams</span>
+                    </div>
+                </div>
+
+                <!-- Hero Stats -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="500000">5L+</span>
+                        <span class="stat-label">Active Learners</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="2000">2K+</span>
+                        <span class="stat-label">Courses</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="500">500+</span>
+                        <span class="stat-label">Expert Tutors</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="98">98%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="hero-card">
+                    <div class="hero-card-header">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <strong>AI Learning Assistant</strong>
+                            <span class="online-status">● Online</span>
+                        </div>
+                    </div>
+                    <div class="hero-card-body">
+                        <div class="chat-bubble ai-bubble">
+                            <p id="typingText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 1            -->
+    <!-- ==================== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space — Leaderboard (728x90)</span>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- COURSE CATEGORIES    -->
+    <!-- ==================== -->
+    <section class="section categories-section" id="courses">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Explore Courses</span>
+                <h2 class="section-title">Browse by <span class="gradient-text">Category</span></h2>
+                <p class="section-subtitle">Choose from 2000+ courses across 8 expert-curated categories</p>
+            </div>
+
+            <div class="categories-grid">
+                <div class="category-card" data-category="govt">
+                    <div class="category-icon govt-exams">
+                        <i class="fas fa-landmark"></i>
+                    </div>
+                    <h3>Government Exams</h3>
+                    <p>UPSC, SSC, Banking, Railways & more</p>
+                    <span class="course-count">350+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="programming">
+                    <div class="category-icon programming">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Programming</h3>
+                    <p>Python, Java, Web Dev, Data Science</p>
+                    <span class="course-count">500+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="digital">
+                    <div class="category-icon digital">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3>Digital Marketing</h3>
+                    <p>SEO, Social Media, Ads, Analytics</p>
+                    <span class="course-count">200+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="language">
+                    <div class="category-icon language">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>Languages</h3>
+                    <p>English, Hindi, Sanskrit, Foreign</p>
+                    <span class="course-count">150+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="skill">
+                    <div class="category-icon skill">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Skill Development</h3>
+                    <p>MS Office, Tally, Graphic Design</p>
+                    <span class="course-count">300+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="school">
+                    <div class="category-icon school">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>School Education</h3>
+                    <p>CBSE, ICSE, State Boards (6-12)</p>
+                    <span class="course-count">400+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="competitive">
+                    <div class="category-icon competitive">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Competitive Exams</h3>
+                    <p>JEE, NEET, CAT, GATE & more</p>
+                    <span class="course-count">250+ Courses</span>
+                </div>
+
+                <div class="category-card" data-category="ai">
+                    <div class="category-icon ai">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI & Machine Learning</h3>
+                    <p>ML, Deep Learning, NLP, Computer Vision</p>
+                    <span class="course-count">180+ Courses</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- FEATURES SECTION     -->
+    <!-- ==================== -->
+    <section class="section features-section" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Why SarkarEd</span>
+                <h2 class="section-title">Powerful <span class="gradient-text">Features</span></h2>
+                <p class="section-subtitle">Everything you need to learn, grow, and succeed in your career</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>AI Learning Paths</h3>
+                    <p>Personalized curriculum generated by AI based on your goals, current skills, and learning pace.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Live Expert Classes</h3>
+                    <p>Interactive live sessions with top educators. Ask questions, get instant doubt resolution.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3>Skill Assessments</h3>
+                    <p>AI-powered tests that adapt to your level. Get detailed performance analytics and improvement tips.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Doubt Solver</h3>
+                    <p>24/7 AI tutor that explains concepts in simple language. Supports Hindi and English.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h3>Verified Certificates</h3>
+                    <p>Industry-recognized certificates upon course completion. Share on LinkedIn and resume.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <h3>Scholarship Finder</h3>
+                    <p>AI matches you with 100+ government and private scholarships based on your profile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 2            -->
+    <!-- ==================== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space — Medium Rectangle (300x250)</span>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- HOW IT WORKS         -->
+    <!-- ==================== -->
+    <section class="section how-it-works-section" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Simple Process</span>
+                <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+                <p class="section-subtitle">Start your learning journey in 4 easy steps</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-connector"></div>
+
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3>Create Account</h3>
+                    <p>Sign up for free with your mobile number or email. Complete your profile in 2 minutes.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Skill Assessment</h3>
+                    <p>Take a quick AI-powered assessment to determine your current level and learning goals.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>Get Your Path</h3>
+                    <p>AI generates a personalized learning path with courses, practice tests, and milestones.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Learn & Earn</h3>
+                    <p>Start learning with live classes and AI support. Get certified and land your dream job.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- SCHOLARSHIP FINDER   -->
+    <!-- ==================== -->
+    <section class="section scholarship-section" id="scholarships">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Government Scholarships</span>
+                <h2 class="section-title">Find Your <span class="gradient-text">Scholarship</span></h2>
+                <p class="section-subtitle">AI-powered matching with 100+ government and private scholarships</p>
+            </div>
+
+            <div class="scholarship-finder">
+                <div class="finder-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="scholarCategory">Category</label>
+                            <select id="scholarCategory">
+                                <option value="">Select Category</option>
+                                <option value="sc">SC</option>
+                                <option value="st">ST</option>
+                                <option value="obc">OBC</option>
+                                <option value="ews">EWS</option>
+                                <option value="minority">Minority</option>
+                                <option value="general">General</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="scholarClass">Class/Level</label>
+                            <select id="scholarClass">
+                                <option value="">Select Level</option>
+                                <option value="10th">Class 10th</option>
+                                <option value="12th">Class 12th</option>
+                                <option value="graduation">Graduation</option>
+                                <option value="postgraduation">Post Graduation</option>
+                                <option value="phd">PhD</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="scholarIncome">Annual Income</label>
+                            <select id="scholarIncome">
+                                <option value="">Select Income</option>
+                                <option value="1lakh">Below ₹1 Lakh</option>
+                                <option value="3lakh">₹1-3 Lakh</option>
+                                <option value="5lakh">₹3-5 Lakh</option>
+                                <option value="8lakh">₹5-8 Lakh</option>
+                                <option value="above">Above ₹8 Lakh</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary btn-find" id="findScholarshipBtn">
+                            <i class="fas fa-search"></i> Find Scholarships
+                        </button>
+                    </div>
+                </div>
+
+                <div class="scholarship-results" id="scholarshipResults">
+                    <!-- Results populated by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 3            -->
+    <!-- ==================== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space — Large Rectangle (336x280)</span>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- TESTIMONIALS         -->
+    <!-- ==================== -->
+    <section class="section testimonials-section" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Success Stories</span>
+                <h2 class="section-title">What Our <span class="gradient-text">Learners Say</span></h2>
+                <p class="section-subtitle">Real stories from real learners who transformed their careers</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"SarkarEd's AI learning path helped me crack UPSC in my first attempt. The personalized study plan and live classes were game-changers!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div>
+                            <strong>Priya Sharma</strong>
+                            <span>UPSC Topper 2025, Delhi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"From zero coding knowledge to a software engineer at TCS — SarkarEd made it possible. The AI doubt solver is like having a tutor 24/7."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div>
+                            <strong>Rahul Kumar</strong>
+                            <span>Software Engineer, TCS — Bihar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"The scholarship finder helped me get a full scholarship for my engineering degree. SarkarEd doesn't just educate — it opens doors!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AJ</div>
+                        <div>
+                            <strong>Anita Joshi</strong>
+                            <span>Engineering Student, Rajasthan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- PRICING SECTION      -->
+    <!-- ==================== -->
+    <section class="section pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing Plans</span>
+                <h2 class="section-title">Choose Your <span class="gradient-text">Plan</span></h2>
+                <p class="section-subtitle">Affordable plans for every learner. Government subsidies available.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <p>For beginners exploring</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">0</span>
+                        <span class="period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Access to 50+ free courses</li>
+                        <li><i class="fas fa-check"></i> Basic AI doubt solver</li>
+                        <li><i class="fas fa-check"></i> Community forum access</li>
+                        <li><i class="fas fa-check"></i> Scholarship finder</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Live expert classes</li>
+                        <li class="disabled"><i class="fas fa-times"></i> Verified certificates</li>
+                        <li class="disabled"><i class="fas fa-times"></i> AI learning paths</li>
+                    </ul>
+                    <button class="btn btn-outline btn-full">Get Started Free</button>
+                </div>
+
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro Learner</h3>
+                        <p>For serious learners</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">499</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> All 2000+ courses</li>
+                        <li><i class="fas fa-check"></i> Advanced AI doubt solver</li>
+                        <li><i class="fas fa-check"></i> 10 live classes/month</li>
+                        <li><i class="fas fa-check"></i> Verified certificates</li>
+                        <li><i class="fas fa-check"></i> AI learning paths</li>
+                        <li><i class="fas fa-check"></i> Skill assessments</li>
+                        <li class="disabled"><i class="fas fa-times"></i> 1-on-1 mentoring</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full" onclick="openPaymentModal('Pro Learner', 499)">Subscribe Now</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Premium</h3>
+                        <p>For career transformation</p>
+                    </div>
+                    <div class="pricing-amount">
+                        <span class="currency">₹</span>
+                        <span class="price">999</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Everything in Pro</li>
+                        <li><i class="fas fa-check"></i> Unlimited live classes</li>
+                        <li><i class="fas fa-check"></i> 1-on-1 mentoring</li>
+                        <li><i class="fas fa-check"></i> Job placement assistance</li>
+                        <li><i class="fas fa-check"></i> Interview preparation</li>
+                        <li><i class="fas fa-check"></i> Priority doubt resolution</li>
+                        <li><i class="fas fa-check"></i> Offline content download</li>
+                    </ul>
+                    <button class="btn btn-primary btn-full" onclick="openPaymentModal('Premium', 999)">Subscribe Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 4            -->
+    <!-- ==================== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space — Banner (468x60)</span>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- FAQ SECTION          -->
+    <!-- ==================== -->
+    <section class="section faq-section" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Got Questions?</span>
+                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="section-subtitle">Find answers to common questions about SarkarEd</p>
+            </div>
+
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is SarkarEd really free to use?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! SarkarEd offers a generous free tier with access to 50+ courses, basic AI doubt solver, and the scholarship finder. You can upgrade to Pro or Premium for advanced features like live classes and certificates.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>How does the AI Learning Path work?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI analyzes your current skill level through a quick assessment, understands your career goals, and creates a personalized curriculum. It adapts in real-time based on your progress, strengths, and areas needing improvement.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Are the certificates recognized by employers?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! SarkarEd certificates are verified and recognized by 500+ companies across India. You can share them directly on LinkedIn and add them to your resume. Our certificates include a unique verification link.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Can I access SarkarEd in Hindi?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! SarkarEd supports both Hindi and English. Our AI doubt solver, course content, and live classes are available in both languages. You can switch languages anytime from your profile settings.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>What payment methods do you accept?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We accept UPI (GPay, PhonePe, Paytm), credit/debit cards, net banking, and EMI options. All payments are processed through secure RBI-compliant payment gateways. Government subsidies are automatically applied for eligible learners.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is there a refund policy?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, we offer a 7-day money-back guarantee on all paid plans. If you're not satisfied, contact our support team within 7 days of purchase for a full refund — no questions asked.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- CTA SECTION          -->
+    <!-- ==================== -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Start Your <span class="gradient-text">Learning Journey?</span></h2>
+                <p>Join 5 lakh+ learners who are already transforming their careers with SarkarEd.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary btn-lg">
+                        <i class="fas fa-rocket"></i> Start Learning Free
+                    </button>
+                    <button class="btn btn-outline btn-lg">
+                        <i class="fas fa-phone"></i> Talk to Counselor
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- FOOTER               -->
+    <!-- ==================== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Sarkar<span class="logo-accent">Ed</span></span>
+                    </div>
+                    <p>India's AI-powered education platform. Learn smarter, grow faster, and build the career you deserve.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Courses</h4>
+                    <ul>
+                        <li><a href="#">Government Exams</a></li>
+                        <li><a href="#">Programming</a></li>
+                        <li><a href="#">Digital Marketing</a></li>
+                        <li><a href="#">Languages</a></li>
+                        <li><a href="#">Skill Development</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Grievance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarEd. All rights reserved. Made with ❤️ in India.</p>
+                <p>Ministry of Education Recognized | NPTEL Partner | Skill India Initiative</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== -->
+    <!-- UPI PAYMENT MODAL    -->
+    <!-- ==================== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="paymentModalTitle">Complete Payment</h3>
+                <button class="modal-close" id="closePaymentModal" aria-label="Close payment modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="payment-plan-summary">
+                    <span id="paymentPlanName">Pro Learner</span>
+                    <span class="payment-amount">₹<span id="paymentPlanAmount">499</span>/month</span>
+                </div>
+
+                <!-- Payment Tabs -->
+                <div class="payment-tabs">
+                    <button class="payment-tab active" data-tab="upi">
+                        <i class="fas fa-mobile-screen"></i> UPI
+                    </button>
+                    <button class="payment-tab" data-tab="card">
+                        <i class="fas fa-credit-card"></i> Card
+                    </button>
+                    <button class="payment-tab" data-tab="netbanking">
+                        <i class="fas fa-building-columns"></i> Net Banking
+                    </button>
+                </div>
+
+                <!-- UPI Tab -->
+                <div class="payment-tab-content active" id="upiTab">
+                    <div class="upi-apps">
+                        <button class="upi-app" data-app="gpay">
+                            <i class="fab fa-google-pay"></i> GPay
+                        </button>
+                        <button class="upi-app" data-app="phonepe">
+                            <i class="fas fa-phone"></i> PhonePe
+                        </button>
+                        <button class="upi-app" data-app="paytm">
+                            <i class="fas fa-wallet"></i> Paytm
+                        </button>
+                        <button class="upi-app" data-app="bhim">
+                            <i class="fas fa-indian-rupee-sign"></i> BHIM
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label for="upiId">Enter UPI ID</label>
+                        <input type="text" id="upiId" placeholder="yourname@upi" aria-label="UPI ID">
+                    </div>
+                    <button class="btn btn-primary btn-full btn-pay" id="upiPayBtn">
+                        Pay ₹<span id="upiPayAmount">499</span> via UPI
+                    </button>
+                </div>
+
+                <!-- Card Tab -->
+                <div class="payment-tab-content" id="cardTab">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" aria-label="Card Number">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiry">Expiry</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" aria-label="Expiry Date">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvv">CVV</label>
+                            <input type="password" id="cardCvv" placeholder="123" maxlength="4" aria-label="CVV">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Cardholder Name</label>
+                        <input type="text" id="cardName" placeholder="Name on card" aria-label="Cardholder Name">
+                    </div>
+                    <button class="btn btn-primary btn-full btn-pay" id="cardPayBtn">
+                        Pay ₹<span id="cardPayAmount">499</span>
+                    </button>
+                </div>
+
+                <!-- Net Banking Tab -->
+                <div class="payment-tab-content" id="netbankingTab">
+                    <div class="bank-list">
+                        <button class="bank-option" data-bank="sbi">
+                            <span class="bank-icon">SBI</span> State Bank of India
+                        </button>
+                        <button class="bank-option" data-bank="hdfc">
+                            <span class="bank-icon">HDFC</span> HDFC Bank
+                        </button>
+                        <button class="bank-option" data-bank="icici">
+                            <span class="bank-icon">ICICI</span> ICICI Bank
+                        </button>
+                        <button class="bank-option" data-bank="pnb">
+                            <span class="bank-icon">PNB</span> Punjab National Bank
+                        </button>
+                        <button class="bank-option" data-bank="bob">
+                            <span class="bank-icon">BoB</span> Bank of Baroda
+                        </button>
+                        <button class="bank-option" data-bank="axis">
+                            <span class="bank-icon">Axis</span> Axis Bank
+                        </button>
+                    </div>
+                    <button class="btn btn-primary btn-full btn-pay" id="netbankingPayBtn">
+                        Pay ₹<span id="netbankingPayAmount">499</span>
+                    </button>
+                </div>
+
+                <p class="payment-secure">
+                    <i class="fas fa-lock"></i> 256-bit SSL encrypted payment. RBI compliant.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- SUCCESS TOAST        -->
+    <!-- ==================== -->
+    <div class="toast" id="toast" role="alert" aria-live="polite">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Payment successful!</span>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

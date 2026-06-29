@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+      SarkarJobs - Job Portal Landing Page
+      A complete, responsive job portal with search, categories,
+      features, how it works, testimonials, pricing, FAQ, and more.
+    -->
+
+    <!-- ===== META & SEO ===== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SarkarJobs — Find Your Dream Government & Private Jobs in India</title>
+    <meta name="description" content="SarkarJobs is India's leading job portal for government and private sector jobs. Search 50,000+ active vacancies, get exam alerts, apply online, and track your applications — all in one place.">
+    <meta name="keywords" content="SarkarJobs, government jobs, private jobs, job portal India, sarkari naukri, job alerts, online application, exam results">
+    <meta name="author" content="SarkarJobs">
+    <meta name="robots" content="index, follow">
+
+    <!-- ===== Open Graph ===== -->
+    <meta property="og:title" content="SarkarJobs — Find Your Dream Government & Private Jobs">
+    <meta property="og:description" content="Search 50,000+ active vacancies. Get exam alerts, apply online, track applications — all in one place.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarjobs.in">
+    <meta property="og:image" content="https://sarkarjobs.in/og-image.jpg">
+    <meta property="og:site_name" content="SarkarJobs">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- ===== Twitter Card ===== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarJobs — Find Your Dream Government & Private Jobs">
+    <meta name="twitter:description" content="Search 50,000+ active vacancies. Get exam alerts, apply online, track applications.">
+    <meta name="twitter:image" content="https://sarkarjobs.in/og-image.jpg">
+
+    <!-- ===== Schema.org JSON-LD ===== -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SarkarJobs",
+        "url": "https://sarkarjobs.in",
+        "description": "India's leading job portal for government and private sector jobs",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sarkarjobs.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "SarkarJobs",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://sarkarjobs.in/logo.png"
+            }
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "SarkarJobs",
+        "url": "https://sarkarjobs.in",
+        "logo": "https://sarkarjobs.in/logo.png",
+        "sameAs": [
+            "https://twitter.com/sarkarjobs",
+            "https://facebook.com/sarkarjobs",
+            "https://linkedin.com/company/sarkarjobs"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-1800-123-4567",
+            "contactType": "customer service",
+            "areaServed": "IN",
+            "availableLanguage": ["English", "Hindi"]
+        }
+    }
+    </script>
+
+    <!-- ===== Favicon ===== -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💼</text></svg>">
+
+    <!-- ===== Google Fonts ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ===== Stylesheet ===== -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ===== DARK MODE TOGGLE ===== -->
+    <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="toggle-icon" id="toggleIcon">🌙</span>
+    </button>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" aria-label="SarkarJobs Home">
+                <span class="logo-icon">💼</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Jobs</span></span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn btn-ghost">Login</a>
+                <a href="#" class="btn btn-primary btn-nav">Sign Up Free</a>
+            </div>
+            <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+        <ul class="mobile-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#categories">Categories</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#faq">FAQ</a></li>
+        </ul>
+        <div class="mobile-actions">
+            <a href="#" class="btn btn-ghost">Login</a>
+            <a href="#" class="btn btn-primary">Sign Up Free</a>
+        </div>
+    </div>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="home">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">🔥 50,000+ Active Jobs</div>
+                <h1 class="hero-title">
+                    Find Your <span class="gradient-text">Dream Job</span> in India
+                </h1>
+                <p class="hero-subtitle">
+                    Government & Private sector jobs at your fingertips. Get instant alerts,
+                    apply online, and track your applications — all in one place.
+                </p>
+
+                <!-- Hero Search Bar -->
+                <div class="hero-search">
+                    <div class="search-tabs">
+                        <button class="search-tab active" data-tab="jobs">Jobs</button>
+                        <button class="search-tab" data-tab="companies">Companies</button>
+                        <button class="search-tab" data-tab="exams">Exams</button>
+                    </div>
+                    <div class="search-form">
+                        <div class="search-field">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" placeholder="Job title, keyword, or company" aria-label="Search jobs">
+                        </div>
+                        <div class="search-field">
+                            <span class="search-icon">📍</span>
+                            <input type="text" placeholder="City or state" aria-label="Location">
+                        </div>
+                        <button class="btn btn-primary btn-search">Search Jobs</button>
+                    </div>
+                </div>
+
+                <!-- Hero Stats -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="50000">50,000+</span>
+                        <span class="stat-label">Active Jobs</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="12000">12,000+</span>
+                        <span class="stat-label">Companies</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="5000000">50L+</span>
+                        <span class="stat-label">Job Seekers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-count="98">98%</span>
+                        <span class="stat-label">Success Rate</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AD SLOT 1 (Below Hero) ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ===== JOB CATEGORIES ===== -->
+    <section class="section categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Browse Categories</span>
+                <h2 class="section-title">Popular <span class="gradient-text">Job Categories</span></h2>
+                <p class="section-desc">Explore thousands of opportunities across top sectors in India</p>
+            </div>
+            <div class="categories-grid">
+                <a href="#" class="category-card" aria-label="Government Jobs">
+                    <div class="category-icon">🏛️</div>
+                    <h3>Government Jobs</h3>
+                    <p>12,450+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Banking & Finance">
+                    <div class="category-icon">🏦</div>
+                    <h3>Banking & Finance</h3>
+                    <p>8,320+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Railway Jobs">
+                    <div class="category-icon">🚂</div>
+                    <h3>Railway Jobs</h3>
+                    <p>5,670+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Defence & Police">
+                    <div class="category-icon">🛡️</div>
+                    <h3>Defence & Police</h3>
+                    <p>4,230+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Teaching & Education">
+                    <div class="category-icon">📚</div>
+                    <h3>Teaching & Education</h3>
+                    <p>6,890+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="IT & Software">
+                    <div class="category-icon">💻</div>
+                    <h3>IT & Software</h3>
+                    <p>15,400+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Healthcare & Medical">
+                    <div class="category-icon">🏥</div>
+                    <h3>Healthcare & Medical</h3>
+                    <p>3,560+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+                <a href="#" class="category-card" aria-label="Engineering">
+                    <div class="category-icon">⚙️</div>
+                    <h3>Engineering</h3>
+                    <p>9,120+ openings</p>
+                    <span class="category-arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Why SarkarJobs?</span>
+                <h2 class="section-title">Powerful <span class="gradient-text">Features</span></h2>
+                <p class="section-desc">Everything you need to land your dream job, all in one platform</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3>Instant Job Alerts</h3>
+                    <p>Get real-time notifications via SMS, email, and WhatsApp when matching jobs are posted.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>One-Click Apply</h3>
+                    <p>Apply to multiple jobs with a single click using your saved profile and documents.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Application Tracker</h3>
+                    <p>Track all your applications in one dashboard. Know exactly where you stand.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Resume Builder</h3>
+                    <p>Create ATS-friendly resumes with our AI-powered builder. Get instant feedback.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile App</h3>
+                    <p>Search and apply on the go with our fast, lightweight Android and iOS apps.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Exam Preparation</h3>
+                    <p>Access free study materials, mock tests, and previous year papers for all exams.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AD SLOT 2 (Between Features & How It Works) ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ===== HOW IT WORKS ===== -->
+    <section class="section how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Simple Process</span>
+                <h2 class="section-title">How It <span class="gradient-text">Works</span></h2>
+                <p class="section-desc">Land your dream job in just 4 simple steps</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">👤</div>
+                    <h3>Create Profile</h3>
+                    <p>Sign up for free and build your professional profile with education, skills, and experience.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">🔍</div>
+                    <h3>Search Jobs</h3>
+                    <p>Use smart filters to find jobs that match your skills, location, and salary expectations.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">📤</div>
+                    <h3>Apply Instantly</h3>
+                    <p>Apply to jobs with one click. Your saved profile auto-fills all application forms.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">04</div>
+                    <div class="step-icon">🎉</div>
+                    <h3>Get Hired</h3>
+                    <p>Track applications, prepare with our resources, and land your dream job!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TESTIMONIALS ===== -->
+    <section class="section testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Success Stories</span>
+                <h2 class="section-title">What Our <span class="gradient-text">Users Say</span></h2>
+                <p class="section-desc">Thousands of job seekers found their dream jobs through SarkarJobs</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"SarkarJobs helped me crack SSC CGL! The instant alerts and study materials were a game-changer. I got my dream government job within 6 months."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RA</div>
+                        <div class="author-info">
+                            <strong>Rahul Sharma</strong>
+                            <span>SSC CGL Selected, Delhi</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"The AI resume builder is amazing! It helped me create a professional resume that got me 3 interview calls in the first week itself."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <strong>Priya Singh</strong>
+                            <span>Software Engineer, Bangalore</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 star rating">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"I was struggling with bank exam preparation. SarkarJobs' mock tests and previous year papers helped me clear IBPS PO on my first attempt!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AK</div>
+                        <div class="author-info">
+                            <strong>Amit Kumar</strong>
+                            <span>IBPS PO Selected, Mumbai</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AD SLOT 3 (Between Testimonials & Pricing) ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ===== PRICING SECTION ===== -->
+    <section class="section pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Pricing Plans</span>
+                <h2 class="section-title">Choose Your <span class="gradient-text">Plan</span></h2>
+                <p class="section-desc">Free forever for basic use. Upgrade for premium features.</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Free</h3>
+                        <p class="pricing-desc">Perfect for getting started</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="currency">₹</span>
+                        <span class="amount">0</span>
+                        <span class="period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Basic job search</li>
+                        <li>✅ 5 job alerts per day</li>
+                        <li>✅ Apply to 10 jobs/month</li>
+                        <li>✅ Basic resume template</li>
+                        <li>✅ Community support</li>
+                        <li>❌ AI Resume Builder</li>
+                        <li>❌ Priority applications</li>
+                        <li>❌ Ad-free experience</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline btn-block">Get Started Free</a>
+                </div>
+
+                <!-- Pro Plan (Popular) -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Pro</h3>
+                        <p class="pricing-desc">For serious job seekers</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="currency">₹</span>
+                        <span class="amount">299</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Unlimited job search</li>
+                        <li>✅ Unlimited job alerts</li>
+                        <li>✅ Unlimited applications</li>
+                        <li>✅ AI Resume Builder</li>
+                        <li>✅ Priority applications</li>
+                        <li>✅ Mock tests & study material</li>
+                        <li>✅ Ad-free experience</li>
+                        <li>✅ Email support</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" id="proPlanBtn" aria-label="Subscribe to Pro plan">Subscribe Now</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Premium</h3>
+                        <p class="pricing-desc">For career acceleration</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="currency">₹</span>
+                        <span class="amount">799</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Pro</li>
+                        <li>✅ Personal career mentor</li>
+                        <li>✅ Interview preparation</li>
+                        <li>✅ Salary negotiation help</li>
+                        <li>✅ LinkedIn profile review</li>
+                        <li>✅ 1-on-1 coaching sessions</li>
+                        <li>✅ Priority support 24/7</li>
+                        <li>✅ Job guarantee program</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" id="premiumPlanBtn" aria-label="Subscribe to Premium plan">Subscribe Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== UPI PAYMENT MODAL ===== -->
+    <div class="modal-overlay" id="paymentModal" aria-hidden="true" role="dialog" aria-labelledby="paymentModalTitle">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+            <div class="modal-header">
+                <h2 id="paymentModalTitle">Complete Your Payment</h2>
+                <p class="modal-subtitle" id="modalPlanName">Pro Plan — ₹299/month</p>
+            </div>
+
+            <!-- Payment Tabs -->
+            <div class="payment-tabs">
+                <button class="payment-tab active" data-paytab="upi" aria-label="Pay via UPI">
+                    <span>📱</span> UPI
+                </button>
+                <button class="payment-tab" data-paytab="card" aria-label="Pay via Card">
+                    <span>💳</span> Card
+                </button>
+                <button class="payment-tab" data-paytab="netbanking" aria-label="Pay via Net Banking">
+                    <span>🏦</span> Net Banking
+                </button>
+            </div>
+
+            <!-- UPI Payment Form -->
+            <div class="payment-form active" id="upiForm">
+                <div class="upi-apps">
+                    <button class="upi-app" aria-label="Google Pay">
+                        <span class="upi-icon">GPay</span>
+                    </button>
+                    <button class="upi-app" aria-label="PhonePe">
+                        <span class="upi-icon">PhonePe</span>
+                    </button>
+                    <button class="upi-app" aria-label="Paytm">
+                        <span class="upi-icon">Paytm</span>
+                    </button>
+                    <button class="upi-app" aria-label="Other UPI">
+                        <span class="upi-icon">Other</span>
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label for="upiId">Enter UPI ID</label>
+                    <input type="text" id="upiId" placeholder="yourname@upi" aria-label="UPI ID">
+                </div>
+                <button class="btn btn-primary btn-block" id="payBtn">Pay ₹<span id="payAmount">299</span></button>
+            </div>
+
+            <!-- Card Payment Form -->
+            <div class="payment-form" id="cardForm">
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" aria-label="Card number">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cardExpiry">Expiry</label>
+                        <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" aria-label="Card expiry">
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCvv">CVV</label>
+                        <input type="password" id="cardCvv" placeholder="123" maxlength="3" aria-label="Card CVV">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="cardName">Cardholder Name</label>
+                    <input type="text" id="cardName" placeholder="Name on card" aria-label="Cardholder name">
+                </div>
+                <button class="btn btn-primary btn-block">Pay ₹<span class="pay-amount">299</span></button>
+            </div>
+
+            <!-- Net Banking Form -->
+            <div class="payment-form" id="netbankingForm">
+                <div class="form-group">
+                    <label for="bankSelect">Select Your Bank</label>
+                    <select id="bankSelect" aria-label="Select bank">
+                        <option value="">Choose a bank...</option>
+                        <option value="sbi">State Bank of India</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="pnb">Punjab National Bank</option>
+                        <option value="bob">Bank of Baroda</option>
+                        <option value="kotak">Kotak Mahindra Bank</option>
+                        <option value="indusind">IndusInd Bank</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block">Pay ₹<span class="pay-amount">299</span></button>
+            </div>
+
+            <p class="payment-secure">🔒 Your payment is secured with 256-bit SSL encryption</p>
+        </div>
+    </div>
+
+    <!-- ===== FAQ SECTION ===== -->
+    <section class="section faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Got Questions?</span>
+                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="section-desc">Everything you need to know about SarkarJobs</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Is SarkarJobs really free to use?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! SarkarJobs is completely free for basic job search and applications. You can search jobs, set up alerts, and apply to positions without paying anything. We also offer Pro and Premium plans with advanced features like AI Resume Builder, priority applications, and personal career mentoring.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>How do job alerts work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Simply set your preferences — job type, location, salary range, and keywords. We'll send you instant notifications via email, SMS, and WhatsApp whenever a matching job is posted. Free users get 5 alerts per day; Pro and Premium users get unlimited alerts.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Can I apply to multiple jobs at once?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Absolutely! With our One-Click Apply feature, you can apply to multiple jobs simultaneously. Your saved profile and documents are automatically filled in, saving you hours of time. Free users can apply to 10 jobs per month; Pro and Premium users get unlimited applications.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>What payment methods do you accept?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We accept all major payment methods including UPI (Google Pay, PhonePe, Paytm), credit/debit cards (Visa, Mastercard, RuPay), and net banking from all major Indian banks. All transactions are secured with 256-bit SSL encryption.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Do you have a mobile app?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! SarkarJobs is available on both Android and iOS. Our mobile app lets you search jobs, apply on the go, receive push notifications for new job alerts, and even prepare for exams with our built-in mock test feature. Download it free from the Play Store or App Store.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== AD SLOT 4 (Above Footer) ===== -->
+    <div class="ad-slot container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <p>Ad Space — 728x90 Leaderboard</p>
+        </div>
+    </div>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-box">
+                <h2>Ready to Find Your Dream Job?</h2>
+                <p>Join 50 lakh+ job seekers who trust SarkarJobs. Sign up free today!</p>
+                <div class="cta-actions">
+                    <a href="#" class="btn btn-white">Sign Up Free</a>
+                    <a href="#" class="btn btn-ghost-white">Download App</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="#" class="nav-logo">
+                        <span class="logo-icon">💼</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Jobs</span></span>
+                    </a>
+                    <p>India's leading job portal for government and private sector jobs. Find your dream career with us.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook">📘</a>
+                        <a href="#" aria-label="Twitter">🐦</a>
+                        <a href="#" aria-label="LinkedIn">💼</a>
+                        <a href="#" aria-label="YouTube">📺</a>
+                        <a href="#" aria-label="Instagram">📷</a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#categories">Job Categories</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Job Seekers</h4>
+                    <ul>
+                        <li><a href="#">Browse Jobs</a></li>
+                        <li><a href="#">Companies</a></li>
+                        <li><a href="#">Resume Builder</a></li>
+                        <li><a href="#">Career Advice</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Employers</h4>
+                    <ul>
+                        <li><a href="#">Post a Job</a></li>
+                        <li><a href="#">Browse Resumes</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Employer Login</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarJobs. All rights reserved. Made with ❤️ in India</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script src="app.js"></script>
+</body>
+</html>

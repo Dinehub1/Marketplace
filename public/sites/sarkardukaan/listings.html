@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarDukaan — Business Listings Page v1.0
+    Built by Loop Agent | ZOO Company
+    Features: Business listing cards, search bar, category filter sidebar,
+    pagination, rating stars, mobile-first responsive,
+    SEO meta tags, Schema.org JSON-LD, Open Graph
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ===== SEO Meta Tags ===== -->
+  <title>Browse Local Businesses — SarkarDukaan | Search & Find Shops Near You</title>
+  <meta name="description" content="Browse 50,000+ local businesses on SarkarDukaan. Search by category, location, or name. Read reviews, compare ratings, and find the best shops near you in Indore and 50+ cities.">
+  <meta name="keywords" content="local businesses, business listings, shops near me, Indore businesses, business directory, reviews, ratings">
+  <meta name="author" content="SarkarDukaan">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkardukaan.in/listings.html">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Browse Local Businesses — SarkarDukaan">
+  <meta property="og:description" content="Browse 50,000+ local businesses. Search by category, location, or name. Read reviews and compare ratings.">
+  <meta property="og:url" content="https://sarkardukaan.in/listings.html">
+  <meta property="og:site_name" content="SarkarDukaan">
+  <meta property="og:image" content="https://sarkardukaan.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Browse Local Businesses — SarkarDukaan">
+  <meta name="twitter:description" content="Browse 50,000+ local businesses on SarkarDukaan.">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Local Business Listings",
+    "description": "Browse local businesses on SarkarDukaan",
+    "url": "https://sarkardukaan.in/listings.html",
+    "numberOfItems": 12,
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Sharma Electronics", "url": "https://sarkardukaan.in/listings.html#sharma-electronics"},
+      {"@type": "ListItem", "position": 2, "name": "Gupta Kirana Store", "url": "https://sarkardukaan.in/listings.html#gupta-kirana"},
+      {"@type": "ListItem", "position": 3, "name": "Patel Restaurant", "url": "https://sarkardukaan.in/listings.html#patel-restaurant"}
+    ]
+  }
+  </script>
+
+  <!-- ===== Stylesheet ===== -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ===== Page-Specific Styles ===== -->
+  <style>
+    /* Listings Hero / Search */
+    .listings-hero {
+      background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%);
+      padding: 8rem 1.5rem 3rem;
+      text-align: center;
+      color: #fff;
+    }
+    .listings-hero h1 {
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+    .listings-hero p {
+      opacity: 0.9;
+      margin-bottom: 2rem;
+    }
+    .search-bar {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0.5rem;
+      background: #fff;
+      border-radius: 1rem;
+      padding: 0.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      color: #0f172a;
+      background: transparent;
+    }
+    .search-bar input:focus { outline: none; }
+    .search-bar select {
+      border: none;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      color: #475569;
+      background: #f1f5f9;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    .search-bar button {
+      padding: 0.75rem 1.5rem;
+      background: #7c3aed;
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    /* Listings Layout */
+    .listings-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+    @media (min-width: 768px) {
+      .listings-layout { grid-template-columns: 260px 1fr; }
+    }
+
+    /* Category Sidebar */
+    .category-sidebar {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.06);
+      height: fit-content;
+    }
+    .category-sidebar h3 {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .category-list li {
+      margin-bottom: 0.25rem;
+    }
+    .category-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.625rem 0.75rem;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .category-list a:hover,
+    .category-list a.active {
+      background: var(--bg-tertiary);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .category-list a span {
+      background: var(--bg-tertiary);
+      padding: 0.125rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Business Cards Grid */
+    .listings-results {
+      flex: 1;
+    }
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .results-header h2 {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+    }
+    .results-header select {
+      padding: 0.5rem 0.75rem;
+      border: 2px solid var(--bg-tertiary);
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-secondary);
+      background: var(--bg-primary);
+    }
+
+    .business-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .business-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .business-card {
+      background: var(--bg-card);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.06);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .business-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+    .business-card-img {
+      height: 160px;
+      background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      position: relative;
+    }
+    .business-card-img .badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      background: #10b981;
+      color: #fff;
+      padding: 0.25rem 0.625rem;
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .business-card-body {
+      padding: 1.25rem;
+    }
+    .business-card-body h3 {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+      font-size: 1.1rem;
+    }
+    .business-card-body .category {
+      color: var(--color-primary);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .business-card-body .address {
+      color: var(--text-tertiary);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+    .business-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    .rating .stars { color: #f59e0b; }
+    .rating-count {
+      color: var(--text-tertiary);
+      font-size: 0.8rem;
+      font-weight: 400;
+    }
+    .status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+    }
+    .status.open { background: #dcfce7; color: #16a34a; }
+    .status.closed { background: #fee2e2; color: #dc2626; }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 1rem 0;
+    }
+    .pagination a,
+    .pagination span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 0.5rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+    .pagination a {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .pagination a:hover {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    .pagination span.current {
+      background: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 1rem 1.5rem;
+      background: var(--bg-tertiary);
+      font-size: 0.875rem;
+    }
+    .breadcrumb a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .breadcrumb span { color: var(--text-tertiary); }
+  </style>
+</head>
+<body>
+  <!-- ===== NAVIGATION (Shared) ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">Sarkar<span class="logo-accent">Dukaan</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="listings.html" class="active">Listings</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="seller-dashboard.html">Seller Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+          <span class="dark-icon">🌙</span>
+        </button>
+        <a href="index.html#pricing" class="btn btn-primary btn-sm">Get Started</a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== BREADCRUMB ===== -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> <span>›</span> <span>Browse Listings</span>
+  </div>
+
+  <!-- ===== LISTINGS HERO / SEARCH ===== -->
+  <section class="listings-hero">
+    <h1>Find Local Businesses</h1>
+    <p>Search from 50,000+ verified businesses across 50+ cities</p>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search businesses, categories...">
+      <select id="locationFilter">
+        <option value="">All Cities</option>
+        <option value="indore">Indore</option>
+        <option value="bhopal">Bhopal</option>
+        <option value="pune">Pune</option>
+        <option value="mumbai">Mumbai</option>
+        <option value="delhi">Delhi</option>
+      </select>
+      <button id="searchBtn">Search</button>
+    </div>
+  </section>
+
+  <!-- ===== AD SLOT: After Search ===== -->
+  <div class="ad-slot" style="max-width:728px;margin:1rem auto;padding:1rem;text-align:center;background:var(--bg-tertiary);border-radius:0.75rem;">
+    <small style="color:var(--text-tertiary);">Advertisement</small>
+    <div style="height:90px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);">
+      Ad Space — 728×90
+    </div>
+  </div>
+
+  <!-- ===== LISTINGS LAYOUT ===== -->
+  <section class="listings-layout">
+    <!-- Category Sidebar -->
+    <aside class="category-sidebar">
+      <h3>📂 Categories</h3>
+      <ul class="category-list" id="categoryList">
+        <li><a href="#" class="active" data-category="all">All Categories <span>50K</span></a></li>
+        <li><a href="#" data-category="kirana">Kirana & Grocery <span>8.2K</span></a></li>
+        <li><a href="#" data-category="electronics">Electronics <span>5.1K</span></a></li>
+        <li><a href="#" data-category="restaurant">Restaurants <span>7.8K</span></a></li>
+        <li><a href="#" data-category="clothing">Clothing & Fashion <span>6.3K</span></a></li>
+        <li><a href="#" data-category="medical">Medical & Pharma <span>4.5K</span></a></li>
+        <li><a href="#" data-category="hardware">Hardware <span>3.2K</span></a></li>
+        <li><a href="#" data-category="salon">Salon & Beauty <span>2.9K</span></a></li>
+        <li><a href="#" data-category="education">Education <span>2.1K</span></a></li>
+        <li><a href="#" data-category="travel">Travel & Transport <span>1.8K</span></a></li>
+        <li><a href="#" data-category="services">Professional Services <span>3.5K</span></a></li>
+      </ul>
+    </aside>
+
+    <!-- Business Cards -->
+    <div class="listings-results">
+      <div class="results-header">
+        <h2 id="resultsCount">Showing 12 of 50,000 businesses</h2>
+        <select id="sortSelect">
+          <option value="relevance">Sort: Relevance</option>
+          <option value="rating">Sort: Highest Rated</option>
+          <option value="reviews">Sort: Most Reviewed</option>
+          <option value="newest">Sort: Newest</option>
+        </select>
+      </div>
+
+      <div class="business-grid" id="businessGrid">
+        <!-- Business Card 1 -->
+        <div class="business-card" data-category="electronics">
+          <div class="business-card-img">
+            🔌
+            <span class="badge">Verified</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Sharma Electronics</h3>
+            <div class="category">Electronics & Appliances</div>
+            <div class="address">📍 Vijay Nagar, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.5</span>
+                <span class="rating-count">(234 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 2 -->
+        <div class="business-card" data-category="kirana">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#dcfce7,#bbf7d0);">
+            🛒
+            <span class="badge">Verified</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Gupta Kirana Store</h3>
+            <div class="category">Kirana & Grocery</div>
+            <div class="address">📍 Rajwada, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★★</span> 4.8</span>
+                <span class="rating-count">(512 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 3 -->
+        <div class="business-card" data-category="restaurant">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">
+            🍽️
+            <span class="badge" style="background:#f97316;">Popular</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Patel Restaurant</h3>
+            <div class="category">Restaurant & Dining</div>
+            <div class="address">📍 Sapna Sangeeta, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.3</span>
+                <span class="rating-count">(189 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 4 -->
+        <div class="business-card" data-category="clothing">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#ede9fe,#ddd6fe);">
+            👔
+          </div>
+          <div class="business-card-body">
+            <h3>Royal Fashion Hub</h3>
+            <div class="category">Clothing & Fashion</div>
+            <div class="address">📍 MG Road, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.2</span>
+                <span class="rating-count">(97 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 5 -->
+        <div class="business-card" data-category="medical">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);">
+            💊
+            <span class="badge">Verified</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Apex Medical Store</h3>
+            <div class="category">Medical & Pharmacy</div>
+            <div class="address">📍 Palasia, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★★</span> 4.9</span>
+                <span class="rating-count">(341 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 6 -->
+        <div class="business-card" data-category="salon">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#fce7f3,#fbcfe8);">
+            ✂️
+          </div>
+          <div class="business-card-body">
+            <h3>Glamour Beauty Salon</h3>
+            <div class="category">Salon & Beauty</div>
+            <div class="address">📍 Scheme 54, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.6</span>
+                <span class="rating-count">(156 reviews)</span>
+              </div>
+              <span class="status closed">Closed</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 7 -->
+        <div class="business-card" data-category="hardware">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#f1f5f9,#e2e8f0);">
+            🔨
+          </div>
+          <div class="business-card-body">
+            <h3>Sharma Hardware</h3>
+            <div class="category">Hardware & Tools</div>
+            <div class="address">📍 Bapat Square, Bhopal</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.1</span>
+                <span class="rating-count">(78 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 8 -->
+        <div class="business-card" data-category="education">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#cffafe,#a5f3fc);">
+            📚
+            <span class="badge" style="background:#0891b2;">New</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Bright Minds Academy</h3>
+            <div class="category">Education & Coaching</div>
+            <div class="address">📍 Sudama Nagar, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★★</span> 4.7</span>
+                <span class="rating-count">(203 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 9 -->
+        <div class="business-card" data-category="travel">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);">
+            🚗
+          </div>
+          <div class="business-card-body">
+            <h3>Indore Cab Services</h3>
+            <div class="category">Travel & Transport</div>
+            <div class="address">📍 RNT Marg, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.0</span>
+                <span class="rating-count">(445 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 10 -->
+        <div class="business-card" data-category="services">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#e0e7ff,#c7d2fe);">
+            ⚖️
+          </div>
+          <div class="business-card-body">
+            <h3>Legal Associates</h3>
+            <div class="category">Professional Services</div>
+            <div class="address">📍 AB Road, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★★</span> 4.9</span>
+                <span class="rating-count">(67 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 11 -->
+        <div class="business-card" data-category="restaurant">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#fed7aa,#fdba74);">
+            ☕
+          </div>
+          <div class="business-card-body">
+            <h3>Cafe Coffee Corner</h3>
+            <div class="category">Cafe & Beverages</div>
+            <div class="address">📍 Treasure Island, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.4</span>
+                <span class="rating-count">(298 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Card 12 -->
+        <div class="business-card" data-category="kirana">
+          <div class="business-card-img" style="background:linear-gradient(135deg,#fef9c3,#fef08a);">
+            🥬
+            <span class="badge">Verified</span>
+          </div>
+          <div class="business-card-body">
+            <h3>Fresh Veg Market</h3>
+            <div class="category">Fruits & Vegetables</div>
+            <div class="address">📍 Khajuri Bazar, Indore</div>
+            <div class="business-meta">
+              <div>
+                <span class="rating"><span class="stars">★★★★</span> 4.3</span>
+                <span class="rating-count">(167 reviews)</span>
+              </div>
+              <span class="status open">Open</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <a href="#">‹</a>
+        <span class="current">1</span>
+        <a href="#">2</a>
+        <a href="#">3</a>
+        <a href="#">4</a>
+        <a href="#">5</a>
+        <a href="#">›</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AD SLOT: Before Footer ===== -->
+  <div class="ad-slot" style="max-width:728px;margin:2rem auto;padding:1rem;text-align:center;background:var(--bg-tertiary);border-radius:0.75rem;">
+    <small style="color:var(--text-tertiary);">Advertisement</small>
+    <div style="height:90px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);">
+      Ad Space — 728×90
+    </div>
+  </div>
+
+  <!-- ===== FOOTER (Shared) ===== -->
+  <footer style="background:var(--bg-tertiary);padding:4rem 1.5rem 2rem;">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;">
+      <div>
+        <a href="index.html" style="text-decoration:none;color:var(--text-primary);font-weight:800;font-size:1.25rem;">
+          🏪 Sarkar<span style="color:var(--color-primary);">Dukaan</span>
+        </a>
+        <p style="color:var(--text-secondary);margin-top:0.75rem;font-size:0.9rem;">India's fastest-growing local business directory.</p>
+      </div>
+      <div>
+        <h4 style="font-weight:700;color:var(--text-primary);margin-bottom:0.75rem;">Quick Links</h4>
+        <ul style="list-style:none;padding:0;">
+          <li style="margin-bottom:0.5rem;"><a href="index.html" style="color:var(--text-secondary);text-decoration:none;">Home</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="about.html" style="color:var(--text-secondary);text-decoration:none;">About</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="listings.html" style="color:var(--text-secondary);text-decoration:none;">Listings</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="contact.html" style="color:var(--text-secondary);text-decoration:none;">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="max-width:1200px;margin:2rem auto 0;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.08);text-align:center;color:var(--text-tertiary);font-size:0.875rem;">
+      © 2026 SarkarDukaan. All rights reserved. Built with ❤️ in India.
+    </div>
+  </footer>
+
+  <!-- ===== SHARED JAVASCRIPT ===== -->
+  <script src="app.js"></script>
+  <script>
+    // Category filter
+    document.querySelectorAll('.category-list a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelectorAll('.category-list a').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        const cat = this.dataset.category;
+        document.querySelectorAll('.business-card').forEach(card => {
+          if (cat === 'all' || card.dataset.category === cat) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Search functionality
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.business-card').forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        const category = card.querySelector('category')?.textContent?.toLowerCase() || '';
+        const address = card.querySelector('.address').textContent.toLowerCase();
+        if (name.includes(query) || category.includes(query) || address.includes(query)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

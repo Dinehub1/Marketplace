@@ -1,0 +1,11 @@
+# robots.txt for Sarkar AI - AI-Powered Government Services Portal
+# https://sarkarai.gov.in/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://sarkarai.gov.in/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

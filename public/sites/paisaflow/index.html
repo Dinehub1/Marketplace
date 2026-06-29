@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        PaisaFlow - Landing Page
+        A modern, responsive landing page for PaisaFlow digital payment solution.
+        Built with HTML5, CSS3 (Flexbox/Grid), vanilla JavaScript.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>PaisaFlow - Instant Digital Payments Made Easy | Send Money Anywhere</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="PaisaFlow is India's fastest digital payment platform. Send money, pay bills, and shop online instantly with UPI. Secure, simple, and available 24/7.">
+
+    <!-- SEO: Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="PaisaFlow - Instant Digital Payments Made Easy">
+    <meta property="og:description" content="Send money, pay bills, and shop online instantly with UPI. Secure, simple, and available 24/7.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://paisaflow.in">
+    <meta property="og:image" content="https://paisaflow.in/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="PaisaFlow">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- SEO: Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PaisaFlow - Instant Digital Payments Made Easy">
+    <meta name="twitter:description" content="Send money, pay bills, and shop online instantly with UPI. Secure, simple, and available 24/7.">
+    <meta name="twitter:image" content="https://paisaflow.in/og-image.png">
+
+    <!-- SEO: Additional Meta Tags -->
+    <meta name="keywords" content="UPI payments, digital payments, money transfer, online payments, PaisaFlow, India">
+    <meta name="author" content="PaisaFlow">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://paisaflow.in/index.html">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- robots.txt is at /robots.txt -->
+
+    <!-- SEO: Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "PaisaFlow",
+        "url": "https://paisaflow.in",
+        "description": "India's fastest digital payment platform for instant money transfers and UPI payments.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://paisaflow.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "PaisaFlow",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://paisaflow.in/logo.png"
+            }
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "PaisaFlow",
+        "url": "https://paisaflow.in",
+        "logo": "https://paisaflow.in/logo.png",
+        "description": "India's fastest digital payment platform for instant money transfers and UPI payments.",
+        "sameAs": [
+            "https://twitter.com/paisaflow",
+            "https://facebook.com/paisaflow",
+            "https://linkedin.com/company/paisaflow"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-1800-123-4567",
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Hindi"]
+        }
+    }
+    </script>
+
+    <!-- Schema.org: Product/Service -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PaisaFlow",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Android, iOS, Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7",
+            "reviewCount": "125000"
+        }
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- QR Code Library (lightweight, 30KB) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <!-- ========== SKIP TO CONTENT (Accessibility) ========== -->
+    <a href="#hero" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <span class="logo-icon">₹</span>
+                <span class="logo-text">Paisa<span class="logo-highlight">Flow</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#send-money">Send Money</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#testimonials">Testimonials</a></li>
+                <li><a href="#comparison">Compare</a></li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <!-- Mobile-only CTA buttons inside the hamburger menu -->
+                <li class="mobile-nav-cta">
+                    <button class="btn btn-ghost mobile-nav-btn" onclick="openLoginModal()">Log In</button>
+                    <button class="btn btn-primary mobile-nav-btn" onclick="openSignupModal()">Get Started</button>
+                </li>
+            </ul>
+
+            <!-- Desktop CTA Buttons -->
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="theme-icon" id="themeIcon">🌙</span>
+                </button>
+                <button class="btn btn-ghost" onclick="openLoginModal()">Log In</button>
+                <button class="btn btn-primary" onclick="openSignupModal()">Get Started</button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <section class="hero" id="hero" aria-label="Main content">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="hero-badge">Trusted by 10 Million+ Indians</span>
+                <h1 class="hero-title">
+                    Send Money <span class="gradient-text">Instantly</span>,<br>
+                    Anywhere in India
+                </h1>
+                <p class="hero-subtitle">
+                    PaisaFlow makes digital payments effortless. Transfer money, pay bills, recharge, and shop online — all from one secure app. No bank visits, no waiting.
+                </p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary btn-lg" onclick="openUpiModal()">
+                        <span class="btn-icon">⚡</span>
+                        Start Paying Now
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="scrollToSection('how-it-works')">
+                        <span class="btn-icon">▶</span>
+                        See How It Works
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number" data-target="10M+">10M+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="₹500Cr+">₹500Cr+</span>
+                        <span class="stat-label">Transactions/Month</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" data-target="4.7★">4.7★</span>
+                        <span class="stat-label">App Rating</span>
+                    </div>
+                </div>
+
+                <!-- ========== LIVE TRANSACTION FEED ========== -->
+                <!-- Shows simulated real-time transactions for social proof -->
+                <div class="live-txn-feed" id="liveTxnFeed" aria-label="Recent transactions" role="list">
+                    <div class="live-txn-header">
+                        <span class="live-dot" aria-hidden="true"></span>
+                        <span class="live-txn-label">Live Transactions</span>
+                    </div>
+                    <div class="live-txn-list" id="liveTxnList">
+                        <!-- Transactions injected by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <!-- Hero Phone Mockup -->
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="phone-header">
+                            <span class="phone-time">9:41</span>
+                            <span class="phone-notch"></span>
+                        </div>
+                        <div class="phone-content">
+                            <div class="phone-balance-label">Total Balance</div>
+                            <div class="phone-balance">₹24,580.00</div>
+                            <div class="phone-actions">
+                                <div class="phone-action-btn">
+                                    <span>📤</span> Send
+                                </div>
+                                <div class="phone-action-btn">
+                                    <span>📥</span> Request
+                                </div>
+                                <div class="phone-action-btn">
+                                    <span>🔄</span> Pay
+                                </div>
+                                <div class="phone-action-btn">
+                                    <span>💳</span> Bills
+                                </div>
+                            </div>
+                            <div class="phone-transaction">
+                                <div class="txn-icon">✓</div>
+                                <div class="txn-details">
+                                    <div class="txn-name">Payment to Rahul</div>
+                                    <div class="txn-time">Just now</div>
+                                </div>
+                                <div class="txn-amount">-₹1,200</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Background Decoration -->
+        <div class="hero-bg-decoration">
+            <div class="circle circle-1"></div>
+            <div class="circle circle-2"></div>
+            <div class="circle circle-3"></div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 1 - Top Banner ========== -->
+    <div class="ad-slot ad-slot-top" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== TRUSTED BY / LOGOS SECTION ========== -->
+    <section class="trusted-by">
+        <div class="container">
+            <p class="trusted-label">Trusted by leading businesses across India</p>
+            <div class="logo-strip">
+                <div class="logo-item">🏪 Reliance</div>
+                <div class="logo-item">🛒 Flipkart</div>
+                <div class="logo-item">🍔 Zomato</div>
+                <div class="logo-item">🚗 Ola</div>
+                <div class="logo-item">📱 Airtel</div>
+                <div class="logo-item">🏦 HDFC</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES SECTION ========== -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Everything You Need to <span class="gradient-text">Manage Money</span></h2>
+                <p class="section-subtitle">Powerful features designed for simplicity. Send, receive, and grow your money — all in one app.</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1: Instant Transfers -->
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">Instant Transfers</h3>
+                    <p class="feature-description">Send money to anyone in India in seconds. UPI-powered transfers work 24/7, even on holidays.</p>
+                </div>
+
+                <!-- Feature 2: Bill Payments -->
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Bill Payments</h3>
+                    <p class="feature-description">Pay electricity, water, gas, broadband, and mobile bills instantly. Set up auto-pay to never miss a due date.</p>
+                </div>
+
+                <!-- Feature 3: Recharge -->
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Mobile & DTH Recharge</h3>
+                    <p class="feature-description">Recharge your prepaid mobile, DTH, and data cards. Get exclusive cashback on every recharge.</p>
+                </div>
+
+                <!-- Feature 4: Security -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3 class="feature-title">Bank-Grade Security</h3>
+                    <p class="feature-description">End-to-end encryption, biometric login, and real-time fraud detection keep your money safe.</p>
+                </div>
+
+                <!-- Feature 5: Rewards -->
+                <div class="feature-card">
+                    <div class="feature-icon">🎁</div>
+                    <h3 class="feature-title">Rewards & Cashback</h3>
+                    <p class="feature-description">Earn rewards on every transaction. Redeem for vouchers, discounts, and exclusive offers.</p>
+                </div>
+
+                <!-- Feature 6: Expense Tracking -->
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Smart Expense Tracking</h3>
+                    <p class="feature-description">AI-powered insights show where your money goes. Set budgets and get alerts before you overspend.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 - Between Features & How It Works ========== -->
+    <div class="ad-slot ad-slot-features" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90</span>
+        </div>
+    </div>
+
+    <!-- ========== HOW IT WORKS SECTION ========== -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">How It Works</span>
+                <h2 class="section-title">Start Paying in <span class="gradient-text">3 Simple Steps</span></h2>
+                <p class="section-subtitle">No complicated setup. Download, connect, and you're ready to go.</p>
+            </div>
+
+            <div class="steps-container">
+                <!-- Step 1 -->
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Download & Register</h3>
+                        <p class="step-description">Get the PaisaFlow app from Play Store or App Store. Sign up with your mobile number and verify with OTP.</p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Link Your Bank Account</h3>
+                        <p class="step-description">Securely link your bank account using UPI. We support 500+ banks including SBI, HDFC, ICICI, and more.</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Start Transacting!</h3>
+                        <p class="step-description">Send money, pay bills, recharge, or scan QR codes at shops. It's that simple.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING SECTION ========== -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing</span>
+                <h2 class="section-title">Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+                <p class="section-subtitle">No hidden charges. Pay only when you exceed the free limits.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Starter</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹0</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-tagline">Perfect for getting started</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ UPI transfers up to ₹1,00,000/month</li>
+                        <li>✓ Bill payments (unlimited)</li>
+                        <li>✓ Mobile recharge</li>
+                        <li>✓ Basic expense tracking</li>
+                        <li>✓ Email support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openSignupModal()">Get Started Free</button>
+                </div>
+
+                <!-- Pro Plan (Featured) -->
+                <div class="pricing-card pricing-card-featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹99</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-tagline">For power users & freelancers</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Unlimited UPI transfers</li>
+                        <li>✓ Priority bill payments</li>
+                        <li>✓ International remittance</li>
+                        <li>✓ Advanced expense analytics</li>
+                        <li>✓ Priority support (24/7)</li>
+                        <li>✓ 2% cashback on online shopping</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="openUpiModal()">Upgrade to Pro</button>
+                </div>
+
+                <!-- Business Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Business</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">₹299</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-tagline">For merchants & businesses</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Everything in Pro</li>
+                        <li>✓ Payment gateway integration</li>
+                        <li>✓ QR code payments</li>
+                        <li>✓ Multi-user access</li>
+                        <li>✓ GST-compliant invoicing</li>
+                        <li>✓ Dedicated account manager</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="openSignupModal()">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 - Between Pricing & Testimonials ========== -->
+    <div class="ad-slot ad-slot-pricing" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 300x250 Rectangle</span>
+        </div>
+    </div>
+
+    <!-- ========== TESTIMONIALS SECTION ========== -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Testimonials</span>
+                <h2 class="section-title">Loved by <span class="gradient-text">Millions</span></h2>
+                <p class="section-subtitle">See what our users have to say about PaisaFlow.</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"PaisaFlow has made my daily payments so easy. I pay all my bills in under 2 minutes. The interface is clean and intuitive!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">PS</div>
+                        <div class="author-info">
+                            <span class="author-name">Priya Sharma</span>
+                            <span class="author-role">Homemaker, Mumbai</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"As a small business owner, PaisaFlow's QR payment feature is a game-changer. Customers just scan and pay. No more cash handling!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div class="author-info">
+                            <span class="author-name">Rahul Kumar</span>
+                            <span class="author-role">Shop Owner, Delhi</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">"The expense tracking feature helped me save 30% more each month. I can see exactly where my money goes. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">AG</div>
+                        <div class="author-info">
+                            <span class="author-name">Anita Gupta</span>
+                            <span class="author-role">Software Engineer, Bangalore</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== DASHBOARD SECTION ========== -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Dashboard</span>
+                <h2 class="section-title">Your <span class="gradient-text">Financial Overview</span></h2>
+                <p class="section-subtitle">Track spending, manage budgets, and view transactions - all in one place.</p>
+            </div>
+            <div class="dashboard-header">
+                <div class="dashboard-greeting">
+                    <h3>Good Morning, Rahul</h3>
+                    <p class="dashboard-date" id="dashboardDate">Loading date...</p>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="notification-btn" id="notificationBtn" aria-label="Notifications">
+                        <span class="notification-bell">&#128276;</span>
+                        <span class="notification-badge" id="notificationBadge">3</span>
+                    </button>
+                </div>
+            </div>
+            <div class="notification-panel" id="notificationPanel" role="region" aria-label="Notifications">
+                <div class="notification-header">
+                    <h4>Notifications</h4>
+                    <button class="notification-clear" id="clearAllNotifications">Clear All</button>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <div class="notification-item notification-unread" data-id="1">
+                        <div class="notification-icon notification-icon-success">&#10003;</div>
+                        <div class="notification-content">
+                            <p class="notification-title">Payment Successful</p>
+                            <p class="notification-desc">&#8377;1,200 sent to Priya Sharma via UPI</p>
+                            <span class="notification-time">2 minutes ago</span>
+                        </div>
+                        <button class="notification-dismiss" aria-label="Dismiss notification">&#10005;</button>
+                    </div>
+                    <div class="notification-item notification-unread" data-id="2">
+                        <div class="notification-icon notification-icon-warning">&#9888;</div>
+                        <div class="notification-content">
+                            <p class="notification-title">Budget Alert</p>
+                            <p class="notification-desc">You have spent 80% of your Dining budget this month</p>
+                            <span class="notification-time">1 hour ago</span>
+                        </div>
+                        <button class="notification-dismiss" aria-label="Dismiss notification">&#10005;</button>
+                    </div>
+                    <div class="notification-item notification-unread" data-id="3">
+                        <div class="notification-icon notification-icon-info">&#8505;</div>
+                        <div class="notification-content">
+                            <p class="notification-title">Cashback Earned</p>
+                            <p class="notification-desc">&#8377;45 cashback credited for your last recharge</p>
+                            <span class="notification-time">3 hours ago</span>
+                        </div>
+                        <button class="notification-dismiss" aria-label="Dismiss notification">&#10005;</button>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-summary">
+                <div class="summary-card summary-income">
+                    <div class="summary-icon">&#128190;</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Income This Month</span>
+                        <span class="summary-value">&#8377;45,800</span>
+                        <span class="summary-change summary-up">&#8593; 12% from last month</span>
+                    </div>
+                </div>
+                <div class="summary-card summary-expense">
+                    <div class="summary-icon">&#128191;</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Spent This Month</span>
+                        <span class="summary-value">&#8377;28,450</span>
+                        <span class="summary-change summary-down">&#8595; 5% from last month</span>
+                    </div>
+                </div>
+                <div class="summary-card summary-savings">
+                    <div class="summary-icon">&#128176;</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Savings</span>
+                        <span class="summary-value">&#8377;17,350</span>
+                        <span class="summary-change summary-up">&#8593; 23% from last month</span>
+                    </div>
+                </div>
+                <div class="summary-card summary-balance">
+                    <div class="summary-icon">&#127970;</div>
+                    <div class="summary-info">
+                        <span class="summary-label">Account Balance</span>
+                        <span class="summary-value">&#8377;1,24,580</span>
+                        <span class="summary-change">Across 2 linked accounts</span>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-charts">
+                <div class="chart-card">
+                    <h4 class="chart-title">Spending by Category</h4>
+                    <div class="chart-donut-container">
+                        <div class="donut-chart" id="donutChart"></div>
+                        <div class="donut-center-label">
+                            <span class="donut-total">&#8377;28,450</span>
+                            <span class="donut-total-label">Total Spent</span>
+                        </div>
+                    </div>
+                    <div class="donut-legend" id="donutLegend"></div>
+                </div>
+                <div class="chart-card">
+                    <h4 class="chart-title">Weekly Spending</h4>
+                    <div class="bar-chart" id="barChart"></div>
+                    <div class="bar-chart-labels" id="barChartLabels"></div>
+                </div>
+            </div>
+            <div class="budget-section">
+                <h4 class="budget-title">Monthly Budget Progress</h4>
+                <div class="budget-list">
+                    <div class="budget-item" data-category="food">
+                        <div class="budget-item-header">
+                            <span class="budget-category"><span class="budget-category-icon">&#127828;</span> Dining and Food</span>
+                            <span class="budget-amount">&#8377;4,800 / &#8377;6,000</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="budget-progress-fill budget-progress-food" style="width: 80%;" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Dining budget 80 percent used"></div>
+                        </div>
+                        <span class="budget-remaining budget-remaining-warning">&#8377;1,200 remaining</span>
+                    </div>
+                    <div class="budget-item" data-category="shopping">
+                        <div class="budget-item-header">
+                            <span class="budget-category"><span class="budget-category-icon">&#128722;</span> Shopping</span>
+                            <span class="budget-amount">&#8377;8,200 / &#8377;15,000</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="budget-progress-fill budget-progress-shopping" style="width: 55%;" role="progressbar" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100" aria-label="Shopping budget 55 percent used"></div>
+                        </div>
+                        <span class="budget-remaining">&#8377;6,800 remaining</span>
+                    </div>
+                    <div class="budget-item" data-category="transport">
+                        <div class="budget-item-header">
+                            <span class="budget-category"><span class="budget-category-icon">&#128663;</span> Transport</span>
+                            <span class="budget-amount">&#8377;3,500 / &#8377;5,000</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="budget-progress-fill budget-progress-transport" style="width: 70%;" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="Transport budget 70 percent used"></div>
+                        </div>
+                        <span class="budget-remaining">&#8377;1,500 remaining</span>
+                    </div>
+                    <div class="budget-item" data-category="bills">
+                        <div class="budget-item-header">
+                            <span class="budget-category"><span class="budget-category-icon">&#128203;</span> Bills and Utilities</span>
+                            <span class="budget-amount">&#8377;6,800 / &#8377;8,000</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="budget-progress-fill budget-progress-bills" style="width: 85%;" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Bills budget 85 percent used"></div>
+                        </div>
+                        <span class="budget-remaining budget-remaining-warning">&#8377;1,200 remaining</span>
+                    </div>
+                    <div class="budget-item" data-category="entertainment">
+                        <div class="budget-item-header">
+                            <span class="budget-category"><span class="budget-category-icon">&#127916;</span> Entertainment</span>
+                            <span class="budget-amount">&#8377;1,150 / &#8377;3,000</span>
+                        </div>
+                        <div class="budget-progress-bar">
+                            <div class="budget-progress-fill budget-progress-entertainment" style="width: 38%;" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100" aria-label="Entertainment budget 38 percent used"></div>
+                        </div>
+                        <span class="budget-remaining">&#8377;1,850 remaining</span>
+                    </div>
+                </div>
+            </div>
+            <div class="transaction-section">
+                <div class="transaction-header">
+                    <h4 class="transaction-title">Recent Transactions</h4>
+                    <div class="transaction-controls">
+                        <div class="transaction-search">
+                            <input type="text" id="transactionSearch" placeholder="Search transactions..." aria-label="Search transactions">
+                            <span class="search-icon">&#128269;</span>
+                        </div>
+                        <select class="transaction-filter" id="transactionFilter" aria-label="Filter transactions by category">
+                            <option value="all">All Categories</option>
+                            <option value="food">Food and Dining</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="transport">Transport</option>
+                            <option value="bills">Bills</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="transfer">Transfers</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="transaction-table-wrapper">
+                    <table class="transaction-table" id="transactionTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="transaction-pagination">
+                    <button class="pagination-btn" id="prevPage" aria-label="Previous page">&larr; Prev</button>
+                    <span class="pagination-info" id="paginationInfo">Page 1 of 3</span>
+                    <button class="pagination-btn" id="nextPage" aria-label="Next page">Next &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="ad-slot ad-slot-dashboard" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90</span>
+        </div>
+    </div>
+    <!-- ========== FAQ SECTION ========== -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FAQ</span>
+                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is PaisaFlow safe and secure?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes! PaisaFlow uses bank-grade 256-bit encryption and is RBI-compliant. We offer biometric login, real-time fraud detection, and instant transaction alerts to keep your money safe.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Are there any charges for UPI transfers?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>UPI transfers up to ₹1,00,000/month are completely free on the Starter plan. Transfers above this limit have a nominal fee of ₹2 per transaction on the Pro plan.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Which banks are supported?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>PaisaFlow supports 500+ banks including SBI, HDFC Bank, ICICI Bank, Axis Bank, Kotak Mahindra, PNB, BOB, and all major cooperative banks.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFaq(this)">
+                        <span>Can I use PaisaFlow without internet?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>For basic UPI transfers, you can use USSD-based (*99#) service on feature phones. However, for the full app experience, an internet connection is required.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ========== COMPARISON TABLE SECTION ========== -->
+    <section class="comparison" id="comparison">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Comparison</span>
+                <h2 class="section-title">Why <span class="gradient-text">PaisaFlow</span> Stands Out</h2>
+                <p class="section-subtitle">See how PaisaFlow compares to other popular payment platforms in India.</p>
+            </div>
+
+            <div class="comparison-table-wrapper">
+                <table class="comparison-table" role="table" aria-label="Feature comparison of PaisaFlow vs competitors">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="comparison-feature-col">Feature</th>
+                            <th scope="col" class="comparison-brand-col"><span class="comparison-brand">PaisaFlow</span></th>
+                            <th scope="col" class="comparison-other-col">Paytm</th>
+                            <th scope="col" class="comparison-other-col">PhonePe</th>
+                            <th scope="col" class="comparison-other-col">Google Pay</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="comparison-feature">UPI Transfers</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Free up to &#8377;1L/month</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Free</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Free</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Free</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Bill Payments</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Unlimited + Auto-pay</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Limited + Auto-pay</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Unlimited</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">QR Code Payments</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Dynamic QR + Soundbox</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Static QR</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Static QR</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Expense Tracking</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>AI-powered insights</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Basic only</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Basic only</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Multi-Currency Support</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>150+ currencies</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Limited</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Business Invoicing</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>GST-compliant</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Basic invoicing</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Not available</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Cashback & Rewards</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Up to 5% cashback</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>1-2% cashback</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>Scratch cards</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Rare</span></td>
+                        </tr>
+                        <tr>
+                            <td class="comparison-feature">Customer Support</td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>24/7 Priority</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Email only</span></td>
+                            <td class="comparison-value comparison-check"><span class="check-icon" aria-hidden="true">&#10003;</span> <span>In-app chat</span></td>
+                            <td class="comparison-value comparison-cross"><span class="cross-icon" aria-hidden="true">&#10007;</span> <span>Limited</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison-cta">
+                <p>Join 10 million+ users who chose PaisaFlow for their daily payments</p>
+                <button class="btn btn-primary btn-lg" data-action="open-signup">
+                    <span class="btn-icon">&#9889;</span> Get Started Free
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 5 - Between Comparison & Resources ========== -->
+    <div class="ad-slot ad-slot-comparison" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90</span>
+        </div>
+    </div>
+
+
+    <!-- ========== RESOURCES / BLOG SECTION ========== -->
+    <section class="resources" id="resources">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Resources</span>
+                <h2 class="section-title">Learn & <span class="gradient-text">Grow</span></h2>
+                <p class="section-subtitle">Expert tips on personal finance, UPI trends, and making the most of PaisaFlow.</p>
+            </div>
+
+            <!-- Resource Category Tabs -->
+            <div class="resource-tabs" role="tablist" aria-label="Resource categories">
+                <button class="resource-tab active" role="tab" aria-selected="true" data-tab="all" id="tabAll">All Articles</button>
+                <button class="resource-tab" role="tab" aria-selected="false" data-tab="upi" id="tabUpi">UPI Guide</button>
+                <button class="resource-tab" role="tab" aria-selected="false" data-tab="finance" id="tabFinance">Personal Finance</button>
+                <button class="resource-tab" role="tab" aria-selected="false" data-tab="business" id="tabBusiness">For Business</button>
+            </div>
+
+            <!-- Resource Cards Grid -->
+            <div class="resources-grid" id="resourcesGrid" role="tabpanel">
+                <!-- Article 1 -->
+                <article class="resource-card" data-category="upi finance" data-id="1">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder upi-bg">
+                            <span class="resource-card-emoji">&#128279;</span>
+                        </div>
+                        <span class="resource-card-category">UPI Guide</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">Complete Guide to UPI Payments in India (2026)</h3>
+                        <p class="resource-card-excerpt">Everything you need to know about UPI - how it works, security features, transaction limits, and tips for safe payments.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">June 15, 2026</span>
+                            <span class="resource-card-read">5 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="resource-card" data-category="finance" data-id="2">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder finance-bg">
+                            <span class="resource-card-emoji">&#128176;</span>
+                        </div>
+                        <span class="resource-card-category">Personal Finance</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">10 Smart Budgeting Tips for Young Indians</h3>
+                        <p class="resource-card-excerpt">Learn how to allocate your income, build an emergency fund, and start investing early with practical strategies.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">June 10, 2026</span>
+                            <span class="resource-card-read">7 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="resource-card" data-category="business" data-id="3">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder business-bg">
+                            <span class="resource-card-emoji">&#128188;</span>
+                        </div>
+                        <span class="resource-card-category">For Business</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">How Small Businesses Can Go Digital with UPI</h3>
+                        <p class="resource-card-excerpt">A step-by-step guide for shop owners and freelancers to accept digital payments and grow their business.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">June 5, 2026</span>
+                            <span class="resource-card-read">6 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 4 -->
+                <article class="resource-card" data-category="upi" data-id="4">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder security-bg">
+                            <span class="resource-card-emoji">&#128274;</span>
+                        </div>
+                        <span class="resource-card-category">UPI Guide</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">UPI Safety: How to Protect Yourself from Fraud</h3>
+                        <p class="resource-card-excerpt">Essential security tips for UPI users. Learn to identify scams, set transaction limits, and keep your money safe.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">May 28, 2026</span>
+                            <span class="resource-card-read">4 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 5 -->
+                <article class="resource-card" data-category="finance" data-id="5">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder invest-bg">
+                            <span class="resource-card-emoji">&#128200;</span>
+                        </div>
+                        <span class="resource-card-category">Personal Finance</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">Tax Saving Tips for Freelancers Using Digital Payments</h3>
+                        <p class="resource-card-excerpt">How to use PaisaFlow's expense tracking to simplify tax filing and maximize your deductions as a freelancer.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">May 20, 2026</span>
+                            <span class="resource-card-read">8 min read</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 6 -->
+                <article class="resource-card" data-category="business" data-id="6">
+                    <div class="resource-card-image">
+                        <div class="resource-card-image-placeholder growth-bg">
+                            <span class="resource-card-emoji">&#128203;</span>
+                        </div>
+                        <span class="resource-card-category">For Business</span>
+                    </div>
+                    <div class="resource-card-content">
+                        <h3 class="resource-card-title">GST Invoicing Made Easy for Indian Merchants</h3>
+                        <p class="resource-card-excerpt">Learn how PaisaFlow's built-in invoicing helps you create GST-compliant invoices in under 2 minutes.</p>
+                        <div class="resource-card-meta">
+                            <span class="resource-card-date">May 12, 2026</span>
+                            <span class="resource-card-read">5 min read</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="resources-cta">
+                <button class="btn btn-outline" id="loadMoreArticles">
+                    Load More Articles <span class="btn-icon">&#8595;</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SEND MONEY SECTION ========== -->
+    <section class="send-money" id="send-money">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Send Money</span>
+                <h2 class="section-title">Send <span class="gradient-text">Money Instantly</span></h2>
+                <p class="section-subtitle">Transfer funds in seconds using UPI. Enter an amount, choose a recipient, and send.</p>
+            </div>
+            <div class="send-money-grid">
+                <!-- Left: Recent Contacts -->
+                <div class="recent-contacts-card">
+                    <h4 class="card-title">Recent Contacts</h4>
+                    <div class="contacts-list" id="contactsList">
+                        <div class="contact-item active" data-name="Priya Sharma" data-upi="priyasharma@oksbi" data-bank="SBI">
+                            <div class="contact-avatar" style="background: #e8f5e9; color: #2e7d32;">PS</div>
+                            <div class="contact-info">
+                                <span class="contact-name">Priya Sharma</span>
+                                <span class="contact-upi">priyasharma@oksbi</span>
+                            </div>
+                            <span class="contact-selected">&#10003;</span>
+                        </div>
+                        <div class="contact-item" data-name="Amit Kumar" data-upi="amitk@hdfcbank" data-bank="HDFC">
+                            <div class="contact-avatar" style="background: #e3f2fd; color: #1565c0;">AK</div>
+                            <div class="contact-info">
+                                <span class="contact-name">Amit Kumar</span>
+                                <span class="contact-upi">amitk@hdfcbank</span>
+                            </div>
+                        </div>
+                        <div class="contact-item" data-name="Sneha Patel" data-upi="sneha.patel@icici" data-bank="ICICI">
+                            <div class="contact-avatar" style="background: #fff3e0; color: #e65100;">SP</div>
+                            <div class="contact-info">
+                                <span class="contact-name">Sneha Patel</span>
+                                <span class="contact-upi">sneha.patel@icici</span>
+                            </div>
+                        </div>
+                        <div class="contact-item" data-name="Rahul Verma" data-upi="rahulv@axisbank" data-bank="Axis">
+                            <div class="contact-avatar" style="background: #f3e5f5; color: #6a1b9a;">RV</div>
+                            <div class="contact-info">
+                                <span class="contact-name">Rahul Verma</span>
+                                <span class="contact-upi">rahulv@axisbank</span>
+                            </div>
+                        </div>
+                        <div class="contact-item" data-name="Anita Desai" data-upi="anita@pnbindia" data-bank="PNB">
+                            <div class="contact-avatar" style="background: #fce4ec; color: #c62828;">AD</div>
+                            <div class="contact-info">
+                                <span class="contact-name">Anita Desai</span>
+                                <span class="contact-upi">anita@pnbindia</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="add-contact-btn" id="addRecipientBtn" role="button" tabindex="0">
+                        <span class="add-icon">+</span>
+                        <span>Add New Recipient</span>
+                    </div>
+                </div>
+                <!-- Right: Send Money Form -->
+                <div class="send-money-card">
+                    <div class="send-money-steps">
+                        <div class="step-indicator active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Amount</span>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step-indicator" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Review</span>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step-indicator" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Send</span>
+                        </div>
+                    </div>
+                    <!-- Step 1: Amount -->
+                    <div class="send-step active" id="step1">
+                        <div class="amount-input-group">
+                            <label for="sendAmount" class="input-label">Enter Amount</label>
+                            <div class="amount-input-wrapper">
+                                <span class="currency-symbol">&#8377;</span>
+                                <input type="number" id="sendAmount" class="amount-input" placeholder="0" min="1" max="100000" aria-label="Enter amount in rupees">
+                            </div>
+                            <span class="amount-error" id="amountError">Please enter a valid amount (&#8377;1 - &#8377;1,00,000)</span>
+                        </div>
+                        <div class="amount-quick-select">
+                            <button class="quick-amount" data-amount="100">&#8377;100</button>
+                            <button class="quick-amount" data-amount="500">&#8377;500</button>
+                            <button class="quick-amount" data-amount="1000">&#8377;1,000</button>
+                            <button class="quick-amount" data-amount="2000">&#8377;2,000</button>
+                            <button class="quick-amount" data-amount="5000">&#8377;5,000</button>
+                        </div>
+                        <div class="amount-note">
+                            <span class="note-icon">&#128161;</span>
+                            <span>No fees on UPI transfers. Instant transfer 24/7.</span>
+                        </div>
+                        <button class="btn btn-primary btn-full" id="toStep2" disabled>Review Payment</button>
+                    </div>
+                    <!-- Step 2: Review -->
+                    <div class="send-step" id="step2">
+                        <div class="review-summary">
+                            <div class="review-row">
+                                <span class="review-label">Sending to</span>
+                                <span class="review-value" id="reviewRecipient">--</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">UPI ID</span>
+                                <span class="review-value" id="reviewUpi">--</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">Bank</span>
+                                <span class="review-value" id="reviewBank">--</span>
+                            </div>
+                            <div class="review-row review-row-total">
+                                <span class="review-label">Amount</span>
+                                <span class="review-value review-amount" id="reviewAmount">&#8377;0</span>
+                            </div>
+                            <div class="review-row">
+                                <span class="review-label">Transfer Fee</span>
+                                <span class="review-value review-free">FREE</span>
+                            </div>
+                        </div>
+                        <div class="review-note">
+                            <span>&#128274;</span>
+                            <span>Your transaction is secured with 256-bit encryption and NPCI guidelines.</span>
+                        </div>
+                        <div class="send-actions">
+                            <button class="btn btn-ghost" id="backToStep1">Edit</button>
+                            <button class="btn btn-primary" id="toStep3">Confirm &amp; Send</button>
+                        </div>
+                    </div>
+                    <!-- Step 3: Success -->
+                    <div class="send-step" id="step3">
+                        <div class="success-animation">
+                            <div class="success-checkmark">
+                                <svg viewBox="0 0 52 52" class="checkmark-svg">
+                                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+                                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                                </svg>
+                            </div>
+                            <h3 class="success-title">Money Sent Successfully!</h3>
+                            <p class="success-amount" id="successAmount">&#8377;0</p>
+                            <p class="success-recipient" id="successRecipient">to --</p>
+                            <p class="success-txn">Transaction ID: <span id="txnId">--</span></p>
+                        </div>
+                        <div class="success-actions">
+                            <button class="btn btn-ghost" id="sendAgain">Send Again</button>
+                            <button class="btn btn-primary" id="shareReceipt">Share Receipt</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ========== REFERRAL SECTION ========== -->
+    <section class="referral-section" id="referral">
+        <div class="container">
+            <div class="referral-grid">
+                <div class="referral-content">
+                    <div class="section-header">
+                        <span class="section-badge">Refer &amp; Earn</span>
+                        <h2 class="section-title">Invite Friends, Earn <span class="gradient-text">Rewards</span></h2>
+                        <p class="section-subtitle">Share PaisaFlow with friends. You both earn &#8377;50 cashback on their first UPI transaction!</p>
+                    </div>
+                    <div class="referral-tiers">
+                        <div class="tier-card">
+                            <div class="tier-icon">&#127881;</div>
+                            <div class="tier-info">
+                                <span class="tier-name">1-5 Referrals</span>
+                                <span class="tier-reward">&#8377;50 each</span>
+                            </div>
+                        </div>
+                        <div class="tier-card">
+                            <div class="tier-icon">&#127775;</div>
+                            <div class="tier-info">
+                                <span class="tier-name">6-20 Referrals</span>
+                                <span class="tier-reward">&#8377;75 each</span>
+                            </div>
+                        </div>
+                        <div class="tier-card">
+                            <div class="tier-icon">&#127942;</div>
+                            <div class="tier-info">
+                                <span class="tier-name">20+ Referrals</span>
+                                <span class="tier-reward">&#8377;100 each</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="referral-link-box">
+                        <p class="referral-label">Your Referral Code</p>
+                        <div class="referral-code-wrapper">
+                            <span class="referral-code" id="referralCode">RAHUL2026</span>
+                            <button class="btn btn-small" id="copyReferralCode">Copy</button>
+                        </div>
+                        <p class="referral-share-label">Share via</p>
+                        <div class="share-buttons">
+                            <button class="share-btn share-whatsapp" aria-label="Share on WhatsApp">WhatsApp</button>
+                            <button class="share-btn share-telegram" aria-label="Share on Telegram">Telegram</button>
+                            <button class="share-btn share-sms" aria-label="Share via SMS">SMS</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="referral-stats">
+                    <div class="stat-card">
+                        <span class="stat-number" id="refCount">12</span>
+                        <span class="stat-label">Friends Referred</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">&#8377;<span id="refEarned">600</span></span>
+                        <span class="stat-label">Total Earned</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">&#8377;50</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ========== CTA SECTION ========== -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Simplify Your Payments?</h2>
+                <p class="cta-subtitle">Join 10 million+ Indians who trust PaisaFlow for their daily transactions.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-white btn-lg" onclick="openUpiModal()">
+                        <span class="btn-icon">⚡</span>
+                        Get Started Now
+                    </button>
+                    <button class="btn btn-ghost-light btn-lg" onclick="scrollToSection('contact')">
+                        Talk to Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 - Before Footer ========== -->
+    <div class="ad-slot ad-slot-footer" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Footer Banner</span>
+        </div>
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Footer Brand -->
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <span class="logo-icon">₹</span>
+                        <span class="logo-text">Paisa<span class="logo-highlight">Flow</span></span>
+                    </a>
+                    <p class="footer-description">India's most trusted digital payment platform. Send money, pay bills, and shop with ease.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
+                        <a href="#" class="social-link" aria-label="Facebook">f</a>
+                        <a href="#" class="social-link" aria-label="Instagram">📷</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                    </div>
+                </div>
+
+                <!-- Footer Links: Product -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                <li><a href="#send-money">Send Money</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Company -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Support -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Dispute a Transaction</a></li>
+                        <li><a href="#">Report Fraud</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Grievances</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; <span id="footerYear"></span> PaisaFlow Technologies Pvt. Ltd. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="upiModal" role="dialog" aria-modal="true" aria-labelledby="upiModalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closeUpiModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="upiModalTitle">💳 Pay with UPI</h3>
+                <p class="modal-subtitle">Send money securely via UPI — works with any UPI app</p>
+            </div>
+            <div class="modal-body" id="upiModalBody">
+                <!-- ========== PAYMENT FORM SECTION ========== -->
+                <div class="modal-body-section active" id="upiFormSection">
+                    <!-- Payment Progress Steps -->
+                    <div class="payment-progress" id="paymentProgress" aria-label="Payment progress">
+                        <div class="payment-progress-step active" id="progressStep1">
+                            <div class="payment-progress-dot">1</div>
+                        </div>
+                        <div class="payment-progress-line" id="progressLine1"></div>
+                        <div class="payment-progress-step" id="progressStep2">
+                            <div class="payment-progress-dot">2</div>
+                        </div>
+                        <div class="payment-progress-line" id="progressLine2"></div>
+                        <div class="payment-progress-step" id="progressStep3">
+                            <div class="payment-progress-dot">3</div>
+                        </div>
+                    </div>
+
+                    <!-- Payee UPI ID Display + Copy -->
+                    <div class="upi-payee-card">
+                        <div class="upi-payee-label">Pay to UPI ID</div>
+                        <div class="upi-payee-id-row">
+                            <span class="upi-payee-id" id="payeeUpiId">paisaflow@hdfcbank</span>
+                            <button class="upi-copy-btn" onclick="copyPayeeUPI()" aria-label="Copy UPI ID">
+                                <span id="copyIcon">📋</span> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- UPI App Selector -->
+                    <div class="upi-app-selector">
+                        <p class="upi-app-label">Choose your preferred UPI app:</p>
+                        <div class="upi-app-grid">
+                            <button class="upi-app-btn" onclick="openUpiApp('gpay')" aria-label="Pay with Google Pay">
+                                <svg class="upi-app-svg" viewBox="0 0 24 24" aria-hidden="true" role="img">
+                                    <path fill="#4285F4" d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/>
+                                    <path fill="#34A853" d="M3.074 7.345l3.698 2.707c.994-2.297 3.23-3.868 5.468-3.868 1.281 0 2.437.428 3.376 1.151l3.254-3.138C17.486 2.527 15.098 1.5 12.24 1.5c-4.011 0-7.473 2.336-9.166 5.845z" opacity="0"/>
+                                </svg>
+                                <span class="upi-app-name">Google Pay</span>
+                            </button>
+                            <button class="upi-app-btn" onclick="openUpiApp('phonepe')" aria-label="Pay with PhonePe">
+                                <svg class="upi-app-svg" viewBox="0 0 24 24" aria-hidden="true" role="img">
+                                    <path fill="#5F259F" d="M14.122 2.586c0-.463-.375-.838-.838-.838H10.73c-.463 0-.838.375-.838.838v5.345c0 .463.375.838.838.838h2.554c.463 0 .838-.375.838-.838V2.586zm-1.277 0v5.345h-1.677V2.586h1.677z"/>
+                                    <path fill="#5F259F" d="M18.714 8.25c-.558-2.18-2.175-3.796-4.355-4.355V5.47c1.522.468 2.693 1.639 3.161 3.161h1.194z"/>
+                                    <path fill="#5F259F" d="M5.286 8.25c.468-1.522 1.639-2.693 3.161-3.161V3.895c-2.18.558-3.796 2.175-4.355 4.355h1.194z"/>
+                                    <path fill="#5F259F" d="M12 22c5.523 0 10-4.477 10-10h-2c0 4.418-3.582 8-8 8s-8-3.582-8-8H2c0 5.523 4.477 10 10 10z"/>
+                                </svg>
+                                <span class="upi-app-name">PhonePe</span>
+                            </button>
+                            <button class="upi-app-btn" onclick="openUpiApp('paytm')" aria-label="Pay with Paytm">
+                                <svg class="upi-app-svg" viewBox="0 0 24 24" aria-hidden="true" role="img">
+                                    <rect x="2" y="4" width="20" height="16" rx="3" fill="#00BAF2"/>
+                                    <path fill="#002970" d="M7.5 15.5V8.2h1.8l2.2 4.5 2.2-4.5h1.8v7.3h-1.5v-4.8l-1.9 3.8h-1.2l-1.9-3.8v4.8H7.5z"/>
+                                    <circle cx="17" cy="14.5" r="1.5" fill="#FFFFFF"/>
+                                </svg>
+                                <span class="upi-app-name">Paytm</span>
+                            </button>
+                            <button class="upi-app-btn" onclick="openUpiApp('bhim')" aria-label="Pay with BHIM">
+                                <svg class="upi-app-svg" viewBox="0 0 24 24" aria-hidden="true" role="img">
+                                    <circle cx="12" cy="12" r="10" fill="#0066B3"/>
+                                    <path fill="#fff" d="M13 7h-1v2H9c-.55 0-1 .45-1 1v3c0 .55.45 1 1 1h3v2H8v2h4v2h2v-2h1c.55 0 1-.45 1-1v-3c0-.55-.45-1-1-1h-1V9h3V7h-3V5h-2v2z"/>
+                                    <rect x="10.5" y="12" width="3" height="1" rx=".5" fill="#0066B3"/>
+                                </svg>
+                                <span class="upi-app-name">BHIM</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- UPI ID Input Form -->
+                    <div class="modal-divider">
+                        <span>OR Enter Details Manually</span>
+                    </div>
+
+                    <form id="upiForm" onsubmit="processUpiPayment(event)" novalidate>
+                        <div class="form-group">
+                            <label for="upiId" class="form-label">Your UPI ID</label>
+                            <input type="text" id="upiId" class="form-input" placeholder="yourname@upi" required aria-describedby="upiIdError">
+                            <span class="form-error-text" id="upiIdError" role="alert" style="display:none;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="upiAmount" class="form-label">Amount (₹)</label>
+                            <input type="number" id="upiAmount" class="form-input" placeholder="Enter amount" min="1" max="100000" value="99" required aria-describedby="upiAmountError">
+                            <span class="form-error-text" id="upiAmountError" role="alert" style="display:none;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="upiNote" class="form-label">Note (Optional)</label>
+                            <input type="text" id="upiNote" class="form-input" placeholder="e.g., PaisaFlow Pro subscription">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block btn-lg" id="payNowBtn">
+                            <span class="btn-icon">⚡</span> Pay Now
+                        </button>
+                    </form>
+
+                    <!-- QR Code Section -->
+                    <div class="modal-divider">
+                        <span>OR Scan QR Code</span>
+                    </div>
+
+                    <div class="qr-section">
+                        <canvas id="upiQrCanvas" width="200" height="200" class="qr-canvas"></canvas>
+                        <p class="qr-text">Open any UPI app and scan this QR code to pay</p>
+                    </div>
+                </div>
+
+                <!-- ========== PAYMENT PROCESSING SECTION ========== -->
+                <div class="modal-body-section" id="upiProcessingSection">
+                    <div class="payment-processing">
+                        <div class="processing-spinner">
+                            <div class="processing-spinner-ring"></div>
+                            <div class="processing-spinner-inner">💳</div>
+                        </div>
+                        <p class="processing-text" id="processingText">Processing your payment...</p>
+                        <p class="processing-subtext">Please do not close this window</p>
+                    </div>
+                </div>
+
+                <!-- ========== PAYMENT SUCCESS SECTION ========== -->
+                <div class="modal-body-section" id="upiSuccessSection">
+                    <div class="payment-success">
+                        <!-- Confetti particles -->
+                        <div class="confetti-container" aria-hidden="true">
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                            <div class="confetti-particle"></div>
+                        </div>
+
+                        <!-- Animated checkmark -->
+                        <div class="success-checkmark">
+                            <div class="success-checkmark-circle">
+                                <svg class="success-checkmark-svg" viewBox="0 0 24 24">
+                                    <path class="success-checkmark-path" d="M6 12l5 5L18 7"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <h3 class="success-title">Payment Successful!</h3>
+                        <p class="success-amount" id="upiSuccessAmount">₹99</p>
+                        <p class="success-detail" id="successDetail">Paid to PaisaFlow</p>
+                        <span class="success-txn-id" id="successTxnId">TXN12345678</span>
+
+                        <div class="success-actions">
+                            <button class="btn btn-outline" onclick="downloadReceipt()">
+                                📄 Download Receipt
+                            </button>
+                            <button class="btn btn-primary" onclick="closeUpiModal()">
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SIGNUP MODAL ========== -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeSignupModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title">Create Your Account</h3>
+                <p class="modal-subtitle">Get started with PaisaFlow in under 2 minutes</p>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm" onsubmit="processSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName" class="form-label">Full Name</label>
+                        <input type="text" id="signupName" class="form-input" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupMobile" class="form-label">Mobile Number</label>
+                        <div class="mobile-input-wrapper">
+                            <span class="mobile-prefix">+91</span>
+                            <input type="tel" id="signupMobile" class="form-input mobile-input-with-prefix" placeholder="98765 43210" maxlength="11" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail" class="form-label">Email</label>
+                        <input type="email" id="signupEmail" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPin" class="form-label">Create 4-Digit PIN</label>
+                        <input type="password" id="signupPin" class="form-input" placeholder="••••" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required aria-describedby="signupPinHelp">
+                        <p class="form-hint" id="signupPinHelp">This PIN will be used to log in to your account</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPinConfirm" class="form-label">Confirm PIN</label>
+                        <input type="password" id="signupPinConfirm" class="form-input" placeholder="••••" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required aria-describedby="signupPinConfirmHelp">
+                        <p class="form-hint" id="signupPinConfirmHelp">Re-enter your 4-digit PIN to confirm</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                </form>
+                <p class="modal-footer-text">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LOGIN MODAL ========== -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeLoginModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title">Welcome Back</h3>
+                <p class="modal-subtitle">Log in to your PaisaFlow account</p>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" onsubmit="processLogin(event)">
+                    <div class="form-group">
+                        <label for="loginMobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="loginMobile" class="form-input" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPin" class="form-label">4-Digit PIN</label>
+                        <input type="password" id="loginPin" class="form-input" placeholder="••••" maxlength="4" pattern="[0-9]{4}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </form>
+                <p class="modal-footer-text"><a href="#">Forgot PIN?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== ADD RECIPIENT MODAL ========== -->
+    <div class="modal-overlay" id="addRecipientModal" role="dialog" aria-modal="true" aria-labelledby="addRecipientTitle">
+        <div class="modal modal-sm">
+            <button class="modal-close" onclick="closeAddRecipientModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="addRecipientTitle">➕ Add New Recipient</h3>
+                <p class="modal-subtitle">Enter the recipient's details to add them to your contacts</p>
+            </div>
+            <div class="modal-body">
+                <form id="addRecipientForm" onsubmit="processAddRecipient(event)">
+                    <div class="form-group">
+                        <label for="recipientName" class="form-label">Recipient Name</label>
+                        <input type="text" id="recipientName" class="form-input" placeholder="e.g., Rahul Kumar" required aria-describedby="recipientNameError">
+                        <span class="form-error-text" id="recipientNameError" role="alert" style="display:none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipientUpi" class="form-label">UPI ID</label>
+                        <input type="text" id="recipientUpi" class="form-input" placeholder="e.g., rahul@hdfcbank" required aria-describedby="recipientUpiError">
+                        <span class="form-error-text" id="recipientUpiError" role="alert" style="display:none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipientBank" class="form-label">Bank Name</label>
+                        <select id="recipientBank" class="form-input" required aria-describedby="recipientBankError">
+                            <option value="">Select bank...</option>
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="SBI">State Bank of India</option>
+                            <option value="ICICI">ICICI Bank</option>
+                            <option value="Axis">Axis Bank</option>
+                            <option value="PNB">Punjab National Bank</option>
+                            <option value="BOB">Bank of Baroda</option>
+                            <option value="Kotak">Kotak Mahindra Bank</option>
+                            <option value="IndusInd">IndusInd Bank</option>
+                            <option value="Yes Bank">Yes Bank</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span class="form-error-text" id="recipientBankError" role="alert" style="display:none;"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Add Recipient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SUCCESS TOAST ========== -->
+    <!-- aria-live="polite" announces toast messages to screen readers without interrupting -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+        <span class="toast-icon">✓</span>
+        <span class="toast-message" id="toastMessage">Success!</span>
+    </div>
+
+    <!-- ========== ARTICLE DETAIL MODAL ========== -->
+    <div class="modal-overlay" id="articleModal" role="dialog" aria-modal="true" aria-labelledby="articleModalTitle">
+        <div class="modal modal-lg">
+            <button class="modal-close" onclick="closeArticleModal()" aria-label="Close article">&times;</button>
+            <div class="article-modal-body" id="articleModalBody">
+                <!-- Article content injected by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

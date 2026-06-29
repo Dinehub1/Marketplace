@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    JustDial Agent — Local Business Discovery & AI Assistant Platform v2.0
+    Built by Loop Agent | ZOO Company
+    Features: Hero, Features Grid, How It Works, Pricing with UPI Modal,
+    Testimonials Carousel, FAQ Accordion, Dark Mode, Mobile-First Responsive,
+    SEO Meta Tags, Schema.org JSON-LD, Open Graph, 4 Ad Slots, Live Chat Widget
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ===== SEO Meta Tags ===== -->
+  <title>JustDial Agent — AI-Powered Local Business Discovery Platform</title>
+  <meta name="description" content="Find local businesses, book services, and get AI-powered recommendations. JustDial Agent connects millions of customers with trusted local businesses across India. Free to use.">
+  <meta name="keywords" content="local business, business directory, AI assistant, service booking, JustDial, local search, UPI payments, India">
+  <meta name="author" content="JustDial Agent">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://justdialagent.in">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="JustDial Agent — AI-Powered Local Business Discovery">
+  <meta property="og:description" content="Find local businesses, book services, and get AI-powered recommendations. Trusted by millions across India.">
+  <meta property="og:url" content="https://justdialagent.in">
+  <meta property="og:site_name" content="JustDial Agent">
+  <meta property="og:image" content="https://justdialagent.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="JustDial Agent — AI-Powered Local Business Discovery">
+  <meta name="twitter:description" content="Find local businesses, book services, and get AI-powered recommendations.">
+  <meta name="twitter:image" content="https://justdialagent.in/og-image.png">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "JustDial Agent",
+    "url": "https://justdialagent.in",
+    "description": "AI-powered local business discovery and service booking platform.",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "INR"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.7",
+      "ratingCount": "125000",
+      "bestRating": "5"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "JustDial Agent",
+      "url": "https://justdialagent.in",
+      "logo": "https://justdialagent.in/logo.png"
+    }
+  }
+  </script>
+
+  <!-- ===== Stylesheet ===== -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ===== Favicon ===== -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body>
+  <!-- ===== Skip to Content (Accessibility) ===== -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ===== Navigation Bar ===== -->
+  <header class="navbar" id="navbar" role="banner">
+    <div class="nav-container">
+      <a href="#" class="nav-logo" aria-label="JustDial Agent Home">
+        <span class="logo-icon">🔍</span>
+        <span class="logo-text">JustDial<span class="logo-accent">Agent</span></span>
+      </a>
+
+      <nav class="nav-links" id="nav-links" role="navigation" aria-label="Main navigation">
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+        <a href="#pricing" class="nav-link">Pricing</a>
+        <a href="#testimonials" class="nav-link">Reviews</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="#contact" class="nav-link nav-cta">Get Started</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <span class="theme-icon-light">☀️</span>
+          <span class="theme-icon-dark">🌙</span>
+        </button>
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open menu" aria-expanded="false">
+          <span class="hamburger"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Main Content ===== -->
+  <main id="main-content">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="hero">
+      <div class="hero-bg-pattern"></div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge" data-animate="fade-up">
+            <span class="badge-dot"></span>
+            Trusted by 2M+ Users Across India
+          </div>
+          <h1 class="hero-title" data-animate="fade-up" data-delay="100">
+            Find Any Local Business<br>
+            <span class="gradient-text">In Seconds, Not Hours</span>
+          </h1>
+          <p class="hero-subtitle" data-animate="fade-up" data-delay="200">
+            AI-powered local search that connects you with trusted businesses near you.
+            Book services, compare prices, and pay securely — all in one place.
+          </p>
+          <div class="hero-search" data-animate="fade-up" data-delay="300">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" class="search-input" id="hero-search-input" placeholder="Search for restaurants, plumbers, doctors..." aria-label="Search businesses">
+              <select class="search-location" aria-label="Select location">
+                <option value="">📍 All India</option>
+                <option value="indore">Indore</option>
+                <option value="bhopal">Bhopal</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="delhi">Delhi</option>
+                <option value="bangalore">Bangalore</option>
+              </select>
+              <button class="search-btn" id="hero-search-btn">Search</button>
+            </div>
+          </div>
+          <div class="hero-stats" data-animate="fade-up" data-delay="400">
+            <div class="stat-item">
+              <span class="stat-number" data-count="500000">0</span><span class="stat-suffix">+</span>
+              <span class="stat-label">Businesses</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number" data-count="2000000">0</span><span class="stat-suffix">+</span>
+              <span class="stat-label">Happy Users</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <span class="stat-number" data-count="47">0</span><span class="stat-suffix">/5</span>
+              <span class="stat-label">Rating</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual" data-animate="fade-left" data-delay="200">
+          <div class="hero-card">
+            <div class="hero-card-header">
+              <div class="hero-card-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <span class="hero-card-title">AI Recommendations</span>
+            </div>
+            <div class="hero-card-body">
+              <div class="recommendation-item">
+                <div class="rec-icon">🍕</div>
+                <div class="rec-info">
+                  <strong>Pizza Palace</strong>
+                  <span>4.8 ★ • 0.8 km away</span>
+                </div>
+                <span class="rec-badge">Top Rated</span>
+              </div>
+              <div class="recommendation-item">
+                <div class="rec-icon">🔧</div>
+                <div class="rec-info">
+                  <strong>QuickFix Plumbing</strong>
+                  <span>4.6 ★ • 1.2 km away</span>
+                </div>
+                <span class="rec-badge">Verified</span>
+              </div>
+              <div class="recommendation-item">
+                <div class="rec-icon">💇</div>
+                <div class="rec-info">
+                  <strong>Glamour Salon</strong>
+                  <span>4.9 ★ • 0.5 km away</span>
+                </div>
+                <span class="rec-badge">Trending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 1: Below Hero ===== -->
+    <div class="ad-slot ad-slot-hero" id="ad-slot-1" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <span class="ad-placeholder">Ad Space — 728x90 Leaderboard</span>
+      </div>
+    </div>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-header" data-animate="fade-up">
+          <span class="section-tag">Features</span>
+          <h2 class="section-title">Everything You Need to <span class="gradient-text">Discover & Connect</span></h2>
+          <p class="section-subtitle">Powerful tools that make finding and booking local services effortless</p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="0">
+            <div class="feature-icon">🤖</div>
+            <h3 class="feature-title">AI-Powered Search</h3>
+            <p class="feature-desc">Our AI understands natural language queries. Just type what you need and get instant, relevant results.</p>
+          </div>
+          <!-- Feature 2 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="100">
+            <div class="feature-icon">📍</div>
+            <h3 class="feature-title">Location-Based Results</h3>
+            <p class="feature-desc">Find businesses near you with real-time distance calculation and map integration.</p>
+          </div>
+          <!-- Feature 3 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="200">
+            <div class="feature-icon">⭐</div>
+            <h3 class="feature-title">Verified Reviews</h3>
+            <p class="feature-desc">Read authentic reviews from real customers. Our verification system ensures genuine feedback.</p>
+          </div>
+          <!-- Feature 4 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="0">
+            <div class="feature-icon">📅</div>
+            <h3 class="feature-title">Instant Booking</h3>
+            <p class="feature-desc">Book appointments and services directly through the platform. No phone calls needed.</p>
+          </div>
+          <!-- Feature 5 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="100">
+            <div class="feature-icon">💳</div>
+            <h3 class="feature-title">Secure UPI Payments</h3>
+            <p class="feature-desc">Pay securely via UPI, cards, or wallets. All transactions are encrypted and protected.</p>
+          </div>
+          <!-- Feature 6 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="200">
+            <div class="feature-icon">📊</div>
+            <h3 class="feature-title">Price Comparison</h3>
+            <p class="feature-desc">Compare prices across multiple providers to get the best deal for any service.</p>
+          </div>
+          <!-- Feature 7 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="0">
+            <div class="feature-icon">🔔</div>
+            <h3 class="feature-title">Real-Time Alerts</h3>
+            <p class="feature-desc">Get notified about deals, booking confirmations, and service updates in real time.</p>
+          </div>
+          <!-- Feature 8 -->
+          <div class="feature-card" data-animate="fade-up" data-delay="100">
+            <div class="feature-icon">🛡️</div>
+            <h3 class="feature-title">Verified Businesses</h3>
+            <p class="feature-desc">Every business is verified with GST, address, and identity checks for your safety.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 2: After Features ===== -->
+    <div class="ad-slot" id="ad-slot-2" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <span class="ad-placeholder">Ad Space — 728x90 Leaderboard</span>
+      </div>
+    </div>
+
+    <!-- ===== HOW IT WORKS SECTION ===== -->
+    <section class="how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-header" data-animate="fade-up">
+          <span class="section-tag">How It Works</span>
+          <h2 class="section-title">Get Started in <span class="gradient-text">3 Simple Steps</span></h2>
+          <p class="section-subtitle">Finding and booking local services has never been easier</p>
+        </div>
+
+        <div class="steps-container">
+          <!-- Step 1 -->
+          <div class="step-card" data-animate="fade-up" data-delay="0">
+            <div class="step-number">01</div>
+            <div class="step-icon">🔍</div>
+            <h3 class="step-title">Search</h3>
+            <p class="step-desc">Type what you need — a restaurant, plumber, doctor, or any service. Our AI understands your query.</p>
+            <div class="step-connector"></div>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card" data-animate="fade-up" data-delay="150">
+            <div class="step-number">02</div>
+            <div class="step-icon">📋</div>
+            <h3 class="step-title">Compare & Choose</h3>
+            <p class="step-desc">Browse results with ratings, reviews, prices, and distance. Pick the best option for your needs.</p>
+            <div class="step-connector"></div>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card" data-animate="fade-up" data-delay="300">
+            <div class="step-number">03</div>
+            <div class="step-icon">✅</div>
+            <h3 class="step-title">Book & Pay</h3>
+            <p class="step-desc">Book instantly and pay securely via UPI. Get confirmation and track your booking in real time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 3: After How It Works ===== -->
+    <div class="ad-slot" id="ad-slot-3" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <span class="ad-placeholder">Ad Space — 728x90 Leaderboard</span>
+      </div>
+    </div>
+
+    <!-- ===== PRICING SECTION ===== -->
+    <section class="pricing" id="pricing">
+      <div class="container">
+        <div class="section-header" data-animate="fade-up">
+          <span class="section-tag">Pricing</span>
+          <h2 class="section-title">Simple, Transparent <span class="gradient-text">Pricing</span></h2>
+          <p class="section-subtitle">Choose the plan that fits your business needs</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Free Plan -->
+          <div class="pricing-card" data-animate="fade-up" data-delay="0">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Free</h3>
+              <p class="pricing-desc">Perfect for getting started</p>
+            </div>
+            <div class="pricing-amount">
+              <span class="pricing-currency">₹</span>
+              <span class="pricing-price">0</span>
+              <span class="pricing-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature included">Basic business listing</li>
+              <li class="pricing-feature included">Up to 5 photos</li>
+              <li class="pricing-feature included">Customer reviews</li>
+              <li class="pricing-feature included">Basic analytics</li>
+              <li class="pricing-feature excluded">Priority listing</li>
+              <li class="pricing-feature excluded">AI recommendations</li>
+              <li class="pricing-feature excluded">Lead generation</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-outline" onclick="openUPIModal('Free', 0)">Get Started Free</button>
+          </div>
+
+          <!-- Pro Plan (Popular) -->
+          <div class="pricing-card pricing-popular" data-animate="fade-up" data-delay="150">
+            <div class="popular-badge">Most Popular</div>
+            <div class="pricing-header">
+              <h3 class="pricing-name">Pro</h3>
+              <p class="pricing-desc">Best for growing businesses</p>
+            </div>
+            <div class="pricing-amount">
+              <span class="pricing-currency">₹</span>
+              <span class="pricing-price">999</span>
+              <span class="pricing-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature included">Everything in Free</li>
+              <li class="pricing-feature included">Priority listing</li>
+              <li class="pricing-feature included">Unlimited photos & videos</li>
+              <li class="pricing-feature included">AI-powered lead generation</li>
+              <li class="pricing-feature included">Advanced analytics dashboard</li>
+              <li class="pricing-feature included">WhatsApp integration</li>
+              <li class="pricing-feature excluded">Dedicated account manager</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-primary" onclick="openUPIModal('Pro', 999)">Upgrade to Pro</button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-card" data-animate="fade-up" data-delay="300">
+            <div class="pricing-header">
+              <h3 class="pricing-name">Enterprise</h3>
+              <p class="pricing-desc">For large businesses & chains</p>
+            </div>
+            <div class="pricing-amount">
+              <span class="pricing-currency">₹</span>
+              <span class="pricing-price">4,999</span>
+              <span class="pricing-period">/month</span>
+            </div>
+            <ul class="pricing-features">
+              <li class="pricing-feature included">Everything in Pro</li>
+              <li class="pricing-feature included">Dedicated account manager</li>
+              <li class="pricing-feature included">Multi-location support</li>
+              <li class="pricing-feature included">API access</li>
+              <li class="pricing-feature included">Custom branding</li>
+              <li class="pricing-feature included">White-label solution</li>
+              <li class="pricing-feature included">24/7 priority support</li>
+            </ul>
+            <button class="pricing-btn pricing-btn-outline" onclick="openUPIModal('Enterprise', 4999)">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AD SLOT 4: After Pricing ===== -->
+    <div class="ad-slot" id="ad-slot-4" role="complementary" aria-label="Advertisement">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">
+        <span class="ad-placeholder">Ad Space — 728x90 Leaderboard</span>
+      </div>
+    </div>
+
+    <!-- ===== TESTIMONIALS SECTION ===== -->
+    <section class="testimonials" id="testimonials">
+      <div class="container">
+        <div class="section-header" data-animate="fade-up">
+          <span class="section-tag">Testimonials</span>
+          <h2 class="section-title">Loved by <span class="gradient-text">Businesses & Users</span></h2>
+          <p class="section-subtitle">See what our community has to say about JustDial Agent</p>
+        </div>
+
+        <div class="testimonials-carousel" id="testimonials-carousel">
+          <div class="testimonials-track">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"JustDial Agent transformed our restaurant's visibility. We saw a 300% increase in footfall within the first month of listing!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">RK</div>
+                <div class="author-info">
+                  <strong class="author-name">Rajesh Kumar</strong>
+                  <span class="author-role">Owner, Spice Garden Restaurant</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"As a plumber, getting regular leads was always a challenge. The AI lead generation feature brings me 15+ qualified leads every week."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">SM</div>
+                <div class="author-info">
+                  <strong class="author-name">Suresh Mehta</strong>
+                  <span class="author-role">QuickFix Plumbing Services</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 3 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"Finding a reliable electrician used to take hours. Now I just search on JustDial Agent and book in under 2 minutes. Incredible!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">PS</div>
+                <div class="author-info">
+                  <strong class="author-name">Priya Sharma</strong>
+                  <span class="author-role">Verified User, Indore</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 4 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"The UPI payment integration is seamless. My salon clients love the instant booking and payment experience. Highly recommended!"</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">NJ</div>
+                <div class="author-info">
+                  <strong class="author-name">Neha Joshi</strong>
+                  <span class="author-role">Owner, Glamour Beauty Salon</span>
+                </div>
+              </div>
+            </div>
+            <!-- Testimonial 5 -->
+            <div class="testimonial-card">
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-text">"We manage 12 clinics across the city. The Enterprise plan's multi-location support and analytics dashboard are game-changers."</p>
+              <div class="testimonial-author">
+                <div class="author-avatar">AD</div>
+                <div class="author-info">
+                  <strong class="author-name">Dr. Anil Deshmukh</strong>
+                  <span class="author-role">Director, HealthFirst Clinics</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-controls">
+            <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="Previous testimonial">←</button>
+            <div class="carousel-dots" id="carousel-dots"></div>
+            <button class="carousel-btn carousel-next" id="carousel-next" aria-label="Next testimonial">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ SECTION ===== -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="section-header" data-animate="fade-up">
+          <span class="section-tag">FAQ</span>
+          <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+          <p class="section-subtitle">Everything you need to know about JustDial Agent</p>
+        </div>
+
+        <div class="faq-search" data-animate="fade-up">
+          <span class="faq-search-icon">🔍</span>
+          <input type="text" class="faq-search-input" id="faq-search-input" placeholder="Search FAQs..." aria-label="Search FAQs">
+        </div>
+
+        <div class="faq-list" id="faq-list">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="0">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">Is JustDial Agent free to use for customers?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! JustDial Agent is completely free for customers. You can search, browse, read reviews, and contact businesses without any charges. We only charge businesses for premium listing features.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 2 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="50">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">How do I list my business on JustDial Agent?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Click the "Get Started" button, choose your plan, and complete the registration. You'll need your business name, address, contact details, and GST number (optional for free plan). Your listing goes live within 24 hours after verification.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 3 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="100">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">What UPI payment methods are supported?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We support all major UPI apps including Google Pay, PhonePe, Paytm, BHIM, and bank-specific UPI apps. You can also pay via credit/debit cards, net banking, and popular wallets.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 4 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="150">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">How does the AI recommendation engine work?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Our AI analyzes multiple factors including your search query, location, past behavior, business ratings, review sentiment, and real-time availability to provide the most relevant recommendations tailored to your needs.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 5 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="200">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">Can I cancel my subscription anytime?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Absolutely! You can cancel your subscription at any time from your dashboard. There are no cancellation fees. Your premium features will remain active until the end of your billing period.</p>
+            </div>
+          </div>
+          <!-- FAQ Item 6 -->
+          <div class="faq-item" data-animate="fade-up" data-delay="250">
+            <button class="faq-question" aria-expanded="false">
+              <span class="faq-question-text">How do you verify businesses on the platform?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We verify businesses through a multi-step process including GST verification, address proof, phone number verification, and in some cases, physical verification. Verified businesses get a "Verified" badge on their listing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT / CTA SECTION ===== -->
+    <section class="contact" id="contact">
+      <div class="container">
+        <div class="contact-wrapper" data-animate="fade-up">
+          <div class="contact-content">
+            <h2 class="contact-title">Ready to Grow Your <span class="gradient-text">Business?</span></h2>
+            <p class="contact-desc">Join 500,000+ businesses already using JustDial Agent to reach more customers and grow revenue.</p>
+            <div class="contact-actions">
+              <button class="btn btn-primary btn-lg" onclick="openUPIModal('Pro', 999)">Start Free Trial</button>
+              <a href="#pricing" class="btn btn-outline btn-lg">View Pricing</a>
+            </div>
+            <div class="contact-trust">
+              <span>🔒 Secure payments</span>
+              <span>✓ No credit card required</span>
+              <span>⚡ Setup in 5 minutes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">🔍</span>
+            <span class="logo-text">JustDial<span class="logo-accent">Agent</span></span>
+          </a>
+          <p class="footer-desc">AI-powered local business discovery platform connecting millions of customers with trusted businesses across India.</p>
+          <div class="footer-social">
+            <a href="#" class="social-link" aria-label="Facebook">📘</a>
+            <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+            <a href="#" class="social-link" aria-label="Instagram">📸</a>
+            <a href="#" class="social-link" aria-label="LinkedIn">💼</a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4 class="footer-heading">Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#">API Docs</a></li>
+            <li><a href="#">Integrations</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4 class="footer-heading">Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4 class="footer-heading">Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 JustDial Agent. All rights reserved. Built with ❤️ in India.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== UPI PAYMENT MODAL ===== -->
+  <div class="modal-overlay" id="upi-modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close" aria-label="Close modal">&times;</button>
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Complete Your Payment</h2>
+        <p class="modal-subtitle" id="modal-subtitle">Upgrade to Pro Plan</p>
+      </div>
+      <div class="modal-body">
+        <div class="payment-summary">
+          <div class="payment-plan">
+            <span class="payment-plan-name" id="payment-plan-name">Pro Plan</span>
+            <span class="payment-plan-price" id="payment-plan-price">₹999/month</span>
+          </div>
+          <div class="payment-total">
+            <span>Total</span>
+            <strong id="payment-total-amount">₹999</strong>
+          </div>
+        </div>
+
+        <div class="upi-options">
+          <h3 class="upi-title">Pay via UPI</h3>
+          <div class="upi-apps">
+            <button class="upi-app" data-app="gpay">
+              <span class="upi-app-icon">G</span>
+              <span>Google Pay</span>
+            </button>
+            <button class="upi-app" data-app="phonepe">
+              <span class="upi-app-icon">P</span>
+              <span>PhonePe</span>
+            </button>
+            <button class="upi-app" data-app="paytm">
+              <span class="upi-app-icon">₱</span>
+              <span>Paytm</span>
+            </button>
+            <button class="upi-app" data-app="bhim">
+              <span class="upi-app-icon">B</span>
+              <span>BHIM</span>
+            </button>
+          </div>
+          <div class="upi-id-input">
+            <label for="upi-id">Enter UPI ID</label>
+            <input type="text" id="upi-id" placeholder="yourname@upi" aria-label="UPI ID">
+          </div>
+          <button class="btn btn-primary btn-block" id="pay-now-btn">Pay ₹999 Now</button>
+        </div>
+
+        <div class="payment-divider">
+          <span>or pay with</span>
+        </div>
+
+        <div class="card-payment">
+          <button class="btn btn-outline btn-block">💳 Credit / Debit Card</button>
+          <button class="btn btn-outline btn-block">🏦 Net Banking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LIVE CHAT WIDGET ===== -->
+  <div class="chat-widget" id="chat-widget">
+    <button class="chat-toggle" id="chat-toggle" aria-label="Open live chat">
+      <span class="chat-icon">💬</span>
+      <span class="chat-badge">1</span>
+    </button>
+    <div class="chat-box" id="chat-box">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <strong>JustDial Assistant</strong>
+          <span class="chat-status">🟢 Online</span>
+        </div>
+        <button class="chat-close" id="chat-close" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-message chat-bot">
+          <p>Hi! 👋 I'm your JustDial Assistant. How can I help you today?</p>
+          <span class="chat-time">Just now</span>
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Type your message..." aria-label="Chat message">
+        <button class="chat-send" id="chat-send" aria-label="Send message">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BACK TO TOP BUTTON ===== -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+
+  <!-- ===== JavaScript ===== -->
+  <script src="app.js"></script>
+</body>
+</html>

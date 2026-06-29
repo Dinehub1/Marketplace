@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO: Title -->
+  <title>Indore Real Estate — Find Your Dream Home | Free Setup</title>
+
+  <!-- SEO: Meta Description -->
+  <meta name="description" content="Discover premium 2BHK & 3BHK properties in Indore. Free setup, flexible payment plans, prime locations. Book a free site visit today! Call +91 98765 43210">
+
+  <!-- SEO: Open Graph Tags -->
+  <meta property="og:title" content="Indore Real Estate — Find Your Dream Home">
+  <meta property="og:description" content="Premium 2BHK & 3BHK properties in Indore. Free setup, flexible payment plans, prime locations. Book a free site visit!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.indorerealestate.com/">
+  <meta property="og:image" content="https://www.indorerealestate.com/og-image.jpg">
+  <meta property="og:site_name" content="Indore Real Estate">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- SEO: Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Indore Real Estate — Find Your Dream Home">
+  <meta name="twitter:description" content="Premium 2BHK & 3BHK properties in Indore. Free setup, flexible payment plans.">
+
+  <!-- SEO: Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "RealEstateAgent",
+    "name": "Indore Real Estate",
+    "description": "Premium 2BHK & 3BHK properties in Indore with free setup and flexible payment plans.",
+    "url": "https://www.indorerealestate.com",
+    "telephone": "+91-98765-43210",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Indore",
+      "addressRegion": "Madhya Pradesh",
+      "addressCountry": "IN"
+    },
+    "priceRange": "₹₹₹",
+    "areaServed": {
+      "@type": "City",
+      "name": "Indore"
+    },
+    "openingHours": "Mo-Su 09:00-21:00"
+  }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========== NAVIGATION ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon">🏠</span>
+        <span class="logo-text">Indore<span class="highlight">Estate</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        <a href="tel:+919876543210" class="btn btn-nav">Call Now</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-container">
+      <div class="hero-badge">🔥 Limited Time: FREE SETUP</div>
+      <h1 class="hero-title">
+        Find Your <span class="accent">Dream Home</span><br>
+        In Indore
+      </h1>
+      <p class="hero-subtitle">
+        Premium 2BHK & 3BHK properties in prime locations with flexible payment plans.
+        <span class="hindi">अपना सपनों का घर खोजें</span>
+      </p>
+      <div class="hero-cta">
+        <button class="btn btn-primary btn-lg" onclick="openPaymentModal()">
+          Book Free Site Visit
+        </button>
+        <a href="#features" class="btn btn-secondary btn-lg">Explore Properties</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Properties</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Happy Families</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">10+</span>
+          <span class="stat-label">Years Experience</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <a href="#features">↓ Scroll Down</a>
+    </div>
+  </section>
+
+  <!-- ========== AD SLOT 1 (Below Hero) ========== -->
+  <div class="ad-slot" id="adSlot1">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-content">
+      <span>📢 Your ad could be here — Contact us for advertising</span>
+    </div>
+  </div>
+
+  <!-- ========== FEATURES SECTION ========== -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Why Choose Us</span>
+        <h2 class="section-title">Premium Features</h2>
+        <p class="section-desc">Everything you need to find and move into your dream property</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🏗️</div>
+          <h3>New Construction</h3>
+          <p>Brand new 2BHK & 3BHK apartments with modern architecture and premium finishes.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3>Prime Locations</h3>
+          <p>Properties in the most sought-after areas of Indore with excellent connectivity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <h3>Flexible Payment</h3>
+          <p>EMI options and installment plans to make your dream home affordable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔑</div>
+          <h3>Free Setup</h3>
+          <p>Complimentary interior design consultation and setup assistance for new buyers.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>Clear Documentation</h3>
+          <p>100% legal verification and transparent paperwork process for peace of mind.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🚗</div>
+          <h3>Free Site Visit</h3>
+          <p>We arrange transportation for property visits — completely free of charge.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== AD SLOT 2 (After Features) ========== -->
+  <div class="ad-slot" id="adSlot2">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-content">
+      <span>📢 Your ad could be here — Contact us for advertising</span>
+    </div>
+  </div>
+
+  <!-- ========== HOW IT WORKS ========== -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Simple Process</span>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-desc">Four easy steps to your new home</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">📞</div>
+          <h3>Contact Us</h3>
+          <p>Call us or fill the form. Our team will understand your requirements and budget.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">🏘️</div>
+          <h3>Property Shortlist</h3>
+          <p>We curate a list of 5-10 properties matching your criteria from our 50+ listings.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">🚙</div>
+          <h3>Free Site Visit</h3>
+          <p>Visit shortlisted properties with our expert. Transportation is on us!</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon">🏠</div>
+          <h3>Move In</h3>
+          <p>Complete paperwork, choose your payment plan, and get the keys to your new home.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== PRICING SECTION ========== -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Pricing Plans</span>
+        <h2 class="section-title">Affordable Packages</h2>
+        <p class="section-desc">Choose a plan that fits your needs. No hidden charges.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Basic</h3>
+            <p class="pricing-desc">For first-time buyers</p>
+          </div>
+          <div class="pricing-price">
+            <span class="currency">₹</span>
+            <span class="amount">0</span>
+            <span class="period">Visit Charges</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Free property consultation</li>
+            <li>✅ 5 property recommendations</li>
+            <li>✅ Site visit arrangement</li>
+            <li>✅ Documentation guidance</li>
+            <li>❌ Interior consultation</li>
+            <li>❌ EMI assistance</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="openPaymentModal()">Get Started</button>
+        </div>
+        <div class="pricing-card featured">
+          <div class="popular-badge">Most Popular</div>
+          <div class="pricing-header">
+            <h3>Premium</h3>
+            <p class="pricing-desc">Complete home buying</p>
+          </div>
+          <div class="pricing-price">
+            <span class="currency">₹</span>
+            <span class="amount">5,000</span>
+            <span class="period">one-time</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Everything in Basic</li>
+            <li>✅ 10+ property options</li>
+            <li>✅ Free interior consultation</li>
+            <li>✅ EMI & loan assistance</li>
+            <li>✅ Legal verification</li>
+            <li>✅ Priority site visits</li>
+          </ul>
+          <button class="btn btn-primary btn-full" onclick="openPaymentModal()">Choose Premium</button>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>Luxury</h3>
+            <p class="pricing-desc">Premium properties</p>
+          </div>
+          <div class="pricing-price">
+            <span class="currency">₹</span>
+            <span class="amount">15,000</span>
+            <span class="period">one-time</span>
+          </div>
+          <ul class="pricing-features">
+            <li>✅ Everything in Premium</li>
+            <li>✅ Luxury property access</li>
+            <li>✅ Personal property manager</li>
+            <li>✅ Full interior designing</li>
+            <li>✅ Free registration support</li>
+            <li>✅ Lifetime support</li>
+          </ul>
+          <button class="btn btn-outline btn-full" onclick="openPaymentModal()">Choose Luxury</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== AD SLOT 3 (After Pricing) ========== -->
+  <div class="ad-slot" id="adSlot3">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-content">
+      <span>📢 Your ad could be here — Contact us for advertising</span>
+    </div>
+  </div>
+
+  <!-- ========== TESTIMONIALS ========== -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Testimonials</span>
+        <h2 class="section-title">What Our Clients Say</h2>
+        <p class="section-desc">Real stories from real families</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"We found our perfect 3BHK in Vijay Nagar through them. The free site visit and documentation support made everything so easy!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">RA</div>
+            <div>
+              <strong>Rahul Agrawal</strong>
+              <span>Vijay Nagar</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"Excellent service! They helped us get a home loan with the best rates. The free interior consultation was a bonus. Highly recommended!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SM</div>
+            <div>
+              <strong>Sneha Mehta</strong>
+              <span>AB Road</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">⭐⭐⭐⭐⭐</div>
+          <p class="testimonial-text">"निःशुल्क सेटअप ऑफर ने हमें बहुत फायदा मिला। टीम बहुत मेहनती और सहायक है। अब हम अपने सपनों के घर में रहते हैं!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">VK</div>
+            <div>
+              <strong>Vikash Kumar</strong>
+              <span>Rau</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ SECTION ========== -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">FAQ</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">Common questions about our services</p>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What areas in Indore do you cover?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>We cover all prime areas in Indore including Vijay Nagar, AB Road, Rau, Scheme No. 54, Palasia, Rajendra Nagar, and Super Corridor.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Is the site visit really free?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! All site visits are completely free. We also provide free transportation to and from the property locations.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>Do you help with home loans?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely! Our Premium and Luxury plans include home loan assistance. We partner with top banks to get you the best interest rates.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>What documents are required for buying?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>You'll need ID proof (Aadhaar/PAN), address proof, income documents, and photographs. Our team guides you through every step.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this)">
+            <span>How long does the entire process take?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Typically 2-4 weeks from property selection to registration, depending on how quickly you finalize and the loan approval process.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA SECTION ========== -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Ready to Find Your Dream Home?</h2>
+        <p>Call us now or book a free site visit. Our team is ready to help!</p>
+        <div class="cta-buttons">
+          <a href="tel:+919876543210" class="btn btn-primary btn-lg">📞 Call: +91 98765 43210</a>
+          <button class="btn btn-secondary btn-lg" onclick="openPaymentModal()">💰 Pay Booking Fee</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== AD SLOT 4 (Before Footer) ========== -->
+  <div class="ad-slot" id="adSlot4">
+    <div class="ad-label">Advertisement</div>
+    <div class="ad-content">
+      <span>📢 Your ad could be here — Contact us for advertising</span>
+    </div>
+  </div>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="#" class="nav-logo">
+            <span class="logo-icon">🏠</span>
+            <span class="logo-text">Indore<span class="highlight">Estate</span></span>
+          </a>
+          <p>Your trusted partner for finding the perfect home in Indore since 2015. Free setup, flexible payments, and premium properties.</p>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook">📘</a>
+            <a href="#" aria-label="Instagram">📸</a>
+            <a href="#" aria-label="YouTube">🎬</a>
+            <a href="#" aria-label="WhatsApp">💬</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Locations</h4>
+          <ul>
+            <li><a href="#">Vijay Nagar</a></li>
+            <li><a href="#">AB Road</a></li>
+            <li><a href="#">Palasia</a></li>
+            <li><a href="#">Scheme No. 54</a></li>
+            <li><a href="#">Rau</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Contact Us</h4>
+          <ul class="contact-info">
+            <li>📞 <a href="tel:+919876543210">+91 98765 43210</a></li>
+            <li>📧 <a href="mailto:info@indorerealestate.com">info@indorerealestate.com</a></li>
+            <li>📍 AB Road, Indore, MP 452001</li>
+            <li>🕐 Mon-Sun: 9AM - 9PM</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Indore Real Estate. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== UPI PAYMENT MODAL ========== -->
+  <div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+      <div class="modal-header">
+        <h2>🎉 Complete Your Booking</h2>
+        <p>Pay the booking fee via UPI to confirm your site visit</p>
+      </div>
+      <div class="modal-body">
+        <div class="upi-apps">
+          <button class="upi-app gpay" onclick="selectUpiApp(this)">
+            <span>Google Pay</span>
+          </button>
+          <button class="upi-app phonepe" onclick="selectUpiApp(this)">
+            <span>📱 PhonePe</span>
+          </button>
+          <button class="upi-app paytm" onclick="selectUpiApp(this)">
+            <span>💳 Paytm</span>
+          </button>
+          <button class="upi-app bhim" onclick="selectUpiApp(this)">
+            <span>🏦 BHIM UPI</span>
+          </button>
+        </div>
+        <div class="upi-id-box">
+          <label for="upiId">Enter Your UPI ID</label>
+          <div class="upi-input-group">
+            <input type="text" id="upiId" placeholder="yourname@upi" autocomplete="off">
+            <span class="upi-domain">@okhdfcbank</span>
+          </div>
+        </div>
+        <div class="payment-amount">
+          <span>Amount to Pay:</span>
+          <strong id="paymentAmount">₹5,000</strong>
+        </div>
+        <div class="payment-plans">
+          <p>Select a plan:</p>
+          <div class="plan-options">
+            <button class="plan-option" data-amount="0" onclick="selectPlan(this)">Basic — ₹0</button>
+            <button class="plan-option active" data-amount="5000" onclick="selectPlan(this)">Premium — ₹5,000</button>
+            <button class="plan-option" data-amount="15000" onclick="selectPlan(this)">Luxury — ₹15,000</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" id="payButton">
+          Pay Now — ₹5,000
+        </button>
+        <p class="payment-note">🔒 Secure UPI payment. Your data is encrypted and protected.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script src="app.js"></script>
+</body>
+</html>

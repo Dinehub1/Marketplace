@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SarkarSarkar — Application Tracker Page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Track Your Application — SarkarSarkar | Real-Time Status</title>
+  <meta name="description" content="Track your government application status in real-time. Enter your application ID to see current status, timeline, and next steps.">
+  <meta name="keywords" content="application tracker, government application status, track Aadhaar, track PAN, track passport, SarkarSarkar">
+  <meta name="author" content="SarkarSarkar">
+  <meta property="og:title" content="Track Your Application — SarkarSarkar">
+  <meta property="og:description" content="Real-time application status tracking for all government services.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarsarkar.in/tracker.html">
+  <meta property="og:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="SarkarSarkar">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Track Your Application — SarkarSarkar">
+  <meta name="twitter:description" content="Real-time application status tracking for all government services.">
+  <meta name="twitter:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkarsarkar.in/tracker.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Application Tracker","description":"Track government application status","url":"https://sarkarsarkar.in/tracker.html"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"SarkarSarkar","url":"https://sarkarsarkar.in","potentialAction":{"@type":"SearchAction","target":"https://sarkarsarkar.in/services.html?q={search_term_string}"}}
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-hero { padding: 120px 0 60px; background: var(--bg-hero); text-align: center; }
+    .page-hero h1 { color: #fff; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 12px; }
+    .page-hero p { color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .tracker-section { padding: 60px 0; }
+    .tracker-form-wrapper { max-width: 600px; margin: 0 auto 40px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 32px; box-shadow: var(--shadow-md); }
+    .tracker-form-wrapper h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 24px; color: var(--text-primary); text-align: center; }
+    .timeline { max-width: 600px; margin: 0 auto; display: none; }
+    .timeline.show { display: block; }
+    .timeline h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; }
+    .timeline-item { display: flex; gap: 16px; margin-bottom: 24px; position: relative; }
+    .timeline-item::before { content: ''; position: absolute; left: 19px; top: 40px; bottom: -24px; width: 2px; background: var(--border-color); }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; z-index: 1; }
+    .timeline-dot.done { background: #10b981; }
+    .timeline-dot.current { background: var(--color-primary); animation: pulse 2s infinite; }
+    .timeline-dot.pending { background: var(--border-color); }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(26,86,219,0.4); } 50% { box-shadow: 0 0 0 10px rgba(26,86,219,0); } }
+    .timeline-content { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 16px; flex-grow: 1; }
+    .timeline-content h4 { font-size: 1rem; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .timeline-content p { font-size: 0.85rem; color: var(--text-secondary); }
+    .timeline-content .time { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="eligibility.html" class="nav-link">Eligibility</a>
+        <a href="docs.html" class="nav-link">Documents</a>
+        <a href="tracker.html" class="nav-link active">Track Application</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-lang" id="langToggle" aria-label="Toggle language"><span id="langText">हिं</span></button>
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode"><span class="dark-icon">🌙</span></button>
+        <a href="dashboard.html" class="btn-nav-cta">Login / Register</a>
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="services.html" class="mobile-link">Services</a>
+      <a href="eligibility.html" class="mobile-link">Eligibility</a>
+      <a href="docs.html" class="mobile-link">Documents</a>
+      <a href="tracker.html" class="mobile-link active">Track Application</a>
+      <a href="dashboard.html" class="mobile-link">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta mobile-cta">Login / Register</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Track Your Application</h1>
+        <p>Enter your application ID to see real-time status and timeline</p>
+      </div>
+    </section>
+
+    <!-- AD SLOT 1 -->
+    <div class="ad-slot" id="adSlot1"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Your message reaches millions of citizens here</p></div></div>
+
+    <section class="tracker-section">
+      <div class="container">
+        <div class="tracker-form-wrapper">
+          <h2>🔍 Enter Application Details</h2>
+          <form id="trackerForm">
+            <div class="form-group">
+              <label for="appId">Application ID</label>
+              <input type="text" id="appId" class="form-control" placeholder="e.g., SSK-2026-12345678" required>
+            </div>
+            <div class="form-group">
+              <label for="appMobile">Registered Mobile Number</label>
+              <input type="tel" id="appMobile" class="form-control" placeholder="e.g., 9876543210" pattern="[0-9]{10}" required>
+            </div>
+            <div class="form-group">
+              <label for="appService">Service Type</label>
+              <select id="appService" class="form-control">
+                <option value="">-- Select Service --</option>
+                <option value="aadhaar">Aadhaar Card</option>
+                <option value="pan">PAN Card</option>
+                <option value="passport">Passport</option>
+                <option value="driving">Driving License</option>
+                <option value="voter">Voter ID</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Track Application</button>
+          </form>
+        </div>
+
+        <!-- Timeline Result -->
+        <div class="timeline" id="timelineResult">
+          <h3 id="timelineTitle">Application Timeline</h3>
+          <div id="timelineItems"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AD SLOT 2 -->
+    <div class="ad-slot" id="adSlot2"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Reach 10M+ citizens across India</p></div></div>
+    <!-- AD SLOT 3 -->
+    <div class="ad-slot" id="adSlot3"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Premium placement for your brand</p></div></div>
+    <!-- AD SLOT 4 -->
+    <div class="ad-slot" id="adSlot4"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Connect with India's largest government services audience</p></div></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+          <p class="footer-desc">India's most trusted government services portal.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="eligibility.html">Eligibility</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Accessibility</a></li>
+            <li><a href="#">Sitemap</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 SarkarSarkar. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- ===== UPI PAYMENT MODAL ===== -->
+  <div class="modal-overlay" id="upiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 Pay via UPI</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="upi-amount">
+          <span class="upi-label">Amount to Pay</span>
+          <span class="upi-value" id="upiAmount">₹0</span>
+        </div>
+        <div class="upi-apps">
+          <button class="upi-app" data-app="gpay"><span class="upi-app-icon">G</span><span>Google Pay</span></button>
+          <button class="upi-app" data-app="phonepe"><span class="upi-app-icon">P</span><span>PhonePe</span></button>
+          <button class="upi-app" data-app="paytm"><span class="upi-app-icon">₹</span><span>Paytm</span></button>
+          <button class="upi-app" data-app="bhim"><span class="upi-app-icon">B</span><span>BHIM</span></button>
+        </div>
+        <div class="upi-or">or enter UPI ID</div>
+        <form id="upiForm">
+          <div class="form-group"><input type="text" id="upiId" class="form-control" placeholder="yourname@upi" pattern=".+@.+"></div>
+          <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+        </form>
+        <p class="upi-secure">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <script src="app.js"></script>
+  <script>
+    // ===== TRACKER FORM WITH VALIDATION & LOADING STATES =====
+    (function() {
+      var form = document.getElementById('trackerForm');
+      if (!form) return;
+
+      // Sample application data for demo
+      var sampleData = {
+        steps: [
+          { status: 'done', icon: '📝', title: 'Application Submitted', desc: 'Your application has been received and is queued for processing.', time: '2 days ago' },
+          { status: 'done', icon: '📄', title: 'Document Verification', desc: 'All submitted documents have been verified successfully.', time: '1 day ago' },
+          { status: 'current', icon: '🔍', title: 'Under Review', desc: 'Your application is being reviewed by the concerned department.', time: 'In progress' },
+          { status: 'pending', icon: '✅', title: 'Approval', desc: 'Final approval pending from the authorized officer.', time: 'Pending' },
+          { status: 'pending', icon: '📬', title: 'Dispatch', desc: 'Your document will be dispatched via speed post.', time: 'Pending' }
+        ]
+      };
+
+      // Validation helpers
+      function showError(input, message) {
+        var group = input.closest('.form-group');
+        if (!group) return;
+        group.classList.add('has-error');
+        var errorEl = group.querySelector('.form-error');
+        if (!errorEl) {
+          errorEl = document.createElement('div');
+          errorEl.className = 'form-error';
+          group.appendChild(errorEl);
+        }
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        input.setAttribute('aria-invalid', 'true');
+      }
+
+      function clearError(input) {
+        var group = input.closest('.form-group');
+        if (!group) return;
+        group.classList.remove('has-error');
+        var errorEl = group.querySelector('.form-error');
+        if (errorEl) errorEl.style.display = 'none';
+        input.removeAttribute('aria-invalid');
+      }
+
+      function clearAllErrors() {
+        form.querySelectorAll('.form-group.has-error').forEach(function(g) {
+          g.classList.remove('has-error');
+          var e = g.querySelector('.form-error');
+          if (e) e.style.display = 'none';
+        });
+        form.querySelectorAll('[aria-invalid]').forEach(function(el) {
+          el.removeAttribute('aria-invalid');
+        });
+      }
+
+      // Real-time validation on blur
+      var appIdInput = document.getElementById('appId');
+      var mobileInput = document.getElementById('appMobile');
+      var serviceSelect = document.getElementById('appService');
+
+      appIdInput.addEventListener('blur', function() {
+        var val = this.value.trim();
+        if (!val) {
+          showError(this, '⚠️ Application ID is required.');
+        } else if (val.length < 5) {
+          showError(this, '⚠️ Application ID must be at least 5 characters.');
+        } else {
+          clearError(this);
+        }
+      });
+
+      mobileInput.addEventListener('blur', function() {
+        var val = this.value.trim();
+        if (!val) {
+          showError(this, '⚠️ Mobile number is required.');
+        } else if (!/^\d{10}$/.test(val)) {
+          showError(this, '⚠️ Please enter a valid 10-digit mobile number.');
+        } else {
+          clearError(this);
+        }
+      });
+
+      serviceSelect.addEventListener('change', function() {
+        if (this.value) clearError(this);
+      });
+
+      // Form submission
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        clearAllErrors();
+
+        var appId = appIdInput.value.trim();
+        var mobile = mobileInput.value.trim();
+        var service = serviceSelect.value;
+        var isValid = true;
+
+        // Validate Application ID
+        if (!appId) {
+          showError(appIdInput, '⚠️ Please enter your Application ID.');
+          isValid = false;
+        } else if (appId.length < 5) {
+          showError(appIdInput, '⚠️ Application ID must be at least 5 characters.');
+          isValid = false;
+        }
+
+        // Validate Mobile
+        if (!mobile) {
+          showError(mobileInput, '⚠️ Please enter your registered mobile number.');
+          isValid = false;
+        } else if (!/^\d{10}$/.test(mobile)) {
+          showError(mobileInput, '⚠️ Please enter a valid 10-digit mobile number.');
+          isValid = false;
+        }
+
+        // Validate Service
+        if (!service) {
+          showError(serviceSelect, '⚠️ Please select a service type.');
+          isValid = false;
+        }
+
+        if (!isValid) {
+          // Focus first invalid field
+          var firstInvalid = form.querySelector('[aria-invalid="true"]');
+          if (firstInvalid) firstInvalid.focus();
+          return;
+        }
+
+        // Show loading state
+        var submitBtn = form.querySelector('button[type="submit"]');
+        var originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="btn-loading">⏳ Tracking...</span>';
+
+        // Simulate API call with loading
+        setTimeout(function() {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+
+          // Show timeline
+          var timeline = document.getElementById('timelineResult');
+          var items = document.getElementById('timelineItems');
+          document.getElementById('timelineTitle').textContent = 'Timeline for ' + appId;
+
+          items.innerHTML = '';
+          sampleData.steps.forEach(function(step) {
+            var div = document.createElement('div');
+            div.className = 'timeline-item';
+            div.innerHTML =
+              '<div class="timeline-dot ' + step.status + '">' + step.icon + '</div>' +
+              '<div class="timeline-content">' +
+                '<h4>' + step.title + '</h4>' +
+                '<p>' + step.desc + '</p>' +
+                '<div class="time">' + step.time + '</div>' +
+              '</div>';
+            items.appendChild(div);
+          });
+
+          timeline.classList.add('show');
+          timeline.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+          if (window.showToast) {
+            window.showToast('success', 'Application Found', 'Showing status for ' + appId);
+          }
+        }, 1500);
+      });
+    })();
+  </script>
+</body>
+</html>

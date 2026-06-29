@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SarkarSarkar — User Dashboard Page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Dashboard — SarkarSarkar | Application Management</title>
+  <meta name="description" content="Manage your government service applications. View status, download documents, and track all your applications in one place.">
+  <meta name="keywords" content="application dashboard, government services dashboard, manage applications, SarkarSarkar">
+  <meta name="author" content="SarkarSarkar">
+  <meta property="og:title" content="My Dashboard — SarkarSarkar">
+  <meta property="og:description" content="Manage all your government service applications.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sarkarsarkar.in/dashboard.html">
+  <meta property="og:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="SarkarSarkar">
+  <meta property="og:locale" content="en_IN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="My Dashboard — SarkarSarkar">
+  <meta name="twitter:description" content="Manage all your government service applications.">
+  <meta name="twitter:image" content="https://sarkarsarkar.in/og-image.png">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://sarkarsarkar.in/dashboard.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"User Dashboard","description":"Manage government service applications","url":"https://sarkarsarkar.in/dashboard.html"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebSite","name":"SarkarSarkar","url":"https://sarkarsarkar.in","potentialAction":{"@type":"SearchAction","target":"https://sarkarsarkar.in/services.html?q={search_term_string}"}}
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-hero { padding: 120px 0 40px; background: var(--bg-hero); }
+    .dashboard-hero .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .dashboard-hero h1 { color: #fff; font-size: 1.8rem; font-weight: 800; }
+    .dashboard-hero p { color: rgba(255,255,255,0.7); }
+    .dashboard-section { padding: 40px 0 80px; }
+    .dashboard-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; }
+    .dashboard-sidebar { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; height: fit-content; }
+    .sidebar-user { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+    .sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; margin: 0 auto 12px; }
+    .sidebar-user h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    .sidebar-user p { font-size: 0.85rem; color: var(--text-tertiary); }
+    .sidebar-menu { list-style: none; }
+    .sidebar-menu li { margin-bottom: 4px; }
+    .sidebar-menu a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--border-radius-sm); color: var(--text-secondary); font-weight: 500; font-size: 0.95rem; transition: var(--transition-fast); }
+    .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--bg-tertiary); color: var(--color-primary); }
+    .dashboard-main { }
+    .dashboard-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px; }
+    .dash-stat { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; text-align: center; }
+    .dash-stat-icon { font-size: 2rem; margin-bottom: 8px; }
+    .dash-stat-number { font-size: 2rem; font-weight: 800; color: var(--text-primary); }
+    .dash-stat-label { font-size: 0.85rem; color: var(--text-secondary); }
+    .dash-section-title { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+    .app-list { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; }
+    .app-list-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-color); }
+    .app-list-item:last-child { border-bottom: none; }
+    .app-list-info { display: flex; align-items: center; gap: 12px; }
+    .app-list-icon { font-size: 1.5rem; }
+    .app-list-name { font-weight: 600; color: var(--text-primary); font-size: 0.95rem; }
+    .app-list-id { font-size: 0.8rem; color: var(--text-tertiary); }
+    .app-status { padding: 4px 12px; border-radius: var(--border-radius-full); font-size: 0.8rem; font-weight: 600; }
+    .app-status.approved { background: #ecfdf5; color: #065f46; }
+    .app-status.pending { background: #fffbeb; color: #92400e; }
+    .app-status.review { background: #eff6ff; color: #1e40af; }
+    [data-theme="dark"] .app-status.approved { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    [data-theme="dark"] .app-status.pending { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    [data-theme="dark"] .app-status.review { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    @media (max-width: 768px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .dashboard-cards { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .dashboard-cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="services.html" class="nav-link">Services</a>
+        <a href="eligibility.html" class="nav-link">Eligibility</a>
+        <a href="docs.html" class="nav-link">Documents</a>
+        <a href="tracker.html" class="nav-link">Track Application</a>
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn-lang" id="langToggle" aria-label="Toggle language"><span id="langText">हिं</span></button>
+        <button class="btn-dark" id="darkToggle" aria-label="Toggle dark mode"><span class="dark-icon">🌙</span></button>
+        <a href="dashboard.html" class="btn-nav-cta">My Account</a>
+        <button class="btn-hamburger" id="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-link">Home</a>
+      <a href="services.html" class="mobile-link">Services</a>
+      <a href="eligibility.html" class="mobile-link">Eligibility</a>
+      <a href="docs.html" class="mobile-link">Documents</a>
+      <a href="tracker.html" class="mobile-link">Track Application</a>
+      <a href="dashboard.html" class="mobile-link active">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta mobile-cta">My Account</a>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="dashboard-hero">
+      <div class="container">
+        <div>
+          <h1>Welcome back, Rajesh 👋</h1>
+          <p>Manage all your government service applications</p>
+        </div>
+        <a href="services.html" class="btn btn-primary">+ New Application</a>
+      </div>
+    </section>
+
+    <!-- AD SLOT 1 -->
+    <div class="ad-slot" id="adSlot1"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Your message reaches millions of citizens here</p></div></div>
+
+    <section class="dashboard-section">
+      <div class="container">
+        <div class="dashboard-grid">
+          <!-- Sidebar -->
+          <aside class="dashboard-sidebar">
+            <div class="sidebar-user">
+              <div class="sidebar-avatar">RK</div>
+              <h3>Rajesh Kumar</h3>
+              <p>rajesh@email.com</p>
+            </div>
+            <ul class="sidebar-menu">
+              <li><a href="#" class="active">📊 Dashboard</a></li>
+              <li><a href="tracker.html">📋 My Applications</a></li>
+              <li><a href="#">📄 Documents</a></li>
+              <li><a href="#">💳 Payments</a></li>
+              <li><a href="#">🔔 Notifications</a></li>
+              <li><a href="#">⚙️ Settings</a></li>
+              <li><a href="index.html">🚪 Logout</a></li>
+            </ul>
+          </aside>
+
+          <!-- Main Content -->
+          <div class="dashboard-main">
+            <!-- Stats Cards -->
+            <div class="dashboard-cards">
+              <div class="dash-stat">
+                <div class="dash-stat-icon">📋</div>
+                <div class="dash-stat-number">5</div>
+                <div class="dash-stat-label">Total Applications</div>
+              </div>
+              <div class="dash-stat">
+                <div class="dash-stat-icon">✅</div>
+                <div class="dash-stat-number">3</div>
+                <div class="dash-stat-label">Approved</div>
+              </div>
+              <div class="dash-stat">
+                <div class="dash-stat-icon">⏳</div>
+                <div class="dash-stat-number">2</div>
+                <div class="dash-stat-label">In Progress</div>
+              </div>
+            </div>
+
+            <!-- Recent Applications -->
+            <h3 class="dash-section-title">Recent Applications</h3>
+            <div class="app-list">
+              <div class="app-list-item">
+                <div class="app-list-info">
+                  <span class="app-list-icon">🪪</span>
+                  <div>
+                    <div class="app-list-name">Aadhaar Update</div>
+                    <div class="app-list-id">SSK-2026-12345678</div>
+                  </div>
+                </div>
+                <span class="app-status review">Under Review</span>
+              </div>
+              <div class="app-list-item">
+                <div class="app-list-info">
+                  <span class="app-list-icon">📄</span>
+                  <div>
+                    <div class="app-list-name">PAN Card</div>
+                    <div class="app-list-id">SSK-2026-87654321</div>
+                  </div>
+                </div>
+                <span class="app-status approved">Approved ✓</span>
+              </div>
+              <div class="app-list-item">
+                <div class="app-list-info">
+                  <span class="app-list-icon">🛂</span>
+                  <div>
+                    <div class="app-list-name">Passport Renewal</div>
+                    <div class="app-list-id">SSK-2026-11223344</div>
+                  </div>
+                </div>
+                <span class="app-status pending">Pending</span>
+              </div>
+              <div class="app-list-item">
+                <div class="app-list-info">
+                  <span class="app-list-icon">🗳️</span>
+                  <div>
+                    <div class="app-list-name">Voter ID</div>
+                    <div class="app-list-id">SSK-2026-55667788</div>
+                  </div>
+                </div>
+                <span class="app-status approved">Approved ✓</span>
+              </div>
+              <div class="app-list-item">
+                <div class="app-list-info">
+                  <span class="app-list-icon">🚗</span>
+                  <div>
+                    <div class="app-list-name">Driving License</div>
+                    <div class="app-list-id">SSK-2026-99887766</div>
+                  </div>
+                </div>
+                <span class="app-status approved">Approved ✓</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AD SLOT 2 -->
+    <div class="ad-slot" id="adSlot2"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Reach 10M+ citizens across India</p></div></div>
+    <!-- AD SLOT 3 -->
+    <div class="ad-slot" id="adSlot3"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Premium placement for your brand</p></div></div>
+    <!-- AD SLOT 4 -->
+    <div class="ad-slot" id="adSlot4"><span class="ad-label">Advertisement</span><div class="ad-content"><p>📢 Ad Space — Connect with India's largest government services audience</p></div></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col footer-brand">
+          <a href="index.html" class="nav-logo"><span class="logo-icon">🏛️</span><span class="logo-text">Sarkar<span class="logo-highlight">Sarkar</span></span></a>
+          <p class="footer-desc">India's most trusted government services portal.</p>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="eligibility.html">Eligibility</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-heading">Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Accessibility</a></li>
+            <li><a href="#">Sitemap</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2026 SarkarSarkar. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- ===== UPI PAYMENT MODAL ===== -->
+  <div class="modal-overlay" id="upiModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">💳 Pay via UPI</h3>
+        <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="upi-amount">
+          <span class="upi-label">Amount to Pay</span>
+          <span class="upi-value" id="upiAmount">₹0</span>
+        </div>
+        <div class="upi-apps">
+          <button class="upi-app" data-app="gpay"><span class="upi-app-icon">G</span><span>Google Pay</span></button>
+          <button class="upi-app" data-app="phonepe"><span class="upi-app-icon">P</span><span>PhonePe</span></button>
+          <button class="upi-app" data-app="paytm"><span class="upi-app-icon">₹</span><span>Paytm</span></button>
+          <button class="upi-app" data-app="bhim"><span class="upi-app-icon">B</span><span>BHIM</span></button>
+        </div>
+        <div class="upi-or">or enter UPI ID</div>
+        <form id="upiForm">
+          <div class="form-group"><input type="text" id="upiId" class="form-control" placeholder="yourname@upi" pattern=".+@.+"></div>
+          <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+        </form>
+        <p class="upi-secure">🔒 Secured by 256-bit SSL encryption</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+  <script src="app.js"></script>
+</body>
+</html>

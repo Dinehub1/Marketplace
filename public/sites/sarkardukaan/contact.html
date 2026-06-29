@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    SarkarDukaan — Contact Us Page v1.0
+    Built by Loop Agent | ZOO Company
+    Features: Contact form, Google Maps embed, office info, FAQ quick links,
+    mobile-first responsive, SEO meta tags, Schema.org JSON-LD, Open Graph
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- ===== SEO Meta Tags ===== -->
+  <title>Contact Us — SarkarDukaan | Get in Touch</title>
+  <meta name="description" content="Contact SarkarDukaan for support, partnerships, or business inquiries. Reach us via phone, email, or visit our office in Indore. We're here to help!">
+  <meta name="keywords" content="contact SarkarDukaan, support, business inquiry, Indore office, phone number, email">
+  <meta name="author" content="SarkarDukaan">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://sarkardukaan.in/contact.html">
+
+  <!-- ===== Open Graph / Social Sharing ===== -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Contact Us — SarkarDukaan">
+  <meta property="og:description" content="Get in touch with the SarkarDukaan team. We're here to help with support, partnerships, and business inquiries.">
+  <meta property="og:url" content="https://sarkardukaan.in/contact.html">
+  <meta property="og:site_name" content="SarkarDukaan">
+  <meta property="og:image" content="https://sarkardukaan.in/og-image.png">
+  <meta property="og:locale" content="en_IN">
+
+  <!-- ===== Twitter Card ===== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact Us — SarkarDukaan">
+  <meta name="twitter:description" content="Get in touch with the SarkarDukaan team.">
+
+  <!-- ===== Preconnect for Performance ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact SarkarDukaan",
+    "description": "Contact SarkarDukaan for support, partnerships, or business inquiries.",
+    "url": "https://sarkardukaan.in/contact.html",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "SarkarDukaan",
+      "telephone": "+91-98765-43210",
+      "email": "hello@sarkardukaan.in",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "123, Vijay Nagar",
+        "addressLocality": "Indore",
+        "addressRegion": "Madhya Pradesh",
+        "postalCode": "452010",
+        "addressCountry": "IN"
+      }
+    }
+  }
+  </script>
+
+  <!-- ===== Stylesheet ===== -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- ===== Page-Specific Styles ===== -->
+  <style>
+    /* Contact Hero */
+    .contact-hero {
+      background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 50%, #a78bfa 100%);
+      padding: 8rem 1.5rem 4rem;
+      text-align: center;
+      color: #fff;
+    }
+    .contact-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .contact-hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      opacity: 0.9;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Contact Grid */
+    .contact-section {
+      padding: 5rem 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+    @media (min-width: 768px) {
+      .contact-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Contact Form */
+    .contact-form-wrapper {
+      background: var(--bg-card);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .contact-form-wrapper h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .contact-form-wrapper > p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--bg-tertiary);
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: #fff;
+      border: none;
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+    }
+
+    /* Contact Info Cards */
+    .contact-info h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .contact-info > p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+    .info-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--bg-card);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .info-card .icon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: var(--bg-tertiary);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .info-card h4 {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .info-card p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Map Section */
+    .map-section {
+      padding: 0 1.5rem 5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .map-wrapper {
+      border-radius: 1.5rem;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      background: var(--bg-tertiary);
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .map-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      padding: 1rem 1.5rem;
+      background: var(--bg-tertiary);
+      font-size: 0.875rem;
+    }
+    .breadcrumb a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .breadcrumb span { color: var(--text-tertiary); }
+  </style>
+</head>
+<body>
+  <!-- ===== NAVIGATION (Shared) ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🏪</span>
+        <span class="logo-text">Sarkar<span class="logo-accent">Dukaan</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="listings.html">Listings</a></li>
+        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="seller-dashboard.html">Seller Dashboard</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="dark-toggle" id="darkToggle" aria-label="Toggle dark mode">
+          <span class="dark-icon">🌙</span>
+        </button>
+        <a href="index.html#pricing" class="btn btn-primary btn-sm">Get Started</a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== BREADCRUMB ===== -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> <span>›</span> <span>Contact Us</span>
+  </div>
+
+  <!-- ===== CONTACT HERO ===== -->
+  <section class="contact-hero">
+    <h1>Get in Touch</h1>
+    <p>Have a question, feedback, or partnership inquiry? We'd love to hear from you.</p>
+  </section>
+
+  <!-- ===== CONTACT FORM & INFO ===== -->
+  <section class="contact-section">
+    <div class="contact-grid">
+      <!-- Contact Form -->
+      <div class="contact-form-wrapper">
+        <h2>Send Us a Message</h2>
+        <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+        <form id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" name="firstName" placeholder="Rajesh" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" name="lastName" placeholder="Sharma" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" placeholder="rajesh@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <select id="subject" name="subject" required>
+              <option value="">Select a topic...</option>
+              <option value="general">General Inquiry</option>
+              <option value="support">Technical Support</option>
+              <option value="partnership">Partnership</option>
+              <option value="billing">Billing Question</option>
+              <option value="feedback">Feedback</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" placeholder="Tell us how we can help..." required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Send Message →</button>
+        </form>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="contact-info">
+        <h2>Contact Information</h2>
+        <p>Reach us through any of these channels. We're available Mon–Sat, 9 AM – 7 PM IST.</p>
+
+        <div class="info-card">
+          <div class="icon">📍</div>
+          <div>
+            <h4>Our Office</h4>
+            <p>123, Vijay Nagar<br>Indore, MP 452010<br>India</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon">📞</div>
+          <div>
+            <h4>Phone</h4>
+            <p>+91 98765 43210<br>+91 731 255 1234</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon">✉️</div>
+          <div>
+            <h4>Email</h4>
+            <p>hello@sarkardukaan.in<br>support@sarkardukaan.in</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="icon">🕐</div>
+          <div>
+            <h4>Business Hours</h4>
+            <p>Mon – Fri: 9:00 AM – 7:00 PM<br>Saturday: 10:00 AM – 5:00 PM<br>Sunday: Closed</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== AD SLOT: Between Content ===== -->
+  <div class="ad-slot" style="max-width:728px;margin:2rem auto;padding:1rem;text-align:center;background:var(--bg-tertiary);border-radius:0.75rem;">
+    <small style="color:var(--text-tertiary);">Advertisement</small>
+    <div style="height:90px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);">
+      Ad Space — 728×90
+    </div>
+  </div>
+
+  <!-- ===== MAP SECTION ===== -->
+  <section class="map-section">
+    <div class="map-wrapper">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d117120.16915095988!2d75.81212348749999!3d22.72390995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3962fcad1b410ddb%3A0x96ec4da3562401c1!2sIndore%2C%20Madhya%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="SarkarDukaan Office Location - Indore">
+      </iframe>
+    </div>
+  </section>
+
+  <!-- ===== FAQ QUICK LINKS ===== -->
+  <section style="padding:4rem 1.5rem;background:var(--bg-secondary);">
+    <div style="max-width:800px;margin:0 auto;text-align:center;">
+      <h2 style="font-size:1.75rem;font-weight:800;color:var(--text-primary);margin-bottom:1rem;">Frequently Asked Questions</h2>
+      <p style="color:var(--text-secondary);margin-bottom:2rem;">Before reaching out, you might find your answer in our FAQ section.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;">
+        <a href="index.html#faq" style="padding:0.75rem 1.5rem;background:var(--bg-card);border-radius:0.75rem;text-decoration:none;color:var(--color-primary);font-weight:600;border:2px solid var(--color-primary);">How do I list my business?</a>
+        <a href="index.html#faq" style="padding:0.75rem 1.5rem;background:var(--bg-card);border-radius:0.75rem;text-decoration:none;color:var(--color-primary);font-weight:600;border:2px solid var(--color-primary);">Is listing free?</a>
+        <a href="index.html#faq" style="padding:0.75rem 1.5rem;background:var(--bg-card);border-radius:0.75rem;text-decoration:none;color:var(--color-primary);font-weight:600;border:2px solid var(--color-primary);">How do UPI payments work?</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER (Shared) ===== -->
+  <footer style="background:var(--bg-tertiary);padding:4rem 1.5rem 2rem;">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;">
+      <div>
+        <a href="index.html" style="text-decoration:none;color:var(--text-primary);font-weight:800;font-size:1.25rem;">
+          🏪 Sarkar<span style="color:var(--color-primary);">Dukaan</span>
+        </a>
+        <p style="color:var(--text-secondary);margin-top:0.75rem;font-size:0.9rem;">India's fastest-growing local business directory.</p>
+      </div>
+      <div>
+        <h4 style="font-weight:700;color:var(--text-primary);margin-bottom:0.75rem;">Quick Links</h4>
+        <ul style="list-style:none;padding:0;">
+          <li style="margin-bottom:0.5rem;"><a href="index.html" style="color:var(--text-secondary);text-decoration:none;">Home</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="about.html" style="color:var(--text-secondary);text-decoration:none;">About</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="listings.html" style="color:var(--text-secondary);text-decoration:none;">Listings</a></li>
+          <li style="margin-bottom:0.5rem;"><a href="contact.html" style="color:var(--text-secondary);text-decoration:none;">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="max-width:1200px;margin:2rem auto 0;padding-top:2rem;border-top:1px solid rgba(0,0,0,0.08);text-align:center;color:var(--text-tertiary);font-size:0.875rem;">
+      © 2026 SarkarDukaan. All rights reserved. Built with ❤️ in India.
+    </div>
+  </footer>
+
+  <!-- ===== SHARED JAVASCRIPT ===== -->
+  <script src="app.js"></script>
+  <script>
+    // Contact form submission handler
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('.btn-submit');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      // Simulate form submission
+      setTimeout(() => {
+        btn.textContent = 'Message Sent! ✓';
+        btn.style.background = '#10b981';
+        this.reset();
+        setTimeout(() => {
+          btn.textContent = 'Send Message →';
+          btn.style.background = '';
+          btn.disabled = false;
+        }, 3000);
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        PaisaFlow — About Us Page
+        Company story, mission, values, team, and contact CTA.
+        Built mobile-first with full SEO, Schema.org, ad slots, and UPI payment modal.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- ===== SEO Meta Tags ===== -->
+    <title>About Us — PaisaFlow | India's Fastest Digital Payment Platform</title>
+    <meta name="description" content="Learn about PaisaFlow - India's fastest growing digital payment platform. Our mission is to make instant, secure UPI payments accessible to every Indian.">
+    <meta name="keywords" content="PaisaFlow about, digital payments India, UPI company, fintech startup, PaisaFlow team, payment platform India">
+    <meta name="author" content="PaisaFlow">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://paisaflow.in/about.html">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- ===== Open Graph / Social Sharing ===== -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="About Us — PaisaFlow | India's Fastest Digital Payment Platform">
+    <meta property="og:description" content="Learn about PaisaFlow's mission to make instant, secure UPI payments accessible to every Indian. Meet the team behind 10M+ users.">
+    <meta property="og:url" content="https://paisaflow.in/about.html">
+    <meta property="og:site_name" content="PaisaFlow">
+    <meta property="og:image" content="https://paisaflow.in/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- ===== Twitter Card ===== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Us — PaisaFlow | India's Fastest Digital Payment Platform">
+    <meta name="twitter:description" content="Learn about PaisaFlow's mission to make instant, secure UPI payments accessible to every Indian. Meet the team behind 10M+ users.">
+    <meta name="twitter:image" content="https://paisaflow.in/og-image.png">
+
+    <!-- ===== Preconnect for Performance ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "PaisaFlow",
+        "url": "https://paisaflow.in",
+        "description": "India's fastest digital payment platform for instant money transfers and UPI payments.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://paisaflow.in/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "PaisaFlow",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://paisaflow.in/logo.png"
+            }
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": "About Us — PaisaFlow",
+        "description": "Learn about PaisaFlow — India's fastest growing digital payment platform.",
+        "url": "https://paisaflow.in/about.html",
+        "mainEntity": {
+            "@type": "Organization",
+            "name": "PaisaFlow",
+            "url": "https://paisaflow.in",
+            "logo": "https://paisaflow.in/logo.png",
+            "description": "India's fastest digital payment platform for instant money transfers and UPI payments.",
+            "foundingDate": "2022",
+            "founders": [
+                {"@type": "Person", "name": "Arjun Mehta"},
+                {"@type": "Person", "name": "Sneha Reddy"}
+            ],
+            "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "IN",
+                "addressLocality": "Bangalore",
+                "addressRegion": "Karnataka"
+            },
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+91-1800-123-4567",
+                "contactType": "customer service",
+                "availableLanguage": ["English", "Hindi"]
+            },
+            "sameAs": [
+                "https://twitter.com/paisaflow",
+                "https://facebook.com/paisaflow",
+                "https://linkedin.com/company/paisaflow"
+            ]
+        }
+    }
+    </script>
+
+    <!-- ===== Styles ===== -->
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ===== About Page Specific Styles ===== */
+
+        /* ---- Page Hero ---- */
+        .about-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .about-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .about-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .about-hero h1 {
+            color: #fff;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        .about-hero h1 .gradient-text {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .about-hero p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 1.15rem;
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        /* ---- Story Section ---- */
+        .about-story {
+            padding: 80px 0;
+        }
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        .story-label {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #6366f1;
+            margin-bottom: 12px;
+        }
+        .story-content h2 {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            font-weight: 800;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+        .story-content p {
+            color: var(--text-secondary, #555);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+        .story-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .story-card {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 20px;
+            padding: 48px 40px;
+            color: #fff;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.25);
+        }
+        .story-card-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        .story-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .story-card p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        /* ---- Mission / Values ---- */
+        .about-mission {
+            padding: 80px 0;
+            background: var(--bg-alt, #f8f9fb);
+        }
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .mission-card {
+            background: var(--bg-card, #fff);
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 16px;
+            padding: 36px 28px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .mission-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+        .mission-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        .mission-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 10px;
+        }
+        .mission-card p {
+            color: var(--text-secondary, #555);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* ---- Stats Band ---- */
+        .about-stats {
+            padding: 60px 0;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+            text-align: center;
+        }
+        .about-stat-number {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            color: #fff;
+            display: block;
+        }
+        .about-stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 4px;
+        }
+
+        /* ---- Team Section ---- */
+        .about-team {
+            padding: 80px 0;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 28px;
+        }
+        .team-card {
+            background: var(--bg-card, #fff);
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 16px;
+            padding: 32px 24px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .team-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+        }
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 auto 16px;
+        }
+        .team-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 4px;
+        }
+        .team-role {
+            font-size: 0.85rem;
+            color: #6366f1;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .team-bio {
+            font-size: 0.88rem;
+            color: var(--text-secondary, #555);
+            line-height: 1.6;
+        }
+
+        /* ---- Timeline ---- */
+        .about-timeline {
+            padding: 80px 0;
+            background: var(--bg-alt, #f8f9fb);
+        }
+        .timeline {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #6366f1, #8b5cf6, #a78bfa);
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 56px;
+            margin-bottom: 40px;
+        }
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 10px;
+            top: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #6366f1;
+            border: 4px solid #fff;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .timeline-year {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 4px;
+        }
+        .timeline-content h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 6px;
+        }
+        .timeline-content p {
+            font-size: 0.95rem;
+            color: var(--text-secondary, #555);
+            line-height: 1.7;
+        }
+
+        /* ---- CTA ---- */
+        .about-cta {
+            padding: 80px 0;
+            text-align: center;
+        }
+        .about-cta h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 12px;
+        }
+        .about-cta p {
+            font-size: 1.1rem;
+            color: var(--text-secondary, #555);
+            max-width: 560px;
+            margin: 0 auto 32px;
+            line-height: 1.7;
+        }
+        .about-cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+        }
+        @media (max-width: 768px) {
+            .story-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .mission-grid {
+                grid-template-columns: 1fr;
+            }
+            .team-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+            .about-hero {
+                padding: 100px 0 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== SKIP TO CONTENT (Accessibility) ========== -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="index.html" class="logo">
+                <span class="logo-icon">&#8377;</span>
+                <span class="logo-text">Paisa<span class="logo-highlight">Flow</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+                <li><a href="index.html#send-money">Send Money</a></li>
+                <li><a href="index.html#dashboard">Dashboard</a></li>
+                <li><a href="index.html#testimonials">Testimonials</a></li>
+                <li><a href="index.html#resources">Resources</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+                <li class="mobile-nav-cta">
+                    <button class="btn btn-ghost mobile-nav-btn" onclick="openLoginModal()">Log In</button>
+                    <button class="btn btn-primary mobile-nav-btn" onclick="openSignupModal()">Get Started</button>
+                </li>
+            </ul>
+
+            <!-- Desktop CTA Buttons -->
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="theme-icon" id="themeIcon">&#127769;</span>
+                </button>
+                <button class="btn btn-ghost" onclick="openLoginModal()">Log In</button>
+                <button class="btn btn-primary" onclick="openSignupModal()">Get Started</button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== ABOUT HERO ========== -->
+    <section class="about-hero" aria-label="About PaisaFlow">
+        <div class="container about-hero-content">
+            <h1>Building the Future of <span class="gradient-text">Digital Payments</span> in India</h1>
+            <p>We're on a mission to make instant, secure, and accessible digital payments a reality for every Indian — from Mumbai metros to the smallest villages.</p>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 1 - Above the fold ========== -->
+    <div class="ad-slot ad-slot-top" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== OUR STORY ========== -->
+    <section class="about-story" id="main-content">
+        <div class="container">
+            <div class="story-grid">
+                <div class="story-content">
+                    <span class="story-label">Our Story</span>
+                    <h2>From a Dorm Room Idea to 10 Million+ Users</h2>
+                    <p>PaisaFlow was born in 2022 when our founders, Arjun Mehta and Sneha Reddy, were frustrated by the clunky digital payment experiences available in India. Transfers failed, apps crashed, and customer support was nowhere to be found.</p>
+                    <p>They envisioned a payment platform that just works — one that's fast enough for a street vendor in Delhi, simple enough for a grandmother in Chennai, and powerful enough for a startup in Bangalore.</p>
+                    <p>Today, PaisaFlow processes over &#8377;500 crores in transactions every month. We serve 10 million+ users across all 28 states and 8 union territories. But we're just getting started.</p>
+                </div>
+                <div class="story-visual">
+                    <div class="story-card">
+                        <div class="story-card-icon">&#127758;</div>
+                        <h3>Pan-India Reach</h3>
+                        <p>Serving users in every state and union territory, from metros to Tier-3 towns and rural areas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 - Mid content ========== -->
+    <div class="ad-slot ad-slot-mid" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== MISSION & VALUES ========== -->
+    <section class="about-mission">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Values</span>
+                <h2 class="section-title">What <span class="gradient-text">Drives Us</span></h2>
+                <p class="section-subtitle">Every feature we build, every decision we make, is guided by these core principles.</p>
+            </div>
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <div class="mission-icon">&#9889;</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Every millisecond counts. Our infrastructure is optimized for sub-second UPI transfers, 24/7 — even on bank holidays.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">&#128274;</div>
+                    <h3>Bank-Grade Security</h3>
+                    <p>256-bit encryption, biometric authentication, and real-time fraud detection protect every transaction you make.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">&#127760;</div>
+                    <h3>Truly Inclusive</h3>
+                    <p>Available in 15+ Indian languages with a lightweight app that works on 2G networks and feature phones via USSD.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">&#128176;</div>
+                    <h3>Zero Hidden Fees</h3>
+                    <p>UPI transfers are always free. We believe in transparent pricing — what you see is what you pay. No surprises.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">&#129309;</div>
+                    <h3>People First</h3>
+                    <p>Our 24/7 support team speaks your language. Real humans, real help — average response time under 2 minutes.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon">&#128640;</div>
+                    <h3>Constant Innovation</h3>
+                    <p>We ship updates every week. From AI-powered expense insights to voice-activated payments, we're always pushing boundaries.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== STATS BAND ========== -->
+    <section class="about-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div>
+                    <span class="about-stat-number">10M+</span>
+                    <span class="about-stat-label">Active Users</span>
+                </div>
+                <div>
+                    <span class="about-stat-number">&#8377;500Cr+</span>
+                    <span class="about-stat-label">Monthly Transactions</span>
+                </div>
+                <div>
+                    <span class="about-stat-number">4.7&#9733;</span>
+                    <span class="about-stat-label">App Store Rating</span>
+                </div>
+                <div>
+                    <span class="about-stat-number">15+</span>
+                    <span class="about-stat-label">Indian Languages</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TEAM ========== -->
+    <section class="about-team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Team</span>
+                <h2 class="section-title">Meet the <span class="gradient-text">Builders</span></h2>
+                <p class="section-subtitle">A passionate team of engineers, designers, and dreamers building India's payment infrastructure.</p>
+            </div>
+            <div class="team-grid">
+                <!-- Founder 1 -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">AM</div>
+                    <h3>Arjun Mehta</h3>
+                    <p class="team-role">Co-Founder & CEO</p>
+                    <p class="team-bio">Ex-Google Pay, IIT Delhi. 12+ years in fintech. Passionate about financial inclusion.</p>
+                </div>
+                <!-- Founder 2 -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #ec4899, #f472b6);">SR</div>
+                    <h3>Sneha Reddy</h3>
+                    <p class="team-role">Co-Founder & CTO</p>
+                    <p class="team-bio">Ex-PhonePe, BITS Pilani. Distributed systems expert. Built systems handling 1B+ transactions.</p>
+                </div>
+                <!-- CPO -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #10b981, #34d399);">VK</div>
+                    <h3>Vikram Krishnan</h3>
+                    <p class="team-role">Chief Product Officer</p>
+                    <p class="team-bio">Ex-Paytm, NIT Trichy. Product visionary focused on simplifying complex financial workflows.</p>
+                </div>
+                <!-- Head of Design -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">PD</div>
+                    <h3>Priya Deshmukh</h3>
+                    <p class="team-role">Head of Design</p>
+                    <p class="team-bio">Ex-Flipkart, NID Ahmedabad. Believes great design should be invisible and accessible to all.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 - Before timeline ========== -->
+    <div class="ad-slot ad-slot-timeline" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 300x250 Rectangle</span>
+        </div>
+    </div>
+
+    <!-- ========== TIMELINE ========== -->
+    <section class="about-timeline">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Journey</span>
+                <h2 class="section-title">Key <span class="gradient-text">Milestones</span></h2>
+                <p class="section-subtitle">From a two-person startup to India's fastest-growing payment platform.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">January 2022</div>
+                    <div class="timeline-content">
+                        <h3>The Idea is Born</h3>
+                        <p>Arjun and Sneha sketch the first PaisaFlow prototype on a whiteboard at a Bangalore café. The vision: payments so simple, anyone can use them.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">August 2022</div>
+                    <div class="timeline-content">
+                        <h3>Seed Funding Secured</h3>
+                        <p>Raised &#8377;5 crores from leading Indian angel investors. The team grows to 8 engineers working out of a small Koramangala office.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">March 2023</div>
+                    <div class="timeline-content">
+                        <h3>Public Launch</h3>
+                        <p>PaisaFlow goes live on Android and iOS. 50,000 users sign up in the first week. App Store rating: 4.8 stars.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">November 2023</div>
+                    <div class="timeline-content">
+                        <h3>1 Million Users</h3>
+                        <p>Cross the 1 million user milestone. Launch merchant QR payments and business accounts for small shop owners.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">June 2024</div>
+                    <div class="timeline-content">
+                        <h3>Series A Funding</h3>
+                        <p>Raised &#8377;50 crores Series A from Sequoia India. Expanded to 15 Indian languages and launched USSD support for feature phones.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">December 2024</div>
+                    <div class="timeline-content">
+                        <h3>10 Million Users</h3>
+                        <p>Hit 10 million monthly active users. Processing &#8377;500+ crores in monthly transactions. Team grows to 120+ across 3 offices.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-year">2026 & Beyond</div>
+                    <div class="timeline-content">
+                        <h3>The Road Ahead</h3>
+                        <p>AI-powered financial insights, international remittances, and a full-stack nebbank license. The mission continues — every Indian deserves seamless digital payments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 - Before CTA ========== -->
+    <div class="ad-slot ad-slot-cta" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span class="ad-label">Ad</span>
+            <span>Advertisement Space - 728x90 Leaderboard</span>
+        </div>
+    </div>
+
+    <!-- ========== CTA ========== -->
+    <section class="about-cta">
+        <div class="container">
+            <h2>Ready to Join the Payment Revolution?</h2>
+            <p>10 million+ Indians already trust PaisaFlow. Start sending money instantly — it's free, secure, and takes less than 30 seconds to set up.</p>
+            <div class="about-cta-buttons">
+                <button class="btn btn-primary btn-lg" onclick="openUpiModal()">
+                    <span class="btn-icon">&#9889;</span> Get Started Now
+                </button>
+                <a href="index.html#contact" class="btn btn-outline btn-lg">
+                    Contact Sales
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Footer Brand -->
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">&#8377;</span>
+                        <span class="logo-text">Paisa<span class="logo-highlight">Flow</span></span>
+                    </a>
+                    <p class="footer-description">India's most trusted digital payment platform. Send money, pay bills, and shop with ease.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Twitter">&#10004;</a>
+                        <a href="#" class="social-link" aria-label="Facebook">f</a>
+                        <a href="#" class="social-link" aria-label="Instagram">&#128247;</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                    </div>
+                </div>
+
+                <!-- Footer Links: Product -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Product</h4>
+                    <ul>
+                        <li><a href="index.html#features">Features</a></li>
+                        <li><a href="index.html#pricing">Pricing</a></li>
+                        <li><a href="index.html#send-money">Send Money</a></li>
+                        <li><a href="index.html#dashboard">Dashboard</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">Business</a></li>
+                        <li><a href="#">API Docs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Company -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="index.html#resources">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Footer Links: Support -->
+                <div class="footer-links">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Dispute a Transaction</a></li>
+                        <li><a href="#">Report Fraud</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Grievances</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; <span id="footerYear"></span> PaisaFlow Technologies Pvt. Ltd. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="upiModal" role="dialog" aria-modal="true" aria-labelledby="upiModalTitle">
+        <div class="modal">
+            <button class="modal-close" onclick="closeUpiModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="upiModalTitle">&#8377; Pay with UPI</h3>
+                <p class="modal-subtitle">Choose your preferred payment method</p>
+            </div>
+            <div class="modal-body">
+                <!-- UPI App Selector -->
+                <div class="upi-app-selector">
+                    <p class="upi-app-label">Choose your preferred UPI app:</p>
+                    <div class="upi-app-grid">
+                        <button class="upi-app-btn" onclick="openUpiApp('gpay')" aria-label="Pay with Google Pay">
+                            <span class="upi-app-name">Google Pay</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('phonepe')" aria-label="Pay with PhonePe">
+                            <span class="upi-app-name">PhonePe</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('paytm')" aria-label="Pay with Paytm">
+                            <span class="upi-app-name">Paytm</span>
+                        </button>
+                        <button class="upi-app-btn" onclick="openUpiApp('bhim')" aria-label="Pay with BHIM">
+                            <span class="upi-app-name">BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UPI ID Input Form -->
+                <div class="modal-divider">
+                    <span>OR Enter Details Manually</span>
+                </div>
+
+                <form id="upiForm" onsubmit="processUpiPayment(event)" novalidate>
+                    <div class="form-group">
+                        <label for="upiId" class="form-label">Your UPI ID</label>
+                        <input type="text" id="upiId" class="form-input" placeholder="yourname@upi" required aria-describedby="upiIdError">
+                        <span class="form-error-text" id="upiIdError" role="alert" style="display:none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="upiAmount" class="form-label">Amount (&#8377;)</label>
+                        <input type="number" id="upiAmount" class="form-input" placeholder="Enter amount" min="1" max="100000" value="99" required aria-describedby="upiAmountError">
+                        <span class="form-error-text" id="upiAmountError" role="alert" style="display:none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="upiNote" class="form-label">Note (Optional)</label>
+                        <input type="text" id="upiNote" class="form-input" placeholder="e.g., PaisaFlow Pro subscription">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="payNowBtn">
+                        <span class="btn-icon">&#9889;</span> Pay Now
+                    </button>
+                </form>
+
+                <!-- QR Code Section -->
+                <div class="modal-divider">
+                    <span>OR Scan QR Code</span>
+                </div>
+                <div class="qr-section">
+                    <canvas id="upiQrCanvas" width="200" height="200" class="qr-canvas"></canvas>
+                    <p class="qr-text">Open any UPI app and scan this QR code to pay</p>
+                </div>
+            </div>
+
+            <!-- Payment Processing Section -->
+            <div class="modal-body-section" id="upiProcessingSection">
+                <div class="processing-animation">
+                    <div class="spinner"></div>
+                    <p id="processingText">Processing your payment...</p>
+                </div>
+            </div>
+
+            <!-- Payment Success Section -->
+            <div class="modal-body-section" id="upiSuccessSection">
+                <div class="success-animation">
+                    <div class="success-checkmark">&#10003;</div>
+                    <h3>Payment Successful!</h3>
+                    <p class="success-amount" id="successAmount">&#8377;99</p>
+                    <p class="success-detail" id="successDetail">PaisaFlow Pro subscription</p>
+                    <p class="success-txn">Txn ID: <span id="successTxnId">TXN20260622001</span></p>
+                    <div class="success-actions">
+                        <button class="btn btn-primary" onclick="closeUpiModal()">Done</button>
+                        <button class="btn btn-outline" id="shareReceipt">Share Receipt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SIGNUP MODAL ========== -->
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeSignupModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title">Create Your Account</h3>
+                <p class="modal-subtitle">Start sending money in under 30 seconds</p>
+            </div>
+            <div class="modal-body">
+                <form id="signupForm" onsubmit="processSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName" class="form-label">Full Name</label>
+                        <input type="text" id="signupName" class="form-input" placeholder="e.g., Rahul Kumar" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupMobile" class="form-label">Mobile Number</label>
+                        <div class="mobile-input-wrapper">
+                            <span class="mobile-prefix">+91</span>
+                            <input type="tel" id="signupMobile" class="form-input mobile-input-with-prefix" placeholder="98765 43210" maxlength="11" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail" class="form-label">Email</label>
+                        <input type="email" id="signupEmail" class="form-input" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPin" class="form-label">Create 4-Digit PIN</label>
+                        <input type="password" id="signupPin" class="form-input" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required aria-describedby="signupPinHelp">
+                        <p class="form-hint" id="signupPinHelp">This PIN will be used to log in to your account</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPinConfirm" class="form-label">Confirm PIN</label>
+                        <input type="password" id="signupPinConfirm" class="form-input" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                </form>
+                <p class="modal-footer-text">By signing up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== LOGIN MODAL ========== -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeLoginModal()" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title">Welcome Back</h3>
+                <p class="modal-subtitle">Log in to your PaisaFlow account</p>
+            </div>
+            <div class="modal-body">
+                <form id="loginForm" onsubmit="processLogin(event)">
+                    <div class="form-group">
+                        <label for="loginMobile" class="form-label">Mobile Number</label>
+                        <input type="tel" id="loginMobile" class="form-input" placeholder="+91 98765 43210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPin" class="form-label">4-Digit PIN</label>
+                        <input type="password" id="loginPin" class="form-input" placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="4" pattern="[0-9]{4}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
+                </form>
+                <p class="modal-footer-text"><a href="#">Forgot PIN?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SUCCESS TOAST ========== -->
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+        <span class="toast-icon">&#10003;</span>
+        <span class="toast-message" id="toastMessage">Success!</span>
+    </div>
+
+    <!-- ========== BACK TO TOP ========== -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">&#8679;</button>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script src="app.js"></script>
+    <script>
+        // Page-specific: Navbar scroll effect for about.html
+        (function() {
+            'use strict';
+            var navbar = document.getElementById('navbar');
+            if (!navbar) return;
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // Back to top
+            var backToTop = document.getElementById('backToTop');
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 400) {
+                        backToTop.classList.add('visible');
+                    } else {
+                        backToTop.classList.remove('visible');
+                    }
+                }, { passive: true });
+                backToTop.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // Dynamic year
+            var yearEl = document.getElementById('footerYear');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
+        })();
+    </script>
+</body>
+</html>

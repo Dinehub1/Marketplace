@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        SarkarTravel - India's Smart Travel Booking Portal
+        A modern, mobile-first travel booking platform for flights, hotels, trains, and buses.
+        Built with vanilla HTML5, CSS3 (Flexbox/Grid), vanilla JavaScript.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO: Title Tag -->
+    <title>SarkarTravel - Book Flights, Hotels, Trains & Buses | Best Prices in India</title>
+
+    <!-- SEO: Meta Description -->
+    <meta name="description" content="SarkarTravel is India's smart travel booking portal. Compare and book flights, hotels, trains, and buses at the best prices. AI-powered recommendations, instant UPI payments, and 24/7 support.">
+
+    <!-- SEO: Additional Meta Tags -->
+    <meta name="keywords" content="book flights, hotel booking, train tickets, bus booking, travel India, cheap flights, SarkarTravel, UPI payment">
+    <meta name="author" content="SarkarTravel">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sarkartravel.in">
+
+    <!-- SEO: Open Graph Tags for Social Sharing -->
+    <meta property="og:title" content="SarkarTravel - Book Flights, Hotels, Trains & Buses">
+    <meta property="og:description" content="Compare and book flights, hotels, trains, and buses at the best prices. AI-powered travel recommendations.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkartravel.in">
+    <meta property="og:image" content="https://sarkartravel.in/og-image.png">
+    <meta property="og:site_name" content="SarkarTravel">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- SEO: Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarTravel - Smart Travel Booking">
+    <meta name="twitter:description" content="Book flights, hotels, trains & buses at the best prices.">
+
+    <!-- SEO: Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "SarkarTravel",
+        "url": "https://sarkartravel.in",
+        "description": "India's smart travel booking portal for flights, hotels, trains, and buses.",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "IN",
+            "addressLocality": "New Delhi"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-1800-123-4567",
+            "contactType": "customer service",
+            "availableLanguage": ["English", "Hindi"]
+        },
+        "priceRange": "₹₹",
+        "sameAs": [
+            "https://twitter.com/sarkartravel",
+            "https://facebook.com/sarkartravel"
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "SarkarTravel",
+        "url": "https://sarkartravel.in",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://sarkartravel.in/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ==================== -->
+    <!-- NAVIGATION BAR       -->
+    <!-- ==================== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="nav-logo" aria-label="SarkarTravel Home">
+                <span class="logo-icon">✈️</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Travel</span></span>
+            </a>
+
+            <!-- Desktop Navigation Links -->
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero" class="nav-link active">Home</a></li>
+                <li><a href="#search" class="nav-link">Book</a></li>
+                <li><a href="#categories" class="nav-link">Explore</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="toggle-icon">🌙</span>
+                </button>
+                <a href="#" class="btn btn-outline" id="loginBtn">Login</a>
+                <a href="#" class="btn btn-primary" id="signupBtn">Sign Up</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu" role="menu">
+            <ul class="mobile-nav-links">
+                <li><a href="#hero" class="mobile-nav-link">Home</a></li>
+                <li><a href="#search" class="mobile-nav-link">Book</a></li>
+                <li><a href="#categories" class="mobile-nav-link">Explore</a></li>
+                <li><a href="#features" class="mobile-nav-link">Features</a></li>
+                <li><a href="#how-it-works" class="mobile-nav-link">How It Works</a></li>
+                <li><a href="#pricing" class="mobile-nav-link">Pricing</a></li>
+                <li><a href="#testimonials" class="mobile-nav-link">Reviews</a></li>
+                <li><a href="#faq" class="mobile-nav-link">FAQ</a></li>
+            </ul>
+            <div class="mobile-nav-actions">
+                <a href="#" class="btn btn-outline btn-block">Login</a>
+                <a href="#" class="btn btn-primary btn-block">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== -->
+    <!-- HERO SECTION         -->
+    <!-- ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-container">
+            <div class="hero-content">
+                <span class="hero-badge">🇮🇳 India's #1 Travel Platform</span>
+                <h1 class="hero-title">
+                    Your Next Adventure<br>
+                    <span class="hero-title-highlight">Starts Here</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Compare and book flights, hotels, trains & buses at the best prices.
+                    AI-powered recommendations, instant UPI payments, and 24/7 support.
+                </p>
+
+                <!-- Hero Search Bar -->
+                <div class="hero-search" id="search">
+                    <!-- Search Tabs -->
+                    <div class="search-tabs" role="tablist">
+                        <button class="search-tab active" role="tab" aria-selected="true" data-tab="flights">
+                            ✈️ Flights
+                        </button>
+                        <button class="search-tab" role="tab" aria-selected="false" data-tab="hotels">
+                            🏨 Hotels
+                        </button>
+                        <button class="search-tab" role="tab" aria-selected="false" data-tab="trains">
+                            🚂 Trains
+                        </button>
+                        <button class="search-tab" role="tab" aria-selected="false" data-tab="buses">
+                            🚌 Buses
+                        </button>
+                    </div>
+
+                    <!-- Search Form: Flights -->
+                    <form class="search-form active" id="flights-form" role="search" aria-label="Search flights">
+                        <div class="search-row">
+                            <div class="search-field">
+                                <label for="from-city">From</label>
+                                <input type="text" id="from-city" placeholder="Departure city" value="Delhi (DEL)" autocomplete="off">
+                            </div>
+                            <button type="button" class="swap-btn" aria-label="Swap cities">⇄</button>
+                            <div class="search-field">
+                                <label for="to-city">To</label>
+                                <input type="text" id="to-city" placeholder="Arrival city" value="Mumbai (BOM)" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="depart-date">Departure</label>
+                                <input type="date" id="depart-date">
+                            </div>
+                            <div class="search-field">
+                                <label for="return-date">Return</label>
+                                <input type="date" id="return-date">
+                            </div>
+                            <div class="search-field">
+                                <label for="travelers">Travelers</label>
+                                <select id="travelers">
+                                    <option value="1">1 Adult</option>
+                                    <option value="2">2 Adults</option>
+                                    <option value="3">3 Adults</option>
+                                    <option value="4">4+ Adults</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-search">🔍 Search Flights</button>
+                        </div>
+                    </form>
+
+                    <!-- Search Form: Hotels -->
+                    <form class="search-form" id="hotels-form" role="search" aria-label="Search hotels">
+                        <div class="search-row">
+                            <div class="search-field">
+                                <label for="hotel-city">City / Hotel</label>
+                                <input type="text" id="hotel-city" placeholder="Where are you staying?" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="check-in">Check-in</label>
+                                <input type="date" id="check-in">
+                            </div>
+                            <div class="search-field">
+                                <label for="check-out">Check-out</label>
+                                <input type="date" id="check-out">
+                            </div>
+                            <div class="search-field">
+                                <label for="guests">Guests</label>
+                                <select id="guests">
+                                    <option value="1">1 Guest</option>
+                                    <option value="2">2 Guests</option>
+                                    <option value="3">3+ Guests</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-search">🔍 Search Hotels</button>
+                        </div>
+                    </form>
+
+                    <!-- Search Form: Trains -->
+                    <form class="search-form" id="trains-form" role="search" aria-label="Search trains">
+                        <div class="search-row">
+                            <div class="search-field">
+                                <label for="train-from">From Station</label>
+                                <input type="text" id="train-from" placeholder="Departure station" autocomplete="off">
+                            </div>
+                            <button type="button" class="swap-btn" aria-label="Swap stations">⇄</button>
+                            <div class="search-field">
+                                <label for="train-to">To Station</label>
+                                <input type="text" id="train-to" placeholder="Arrival station" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="train-date">Journey Date</label>
+                                <input type="date" id="train-date">
+                            </div>
+                            <div class="search-field">
+                                <label for="train-class">Class</label>
+                                <select id="train-class">
+                                    <option value="all">All Classes</option>
+                                    <option value="sl">Sleeper (SL)</option>
+                                    <option value="3ac">3AC</option>
+                                    <option value="2ac">2AC</option>
+                                    <option value="1ac">1AC</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-search">🔍 Search Trains</button>
+                        </div>
+                    </form>
+
+                    <!-- Search Form: Buses -->
+                    <form class="search-form" id="buses-form" role="search" aria-label="Search buses">
+                        <div class="search-row">
+                            <div class="search-field">
+                                <label for="bus-from">From</label>
+                                <input type="text" id="bus-from" placeholder="Departure city" autocomplete="off">
+                            </div>
+                            <button type="button" class="swap-btn" aria-label="Swap cities">⇄</button>
+                            <div class="search-field">
+                                <label for="bus-to">To</label>
+                                <input type="text" id="bus-to" placeholder="Arrival city" autocomplete="off">
+                            </div>
+                            <div class="search-field">
+                                <label for="bus-date">Journey Date</label>
+                                <input type="date" id="bus-date">
+                            </div>
+                            <div class="search-field">
+                                <label for="bus-type">Bus Type</label>
+                                <select id="bus-type">
+                                    <option value="all">All Types</option>
+                                    <option value="ac">AC</option>
+                                    <option value="non-ac">Non-AC</option>
+                                    <option value="sleeper">Sleeper</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-search">🔍 Search Buses</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Hero Stats -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="50">50L+</span>
+                        <span class="stat-label">Happy Travelers</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="500">500+</span>
+                        <span class="stat-label">Destinations</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="98">98%</span>
+                        <span class="stat-label">Satisfaction</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="24">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 1: Top Banner -->
+    <!-- ==================== -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement - Top Banner">
+        <div class="ad-content">
+            <span class="ad-label">Ad</span>
+            <p>🎉 Summer Sale: Flat 30% off on domestic flights! Use code: SUMMER30</p>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- TRAVEL CATEGORIES    -->
+    <!-- ==================== -->
+    <section class="section categories" id="categories">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Explore</span>
+                <h2 class="section-title">Travel <span class="highlight">Categories</span></h2>
+                <p class="section-subtitle">Choose from our wide range of travel services</p>
+            </div>
+
+            <div class="categories-grid">
+                <!-- Category 1: Flights -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book flights">
+                    <div class="category-icon">✈️</div>
+                    <h3 class="category-name">Flights</h3>
+                    <p class="category-desc">Domestic & international flights at best prices</p>
+                    <span class="category-count">500+ Airlines</span>
+                </div>
+
+                <!-- Category 2: Hotels -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book hotels">
+                    <div class="category-icon">🏨</div>
+                    <h3 class="category-name">Hotels</h3>
+                    <p class="category-desc">Luxury to budget stays across India</p>
+                    <span class="category-count">10K+ Hotels</span>
+                </div>
+
+                <!-- Category 3: Trains -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book train tickets">
+                    <div class="category-icon">🚂</div>
+                    <h3 class="category-name">Trains</h3>
+                    <p class="category-desc">IRCTC confirmed tickets, instant booking</p>
+                    <span class="category-count">3000+ Trains</span>
+                </div>
+
+                <!-- Category 4: Buses -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book bus tickets">
+                    <div class="category-icon">🚌</div>
+                    <h3 class="category-name">Buses</h3>
+                    <p class="category-desc">AC, non-AC, sleeper buses everywhere</p>
+                    <span class="category-count">2000+ Routes</span>
+                </div>
+
+                <!-- Category 5: Holiday Packages -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Holiday packages">
+                    <div class="category-icon">🏖️</div>
+                    <h3 class="category-name">Holiday Packages</h3>
+                    <p class="category-desc">Curated packages for every budget</p>
+                    <span class="category-count">1000+ Packages</span>
+                </div>
+
+                <!-- Category 6: Cabs -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book cabs">
+                    <div class="category-icon">🚗</div>
+                    <h3 class="category-name">Cabs</h3>
+                    <p class="category-desc">Airport transfers & city rides</p>
+                    <span class="category-count">500+ Cities</span>
+                </div>
+
+                <!-- Category 7: Activities -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Book activities">
+                    <div class="category-icon">🎢</div>
+                    <h3 class="category-name">Activities</h3>
+                    <p class="category-desc">Tours, adventures & experiences</p>
+                    <span class="category-count">5000+ Activities</span>
+                </div>
+
+                <!-- Category 8: Visa Services -->
+                <div class="category-card" tabindex="0" role="button" aria-label="Visa services">
+                    <div class="category-icon">🛂</div>
+                    <h3 class="category-name">Visa Services</h3>
+                    <p class="category-desc">Quick visa processing for 50+ countries</p>
+                    <span class="category-count">50+ Countries</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- FEATURES SECTION     -->
+    <!-- ==================== -->
+    <section class="section features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Why Us</span>
+                <h2 class="section-title">Smart <span class="highlight">Features</span></h2>
+                <p class="section-subtitle">AI-powered tools to make your travel planning effortless</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">AI Trip Planner</h3>
+                    <p class="feature-desc">Our AI analyzes your preferences and creates personalized itineraries in seconds.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3 class="feature-title">Price Prediction</h3>
+                    <p class="feature-desc">AI predicts price drops so you book at the perfect time and save money.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔔</div>
+                    <h3 class="feature-title">Smart Alerts</h3>
+                    <p class="feature-desc">Get instant notifications for price drops, seat availability, and deals.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3 class="feature-title">UPI Instant Pay</h3>
+                    <p class="feature-desc">Pay instantly with any UPI app — GPay, PhonePe, Paytm, or BHIM.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Easy Cancellation</h3>
+                    <p class="feature-desc">Free cancellation up to 24 hours before departure on most bookings.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="feature-title">Travel Insurance</h3>
+                    <p class="feature-desc">Comprehensive coverage for trip delays, cancellations, and medical emergencies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 2: Mid Content -->
+    <!-- ==================== -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement - Mid Content">
+        <div class="ad-content">
+            <span class="ad-label">Ad</span>
+            <p>🏨 Hotel Deals: Up to 50% off on premium hotels in Goa, Kerala & Rajasthan!</p>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- HOW IT WORKS         -->
+    <!-- ==================== -->
+    <section class="section how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Simple Process</span>
+                <h2 class="section-title">How It <span class="highlight">Works</span></h2>
+                <p class="section-subtitle">Book your trip in just 4 easy steps</p>
+            </div>
+
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🔍</div>
+                    <h3 class="step-title">Search & Compare</h3>
+                    <p class="step-desc">Enter your travel details and compare prices across hundreds of options.</p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🎯</div>
+                    <h3 class="step-title">Choose & Customize</h3>
+                    <p class="step-desc">Pick your preferred option and add extras like meals, seats, or insurance.</p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">💳</div>
+                    <h3 class="step-title">Pay Securely</h3>
+                    <p class="step-desc">Pay with UPI, cards, or net banking. 100% secure transactions.</p>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">🎉</div>
+                    <h3 class="step-title">Travel & Enjoy</h3>
+                    <p class="step-desc">Get instant confirmation. Pack your bags and enjoy the journey!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- POPULAR DESTINATIONS -->
+    <!-- ==================== -->
+    <section class="section destinations" id="destinations">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Trending</span>
+                <h2 class="section-title">Popular <span class="highlight">Destinations</span></h2>
+                <p class="section-subtitle">Explore India's most loved travel destinations</p>
+            </div>
+
+            <div class="destinations-grid">
+                <!-- Destination 1 -->
+                <div class="destination-card">
+                    <div class="destination-image" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <span class="destination-emoji">🕌</span>
+                    </div>
+                    <div class="destination-info">
+                        <h3 class="destination-name">Agra</h3>
+                        <p class="destination-detail">Taj Mahal • 2 nights from <strong>₹4,999</strong></p>
+                    </div>
+                </div>
+
+                <!-- Destination 2 -->
+                <div class="destination-card">
+                    <div class="destination-image" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                        <span class="destination-emoji">🏖️</span>
+                    </div>
+                    <div class="destination-info">
+                        <h3 class="destination-name">Goa</h3>
+                        <p class="destination-detail">Beaches • 3 nights from <strong>₹7,499</strong></p>
+                    </div>
+                </div>
+
+                <!-- Destination 3 -->
+                <div class="destination-card">
+                    <div class="destination-image" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                        <span class="destination-emoji">🏔️</span>
+                    </div>
+                    <div class="destination-info">
+                        <h3 class="destination-name">Manali</h3>
+                        <p class="destination-detail">Mountains • 3 nights from <strong>₹5,999</strong></p>
+                    </div>
+                </div>
+
+                <!-- Destination 4 -->
+                <div class="destination-card">
+                    <div class="destination-image" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                        <span class="destination-emoji">🌴</span>
+                    </div>
+                    <div class="destination-info">
+                        <h3 class="destination-name">Kerala</h3>
+                        <p class="destination-detail">Backwaters • 4 nights from <strong>₹9,999</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 3: Pre-Pricing -->
+    <!-- ==================== -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement - Pre Pricing">
+        <div class="ad-content">
+            <span class="ad-label">Ad</span>
+            <p>🚂 IRCTC Partner: Book train tickets with zero convenience fee this month!</p>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- PRICING PLANS        -->
+    <!-- ==================== -->
+    <section class="section pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Pricing</span>
+                <h2 class="section-title">Membership <span class="highlight">Plans</span></h2>
+                <p class="section-subtitle">Unlock exclusive deals with our membership plans</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Explorer</h3>
+                        <p class="pricing-desc">Perfect for occasional travelers</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">0</span>
+                        <span class="price-period">/forever</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Basic search & compare</li>
+                        <li>✅ Standard deals</li>
+                        <li>✅ Email support</li>
+                        <li>✅ UPI payments</li>
+                        <li>✅ Mobile app access</li>
+                        <li>❌ AI trip planner</li>
+                        <li>❌ Price prediction</li>
+                        <li>❌ Priority support</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block">Get Started</button>
+                </div>
+
+                <!-- Pro Plan (Popular) -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Adventurer</h3>
+                        <p class="pricing-desc">Best for frequent travelers</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">499</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Explorer</li>
+                        <li>✅ AI trip planner</li>
+                        <li>✅ Price prediction alerts</li>
+                        <li>✅ 10% extra discount</li>
+                        <li>✅ Priority customer support</li>
+                        <li>✅ Free cancellation protection</li>
+                        <li>✅ Early access to sales</li>
+                        <li>❌ Dedicated travel agent</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="openPaymentModal(499, 'Adventurer Plan')">Subscribe Now</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Globetrotter</h3>
+                        <p class="pricing-desc">For travel enthusiasts</p>
+                    </div>
+                    <div class="pricing-price">
+                        <span class="price-currency">₹</span>
+                        <span class="price-amount">1,999</span>
+                        <span class="price-period">/year</span>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✅ Everything in Adventurer</li>
+                        <li>✅ Dedicated travel agent</li>
+                        <li>✅ 20% extra discount</li>
+                        <li>✅ Lounge access (domestic)</li>
+                        <li>✅ Free travel insurance</li>
+                        <li>✅ Visa assistance</li>
+                        <li>✅ Airport transfers</li>
+                        <li>✅ VIP hotel upgrades</li>
+                    </ul>
+                    <button class="btn btn-primary btn-block" onclick="openPaymentModal(1999, 'Globetrotter Plan')">Subscribe Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- TESTIMONIALS         -->
+    <!-- ==================== -->
+    <section class="section testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Reviews</span>
+                <h2 class="section-title">What Our <span class="highlight">Travelers Say</span></h2>
+                <p class="section-subtitle">Real stories from real travelers</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"SarkarTravel made our family trip to Kerala so easy! The AI trip planner suggested the best routes and the UPI payment was instant. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨</div>
+                        <div class="author-info">
+                            <strong class="author-name">Rajesh Sharma</strong>
+                            <span class="author-location">Delhi → Kerala</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="5 out of 5 stars">⭐⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"I saved ₹3,500 on my Goa trip thanks to the price prediction feature. It told me exactly when to bookmark. The Adventurer plan is totally worth it!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👩</div>
+                        <div class="author-info">
+                            <strong class="author-name">Priya Patel</strong>
+                            <span class="author-location">Mumbai → Goa</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars" aria-label="4 out of 5 stars">⭐⭐⭐⭐</div>
+                    <p class="testimonial-text">"Booked train tickets for my parents at 2 AM and got confirmed seats instantly. The 24/7 support is a lifesaver. Best travel platform in India!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">👨</div>
+                        <div class="author-info">
+                            <strong class="author-name">Amit Kumar</strong>
+                            <span class="author-location">Bangalore → Chennai</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- AD SLOT 4: Pre-FAQ   -->
+    <!-- ==================== -->
+    <div class="ad-slot" role="complementary" aria-label="Advertisement - Pre FAQ">
+        <div class="ad-content">
+            <span class="ad-label">Ad</span>
+            <p>🛡️ Travel Insurance: Protect your trip from just ₹99/booking. Covers delays, cancellations & medical!</p>
+        </div>
+    </div>
+
+    <!-- ==================== -->
+    <!-- FAQ ACCORDION        -->
+    <!-- ==================== -->
+    <section class="section faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">FAQ</span>
+                <h2 class="section-title">Frequently Asked <span class="highlight">Questions</span></h2>
+                <p class="section-subtitle">Everything you need to know about booking with us</p>
+            </div>
+
+            <div class="faq-list" role="list">
+                <!-- FAQ 1 -->
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-1">
+                        <span>How do I book a flight on SarkarTravel?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer" id="faq-answer-1" role="region" aria-hidden="true">
+                        <p>Simply enter your departure and arrival cities, select your travel dates, and click "Search Flights." Compare prices across airlines, choose your preferred flight, and pay securely with UPI, card, or net banking. You'll receive instant confirmation via email and SMS.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-2">
+                        <span>What payment methods do you accept?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer" id="faq-answer-2" role="region" aria-hidden="true">
+                        <p>We accept all major payment methods including UPI (GPay, PhonePe, Paytm, BHIM), credit/debit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and EMI options. All transactions are 100% secure with 256-bit encryption.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-3">
+                        <span>Can I cancel my booking? What's the refund policy?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer" id="faq-answer-3" role="region" aria-hidden="true">
+                        <p>Yes! Free cancellation is available up to 24 hours before departure on most bookings. Adventurer and Globetrotter members get free cancellation protection. Refunds are processed within 5-7 business days to your original payment method.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-4">
+                        <span>How does the AI trip planner work?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer" id="faq-answer-4" role="region" aria-hidden="true">
+                        <p>Our AI trip planner analyzes your travel preferences, budget, dates, and interests to create a personalized itinerary. It considers factors like weather, local events, crowd levels, and reviews to recommend the best destinations, hotels, and activities. Available free for Adventurer and Globetrotter members.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-item" role="listitem">
+                    <button class="faq-question" aria-expanded="false" aria-controls="faq-answer-5">
+                        <span>Is my personal and payment data secure?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer" id="faq-answer-5" role="region" aria-hidden="true">
+                        <p>Absolutely! We use industry-standard 256-bit SSL encryption for all data transmission. We are PCI-DSS compliant and never store your full card details. Your privacy is our top priority — we never share your personal data with third parties without your consent.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- CTA SECTION          -->
+    <!-- ==================== -->
+    <section class="section cta" id="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Start Your Journey?</h2>
+                <p class="cta-subtitle">Join 50 lakh+ happy travelers who trust SarkarTravel for their adventures.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary btn-lg">Explore Deals</button>
+                    <button class="btn btn-outline btn-lg">Download App</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== -->
+    <!-- FOOTER               -->
+    <!-- ==================== -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="footer-logo">
+                        <span class="logo-icon">✈️</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Travel</span></span>
+                    </a>
+                    <p class="footer-desc">India's smart travel booking portal. Compare and book flights, hotels, trains & buses at the best prices with AI-powered recommendations.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">📘</a>
+                        <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+                        <a href="#" class="social-link" aria-label="Instagram">📷</a>
+                        <a href="#" class="social-link" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#hero">Home</a></li>
+                        <li><a href="#search">Book Tickets</a></li>
+                        <li><a href="#categories">Categories</a></li>
+                        <li><a href="#destinations">Destinations</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li>📧 support@sarkartravel.in</li>
+                        <li>📞 1800-123-4567 (Toll Free)</li>
+                        <li>📍 New Delhi, India</li>
+                        <li>🕐 24/7 Customer Support</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 SarkarTravel. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== -->
+    <!-- UPI PAYMENT MODAL    -->
+    <!-- ==================== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle" aria-hidden="true">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="paymentModalTitle">Complete Payment</h3>
+                <button class="modal-close" id="modalClose" aria-label="Close payment modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Payment Amount Display -->
+                <div class="payment-amount">
+                    <span class="payment-label">Amount to Pay</span>
+                    <span class="payment-value" id="paymentAmount">₹499</span>
+                </div>
+
+                <!-- Payment Method Tabs -->
+                <div class="payment-tabs" role="tablist">
+                    <button class="payment-tab active" role="tab" aria-selected="true" data-paytab="upi">
+                        📱 UPI
+                    </button>
+                    <button class="payment-tab" role="tab" aria-selected="false" data-paytab="card">
+                        💳 Card
+                    </button>
+                    <button class="payment-tab" role="tab" aria-selected="false" data-paytab="netbanking">
+                        🏦 Net Banking
+                    </button>
+                </div>
+
+                <!-- UPI Payment Form -->
+                <div class="payment-form active" id="upi-form">
+                    <div class="form-group">
+                        <label for="upi-id">UPI ID</label>
+                        <input type="text" id="upi-id" placeholder="yourname@upi" autocomplete="off">
+                    </div>
+                    <div class="upi-apps">
+                        <p>Or pay using:</p>
+                        <div class="upi-app-buttons">
+                            <button class="upi-app-btn" onclick="alert('Opening Google Pay...')">GPay</button>
+                            <button class="upi-app-btn" onclick="alert('Opening PhonePe...')">PhonePe</button>
+                            <button class="upi-app-btn" onclick="alert('Opening Paytm...')">Paytm</button>
+                            <button class="upi-app-btn" onclick="alert('Opening BHIM...')">BHIM</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="payBtn">Pay Now</button>
+                </div>
+
+                <!-- Card Payment Form -->
+                <div class="payment-form" id="card-form">
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card-expiry">Expiry</label>
+                            <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+                        </div>
+                        <div class="form-group">
+                            <label for="card-cvv">CVV</label>
+                            <input type="password" id="card-cvv" placeholder="123" maxlength="3" autocomplete="cc-csc">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-name">Cardholder Name</label>
+                        <input type="text" id="card-name" placeholder="Name on card" autocomplete="cc-name">
+                    </div>
+                    <button class="btn btn-primary btn-block" id="cardPayBtn">Pay Now</button>
+                </div>
+
+                <!-- Net Banking Form -->
+                <div class="payment-form" id="netbanking-form">
+                    <div class="form-group">
+                        <label for="bank-select">Select Bank</label>
+                        <select id="bank-select">
+                            <option value="">Choose your bank</option>
+                            <option value="sbi">State Bank of India</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="pnb">Punjab National Bank</option>
+                            <option value="bob">Bank of Baroda</option>
+                            <option value="kotak">Kotak Mahindra Bank</option>
+                            <option value="indusind">IndusInd Bank</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="netBankPayBtn">Pay Now</button>
+                </div>
+
+                <!-- Payment Success Message (hidden by default) -->
+                <div class="payment-success" id="paymentSuccess" style="display:none;">
+                    <div class="success-icon">✅</div>
+                    <h4>Payment Successful!</h4>
+                    <p>Your payment of <strong id="successAmount">₹499</strong> has been processed.</p>
+                    <p>Confirmation details have been sent to your email.</p>
+                    <button class="btn btn-primary btn-block" onclick="closePaymentModal()">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

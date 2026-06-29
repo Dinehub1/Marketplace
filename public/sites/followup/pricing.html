@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+        FollowUp CRM — Pricing Page
+        Dedicated pricing page with plan comparison, FAQ, and UPI payment modal.
+        Built mobile-first with full SEO, Schema.org, and ad slots.
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- ===== SEO Meta Tags ===== -->
+    <title>Pricing — FollowUp CRM | Plans Starting Free | Rs.499/mo Pro</title>
+    <meta name="description" content="FollowUp CRM pricing: Starter plan free forever, Pro at Rs.499/month, Enterprise at Rs.1,999/month. Unlimited leads, pipeline, and analytics.">
+    <meta name="keywords" content="CRM pricing, FollowUp CRM plans, sales pipeline software price, Indian CRM cost, lead management pricing, Rs.499 CRM">
+    <meta name="author" content="FollowUp CRM">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://followupcrm.in/pricing.html">
+
+    <!-- ===== Open Graph / Social Sharing ===== -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Pricing — FollowUp CRM | Plans Starting Free">
+    <meta property="og:description" content="Starter free forever, Pro Rs.499/mo, Enterprise Rs.1,999/mo. Unlimited leads, pipeline, analytics. Start free trial today.">
+    <meta property="og:url" content="https://followupcrm.in/pricing.html">
+    <meta property="og:site_name" content="FollowUp CRM">
+    <meta property="og:image" content="https://followupcrm.in/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- ===== Twitter Card ===== -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pricing — FollowUp CRM | Plans Starting Free">
+    <meta name="twitter:description" content="Starter free forever, Pro Rs.499/mo. Unlimited leads, pipeline, analytics. Start free trial.">
+    <meta name="twitter:image" content="https://followupcrm.in/og-image.png">
+
+    <!-- ===== Preconnect for Performance ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- ===== Schema.org JSON-LD Structured Data ===== -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Pricing — FollowUp CRM",
+        "description": "FollowUp CRM pricing plans: Starter free, Pro Rs.499/month, Enterprise Rs.1,999/month.",
+        "url": "https://followupcrm.in/pricing.html",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "FollowUp CRM",
+            "url": "https://followupcrm.in"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": "FollowUp CRM",
+        "description": "Smart lead management and sales pipeline CRM for Indian small businesses.",
+        "offers": [
+            {
+                "@type": "Offer",
+                "name": "Starter Plan",
+                "price": "0",
+                "priceCurrency": "INR",
+                "priceValidUntil": "2027-12-31",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer",
+                "name": "Pro Plan",
+                "price": "499",
+                "priceCurrency": "INR",
+                "priceValidUntil": "2027-12-31",
+                "availability": "https://schema.org/InStock"
+            },
+            {
+                "@type": "Offer",
+                "name": "Enterprise Plan",
+                "price": "1999",
+                "priceCurrency": "INR",
+                "priceValidUntil": "2027-12-31",
+                "availability": "https://schema.org/InStock"
+            }
+        ]
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Main Stylesheet (shared with index.html) -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- ===== Page-Specific Styles ===== -->
+    <style>
+        /* ---- Pricing Page Hero ---- */
+        .pricing-page-hero {
+            padding: 120px 0 60px;
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #4f46e5 100%);
+            text-align: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .pricing-page-hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .pricing-page-hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+
+        /* ---- Billing Toggle ---- */
+        .billing-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50px;
+            padding: 6px 20px;
+            position: relative;
+        }
+        .billing-label { font-size: 0.9rem; font-weight: 500; }
+        .billing-label.active { color: #fff; }
+        .billing-label.inactive { color: rgba(255,255,255,0.6); }
+        .billing-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 13px;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition);
+        }
+        .billing-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .billing-switch.annual::after { transform: translateX(22px); }
+        .save-badge {
+            background: #10b981;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 4px;
+        }
+
+        /* ---- Pricing Cards (Enhanced for standalone page) ---- */
+        .pricing-cards-section { padding: 60px 0; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .pricing-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: var(--transition);
+        }
+        .pricing-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-md);
+            transform: scale(1.03);
+        }
+        .pricing-card.featured:hover { transform: scale(1.03) translateY(-4px); }
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .plan-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .plan-name { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+        .plan-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+        .plan-price { margin-bottom: 1.5rem; }
+        .currency { font-size: 1.2rem; vertical-align: super; }
+        .amount { font-size: 2.5rem; font-weight: 800; }
+        .period { color: var(--text-muted); font-size: 0.9rem; }
+        .plan-features { text-align: left; margin-bottom: 1.5rem; }
+        .plan-features li { padding: 0.4rem 0; font-size: 0.9rem; color: var(--text-secondary); }
+        .plan-features i { color: var(--success); margin-right: 0.5rem; }
+        .btn-block { width: 100%; }
+
+        /* ---- Feature Comparison Table ---- */
+        .comparison-section { padding: 60px 0; background: var(--bg-secondary); }
+        .comparison-table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+        .comparison-table th {
+            background: var(--bg-secondary);
+            font-weight: 700;
+            color: var(--text-primary);
+            position: sticky;
+            top: 0;
+        }
+        .comparison-table th:first-child,
+        .comparison-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: var(--accent-light); }
+        .check-icon { color: var(--success); font-size: 1.1rem; }
+        .cross-icon { color: var(--text-muted); font-size: 1.1rem; }
+        .feature-col-header { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .feature-col-header .col-price { font-size: 0.75rem; font-weight: 400; color: var(--text-muted); }
+
+        /* ---- FAQ Section ---- */
+        .pricing-faq-section { padding: 60px 0; }
+        .faq-list { max-width: 700px; margin: 0 auto; }
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .faq-question i { transition: transform 0.3s; color: var(--accent); }
+        .faq-item.active .faq-question i { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+        .faq-item.active .faq-answer { max-height: 300px; }
+        .faq-answer p { padding: 0 1.2rem 1rem; font-size: 0.9rem; color: var(--text-secondary); }
+
+        /* ---- CTA Section ---- */
+        .pricing-cta-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            text-align: center;
+            color: white;
+        }
+        .pricing-cta-section h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; margin-bottom: 12px; }
+        .pricing-cta-section p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 32px; max-width: 550px; margin-left: auto; margin-right: auto; }
+        .pricing-cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .btn-white { background: #fff; color: var(--accent); font-weight: 700; }
+        .btn-white:hover { background: var(--accent-light); }
+        .btn-outline-white { background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.5); }
+        .btn-outline-white:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+
+        /* ---- Trust Badges ---- */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .trust-badge { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; opacity: 0.85; }
+        .trust-badge i { font-size: 1.1rem; }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 992px) {
+            .pricing-grid { grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+            .pricing-card { padding: 1.5rem; }
+            .amount { font-size: 2rem; }
+        }
+        @media (max-width: 768px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+            .pricing-card.featured { transform: none; }
+            .pricing-card.featured:hover { transform: translateY(-4px); }
+            .trust-badges { gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SKIP TO CONTENT (Accessibility) ========== -->
+    <a href="#main-content" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="index.html" class="nav-logo" aria-label="FollowUp CRM Home">
+                <i class="fas fa-bolt" aria-hidden="true"></i>
+                <span>Follow<span class="logo-accent">Up</span> <small style="font-size:0.6em;color:var(--text-muted);font-weight:400">CRM</small></span>
+            </a>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <ul class="nav-menu" id="navMenu" role="menubar">
+                <li role="none"><a href="index.html#dashboard" role="menuitem" class="nav-link">Dashboard</a></li>
+                <li role="none"><a href="index.html#leads" role="menuitem" class="nav-link">Leads</a></li>
+                <li role="none"><a href="index.html#pipeline" role="menuitem" class="nav-link">Pipeline</a></li>
+                <li role="none"><a href="index.html#calendar" role="menuitem" class="nav-link">Calendar</a></li>
+                <li role="none"><a href="index.html#analytics" role="menuitem" class="nav-link">Analytics</a></li>
+                <li role="none"><a href="pricing.html" role="menuitem" class="nav-link active">Pricing</a></li>
+                <li role="none"><a href="index.html#testimonials" role="menuitem" class="nav-link">Testimonials</a></li>
+                <li role="none"><a href="index.html#faq" role="menuitem" class="nav-link">FAQ</a></li>
+            </ul>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+                <a href="index.html#dashboard" class="btn btn-primary btn-sm nav-cta">
+                    <i class="fas fa-rocket" aria-hidden="true"></i> Start Free
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main id="main-content">
+
+        <!-- ========== PRICING HERO ========== -->
+        <section class="pricing-page-hero" aria-labelledby="pricing-hero-title">
+            <div class="container">
+                <h1 id="pricing-hero-title">Simple, Transparent Pricing</h1>
+                <p>Start free. Scale as you grow. No hidden charges, no surprises. Cancel anytime.</p>
+
+                <!-- Billing Toggle -->
+                <div class="billing-toggle" role="group" aria-label="Billing period toggle">
+                    <span class="billing-label active" id="monthlyLabel">Monthly</span>
+                    <button class="billing-switch" id="billingSwitch" aria-label="Toggle annual billing" aria-pressed="false"></button>
+                    <span class="billing-label inactive" id="annualLabel">Annual <span class="save-badge">Save 20%</span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 1 - Below Hero ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ========== PRICING CARDS ========== -->
+        <section class="pricing-cards-section" aria-labelledby="plans-title">
+            <div class="container">
+                <div class="section-header" style="text-align:center;margin-bottom:40px">
+                    <h2 id="plans-title" class="section-title">Choose Your <span class="gradient-text">Plan</span></h2>
+                    <p class="section-subtitle">All plans include a 14-day free trial. No credit card required.</p>
+                </div>
+
+                <div class="pricing-grid">
+
+                    <!-- ===== STARTER PLAN ===== -->
+                    <div class="pricing-card" data-plan="free">
+                        <div class="plan-icon">🌱</div>
+                        <div class="plan-name">Starter</div>
+                        <div class="plan-desc">Perfect for solo entrepreneurs</div>
+                        <div class="plan-price">
+                            <span class="currency">Rs.</span><span class="amount" data-monthly="0" data-annual="0">0</span>
+                            <span class="period" data-monthly-period="/month" data-annual-period="/month">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Up to 100 leads</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Basic pipeline view</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Follow-up reminders</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Email support</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Mobile responsive</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" data-plan="free">Get Started Free</button>
+                    </div>
+
+                    <!-- ===== PRO PLAN (FEATURED) ===== -->
+                    <div class="pricing-card featured" data-plan="pro">
+                        <div class="pricing-badge">Most Popular</div>
+                        <div class="plan-icon">🚀</div>
+                        <div class="plan-name">Pro</div>
+                        <div class="plan-desc">For growing sales teams</div>
+                        <div class="plan-price">
+                            <span class="currency">Rs.</span><span class="amount" data-monthly="499" data-annual="399">499</span>
+                            <span class="period" data-monthly-period="/month" data-annual-period="/month">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited leads</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Advanced pipeline & Kanban</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Calendar & follow-up scheduling</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Analytics & reports</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Team collaboration (up to 5)</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Priority support</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> CSV import/export</li>
+                        </ul>
+                        <button class="btn btn-primary btn-block" data-plan="pro">Start Pro Trial</button>
+                    </div>
+
+                    <!-- ===== ENTERPRISE PLAN ===== -->
+                    <div class="pricing-card" data-plan="enterprise">
+                        <div class="plan-icon">🏢</div>
+                        <div class="plan-name">Enterprise</div>
+                        <div class="plan-desc">For large organizations</div>
+                        <div class="plan-price">
+                            <span class="currency">Rs.</span><span class="amount" data-monthly="1999" data-annual="1599">1,999</span>
+                            <span class="period" data-monthly-period="/month" data-annual-period="/month">/month</span>
+                        </div>
+                        <ul class="plan-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Everything in Pro</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited team members</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Custom integrations & API</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Dedicated account manager</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> SLA guarantee (99.9%)</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> On-premise deployment option</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Custom branding</li>
+                        </ul>
+                        <button class="btn btn-outline btn-block" data-plan="enterprise">Contact Sales</button>
+                    </div>
+
+                </div><!-- /pricing-grid -->
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 2 - Mid Content ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+        <!-- ========== FEATURE COMPARISON TABLE ========== -->
+        <section class="comparison-section" aria-labelledby="compare-title">
+            <div class="container">
+                <div class="section-header" style="text-align:center;margin-bottom:40px">
+                    <h2 id="compare-title" class="section-title">Compare <span class="gradient-text">Features</span></h2>
+                    <p class="section-subtitle">See exactly what's included in each plan</p>
+                </div>
+
+                <div class="comparison-table-wrapper">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>
+                                    <div class="feature-col-header">
+                                        <span>Starter</span>
+                                        <span class="col-price">Free</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="feature-col-header">
+                                        <span>Pro</span>
+                                        <span class="col-price">Rs.499/mo</span>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="feature-col-header">
+                                        <span>Enterprise</span>
+                                        <span class="col-price">Rs.1,999/mo</span>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Leads</td>
+                                <td>100</td>
+                                <td>Unlimited</td>
+                                <td>Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td>Pipeline views</td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Kanban board</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Calendar & scheduling</td>
+                                <td>Basic</td>
+                                <td>Advanced</td>
+                                <td>Advanced</td>
+                            </tr>
+                            <tr>
+                                <td>Analytics & reports</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Team members</td>
+                                <td>1</td>
+                                <td>Up to 5</td>
+                                <td>Unlimited</td>
+                            </tr>
+                            <tr>
+                                <td>CSV import/export</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>API access</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>Dedicated support</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-check check-icon" aria-label="Included"></i></td>
+                            </tr>
+                            <tr>
+                                <td>SLA guarantee</td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td><i class="fas fa-times cross-icon" aria-label="Not included"></i></td>
+                                <td>99.9%</td>
+                            </tr>
+                            <tr>
+                                <td>Support</td>
+                                <td>Email</td>
+                                <td>Priority email + chat</td>
+                                <td>Dedicated manager</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 3 - Before FAQ ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 300x250 Rectangle</span>
+            </div>
+        </div>
+
+        <!-- ========== MONEY-BACK GUARANTEE ========== -->
+        <section class="guarantee-section" aria-labelledby="guarantee-title" style="padding:60px 0;background:var(--bg-secondary)">
+            <div class="container" style="text-align:center">
+                <div style="max-width:600px;margin:0 auto">
+                    <div style="font-size:3rem;margin-bottom:16px">🛡️</div>
+                    <h2 id="guarantee-title" class="section-title" style="margin-bottom:12px">7-Day Money-Back Guarantee</h2>
+                    <p class="section-subtitle" style="margin-bottom:24px">Try FollowUp CRM risk-free. If you're not completely satisfied within the first 7 days, we'll refund your payment — no questions asked, no hassle.</p>
+                    <div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:24px">
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--text-secondary)">
+                            <i class="fas fa-check-circle" style="color:var(--success)" aria-hidden="true"></i> No questions asked
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--text-secondary)">
+                            <i class="fas fa-check-circle" style="color:var(--success)" aria-hidden="true"></i> Full refund
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--text-secondary)">
+                            <i class="fas fa-check-circle" style="color:var(--success)" aria-hidden="true"></i> Cancel anytime
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== FAQ SECTION ========== -->
+        <section class="pricing-faq-section" aria-labelledby="pricing-faq-title">
+            <div class="container">
+                <div class="section-header" style="text-align:center;margin-bottom:40px">
+                    <h2 id="pricing-faq-title" class="section-title">Pricing <span class="gradient-text">FAQ</span></h2>
+                    <p class="section-subtitle">Common questions about our plans and billing</p>
+                </div>
+
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is the Starter plan really free forever?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! Our Starter plan is completely free forever — up to 100 leads with basic pipeline, follow-up reminders, and email support. No credit card required, no hidden fees, no expiration.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I switch plans at any time?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Absolutely. You can upgrade or downgrade your plan at any time. When upgrading, you'll be charged a prorated amount for the remainder of your billing cycle. When downgrading, the credit applies to your next invoice.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What payment methods do you accept?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We accept UPI (Google Pay, PhonePe, Paytm, BHIM), all major credit and debit cards (Visa, Mastercard, RuPay), and net banking from all major Indian banks. All payments are processed securely with 256-bit SSL encryption.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Do you offer a discount for annual billing?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! When you choose annual billing, you save 20% on all paid plans. That's Rs.399/month for Pro (instead of Rs.499) and Rs.1,599/month for Enterprise (instead of Rs.1,999). Toggle the switch above to see annual pricing.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What happens if I exceed my plan limits?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>If you approach your lead limit on the Starter plan, we'll notify you and suggest upgrading. Your data is never deleted — you just won't be able to add new leads until you upgrade or clean up existing ones.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I cancel my subscription anytime?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes, you can cancel your subscription at any time with no cancellation fees. You'll continue to have access to your paid features until the end of your billing period. After cancellation, your account reverts to the free Starter plan.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is my data secure?</span>
+                            <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We use industry-standard security practices, regular security audits, and your leads and customer data are never shared with third parties.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CTA SECTION ========== -->
+        <section class="pricing-cta-section" aria-labelledby="pricing-cta-title">
+            <div class="container">
+                <h2 id="pricing-cta-title">Ready to Close More Deals?</h2>
+                <p>Join 5,000+ sales teams who use FollowUp CRM. Start your free trial today — no credit card needed.</p>
+                <div class="pricing-cta-buttons">
+                    <a href="index.html#dashboard" class="btn btn-lg btn-white">
+                        <i class="fas fa-rocket" aria-hidden="true"></i> Start Free Trial
+                    </a>
+                    <a href="index.html#testimonials" class="btn btn-lg btn-outline-white">
+                        <i class="fas fa-play" aria-hidden="true"></i> See Testimonials
+                    </a>
+                </div>
+                <div class="trust-badges">
+                    <div class="trust-badge"><i class="fas fa-shield-alt" aria-hidden="true"></i> 256-bit SSL</div>
+                    <div class="trust-badge"><i class="fas fa-lock" aria-hidden="true"></i> Secure Payments</div>
+                    <div class="trust-badge"><i class="fas fa-undo" aria-hidden="true"></i> Cancel Anytime</div>
+                    <div class="trust-badge"><i class="fas fa-headset" aria-hidden="true"></i> 24/7 Support</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== AD SLOT 4 - Before Footer ========== -->
+        <div class="ad-slot" aria-label="Advertisement" role="complementary">
+            <div class="ad-placeholder">
+                <span class="ad-label">Ad</span>
+                <span>Advertisement Space — 728x90 Leaderboard</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <a href="index.html" class="nav-logo">
+                        <i class="fas fa-bolt" aria-hidden="true"></i>
+                        <span>Follow<span class="logo-accent">Up</span></span>
+                    </a>
+                    <p class="footer-desc">Smart lead management and sales pipeline CRM built for Indian small businesses. Never lose a lead again.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="index.html#dashboard">Dashboard</a></li>
+                        <li><a href="index.html#leads">Lead Management</a></li>
+                        <li><a href="index.html#pipeline">Pipeline</a></li>
+                        <li><a href="index.html#calendar">Calendar</a></li>
+                        <li><a href="index.html#analytics">Analytics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Data Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 FollowUp CRM. All rights reserved. Made with <i class="fas fa-heart" aria-hidden="true" style="color:var(--danger);"></i> in India.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="paymentModalTitle">Upgrade Your Plan</div>
+                <button class="modal-close" id="paymentClose" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <!-- Plan Summary -->
+                <div class="payment-summary">
+                    <div class="summary-row">
+                        <span>Selected Plan</span>
+                        <strong id="payPlanName">Pro</strong>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <strong id="payAmount">Rs.499/month</strong>
+                    </div>
+                </div>
+
+                <!-- UPI ID Display & Copy -->
+                <div class="upi-id-display">
+                    <div class="upi-id-label">UPI ID</div>
+                    <div class="upi-id-row">
+                        <code id="upiIdDisplay">followupcrm@paytm</code>
+                        <button class="btn btn-sm btn-outline" id="copyUpiBtn" aria-label="Copy UPI ID">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code (dynamically generated UPI QR) -->
+                <div class="upi-qr">
+                    <div class="qr-placeholder" id="qrCodeContainer">
+                        <i class="fas fa-qrcode"></i>
+                        <span>Scan QR to Pay</span>
+                    </div>
+                </div>
+
+                <!-- Payment Method Tabs -->
+                <div class="payment-tabs" role="tablist">
+                    <button class="payment-tab active" data-tab="upi" role="tab" aria-selected="true" aria-controls="upiContent">
+                        <i class="fas fa-mobile-alt" aria-hidden="true"></i> UPI
+                    </button>
+                    <button class="payment-tab" data-tab="card" role="tab" aria-selected="false" aria-controls="cardContent">
+                        <i class="fas fa-credit-card" aria-hidden="true"></i> Card
+                    </button>
+                    <button class="payment-tab" data-tab="netbanking" role="tab" aria-selected="false" aria-controls="netbankingContent">
+                        <i class="fas fa-university" aria-hidden="true"></i> Net Banking
+                    </button>
+                </div>
+
+                <!-- UPI Payment Content -->
+                <div class="payment-content active" id="upiContent" role="tabpanel">
+                    <div class="upi-providers">
+                        <button class="upi-provider" onclick="window.open('phonepe://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">📱</span> PhonePe
+                        </button>
+                        <button class="upi-provider" onclick="window.open('paytmmp://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">💙</span> Paytm
+                        </button>
+                        <button class="upi-provider" onclick="window.open('upi://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">🔵</span> Google Pay
+                        </button>
+                        <button class="upi-provider" onclick="window.open('upi://pay?pa=followupcrm@paytm')">
+                            <span style="font-size:1.5rem">🏦</span> BHIM
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card Payment Content -->
+                <div class="payment-content" id="cardContent" role="tabpanel">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cardExpiry">Expiry</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" inputmode="numeric">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardCvv">CVV</label>
+                            <input type="password" id="cardCvv" placeholder="123" maxlength="4" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardName">Name on Card</label>
+                        <input type="text" id="cardName" placeholder="As printed on card">
+                    </div>
+                </div>
+
+                <!-- Net Banking Content -->
+                <div class="payment-content" id="netbankingContent" role="tabpanel">
+                    <div class="form-group">
+                        <label style="font-size:0.85rem;font-weight:600;color:var(--text-secondary)">Select your bank:</label>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.5rem">
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="sbi"> SBI
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="hdfc"> HDFC
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="icici"> ICICI
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="axis"> Axis
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="kotak"> Kotak
+                            </label>
+                            <label style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem;border:1px solid var(--border-color);border-radius:var(--radius-sm);cursor:pointer">
+                                <input type="radio" name="bank" value="pnb"> PNB
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:1.5rem">
+                    <button class="btn btn-primary btn-block btn-lg" id="payNowBtn">
+                        <i class="fas fa-lock" aria-hidden="true"></i> Pay Rs.499 Securely
+                    </button>
+                    <p class="payment-secure">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i> 256-bit SSL encrypted payment
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== CONTACT SALES MODAL ========== -->
+    <div class="modal-overlay" id="contactSalesModal" role="dialog" aria-modal="true" aria-labelledby="contactSalesTitle" style="display:none;">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <div class="modal-title" id="contactSalesTitle">Contact Sales</div>
+                <button class="modal-close" id="contactSalesClose" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:1.2rem;text-align:center">
+                    Tell us about your organization and our enterprise team will get back to you within 24 hours.
+                </p>
+                <form id="contactSalesForm" novalidate>
+                    <div class="form-group">
+                        <label for="salesName">Full Name <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="salesName" placeholder="Your full name" required autocomplete="name">
+                        <div class="field-error" id="salesNameError">Please enter your name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesEmail">Work Email <span style="color:var(--danger)">*</span></label>
+                        <input type="email" id="salesEmail" placeholder="you@company.com" required autocomplete="email">
+                        <div class="field-error" id="salesEmailError">Please enter a valid work email</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesPhone">Phone Number</label>
+                        <input type="tel" id="salesPhone" placeholder="+91 98765 43210" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="salesCompany">Company Name <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="salesCompany" placeholder="Your company name" required>
+                        <div class="field-error" id="salesCompanyError">Please enter your company name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesTeamSize">Team Size</label>
+                        <select id="salesTeamSize">
+                            <option value="">Select team size</option>
+                            <option value="1-5">1-5 members</option>
+                            <option value="6-20">6-20 members</option>
+                            <option value="21-50">21-50 members</option>
+                            <option value="51-200">51-200 members</option>
+                            <option value="200+">200+ members</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="salesMessage">What do you need? <span style="color:var(--danger)">*</span></label>
+                        <textarea id="salesMessage" placeholder="Tell us about your requirements, integrations needed, etc." rows="3" required></textarea>
+                        <div class="field-error" id="salesMessageError">Please describe your requirements</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="contactSalesSubmit">
+                        <i class="fas fa-paper-plane" aria-hidden="true"></i> Send Inquiry
+                    </button>
+                    <p class="payment-secure" style="margin-top:0.8rem">
+                        <i class="fas fa-lock" aria-hidden="true"></i> Your information is secure and will never be shared
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ========== JAVASCRIPT ==========
+         app.js handles all interactivity: billing toggle, FAQ accordion,
+         payment modal, dark mode, navbar, and pricing button handlers.
+         No inline JS needed — this eliminates duplicate event handlers. -->
+    <script src="app.js"></script>
+
+</body>
+</html>

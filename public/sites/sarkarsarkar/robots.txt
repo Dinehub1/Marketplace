@@ -1,0 +1,11 @@
+# robots.txt for SarkarSarkar - Government Services Portal
+# https://sarkarsarkar.in/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://sarkarsarkar.in/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mera Ayurvedic — Pure Ayurvedic Medicine & Wellness</title>
+<meta name="description" content="Mera Ayurvedic — 17+ authentic Ayurvedic medicines. Shilajit, Ashwagandha, Moringa, Weight Loss, Hair Growth. GMP certified, 50K+ customers.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root{--primary:#2d6a4f;--primary-dark:#1b4332;--secondary:#d4a373;--accent:#e76f51;--bg:#faf9f6;--card:#fff;--text:#1a1a2e;--text-light:#5a5a72;--border:#e8e4de;--success:#40916c;--shadow:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 25px -3px rgba(0,0,0,.1);--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding-bottom:60px}
+a{text-decoration:none;color:inherit}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:0;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-lg)}
+.header .container{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:10px;color:#fff}
+.logo i{font-size:1.7rem;color:var(--secondary)}
+.nav{display:flex;gap:6px;align-items:center}
+.nav a{color:rgba(255,255,255,.85);font-weight:500;font-size:.875rem;padding:6px 14px;border-radius:6px}
+.nav .btn{background:var(--secondary);color:var(--primary-dark);padding:8px 18px;border-radius:8px;font-weight:700;font-size:.85rem}
+.hero{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:60px 20px;text-align:center}
+.hero h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:800;margin-bottom:12px}
+.hero h1 span{color:var(--secondary)}
+.hero p{font-size:1.1rem;opacity:.9;margin-bottom:28px;max-width:600px;margin:auto}
+.hero .btn{padding:14px 28px;border-radius:10px;font-weight:700;font-size:1rem;display:inline-flex;align-items:center;gap:8px;background:var(--secondary);color:var(--primary-dark)}
+.stats-row{display:flex;justify-content:center;gap:30px;margin-top:30px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-size:1.5rem;font-weight:800;color:var(--secondary)}
+.stat .label{font-size:.75rem;opacity:.8}
+.section{padding:50px 0}
+.section-title{font-size:1.6rem;font-weight:800;text-align:center;margin-bottom:8px}
+.section-subtitle{text-align:center;color:var(--text-light);margin-bottom:35px;font-size:1rem}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .3s;position:relative}
+.product-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.product-card .badge{position:absolute;top:10px;left:10px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;font-size:.65rem;font-weight:700;z-index:1}
+.product-card .img{height:180px;background:linear-gradient(135deg,#f0f4f0,#e8f5e9);display:flex;align-items:center;justify-content:center;font-size:3.5rem;color:var(--primary)}
+.product-card .info{padding:16px}
+.product-card .cat{color:var(--primary);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.product-card .name{font-weight:700;font-size:.95rem;margin-bottom:4px}
+.product-card .rating{color:var(--warning);font-size:.75rem;margin-bottom:6px}
+.product-card .rating span{color:var(--text-light);font-size:.7rem}
+.product-card .price{font-size:1.1rem;font-weight:800;color:var(--primary)}
+.product-card .price .mrp{font-size:.75rem;color:var(--text-light);text-decoration:line-through;font-weight:400;margin-left:4px}
+.product-card .btn{padding:7px 14px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-weight:600;font-size:.75rem;cursor:pointer;margin-top:8px;width:100%}
+.benefits-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.benefit-card{text-align:center;padding:24px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius)}
+.benefit-card .icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.3rem;background:linear-gradient(135deg,rgba(45,106,79,.1),rgba(64,145,108,.1));color:var(--primary)}
+.benefit-card h3{font-size:.95rem;margin-bottom:4px}
+.benefit-card p{font-size:.8rem;color:var(--text-light)}
+.cta{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:50px 20px;text-align:center;border-radius:20px;margin:30px 20px}
+.cta h2{font-size:1.5rem;margin-bottom:10px}
+.cta p{opacity:.9;margin-bottom:20px}
+.cta .btn{display:inline-block;background:var(--secondary);color:var(--primary-dark);padding:12px 28px;border-radius:10px;font-weight:700;font-size:1rem}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.contact-item{display:flex;align-items:start;gap:10px;margin-bottom:14px}
+.contact-item i{color:var(--primary);font-size:1rem;margin-top:2px}
+.contact-item .label{font-weight:600;font-size:.8rem;margin-bottom:2px}
+.contact-item .value{font-size:.85rem;color:var(--text-light)}
+.contact-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-weight:600;margin-bottom:3px;font-size:.8rem}
+.form-group input,.form-group textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:6px;font-size:.85rem}
+.form-group textarea{resize:vertical;min-height:70px}
+.submit-btn{width:100%;background:var(--primary);color:#fff;padding:11px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.95rem}
+.footer{background:var(--primary-dark);color:rgba(255,255,255,.7);padding:40px 20px 20px}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-bottom:24px}
+.footer h4{color:#fff;margin-bottom:12px;font-size:.95rem}
+.footer a{display:block;color:rgba(255,255,255,.6);margin-bottom:6px;font-size:.85rem}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;text-align:center;font-size:.75rem}
+.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);padding:5px 0;z-index:100}
+.mobile-nav a{flex:1;text-align:center;color:var(--text-light);font-size:.65rem;padding:3px}
+.mobile-nav a i{display:block;font-size:1.1rem;margin-bottom:1px}
+@media(max-width:768px){.nav{display:none}.hero h1{font-size:1.6rem}.products-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.contact-grid{grid-template-columns:1fr}.product-card .img{height:130px;font-size:2.5rem}}
+@media(min-width:768px){.mobile-nav{display:none}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="container">
+<a href="#" class="logo"><i class="fas fa-leaf"></i> Mera Ayurvedic</a>
+<nav class="nav">
+<a href="#products">Products</a>
+<a href="#benefits">Benefits</a>
+<a href="#contact">Contact</a>
+<a href="#contact" class="btn">Order Now</a>
+</nav>
+</div>
+</header>
+
+<section class="hero">
+<div class="container">
+<h1>17+ Authentic <span>Ayurvedic</span> Products</h1>
+<p>GMP certified, 100% natural, 50K+ trusted customers</p>
+<a href="#products" class="btn"><i class="fas fa-shopping-bag"></i> Shop All Products</a>
+<div class="stats-row">
+<div class="stat"><div class="num">17+</div><div class="label">Products</div></div>
+<div class="stat"><div class="num">50K+</div><div class="label">Customers</div></div>
+<div class="stat"><div class="num">4.5★</div><div class="label">Avg Rating</div></div>
+</div>
+</div>
+</section>
+
+<!-- ALL PRODUCTS -->
+<section class="section" id="products">
+<div class="container">
+<h2 class="section-title">All Products</h2>
+<p class="section-subtitle">Complete range of authentic Ayurvedic medicines</p>
+<div class="products-grid">
+
+<div class="product-card">
+<div class="badge">BESTSELLER</div>
+<div class="img"><i class="fas fa-weight-scale"></i></div>
+<div class="info"><div class="cat">Weight Loss</div><div class="name">Weight Loss Tablets — 60 Caps</div><div class="rating">★4.67 <span>(3 reviews)</span></div><div class="price">Rs. 1,299 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('Weight Loss Tablets')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="badge">SALE</div>
+<div class="img"><i class="fas fa-gem"></i></div>
+<div class="info"><div class="cat">Strength & Vitality</div><div class="name">Pure Shilajit Gold — 60 Caps</div><div class="rating">★4.67 <span>(3 reviews)</span></div><div class="price">Rs. 999 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('Pure Shilajit Gold')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-leaf"></i></div>
+<div class="info"><div class="cat">Superfood</div><div class="name">Pure Moringa Capsules — 60 Caps</div><div class="rating">★4.75 <span>(4 reviews)</span></div><div class="price">Rs. 999 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('Pure Moringa Capsules')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-apple-alt"></i></div>
+<div class="info"><div class="cat">Weight Management</div><div class="name">Apple Cider Vinegar — 15 Tabs</div><div class="rating">★4.33 <span>(3 reviews)</span></div><div class="price">Rs. 459 <span class="mrp">Rs. 499</span></div><button class="btn" onclick="orderNow('Apple Cider Vinegar')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-tree"></i></div>
+<div class="info"><div class="cat">Energy & Stamina</div><div class="name">Ayurvedic Shilajit Capsules — 60 Caps</div><div class="rating">★4.33 <span>(3 reviews)</span></div><div class="price">Rs. 630 <span class="mrp">Rs. 700</span></div><button class="btn" onclick="orderNow('Ayurvedic Shilajit Capsules')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-mortar-pestle"></i></div>
+<div class="info"><div class="cat">Detox & Weight Loss</div><div class="name">Green Tea Tablets — 60 Tabs</div><div class="rating">★4.0 <span>(3 reviews)</span></div><div class="price">Rs. 799 <span class="mrp">Rs. 1,399</span></div><button class="btn" onclick="orderNow('Green Tea Tablets')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-spa"></i></div>
+<div class="info"><div class="cat">Stress & Energy</div><div class="name">Pure Ashwagandha — 60 Caps</div><div class="rating">★4.33 <span>(3 reviews)</span></div><div class="price">Rs. 999 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('Pure Ashwagandha')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="badge">POPULAR</div>
+<div class="img"><i class="fas fa-dumbbell"></i></div>
+<div class="info"><div class="cat">Weight Gain</div><div class="name">Weight Gain Tablets — 60 Caps</div><div class="rating">★4.67 <span>(3 reviews)</span></div><div class="price">Rs. 799 <span class="mrp">Rs. 1,499</span></div><button class="btn" onclick="orderNow('Weight Gain Tablets')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-heart-pulse"></i></div>
+<div class="info"><div class="cat">Men's Health</div><div class="name">PowerMax Combo</div><div class="rating">NEW</div><div class="price">Rs. 2,500 <span class="mrp">Rs. 3,998</span></div><button class="btn" onclick="orderNow('PowerMax Combo')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-scissors"></i></div>
+<div class="info"><div class="cat">Hair Care</div><div class="name">HairGrow Pro — 60 Caps 500mg</div><div class="rating">★4.0 <span>(3 reviews)</span></div><div class="price">Rs. 1,099 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('HairGrow Pro')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-ruler-vertical"></i></div>
+<div class="info"><div class="cat">Height Increase</div><div class="name">Height Increase Capsule</div><div class="rating">NEW</div><div class="price">Rs. 1,099 <span class="mrp">Rs. 1,999</span></div><button class="btn" onclick="orderNow('Height Increase Capsule')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="badge">NEW</div>
+<div class="img"><i class="fas fa-horse"></i></div>
+<div class="info"><div class="cat">Performance</div><div class="name">Horse Fire Capsule — 60 Caps 600mg</div><div class="rating">NEW</div><div class="price">Rs. 899</div><button class="btn" onclick="orderNow('Horse Fire Capsule')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-pills"></i></div>
+<div class="info"><div class="cat">Multivitamins</div><div class="name">Multivitamins — 60 Caps</div><div class="rating">NEW</div><div class="price">Rs. 499</div><button class="btn" onclick="orderNow('Multivitamins')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-fish"></i></div>
+<div class="info"><div class="cat">Heart & Brain</div><div class="name">Omega-3 Capsule — 60 Caps 500mg</div><div class="rating">NEW</div><div class="price">Rs. 699</div><button class="btn" onclick="orderNow('Omega-3 Capsule')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-wand-magic-sparkles"></i></div>
+<div class="info"><div class="cat">Wellness Combo</div><div class="name">Slimfit Wellness Combo</div><div class="rating">NEW</div><div class="price">Rs. 1,258 <span class="mrp">Rs. 1,898</span></div><button class="btn" onclick="orderNow('Slimfit Wellness Combo')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-tablets"></i></div>
+<div class="info"><div class="cat">Slimming</div><div class="name">Slimming Caps</div><div class="rating">NEW</div><div class="price">Rs. 799</div><button class="btn" onclick="orderNow('Slimming Caps')">Add to Cart</button></div>
+</div>
+
+<div class="product-card">
+<div class="img"><i class="fas fa-cow"></i></div>
+<div class="info"><div class="cat">Digestion</div><div class="name">Aloe Vera Fiber Juice — Litchi 1L</div><div class="rating">★4.67 <span>(3 reviews)</span></div><div class="price">Rs. 349 <span class="mrp">Rs. 450</span></div><button class="btn" onclick="orderNow('Aloe Vera Fiber Juice')">Add to Cart</button></div>
+</div>
+
+</div>
+</div>
+</section>
+
+<section class="section" style="background:var(--card)">
+<div class="container">
+<h2 class="section-title">Why Choose Us</h2>
+<div class="benefits-grid">
+<div class="benefit-card"><div class="icon"><i class="fas fa-shield-halved"></i></div><h3>GMP Certified</h3><p>WHO-GMP certified manufacturing</p></div>
+<div class="benefit-card"><div class="icon"><i class="fas fa-seedling"></i></div><h3>100% Natural</h3><p>Pure herbs, no chemicals</p></div>
+<div class="benefit-card"><div class="icon"><i class="fas fa-truck-fast"></i></div><h3>Fast Delivery</h3><p>Across India, COD available</p></div>
+<div class="benefit-card"><div class="icon"><i class="fas fa-user-doctor"></i></div><h3>Doctor Recommended</h3><p>5000+ practitioners trust us</p></div>
+</div>
+</div>
+</section>
+
+<section class="section" id="contact">
+<div class="container">
+<h2 class="section-title">Order Now</h2>
+<div class="contact-grid">
+<div>
+<div class="contact-item"><i class="fas fa-phone"></i><div><div class="label">Phone / WhatsApp</div><div class="value">+91 98765 43210</div></div></div>
+<div class="contact-item"><i class="fas fa-envelope"></i><div><div class="label">Email</div><div class="value">info@meraayurvedic.com</div></div></div>
+<div class="contact-item"><i class="fas fa-location-dot"></i><div><div class="label">Address</div><div class="value">Indore, MP, India</div></div></div>
+<div style="margin-top:16px;padding:14px;background:linear-gradient(135deg,rgba(45,106,79,.05),rgba(64,145,108,.05));border-radius:var(--radius);border:1px solid var(--border)">
+<h4 style="margin-bottom:6px;font-size:.9rem"><i class="fas fa-rupee-sign" style="color:var(--primary)"></i> UPI Payment</h4>
+<p style="font-size:.8rem;color:var(--text-light)">UPI: <strong>meraayurvedic@okhdfcbank</strong></p>
+<p style="font-size:.75rem;color:var(--text-light)">GPay, PhonePe, Paytm, BHIM accepted</p>
+</div>
+</div>
+<div class="contact-form">
+<h3 style="margin-bottom:14px">Send Inquiry</h3>
+<div class="form-group"><label>Name *</label><input type="text" id="cName"></div>
+<div class="form-group"><label>Phone *</label><input type="tel" id="cPhone"></div>
+<div class="form-group"><label>Product</label><input type="text" id="cProduct"></div>
+<div class="form-group"><label>Message</label><textarea id="cMsg"></textarea></div>
+<button class="submit-btn" onclick="submitContact()"><i class="fab fa-whatsapp"></i> Send via WhatsApp</button>
+</div>
+</div>
+</div>
+</section>
+
+<div class="container"><section class="cta"><h2>Free Ayurvedic Consultation</h2><p>Get personalized treatment advice from our expert doctors</p><a href="#contact" class="btn"><i class="fas fa-user-doctor"></i> Book Consultation</a></section></div>
+
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div><h4><i class="fas fa-leaf"></i> Mera Ayurvedic</h4><p style="font-size:.8rem">Authentic Ayurvedic medicines. 50K+ trusted customers. GMP certified.</p></div>
+<div><h4>Products</h4><a href="#products">Shilajit</a><a href="#products">Ashwagandha</a><a href="#products">Moringa</a><a href="#products">Weight Loss</a><a href="#products">Hair Growth</a></div>
+<div><h4>Support</h4><a href="#contact">Contact Us</a><a href="#">FAQ</a><a href="#">Shipping</a><a href="#">Returns</a></div>
+<div><h4>Contact</h4><a href="tel:+919****3210">+91 98765 43210</a><a href="mailto:info@meraayurvedic.com">info@meraayurvedic.com</a></div>
+</div>
+<div class="footer-bottom">&copy; 2026 Mera Ayurvedic. All rights reserved.</div>
+</div>
+</footer>
+
+<nav class="mobile-nav">
+<a href="#products"><i class="fas fa-shopping-bag"></i> Shop</a>
+<a href="#benefits"><i class="fas fa-leaf"></i> Benefits</a>
+<a href="#contact" class="active"><i class="fab fa-whatsapp"></i> Order</a>
+</nav>
+
+<script>
+function orderNow(p){document.getElementById('cProduct').value=p;document.getElementById('contact').scrollIntoView({behavior:'smooth'});alert('✅ Please fill your details to order: '+p)}
+function submitContact(){
+const n=document.getElementById('cName').value.trim(),ph=document.getElementById('cPhone').value.trim(),p=document.getElementById('cProduct').value.trim(),m=document.getElementById('cMsg').value.trim();
+if(!n||!ph){alert('Please fill name and phone');return;}
+window.open('https://wa.me/919876543210?text='+encodeURIComponent('Name: '+n+'\nPhone: '+ph+'\nProduct: '+p+'\nMessage: '+m),'_blank');
+}
+</script>
+</body>
+</html>

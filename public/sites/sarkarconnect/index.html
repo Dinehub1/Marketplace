@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <!--
+    ============================================
+    SarkarConnect - Citizen Services Portal
+    ============================================
+    Connecting citizens to government services
+    seamlessly. Digital India initiative.
+    ============================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>SarkarConnect - Your Gateway to Government Services | Digital India</title>
+    <meta name="description" content="SarkarConnect is your one-stop digital platform for all government services. Apply for documents, pay bills, track applications, and connect with local representatives — all from one place.">
+    <meta name="keywords" content="government services, digital india, citizen portal, online services, Aadhaar, PAN, passport, bill payment, SarkarConnect">
+    <meta name="author" content="SarkarConnect">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://sarkarconnect.in/">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="SarkarConnect - Your Gateway to Government Services">
+    <meta property="og:description" content="One-stop digital platform for all government services. Apply, pay, track — all from one place.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sarkarconnect.in/">
+    <meta property="og:image" content="https://sarkarconnect.in/assets/og-banner.jpg">
+    <meta property="og:site_name" content="SarkarConnect">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SarkarConnect - Government Services Portal">
+    <meta name="twitter:description" content="Apply for documents, pay bills, track applications — all from one place.">
+    <meta name="twitter:image" content="https://sarkarconnect.in/assets/twitter-card.jpg">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "GovernmentService",
+        "name": "SarkarConnect",
+        "description": "One-stop digital platform for all government services in India",
+        "url": "https://sarkarconnect.in/",
+        "provider": {
+            "@type": "Organization",
+            "name": "SarkarConnect",
+            "url": "https://sarkarconnect.in/",
+            "logo": "https://sarkarconnect.in/assets/logo.png"
+        },
+        "areaServed": {
+            "@type": "Country",
+            "name": "India"
+        },
+        "serviceType": "Government Services Portal",
+        "termsOfService": "https://sarkarconnect.in/terms",
+        "sameAs": [
+            "https://twitter.com/sarkarconnect",
+            "https://facebook.com/sarkarconnect"
+        ]
+    }
+    </script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ============================================
+         SKIP LINK (Accessibility)
+         ============================================ -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- ============================================
+         NAVIGATION BAR
+         ============================================ -->
+    <header class="navbar" id="navbar">
+        <div class="container nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo" aria-label="SarkarConnect Home">
+                <span class="logo-icon">🏛️</span>
+                <span class="logo-text">Sarkar<span class="logo-highlight">Connect</span></span>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
+                <a href="#testimonials" class="nav-link">Testimonials</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+
+            <!-- Nav Actions -->
+            <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <span class="theme-icon sun">☀️</span>
+                    <span class="theme-icon moon">🌙</span>
+                </button>
+
+                <!-- Language Toggle -->
+                <button class="lang-toggle" id="langToggle" aria-label="Toggle language">
+                    हिंदी
+                </button>
+
+                <!-- CTA Button -->
+                <a href="#pricing" class="btn btn-primary btn-nav">Get Started</a>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav-links" aria-label="Mobile navigation">
+                <a href="#services" class="mobile-nav-link">Services</a>
+                <a href="#how-it-works" class="mobile-nav-link">How It Works</a>
+                <a href="#pricing" class="mobile-nav-link">Pricing</a>
+                <a href="#testimonials" class="mobile-nav-link">Testimonials</a>
+                <a href="#faq" class="mobile-nav-link">FAQ</a>
+                <a href="#contact" class="mobile-nav-link">Contact</a>
+                <a href="#pricing" class="btn btn-primary btn-full">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <!-- ============================================
+             HERO SECTION
+             ============================================ -->
+        <section class="hero" id="hero">
+            <div class="hero-bg">
+                <div class="hero-gradient"></div>
+                <div class="hero-pattern"></div>
+            </div>
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <div class="hero-badge" data-animate="fade-up">
+                        <span class="badge-dot"></span>
+                        Trusted by 2M+ Citizens Across India
+                    </div>
+                    <h1 class="hero-title" data-animate="fade-up" data-delay="100">
+                        Your Gateway to
+                        <span class="text-gradient">Government Services</span>
+                        — All in One Place
+                    </h1>
+                    <p class="hero-subtitle" data-animate="fade-up" data-delay="200">
+                        Apply for documents, pay utility bills, track applications, and connect with local representatives. Fast, secure, and available 24/7.
+                    </p>
+                    <div class="hero-cta" data-animate="fade-up" data-delay="300">
+                        <a href="#services" class="btn btn-primary btn-lg">
+                            Explore Services
+                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12m0 0l-5-5m5 5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline btn-lg">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="2"/><path d="M8 7l4 3-4 3V7z" fill="currentColor"/></svg>
+                            Watch Demo
+                        </a>
+                    </div>
+                    <div class="hero-stats" data-animate="fade-up" data-delay="400">
+                        <div class="stat">
+                            <span class="stat-number" data-count="2">2M+</span>
+                            <span class="stat-label">Citizens Served</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="500">500+</span>
+                            <span class="stat-label">Services</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="28">28</span>
+                            <span class="stat-label">States Covered</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" data-count="4.8">4.8★</span>
+                            <span class="stat-label">User Rating</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual" data-animate="fade-left" data-delay="300">
+                    <div class="hero-card">
+                        <div class="hero-card-header">
+                            <div class="hero-card-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="hero-card-title">SarkarConnect Dashboard</span>
+                        </div>
+                        <div class="hero-card-body">
+                            <div class="mini-service">
+                                <span class="mini-icon">📄</span>
+                                <div class="mini-info">
+                                    <span class="mini-name">Aadhaar Update</span>
+                                    <span class="mini-status status-processing">Processing</span>
+                                </div>
+                            </div>
+                            <div class="mini-service">
+                                <span class="mini-icon">🛂</span>
+                                <div class="mini-info">
+                                    <span class="mini-name">Passport Application</span>
+                                    <span class="mini-status status-approved">Approved ✓</span>
+                                </div>
+                            </div>
+                            <div class="mini-service">
+                                <span class="mini-icon">💡</span>
+                                <div class="mini-info">
+                                    <span class="mini-name">Electricity Bill</span>
+                                    <span class="mini-status status-paid">Paid ₹1,240</span>
+                                </div>
+                            </div>
+                            <div class="mini-service">
+                                <span class="mini-icon">🏥</span>
+                                <div class="mini-info">
+                                    <span class="mini-name">Health Card</span>
+                                    <span class="mini-status status-processing">Under Review</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Scroll indicator -->
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <span>Scroll to explore</span>
+            </div>
+        </section>
+
+        <!-- ============================================
+             AD SLOT #1 (Below Hero)
+             ============================================ -->
+        <section class="ad-slot" aria-label="Advertisement">
+            <div class="container">
+                <div class="ad-banner ad-banner-1">
+                    <span class="ad-label">Ad</span>
+                    <div class="ad-content">
+                        <span class="ad-text">📢 Advertise your business here — Reach millions of citizens</span>
+                        <a href="#contact" class="ad-cta">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SERVICES SECTION
+             ============================================ -->
+        <section class="services" id="services">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-tag">Our Services</span>
+                    <h2 class="section-title">Everything You Need,<br>All Under One Roof</h2>
+                    <p class="section-subtitle">From document applications to bill payments, we cover 500+ government and utility services across India.</p>
+                </div>
+
+                <div class="services-grid">
+                    <!-- Service Card 1 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="0">
+                        <div class="service-icon">📄</div>
+                        <h3 class="service-title">Document Services</h3>
+                        <p class="service-desc">Apply for Aadhaar, PAN Card, Passport, Voter ID, Driving License, and more with real-time tracking.</p>
+                        <ul class="service-list">
+                            <li>Aadhaar Update & Download</li>
+                            <li>New PAN Card</li>
+                            <li>Passport Application</li>
+                            <li>Voter ID Registration</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+
+                    <!-- Service Card 2 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="100">
+                        <div class="service-icon">💡</div>
+                        <h3 class="service-title">Bill Payments</h3>
+                        <p class="service-desc">Pay electricity, water, gas, phone, and broadband bills instantly. UPI, cards, and net banking accepted.</p>
+                        <ul class="service-list">
+                            <li>Electricity Bills</li>
+                            <li>Water & Gas Bills</li>
+                            <li>Mobile Recharge</li>
+                            <li>Broadband & DTH</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+
+                    <!-- Service Card 3 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="200">
+                        <div class="service-icon">🏥</div>
+                        <h3 class="service-title">Health Services</h3>
+                        <p class="service-desc">Book Ayushman Bharat health cards, schedule government hospital appointments, and access medical records.</p>
+                        <ul class="service-list">
+                            <li>Health Card (ABHA)</li>
+                            <li>Hospital Appointments</li>
+                            <li>Lab Test Booking</li>
+                            <li>Insurance Claims</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+
+                    <!-- Service Card 4 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="0">
+                        <div class="service-icon">🎓</div>
+                        <h3 class="service-title">Education Services</h3>
+                        <p class="service-desc">Apply for scholarships, check exam results, enroll in government skill programs, and access digital certificates.</p>
+                        <ul class="service-list">
+                            <li>Scholarship Applications</li>
+                            <li>Exam Results</li>
+                            <li>Skill India Courses</li>
+                            <li>Digital Certificates</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+
+                    <!-- Service Card 5 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="100">
+                        <div class="service-icon">🏠</div>
+                        <h3 class="service-title">Property & Land</h3>
+                        <p class="service-desc">Check land records, register property, pay property tax, and apply for housing schemes online.</p>
+                        <ul class="service-list">
+                            <li>Land Records (Bhoomi)</li>
+                            <li>Property Registration</li>
+                            <li>Property Tax Payment</li>
+                            <li>PMAY Applications</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+
+                    <!-- Service Card 6 -->
+                    <div class="service-card" data-animate="fade-up" data-delay="200">
+                        <div class="service-icon">💼</div>
+                        <h3 class="service-title">Business Services</h3>
+                        <p class="service-desc">Register your business, apply for GST, file ITR, and access MSME schemes and subsidies.</p>
+                        <ul class="service-list">
+                            <li>Company Registration</li>
+                            <li>GST Filing</li>
+                            <li>ITR Submission</li>
+                            <li>MSME Schemes</li>
+                        </ul>
+                        <a href="#" class="service-link">Learn more →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             AD SLOT #2 (After Services)
+             ============================================ -->
+        <section class="ad-slot" aria-label="Advertisement">
+            <div class="container">
+                <div class="ad-banner ad-banner-2">
+                    <span class="ad-label">Ad</span>
+                    <div class="ad-content">
+                        <span class="ad-text">🚀 Government schemes you may be eligible for — Check now!</span>
+                        <a href="#services" class="ad-cta">Check Eligibility</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             HOW IT WORKS SECTION
+             ============================================ -->
+        <section class="how-it-works" id="how-it-works">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-tag">How It Works</span>
+                    <h2 class="section-title">Get Started in 4 Simple Steps</h2>
+                    <p class="section-subtitle">Our streamlined process makes accessing government services as easy as ordering food online.</p>
+                </div>
+
+                <div class="steps-container">
+                    <!-- Step 1 -->
+                    <div class="step" data-animate="fade-up" data-delay="0">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <div class="step-icon">🔍</div>
+                            <h3 class="step-title">Find Your Service</h3>
+                            <p class="step-desc">Browse 500+ services or use our smart search to find exactly what you need. Filter by category, state, or urgency.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="step" data-animate="fade-up" data-delay="100">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <div class="step-icon">📝</div>
+                            <h3 class="step-title">Fill & Submit</h3>
+                            <p class="step-desc">Complete the guided application form. Our AI auto-fills from your profile and validates documents in real-time.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="step" data-animate="fade-up" data-delay="200">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <div class="step-icon">💳</div>
+                            <h3 class="step-title">Pay Securely</h3>
+                            <p class="step-desc">Pay fees via UPI, cards, or net banking. Get instant receipts and transaction confirmations via SMS & email.</p>
+                        </div>
+                        <div class="step-connector"></div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="step" data-animate="fade-up" data-delay="300">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <div class="step-icon">✅</div>
+                            <h3 class="step-title">Track & Receive</h3>
+                            <p class="step-desc">Track your application status in real-time. Get notified at every stage. Receive documents digitally or by post.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             AD SLOT #3 (After How It Works)
+             ============================================ -->
+        <section class="ad-slot" aria-label="Advertisement">
+            <div class="container">
+                <div class="ad-banner ad-banner-3">
+                    <span class="ad-label">Ad</span>
+                    <div class="ad-content">
+                        <span class="ad-text">📱 Download the SarkarConnect app — Available on Android & iOS</span>
+                        <a href="#" class="ad-cta">Download Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             PRICING SECTION
+             ============================================ -->
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-tag">Pricing</span>
+                    <h2 class="section-title">Simple, Transparent Pricing</h2>
+                    <p class="section-subtitle">No hidden charges. Pay only for the service you use. Government fees are as per official rates.</p>
+                </div>
+
+                <div class="pricing-grid">
+                    <!-- Free Plan -->
+                    <div class="pricing-card" data-animate="fade-up" data-delay="0">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Starter</h3>
+                            <p class="pricing-desc">Perfect for individual citizens</p>
+                            <div class="pricing-amount">
+                                <span class="currency">₹</span>
+                                <span class="price">0</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included">Up to 5 service requests/month</li>
+                            <li class="included">Basic document tracking</li>
+                            <li class="included">Email notifications</li>
+                            <li class="included">UPI payments</li>
+                            <li class="excluded">Priority processing</li>
+                            <li class="excluded">Dedicated support</li>
+                            <li class="excluded">Bulk applications</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('starter', 0)">Get Started Free</button>
+                    </div>
+
+                    <!-- Pro Plan (Popular) -->
+                    <div class="pricing-card popular" data-animate="fade-up" data-delay="100">
+                        <div class="popular-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Pro</h3>
+                            <p class="pricing-desc">For families & small businesses</p>
+                            <div class="pricing-amount">
+                                <span class="currency">₹</span>
+                                <span class="price">99</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included">Unlimited service requests</li>
+                            <li class="included">Real-time tracking & alerts</li>
+                            <li class="included">SMS + Email + WhatsApp</li>
+                            <li class="included">UPI, Cards, Net Banking</li>
+                            <li class="included">Priority processing</li>
+                            <li class="included">Chat support (9AM-9PM)</li>
+                            <li class="excluded">Bulk applications</li>
+                        </ul>
+                        <button class="btn btn-primary btn-full" onclick="openPaymentModal('pro', 99)">Upgrade to Pro</button>
+                    </div>
+
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card" data-animate="fade-up" data-delay="200">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Enterprise</h3>
+                            <p class="pricing-desc">For organizations & CSCs</p>
+                            <div class="pricing-amount">
+                                <span class="currency">₹</span>
+                                <span class="price">499</span>
+                                <span class="period">/month</span>
+                            </div>
+                        </div>
+                        <ul class="pricing-features">
+                            <li class="included">Unlimited everything</li>
+                            <li class="included">API access</li>
+                            <li class="included">White-label dashboard</li>
+                            <li class="included">All payment methods</li>
+                            <li class="included">VIP processing queue</li>
+                            <li class="included">Dedicated account manager</li>
+                            <li class="included">Bulk applications (100+)</li>
+                        </ul>
+                        <button class="btn btn-outline btn-full" onclick="openPaymentModal('enterprise', 499)">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             TESTIMONIALS SECTION
+             ============================================ -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-tag">Testimonials</span>
+                    <h2 class="section-title">What Citizens Say About Us</h2>
+                    <p class="section-subtitle">Real stories from real people who simplified their government interactions.</p>
+                </div>
+
+                <div class="testimonials-carousel" id="testimonialsCarousel">
+                    <div class="testimonials-track">
+                        <!-- Testimonial 1 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"I renewed my driving license in just 15 minutes! No standing in queues, no middlemen. SarkarConnect is a game-changer for Indian citizens."</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">RK</div>
+                                <div class="author-info">
+                                    <span class="author-name">Rajesh Kumar</span>
+                                    <span class="author-location">Jaipur, Rajasthan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 2 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"Applied for my mother's pension scheme through SarkarConnect. The step-by-step guidance was incredibly helpful. Approved in 3 days!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">PS</div>
+                                <div class="author-info">
+                                    <span class="author-name">Priya Sharma</span>
+                                    <span class="author-location">Lucknow, UP</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 3 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"As a small business owner, GST filing used to take hours. Now it's done in minutes. The auto-fill feature is brilliant!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">VP</div>
+                                <div class="author-info">
+                                    <span class="author-name">Vikram Patel</span>
+                                    <span class="author-location">Ahmedabad, Gujarat</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 4 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"Paid all my utility bills from one place. The UPI integration is seamless. I've been using it for 6 months now — never going back!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">AN</div>
+                                <div class="author-info">
+                                    <span class="author-name">Anita Nair</span>
+                                    <span class="author-location">Kochi, Kerala</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonial 5 -->
+                        <div class="testimonial-card">
+                            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                            <p class="testimonial-text">"Got my daughter's scholarship approved through SarkarConnect. The document verification was instant. Truly Digital India in action!"</p>
+                            <div class="testimonial-author">
+                                <div class="author-avatar">MS</div>
+                                <div class="author-info">
+                                    <span class="author-name">Mohammed Saeed</span>
+                                    <span class="author-location">Hyderabad, Telangana</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Carousel Controls -->
+                    <div class="carousel-controls">
+                        <button class="carousel-btn prev" id="testimonialPrev" aria-label="Previous testimonial">←</button>
+                        <div class="carousel-dots" id="testimonialDots"></div>
+                        <button class="carousel-btn next" id="testimonialNext" aria-label="Next testimonial">→</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             AD SLOT #4 (After Testimonials)
+             ============================================ -->
+        <section class="ad-slot" aria-label="Advertisement">
+            <div class="container">
+                <div class="ad-banner ad-banner-4">
+                    <span class="ad-label">Ad</span>
+                    <div class="ad-content">
+                        <span class="ad-text">🏆 Partner with SarkarConnect — Join 10,000+ CSC operators</span>
+                        <a href="#contact" class="ad-cta">Become a Partner</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             FAQ SECTION
+             ============================================ -->
+        <section class="faq" id="faq">
+            <div class="container">
+                <div class="section-header" data-animate="fade-up">
+                    <span class="section-tag">FAQ</span>
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Got questions? We've got answers. Can't find what you're looking for? Contact our support team.</p>
+                </div>
+
+                <div class="faq-search" data-animate="fade-up">
+                    <input type="text" id="faqSearch" placeholder="Search FAQs..." aria-label="Search FAQs">
+                </div>
+
+                <div class="faq-grid" id="faqGrid">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="0">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is SarkarConnect a government website?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>SarkarConnect is an authorized facilitation platform that helps citizens access government services more easily. We are partnered with various government departments and CSC (Common Service Centres) to provide a seamless digital experience.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="50">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How secure is my personal data?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We use bank-grade 256-bit SSL encryption and follow ISO 27001 security standards. Your data is stored in India-based servers and we never share your information with third parties without consent. We comply with the Digital Personal Data Protection Act, 2023.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="100">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What payment methods do you accept?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>We accept all major payment methods including UPI (GPay, PhonePe, Paytm), debit/credit cards (Visa, Mastercard, RuPay), net banking from 50+ banks, and wallets. All transactions are processed through RBI-compliant payment gateways.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 4 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="150">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>How long does application processing take?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Processing times vary by service. Simple services like bill payments are instant. Document applications typically take 3-15 working days depending on the department. Pro and Enterprise users get priority processing which can reduce wait times by up to 50%.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 5 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="200">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Can I track my application status?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! Every application gets a unique tracking ID. You can check status anytime from your dashboard or via SMS/email notifications. We update status in real-time as your application moves through various stages of processing.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 6 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="250">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>What if my application gets rejected?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>If your application is rejected, we provide detailed reasons and guidance on how to fix the issues. Pro and Enterprise users get free re-submission assistance. Our support team will help you correct and resubmit your application at no extra charge.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 7 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="300">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Do you have a mobile app?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Yes! Our mobile app is available for both Android (Play Store) and iOS (App Store). The app includes all web features plus offline form filling, document scanning with OCR, and push notifications for status updates.</p>
+                        </div>
+                    </div>
+
+                    <!-- FAQ Item 8 -->
+                    <div class="faq-item" data-animate="fade-up" data-delay="350">
+                        <button class="faq-question" aria-expanded="false">
+                            <span>Is there a refund policy?</span>
+                            <span class="faq-icon">+</span>
+                        </button>
+                        <div class="faq-answer">
+                            <p>Government fees are non-refundable as per department policies. However, our service fee is fully refundable if we are unable to process your application due to a platform error. Refunds are processed within 5-7 business days.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             CONTACT / CTA SECTION
+             ============================================ -->
+        <section class="cta-section" id="contact">
+            <div class="container">
+                <div class="cta-card" data-animate="fade-up">
+                    <div class="cta-content">
+                        <h2 class="cta-title">Ready to Simplify Your Government Interactions?</h2>
+                        <p class="cta-text">Join 2 million+ citizens who have already made the switch to digital. Get started in under 2 minutes.</p>
+                        <div class="cta-actions">
+                            <a href="#pricing" class="btn btn-primary btn-lg">Start Free Today</a>
+                            <a href="tel:+9118001234567" class="btn btn-outline btn-lg">📞 1800-123-4567</a>
+                        </div>
+                        <p class="cta-note">Toll-free helpline available 9 AM - 9 PM, all days</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col">
+                    <a href="#" class="logo" aria-label="SarkarConnect Home">
+                        <span class="logo-icon">🏛️</span>
+                        <span class="logo-text">Sarkar<span class="logo-highlight">Connect</span></span>
+                    </a>
+                    <p class="footer-desc">Connecting citizens to government services seamlessly. A Digital India initiative making governance accessible to all.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">📘</a>
+                        <a href="#" class="social-link" aria-label="Twitter">🐦</a>
+                        <a href="#" class="social-link" aria-label="Instagram">📸</a>
+                        <a href="#" class="social-link" aria-label="YouTube">📺</a>
+                    </div>
+                </div>
+
+                <!-- Services Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Services</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Document Services</a></li>
+                        <li><a href="#">Bill Payments</a></li>
+                        <li><a href="#">Health Services</a></li>
+                        <li><a href="#">Education Services</a></li>
+                        <li><a href="#">Property & Land</a></li>
+                        <li><a href="#">Business Services</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Partners</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal Column -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Grievance Redressal</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="copyright">© 2026 SarkarConnect. All rights reserved. | Made with ❤️ in India</p>
+                <p class="disclaimer">SarkarConnect is an authorized facilitation platform. Government fees are as per official rates.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================
+         UPI PAYMENT MODAL
+         ============================================ -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <button class="modal-close" id="modalClose" aria-label="Close modal">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Complete Your Payment</h3>
+                <p class="modal-subtitle" id="modalSubtitle">Secure payment via UPI</p>
+            </div>
+            <div class="modal-body">
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="order-row">
+                        <span>Plan</span>
+                        <span id="orderPlan">Pro</span>
+                    </div>
+                    <div class="order-row">
+                        <span>Amount</span>
+                        <span id="orderAmount">₹99</span>
+                    </div>
+                    <div class="order-row order-total">
+                        <span>Total</span>
+                        <span id="orderTotal">₹99</span>
+                    </div>
+                </div>
+
+                <!-- UPI Options -->
+                <div class="upi-options">
+                    <h4 class="upi-title">Pay using UPI</h4>
+                    <div class="upi-apps">
+                        <button class="upi-app" data-app="gpay">
+                            <span class="upi-icon">G</span>
+                            <span>Google Pay</span>
+                        </button>
+                        <button class="upi-app" data-app="phonepe">
+                            <span class="upi-icon">P</span>
+                            <span>PhonePe</span>
+                        </button>
+                        <button class="upi-app" data-app="paytm">
+                            <span class="upi-icon">₹</span>
+                            <span>Paytm</span>
+                        </button>
+                        <button class="upi-app" data-app="bhim">
+                            <span class="upi-icon">B</span>
+                            <span>BHIM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- UPI ID Input -->
+                <div class="upi-id-section">
+                    <label for="upiId" class="upi-label">Or enter UPI ID manually</label>
+                    <div class="upi-input-group">
+                        <input type="text" id="upiId" placeholder="yourname@upi" class="upi-input">
+                        <button class="btn btn-primary" id="payBtn">Pay Now</button>
+                    </div>
+                    <p class="upi-help">Example: yourname@paytm, yourname@oksbi</p>
+                </div>
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <span>🔒</span>
+                    <span>Your payment is secured with 256-bit SSL encryption. We never store your UPI PIN.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
