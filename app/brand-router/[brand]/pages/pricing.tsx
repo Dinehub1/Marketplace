@@ -1,6 +1,51 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 
 const BRAND_PLANS: Record<string, Array<{ name: string; price: string; period: string; features: string[]; highlighted: boolean; tagline?: string }>> = {
+  sarkarconnect: [
+    {
+      name: "स्टार्टर",
+      price: "मुफ्त",
+      period: "",
+      features: [
+        "बेसिक डिजिटल कार्ड",
+        "5 कनेक्ट/माह",
+        "कैटलॉग में 3 प्रोडक्ट",
+        "कम्युनिटी एक्सेस",
+      ],
+      highlighted: false,
+      tagline: "नए व्यापारियों के लिए शुरुआत",
+    },
+    {
+      name: "बिज़नेस",
+      price: "₹799",
+      period: "/माह",
+      features: [
+        "सब कुछ स्टार्टर में",
+        "असीमित कनेक्ट",
+        "असीमित प्रोडक्ट कैटलॉग",
+        "डील ट्रैकिंग डैशबोर्ड",
+        "प्राथमिकता समर्थन",
+        "WhatsApp बिज़नेस बैज",
+      ],
+      highlighted: true,
+      tagline: "⭐ सबसे लोकप्रिय — बढ़ते व्यापारों के लिए",
+    },
+    {
+      name: "एंटरप्राइज",
+      price: "₹2,499",
+      period: "/माह",
+      features: [
+        "सब कुछ बिज़नेस में",
+        "AI पार्टनर मैचिंग",
+        "टीम मेंबर (5 तक)",
+        "API एक्सेस",
+        "कस्टम ब्रांडिंग",
+        "समर्पित अकाउंट मैनेजर",
+      ],
+      highlighted: false,
+      tagline: "बड़े व्यापारों के लिए",
+    },
+  ],
   sarkardost: [
     {
       name: "नीडी व्यवसाय",
