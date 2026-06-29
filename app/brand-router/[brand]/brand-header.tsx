@@ -98,14 +98,14 @@ export function BrandFooter({ brand }: { brand: any }) {
         <div className="rounded-3xl p-8 md:p-12 text-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
           <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
           <div className="relative">
-            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Ready to get started?</h2>
-            <p className="text-white/80 mb-6 max-w-lg mx-auto">Join thousands of customers who trust {brand.name} for their needs.</p>
+            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">भूख लगी? अभी ऑर्डर करो!</h2>
+            <p className="text-white/80 mb-6 max-w-lg mx-auto">इंदौर के बेस्ट किचन से अपना पसंदीदा खाना पाएं — 30 मिनट में दरवाज़े पर।</p>
             <div className="flex flex-wrap justify-center gap-3">
               <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
-                Get Started Free →
+                फ्री डिलीवरी पाएं →
               </a>
               <a href={`https://${brand.slug}.cashcard.live/contact`} className="border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
-                Contact Us
+                संपर्क करें
               </a>
             </div>
           </div>

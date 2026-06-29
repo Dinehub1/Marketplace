@@ -17,7 +17,7 @@ import { Webhook } from "https://esm.sh/standardwebhooks@1.0.0";
 
 const HOOK_SECRET = Deno.env.get("SEND_SMS_HOOK_SECRET") ?? "";
 const NEXTEL_API_KEY = Deno.env.get("NEXTEL_API_KEY") ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
-const NEXTEL_SENDER = Deno.env.get("NEXTEL_SENDER") ?? "916263461179";
+const NEXTEL_SENDER = Deno.env.get("NEXTEL_SENDER") ?? "6263461179";
 const NEXTEL_ENDPOINT =
   Deno.env.get("NEXTEL_ENDPOINT") ??
   "https://api.nextel.io/API_V2/Whatsapp/send_template/MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";

@@ -5,11 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 // key works and discover the correct recipient field name. Remove after wiring
 // the real Supabase Send SMS Hook.
 
-const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "";
+const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
 const NEXTEL_ENDPOINT =
   process.env.NEXTEL_ENDPOINT ??
-  "https://api.nextel.io/API_V2/Whatsapp/send_template/MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
-const SENDER = process.env.NEXTEL_SENDER ?? "916263461179";
+  "https://api.nextel.io/API_V2/Whatsapp/send_template";
+const SENDER = process.env.NEXTEL_SENDER ?? "6263461179";
 
 // Candidate keys Nextel might use for the recipient, tried in order.
 const CANDIDATE_FIELDS = ["to", "number", "phone", "recipient", "mobile", "contact", "user_phone", "contact_number", "send_to"];
