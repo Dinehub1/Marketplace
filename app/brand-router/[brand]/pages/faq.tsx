@@ -15,6 +15,8 @@ const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
     { q: "Listing kaise banayein?", a: "Mobile number se sign up karein, business details bharein aur submit karein — 5 minute mein live!" },
     { q: "Kya listing free hai?", a: "Haan! Basic listing bilkul free hai. Premium features ke liye paid plans hain." },
     { q: "Customer kaise milenge?", a: "Jab koi aapki category mein search karta hai, aapki listing dikhti hai — WhatsApp ya call se contact karte hain." },
+    { q: "Kya main apni listing edit kar sakta hoon?", a: "Bilkul! Dashboard se kisi bhi waqt listing update karein — photos, timings, prices." },
+    { q: "Ranking kaise badhayein?", a: "Reviews ikattha karein, profile complete karein, regularly active rahein — algorithm aapko upar dikhata hai." },
   ],
   followup: [
     { q: "Reminder kaise set karein?", a: "App mein task add karein, date/time set karein, channel choose karein — WhatsApp, SMS ya Email." },
@@ -66,6 +68,11 @@ const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
     { q: "Online consultation kaise hoti hai?", a: "Video call par — WhatsApp ya Zoom se connect hote hain." },
     { q: "Kya court representation milta hai?", a: "Pro plan mein experienced lawyers court mein represent karte hain." },
   ],
+  "justdial-agent": [
+    { q: "Data analytics kaise kaam karta hai?", a: "Hum market trends, customer behavior aur competition ka data analyze karte hain — aapko actionable insights dete hain." },
+    { q: "Lead generation mein kya shamil hai?", a: "Verified customer contacts, demand analysis aur targeted outreach — jo actually interested hain unhi tak pahunch." },
+    { q: "Kya mobile se manage ho sakta hai?", a: "Bilkul! Poora dashboard mobile-friendly hai — kahi bhi, kabhi bhi apne business ki monitoring karein." },
+  ],
   sarkarmarketplace: [
     { q: "Business kaise list karein?", a: "Free sign up — business details bharein aur turant live ho jayega." },
     { q: "Kya verification hoti hai?", a: "Haan! Hum har business verify karte hain — GST, address check." },
@@ -85,6 +92,11 @@ const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
     { q: "Certificate milta hai?", a: "Haan! Course complete karne par government-recognized certificate milta hai." },
     { q: "Placement assistance hai?", a: "Haan! 60% students ko placement milta hai — tie-ups with 100+ companies." },
     { q: "Installment option hai?", a: "Haan! ₹500/month se start — education loan bhi available hai." },
+  ],
+  "hyperframes-realestate": [
+    { q: "Video tour kaise banayein?", a: "Professional team aapki property ki 4K video shoot karti hai — 360° walkthrough ke saath." },
+    { q: "Kya NRI log bhi use kar sakte hain?", a: "Bilkul! Video tour se door se property dekhein, virtual meeting ke through deal close karein." },
+    { q: "Price analytics kaise kaam karta hai?", a: "Area ke recent transactions, market trends aur demand-supply analysis se fair price estimate milta hai." },
   ],
   sikshahub: [
     { q: "Kya CBSE board covered hai?", a: "Haan! CBSE, ICSE aur MP Board — class 1 se 12 tak." },

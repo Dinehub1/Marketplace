@@ -12,6 +12,7 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   sarkardost: [
     { name: "Raju Tea Stall", text: "SarkarDost par listing karne ke baad mere customers badh gaye — log directly call karte hain ab.", rating: 5, role: "Chaiwala, Rajwada" },
     { name: "Meena Tailor", text: "Pehle sirf mile jo aate the — ab naye customers bhi mil rahe hain. Bahut achha platform hai!", rating: 5, role: "Tailor, Palasia" },
+    { name: "Pandit Electrician", text: "Maine apni service online lagayi — ab 5-6 calls daily aati hain. Pehle 1-2 hoti the.", rating: 5, role: "Electrician, Sudama Nagar" },
   ],
   followup: [
     { name: "Amit Sales", text: "FollowUp se mere clients ko kabhi miss nahi karna padta — automated messages sab yaad dilate hain.", rating: 5, role: "Sales Executive" },
@@ -55,9 +56,16 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   ],
   "justdial-agent": [
     { name: "Suresh A.", text: "Listing ke baad calls aane lage — business 30% badh gayi 2 mahine mein.", rating: 5, role: "AC Repair Business" },
+    { name: "Ashok Kumar", text: "JustDial agent ne mere shop ki listing top kar di — ab phone nahi bajate, message aate hain.", rating: 5, role: "Shop Owner, Sarafa Bazaar" },
+    { name: "Deepika Singh", text: "Review management feature bahut helpful hai — negative feedback ko jaldi se resolve kar paa rahe hain.", rating: 4, role: "Restaurant Manager, Vijay Nagar" },
+    { name: "Sanjay Patel", text: "Analytics dashboard se pata chalta hai kaunse keywords se zyada traffic aa raha hai — ROI improve hua.", rating: 5, role: "Business Consultant, Indore" },
+    { name: "Deepak R.", text: "Lead generation feature ne mujhe 15 naye clients diye sirf 1 mahine mein. ROI bahut fast hai!", rating: 5, role: "Salon Owner, Vijay Nagar" },
+    { name: "Kavita S.", text: "Data analytics se pata chala kaunse product mein zyada margin hai — ab smart decisions le raha hoon.", rating: 5, role: "Electronics Store Owner" },
   ],
   sarkarmarketplace: [
     { name: "Meera J.", text: "Indore ka sabse bada directory — har category mein verified businesses mil gayi.", rating: 5, role: "Customer" },
+    { name: "Rajesh K.", text: "Apni chini ki dukaan online laga di — ab poore district mein orders aate hain jaldi.", rating: 5, role: "Kirana Merchant, Palasia" },
+    { name: "Anita M.", text: "Mujhe ek achhi jagah chahiye thi catering ke liye — directory se turant mil gayi, event super hit raha!", rating: 4, role: "Event Planner" },
   ],
   ayurvedicwebsite: [
     { name: "Ashok P.", text: "Ashwagandha ne energy badhayi — AYUSH certified hai toh bharosa bhi hai.", rating: 5, role: "Fitness Enthusiast" },
@@ -65,6 +73,8 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   ],
   sarkarghar: [
     { name: "Vikram S.", text: "Virtual tour dekhke decide kiya — ghar jaane ka time bachaya aur perfect mill gaya.", rating: 5, role: "Home Buyer" },
+    { name: "Sunita P.", text: "Loan assistance bhi mili platform se — bank tak pahunchne mein madad mili, process smooth raha.", rating: 5, role: "First-time Buyer, Rajwada" },
+    { name: "Amit J.", text: "Price analytics se pata chala sahi rate kya hai — ₹2 lakh bachaye fraud se bach gaye.", rating: 4, role: "Investor, Scheme No. 78" },
   ],
   sarkarskills: [
     { name: "Rahul Y.", text: "Digital marketing course pura kiya — ab freelance se ₹25,000/month kamata hoon.", rating: 5, role: "Graduate" },
@@ -72,30 +82,48 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   ],
   "hyperframes-realestate": [
     { name: "Sanjay M.", text: "Video tour se property dekh liya — Indore aane ki zarurat nahi padi. Time and money dono bachaya!", rating: 5, role: "NRI Buyer" },
+    { name: "Priyanka S.", text: "360° virtual tour ne itni achhi dikhi property ki — actually jaake dekhne ke baad bhi same laga. Fully accurate!", rating: 5, role: "Home Buyer, Mumbai" },
+    { name: "Rajiv T.", text: "Video listing daalne ke baad hi 3 buyer interested hue — personally visit karne ke baad ek ne turant booking kar li.", rating: 5, role: "Property Seller" },
   ],
   sikshahub: [
     { name: "Priyanka T.", text: "Beti ke liye SikshaHub liya — CBSE syllabus, video classes, sab ₹199 mein. Best investment!", rating: 5, role: "Parent" },
+    { name: "Rohit K.", text: "Live tuition sessions ne samjh aaya jo school mein nahi samjha — maths mein 40% improvement!", rating: 5, role: "Class 10 Student" },
+    { name: "Meena D.", text: "MP Board ke liye yahan sab kuch milta hai — notes, video, practice test. Beta self-study kar raha hai ab.", rating: 4, role: "Mother, Sudama Nagar" },
   ],
   sarkartravel: [
     { name: "Amit J.", text: "Flight + hotel package compare kiya — ₹3,000 bachaye!", rating: 5, role: "Frequent Traveler" },
+    { name: "Kavita N.", text: "Shimla honeymoon package book kiya — bahut sundar hotels aur itinerary perfectly planned tha.", rating: 5, role: "Newlywed, Indore" },
+    { name: "Sunil P.", text: "Train tickets nahi mil thi — Travel ne waitlist suggestion di, WL2 se confirm ho gayi. Bahut helpful!", rating: 4, role: "Regular Commuter" },
   ],
   sarkardukaan: [
     { name: "Ganesh P.", text: "Dukaan online ho gayi 10 minute mein — ab poore sheher mein orders aate hain.", rating: 5, role: "Kirana Shop Owner" },
+    { name: "Lalita B.", text: "Main kapde online bechhti hoon — Dukaan ne meri puri dukaan smartphone pe layi. Koi shop rent nahi deni padegi!", rating: 5, role: "Boutique Owner, Palasia" },
+    { name: "Mohammed S.", text: "Inventory manage karna itna aasan ho gaya — automatically pata chalta hai kab restock karna hai.", rating: 4, role: "Mobile Accessories Shop" },
   ],
   sarkarbazaar: [
     { name: "Lata S.", text: "Local crafts online bech pa rahi hain — Bazaar ne reach di worldwide.", rating: 5, role: "Handicraft Seller" },
+    { name: "Prakash J.", text: "B2B orders aane lage suppliers se directly — beech ke hatane se margin badh gaya.", rating: 5, role: "Wholesaler, Cloth Market" },
+    { name: "Nisha A.", text: "Shipping partner network ne delivery ko easy baya — DTDC se ghar tak pahunchta hai order safely.", rating: 4, role: "Home Baker" },
   ],
   sarkarjobs: [
     { name: "Ravi K.", text: "Verified companies mil gayi — pehle fraud ka darr tha, ab nahi.", rating: 5, role: "Fresh Graduate" },
+    { name: "Sneha M.", text: "AI job match ne sahi company bheji — 3 interviews clear kiye, final selection!", rating: 5, role: "BBA Graduate, Palasia" },
+    { name: "Arvind P.", text: "Salary comparison tool ne pata kiya ki mujhse kam mil raha tha — company negotiate kar payi is data se.", rating: 5, role: "Sales Executive" },
   ],
   sarkared: [
     { name: "Pooja M.", text: "Web development seekha — ab apna khud ka website bana leti hoon. ₹499/mein best course!", rating: 5, role: "Aspiring Developer" },
+    { name: "Amit S.", text: "AI course se chatbot bana liya apne business ke liye — customer support automated ho gaya.", rating: 5, role: "Startup Founder" },
+    { name: "Kiran B.", text: "Certificate mila course ke baad — HR ne bola yeh practical knowledge hai, offer letter mil gayi!", rating: 5, role: "BCA Student" },
   ],
   sarkarsarkar: [
     { name: "Bhagirath J.", text: "Aadhar card correction ke liye SarkarSarkar use kiya — ghar baithke ho gaya kaam!", rating: 5, role: "Senior Citizen" },
+    { name: "Rekha D.", text: "Ration card banana tha — pehle taiyar the kagzaat galat ho gaye the, platform ne sab set kar diya.", rating: 5, role: "Homemaker, Rajwada" },
+    { name: "Ghanshyam K.", text: "Online RTI file kari — 15 din mein jawaab mil gaya. Pehle mahino lag jaate the.", rating: 4, role: "RTI Activist" },
   ],
   sarkarwellness: [
     { name: "Meera D.", text: "Panchkarma treatment ne back pain door kiya — natural aur effective.", rating: 5, role: "Yoga Practitioner" },
+    { name: "Dr. Ashok T.", text: "Ayurvedic consultation ne meri skin problem 3 mahine mein solve ki — chemical creams se zyada effective.", rating: 5, role: "Retired Teacher" },
+    { name: "Priyanka R.", text: "Daily yoga classes join ki — stress kam hua, neend achhi aa rahi hai. Best wellness decision!", rating: 4, role: "Working Mom, Vijay Nagar" },
   ],
 };
 
