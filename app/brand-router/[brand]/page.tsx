@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getBrand } from "@/lib/brands";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 300; // Revalidate every 5 minutes (ISR cache)
 
 function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;

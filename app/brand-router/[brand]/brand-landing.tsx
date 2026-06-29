@@ -390,7 +390,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
             Aaj hi shuru karein — {brand.name} ke saath juden
           </h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            Free mein register karein aur 50+ doctors tak pahunchein — ghar baithe.
+            Free mein register karein aur {brand.name} ke saath apna safar shuru karein — ghar baithe.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
