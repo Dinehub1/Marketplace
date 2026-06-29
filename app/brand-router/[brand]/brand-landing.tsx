@@ -31,6 +31,15 @@ export async function BrandLanding({ brand }: { brand: any }) {
         "💼 डिजिटल कार्ड — अपने व्यापार को प्रोफ़ेशनल तरीके से प्रेज़ेंट करें",
       ],
     },
+    "sarkarhealth": {
+      headline: "आपकी सेहत, हमारी ज़िम्मेदारी",
+      subheadline: "SarkarHealth इंदौर के लिए पूर्ण हेल्थकेयर समाधान — डॉक्टर से लेकर दवाई तक, एक ही ऐप में।",
+      highlights: [
+        "🩺 वीडियो कंसल्टेशन — कहीं भी, कभी भी डॉक्टर से मिलें",
+        "💊 ऑनलाइन दवाई ऑर्डर — घर बैठे दवाई पाएं",
+        "📋 हेल्थ रिकॉर्ड — आपकी पूरी मेडिकल जानकारी सुरक्षित एक जगह",
+      ],
+    },
   };
 
   const hero = brandHero[brand.slug] || {
@@ -120,10 +129,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
         <div className="mx-auto max-w-5xl px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { v: "500+", label: "स्थानीय व्यवसाय", icon: "🏪" },
-              { v: "25,000+", label: "सक्रिय उपयोगकर्ता", icon: "👥" },
-              { v: "4.8★", label: "औसत रेटिंग", icon: "⭐" },
-              { v: "15+", label: "इंदौर इलाके", icon: "📍" },
+              { v: "10,000+", label: "वेरिफ़ाइड बिज़नेस", icon: "🏢" },
+              { v: "50,000+", label: "सक्रिय कनेक्शन", icon: "🔗" },
+              { v: "500+", label: "मासिक डील्स", icon: "🤝" },
+              { v: "25+", label: "इंडस्ट्री सेक्टर", icon: "📊" },
             ].map((s, i) => (
               <div key={i} className="rounded-2xl p-6 border bg-white" style={{ borderColor: `${accent}20` }}>
                 <div className="text-2xl mb-2">{s.icon}</div>
@@ -140,13 +149,13 @@ export async function BrandLanding({ brand }: { brand: any }) {
         <div className="mx-auto max-w-5xl px-6 py-20">
           <div className="text-center mb-12">
             <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>यह कैसे काम करता है</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>तीन आसान चरणों मं शामिल हों</h2>
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>तीन आसान चरणों मं शुरू करें</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { n: "1", t: "अपनी प्रोफ़ाइल बनाएं", d: "स्थानीय व्यवसाय, सेवा या विशेषज्ञ बनने के लिए मिनटों मं साइन अप करें।" },
-              { n: "2", t: "ग्राहक से जुड़ें", d: "लीड पाएं, संदेश लें और सीधे व्यापार बढ़ाएं — बिना किसी बिचौलिए के।" },
-              { n: "3", t: "समुदाय मं प्रगति करें", d: "रेटिंग बढ़ाएं, समीक्षाएं पाएं और आपने ब्रांड को मजबूत बनाएं।" },
+              { n: "1", t: "डिजिटल कार्ड बनाएं", d: "अपने व्यापार का प्रोफ़ेशनल डिजिटल कार्ड बनाएं — QR कोड के साथ तुरंत शेयर करें।" },
+              { n: "2", t: "B2B पार्टनर खोजें", d: "AI-आधारित मैचिंग से सही सप्लायर, बायर और डिस्ट्रीब्यूटर से जुड़ें।" },
+              { n: "3", t: "डील क्लोज़ करें और बढ़ें", d: "लीड ट्रैक करें, प्रपोज़ल भेजें और सीधे डील क्लोज़ करें — पूरा रिकॉर्ड एक जगह।" },
             ].map((step) => (
               <div key={step.n} className="text-center relative">
                 <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
@@ -160,19 +169,19 @@ export async function BrandLanding({ brand }: { brand: any }) {
         </div>
       </section>
 
-      {/* Who Uses SarkarDost */}
+      {/* Who Uses SarkarConnect */}
       <section className="border-t" style={{ borderColor: `${accent}20` }}>
         <div className="mx-auto max-w-5xl px-6 py-20">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>समुदाय का हिस्सा बनें</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>SarkarDost का उपयोग कौन करता है?</h2>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>भारत के व्यापारियों का नेटवर्क</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>SarkarConnect का उपयोग कौन करता है?</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "🏪", t: "दुकानदार", d: "अपनी दुकान को ऑनलाइन दिखाएं और ग्राहक पाएं" },
-              { icon: "👨‍🔧", t: "सेवा प्रदाता", d: "प्लंबर से लेकर ट्यूटर तक — सब की जानकारी एक जगह" },
-              { icon: "🎓", t: "प्रशिक्षक", d: "कोचिंग, ट्यूशन और कौशल प्रशिक्षण को प्रमोट करें" },
-              { icon: "🏥", t: "स्वास्थ्य विशेषज्ञ", d: "क्लिनिक, फिजियो और डॉक्टर को आसानी से खोजें" },
+              { icon: "🏭", t: "मैन्युफैक्चरर", d: "अपने उत्पादों को सही बायर तक पहुंचाएं — सीधे कनेक्शन" },
+              { icon: "📦", t: "डिस्ट्रीब्यूटर", d: "नए मार्केट में विस्तार करें और रिटेयल नेटवर्क बनाएं" },
+              { icon: "🛒", t: "रिटेयलर", d: "वेरिफ़ाइड सप्लायर खोजें और बेस्ट डील्स पाएं" },
+              { icon: "💼", t: "सर्विस प्रोवाइडर", d: "B2B सेवाएं बेचें और कॉर्पोरेट क्लाइंट्स से जुड़ें" },
             ].map((u, i) => (
               <div key={i} className="rounded-2xl border bg-white p-6 text-center" style={{ borderColor: `${accent}30` }}>
                 <div className="text-4xl mb-3">{u.icon}</div>
@@ -210,10 +219,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
           <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
-            आज ही जुड़ें — इंदौर के सबसे बड़े समुदाय नेटवर्क से
+            आज ही कनेक्ट करें — भारत के सबसे बड़े B2B नेटवर्क से
           </h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            अपने व्यापार या सेवा को मुफ्त में लिस्ट करें और हज़ारों ग्राहकों तक पहुंचें।
+            अपने व्यापार को मुफ्त में रजिस्टर करें और हज़ारों वेरिफ़ाइड पार्टनर्स तक पहुंचें।
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
