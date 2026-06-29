@@ -54,7 +54,7 @@ export function ServicesPage({ brand }: { brand: any }) {
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>हमारी सेवाएं</div>
           <h1 className="heading-xl mb-6"><span style={{ color: primary }}>{brand.name} आपके लिए क्या कर सकता है?</span></h1>
           <p className="text-lg opacity-60 max-w-2xl mx-auto">
-            अपने स्थानीय व्यापार को डिजिटल रूप से मजबूत बनाने के लिए हर ज़रूरी सेवा — एक ही जगह।
+          Ghar baithe poora healthcare — doctor se milen, dawai payein, reports paayein — sab ek jagah.
           </p>
         </div>
       </section>
@@ -104,7 +104,7 @@ export function ServicesPage({ brand }: { brand: any }) {
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">शुरू करने को तैयार?</h2>
-              <p className="text-white/80 mb-8">आज ही अपने व्यापार को {brand.name} पर लिस्ट करें — पहला महीना मुफ्त!</p>
+              <p className="text-white/80 mb-8">Aaj hi apni family ka health profile banaayein — pehla consultation free!</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>संपर्क करें →</a>
                 <a href={`https://${brand.slug}.cashcard.live/pricing`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">प्राइसिंग देखें</a>

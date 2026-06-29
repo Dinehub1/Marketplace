@@ -205,10 +205,10 @@ export function PricingPage({ brand }: { brand: any }) {
           </div>
           <div className="space-y-4">
             {[
-              { q: "क्या मैं मुफ्त में शुरू कर सकता हूँ?", a: "हाँ! नीडी व्यवसाय प्लान पूरी तरह मुफ्त है। आप बिना क्रेडिट कार्ड के साइन अप कर सकते हैं।" },
-              { q: "क्या मैं प्लान बदल सकता हूँ?", a: "बिल्कुल! कभी भी अपग्रेड या डाउनग्रेड करें — अनुपातिक बिलिंग होती है।" },
-              { q: "लीड क्या होते हैं?", a: "लीड वे संभावित ग्राहक हैं जो आपकी लिस्टिंग देखकर संपर्क करना चाहते हैं।" },
-              { q: "क्या EMI पर भुगतान कर सकते हैं?", a: "हाँ, सभी प्रो और प्रीमियम प्लान UPI ऑटो-पे या त्रैमासिक भुगतान से कर सकते हैं।" },
+              { q: "Kya main free mein doctor se baat kar sakta hoon?", a: "Pehla consultation free hai! Uske baad Health Pro plan mein unlimited video consultations milte hain sirf �299/maheene." },
+              { q: "Kya doctor ghar par aayega?", a: "Haan, Family Plan (₹699/mein) mein monthly 1 doctor home visit shamil hai — specialist physician aapke ghar aayega." },
+              { q: "Dawai kaise order karein?", a: "Prescription upload karein ya direct order karein — generic options mein 40% tak bachat. Same-day delivery Indore mein." },
+              { q: "Kya insurance claim hoga?", a: "Hum TPA tie-up ke saath hain — cashless claims aram se process hoti hain. Billing documents milte hain directly app mein." },
             ].map((faq, i) => (
               <div key={i} className="rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
                 <h3 className="font-bold mb-2" style={{ color: primary }}>{faq.q}</h3>
@@ -224,8 +224,8 @@ export function PricingPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">कस्टम प्लान चाहिए?</h2>
-              <p className="text-white/80 mb-8">बड़े व्यापारों, श्रृंखलाओं और एजेंसियों के लिए विशेष मूल्य निर्धारण उपलब्ध है।</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Custom Plan Chahiye?</h2>
+          <p className="text-white/80 mb-8">Badho hospitals, clinics aur chains ke liye special pricing available hai.</p>
               <a href={`https://${brand.slug}.cashcard.live/quote`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>कस्टम कोट मांगें →</a>
             </div>
           </div>

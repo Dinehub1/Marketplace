@@ -180,9 +180,55 @@ export async function BrandLanding({ brand }: { brand: any }) {
 
   const hero = brandHero[brand.slug] || {
     headline: brand.tagline || brand.name,
-    subheadline: brand.description || `${brand.name} — आपकी विश्वसनीय प्लेटफउर्म।`,
+    subheadline: brand.description || `${brand.name} — आपकी विश्वसनी� प्�ेटफउर्म�`,
     highlights: [],
   };
+
+  // Brand-specific stats
+    const brandStats: Record<string, Array<{ v: string; label: string; icon: string }>> = {
+      sarkarhealth: [
+        { v: "50+", label: "वेरि�़ाइड डॉक्टर", icon: "�" },
+        { v: "5,000+", label: "सक्रिय मरीज़", icon: "👥" },
+        { v: "4.9★", label: "डॉक्�र रेटिंग", icon: "⭐" },
+        { v: "24/7", label: "हेल्पलाइन", icon: "🚑" },
+      ],
+    };
+    const stats = brandStats[brand.slug] ?? [
+      { v: "10,000+", label: "सक्रिय उप�ोगकर्ता", icon: "👥" },
+      { v: "5,000+", label: "सफल �ंटरैक्शन", icon: "✅" },
+      { v: "4.9★", label: "�सत रेटिंग", icon: "⭐" },
+      { v: "24/7", label: "समर्�न उपलब्ध", icon: "🛟" },
+    ];
+
+  // Brand-specific steps
+    const brandSteps: Record<string, Array<{ n: string; t: string; d: string }>> = {
+      sarkarhealth: [
+        { n: "1", t: "डॉक्�र चुनें", d: "विशे�ज्�ता �र �नु�व के अनुसार सही डॉक्टर खो�ें — प्रो�़ाइल पढ़ें, रेटिंग देखें।" },
+        { n: "2", t: "�पॉइं�मेंट बुक करें", d: "वीडियो या इन-पर्सन — �पनी सुविधा के अनुसा� �ुनें� तुरंत कन्फर्मेशन�" },
+        { n: "3", t: "कंसल्ट करें", d: "�ॉक्टर से मिलें, प्�िस्�्रिप्शन पाएं, दवाई �र्डर करें — सब �क �गह।" },
+      ],
+    };
+    const steps = brandSteps[brand.slug] ?? [
+      { n: "1", t: "Sign Up Karein", d: "Minutes mein account banayein — bina kisi complexity ke, bas mobile number se." },
+      { n: "2", t: "Services Dhoen ya Bechhein", d: "Apni zaroorat ke anusaar services dhoen ya apne business ko promote karein." },
+      { n: "3", t: "Judein aur Badhein", d: "Connections banayein, deals karein aur apne community mein progress karein." },
+    ];
+
+  // Brand-specific community
+    const brandCommunity: Record<string, Array<{ icon: string; t: string; d: string }>> = {
+      sarkarhealth: [
+        { icon: "�", t: "हॉस्�िटल �र क्लीनिक", d: "50+ पार्टनर हॉस्�िटल — �ंद�र में सबसे बड़ा नेटवर्क" },
+        { icon: "�‍⚕️", t: "ड�क्टर्�", d: "MBBS, MD, BAMS — सभी वि�ेषज्ञता के वेरिफ�ाइड प्र�क्टिशनर" },
+        { icon: "👨‍👩‍�‍👦", t: "परिवार", d: "हर �म्र के मरीज़ — ब�्चों से बु�़ुर्गों तक पूरा ख्�ाल" },
+        { icon: "�", t: "लै� पा�्टनर्स", d: "NABL सर्टि�़ाइड लैब — सटीक रिपोर्ट, तेज़ �िलवरी" },
+      ],
+    };
+    const community = brandCommunity[brand.slug] ?? [
+      { icon: "👤", t: "उपयोगकर्ता", d: "अपनी ज़रूरतों के अनुसार सेवाएं खोजें और भरोसेमंद पार्टनर पाएं" },
+      { icon: "🏪", t: "व्यापारी", d: "अपने व्यापार को ऑनलाइन ले जाएं और नए ग्राहकों तक पहुंचें" },
+      { icon: "👨‍💼", t: "पेशेवर", d: "अपनी कौशल को प्रमोट करें और सही अवसर पाएं" },
+      { icon: "🏠", t: "परिवार", d: "परिवार की ज़रूरतों के लिए सही सेवा — एक ही जगह" },
+    ];
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
@@ -264,12 +310,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section className="border-t" style={{ borderColor: `${accent}20` }}>
         <div className="mx-auto max-w-5xl px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {[
-              { v: "10,000+", label: "सक्रिय उपयोगकर्ता", icon: "👥" },
-              { v: "5,000+", label: "सफल इंटरैक्शन", icon: "✅" },
-              { v: "4.9★", label: "औसत रेटिंग", icon: "⭐" },
-              { v: "24/7", label: "समर्थन उपलब्ध", icon: "🛟" },
-            ].map((s, i) => (
+            {stats.map((s, i) => (
               <div key={i} className="rounded-2xl p-6 border bg-white" style={{ borderColor: `${accent}20` }}>
                 <div className="text-2xl mb-2">{s.icon}</div>
                 <div className="text-2xl md:text-3xl font-extrabold" style={{ color: primary }}>{s.v}</div>
@@ -288,11 +329,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
             <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>तीन आसान चरणों मं शुरू करें</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { n: "1", t: "साइन अप करें", d: "मिनटों में अपना अकाउंट बनाएं — बिना किसी जटिलता के, बस मोबाइल नंबर से।" },
-              { n: "2", t: "सेवाएं खोजें या बेचें", d: "अपनी ज़रूरत के अनुसार सेवाएं खोजें या अपने व्यापार को प्रमोट करें।" },
-              { n: "3", t: "जुड़ें और बढ़ें", d: "कनेक्शन बनाएं, डील्स करें और अपने समुदाय में प्रगति करें।" },
-            ].map((step) => (
+            {steps.map((step) => (
               <div key={step.n} className="text-center relative">
                 <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
                   {step.n}
@@ -313,12 +350,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
             <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>{brand.name} का उपयोग कौन करता है?</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: "👤", t: "उपयोगकर्ता", d: "अपनी ज़रूरतों के अनुसार सेवाएं खोजें और भरोसेमंद पार्टनर पाएं" },
-              { icon: "🏪", t: "व्यापारी", d: "अपने व्यापार को ऑनलाइन ले जाएं और नए ग्राहकों तक पहुंचें" },
-              { icon: "👨‍💼", t: "पेशेवर", d: "अपनी कौशल को प्रमोट करें और सही अवसर पाएं" },
-              { icon: "🏠", t: "परिवार", d: "परिवार की ज़रूरतों के लिए सही सेवा — एक ही जगह" },
-            ].map((u, i) => (
+            {community.map((u, i) => (
               <div key={i} className="rounded-2xl border bg-white p-6 text-center" style={{ borderColor: `${accent}30` }}>
                 <div className="text-4xl mb-3">{u.icon}</div>
                 <h3 className="font-bold text-lg mb-2" style={{ color: primary }}>{u.t}</h3>
@@ -355,10 +387,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
           <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
-            आज ही शुरू करें — {brand.name} के साथ जुड़ें
+            Aaj hi shuru karein — {brand.name} ke saath juden
           </h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            मुफ्त में रजिस्टर करें और हज़ारों उपयोगकर्ताओं तक पहुंचें।
+            Free mein register karein aur 50+ doctors tak pahunchein — ghar baithe.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>

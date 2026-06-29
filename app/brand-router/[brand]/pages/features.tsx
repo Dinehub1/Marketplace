@@ -78,6 +78,36 @@ export function FeaturesPage({ brand }: { brand: any }) {
   const bg = theme.bg ?? "#faf5ff";
   const features = BRAND_FEATURES[brand.slug] ?? (brand.features_json ?? DEFAULT_FEATURES) as any[];
 
+  // Brand-specific stats for the stats bar
+    const brandStatsBar: Record<string, Array<{ v: string; l: string }>> = {
+      sarkarhealth: [
+        { v: "50+", l: "वेरिफ़ा�ड �ॉक्टर" },
+        { v: "5,000+", l: "सक्रि� मरीज�" },
+        { v: "4.9★", l: "औसत रे�िं�" },
+        { v: "24/7", l: "हेल्�लाइन" },
+      ],
+    };
+    const statsBar = brandStatsBar[brand.slug] ?? [
+      { v: "500+", l: "Local Businesses" },
+      { v: "25,000+", l: "Active Users" },
+      { v: "4.8★", l: "Avg Rating" },
+      { v: "24/7", l: "Support" },
+    ];
+
+  // Brand-specific how it works
+    const brandHowItWorks: Record<string, Array<{ t: string; d: string }>> = {
+      sarkarhealth: [
+        { t: "लक्ष� बताएं", d: "�पनी �ीमा�ी के बा�े में बताएं — AI �पको सही �ॉक्टर से मिलाएगा�" },
+        { t: "वीडियो कॉल पर मिलें", d: "सुरक्�ित वीडियो कंसल्टेशन — अपनी प्रा�वेसी �नी रहे�ी।" },
+        { t: "प्रिस्क्रिप्शन और दवा�", d: "डि�िटल प्रिस्क्�िप्�न पाएं, दवा� दरवाजे पर ऑर्�र करें�" },
+      ],
+    };
+    const howItWorks = brandHowItWorks[brand.slug] ?? [
+      { t: "Sign Up in Minutes", d: "Bina credit card ke account banayein — bas mobile number chahiye." },
+      { t: "Listing Jodein", d: "Apni dukan, service ya skill ki jankari bharein aur turant live hoen." },
+      { t: "Customer Paayein aur Badhein", d: "Lead paayein, reviews ikattha karein aur apne community mein prasiddh banein." },
+    ];
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
       <BrandHeader brand={brand} />
@@ -126,12 +156,7 @@ export function FeaturesPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-8 md:p-12 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
-              {[
-                { v: "500+", l: "स्थानीय व्यवसाय" },
-                { v: "25,000+", l: "सक्रिय उपयोगकर्ता" },
-                { v: "4.8★", l: "औसत रेटिंग" },
-                { v: "24/7", l: "समर्थन" },
-              ].map((s) => (
+              {statsBar.map((s) => (
                 <div key={s.l}>
                   <div className="text-2xl md:text-4xl font-extrabold mb-1">{s.v}</div>
                   <div className="text-sm opacity-70">{s.l}</div>
@@ -150,11 +175,7 @@ export function FeaturesPage({ brand }: { brand: any }) {
             <h2 className="heading-md" style={{ color: primary }}>तीन आसान चरणों मं शुरू करें</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { t: "मुफ्त में साइन अप", d: "किसी क्रेडिट कार्ड के बिना अपना अकाउंट बनाएं — बस मोबाइल नंबर चाहिए।" },
-              { t: "अपनी लिस्टिंग जोड़ें", d: "अपनी दुकान, सेवा या कौशल की जानकारी भरें और तुरंत लाइव हो जाएं।" },
-              { t: "ग्राहक पाएं और बढ़ें", d: "लीड प्राप्त करें, समीक्षाएं इकट्ठा करें और अपने समुदाय में प्रसिद्ध बनें।" },
-            ].map((step, i) => (
+            {howItWorks.map((step, i) => (
               <div key={i} className="text-center relative">
                 <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold animate-pulse-glow" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
                   {i + 1}
@@ -177,7 +198,7 @@ export function FeaturesPage({ brand }: { brand: any }) {
                 {brand.name} के साथ आज ही जुड़ें
               </h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">
-                इंदौर के हज़ारों स्थानीय व्यवसाय पहले से जुड़ चुके हैं — आप अब कब रहेंगे?
+                Indore ke hazaron rogi pahle se jude chuke hain — aap ab kab rahenge?
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>

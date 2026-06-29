@@ -31,12 +31,11 @@ export function BookingPage({ brand }: { brand: any }) {
         <div className="relative mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: primary }} />
-            Book an Appointment
-          </div>
+            Book </div>
           <h1 className="heading-xl mb-4">
-            Schedule your <span className="gradient-text">visit</span>
+            Apni <span className="gradient-text">Appointment</span> Book Karein
           </h1>
-          <p className="text-lg opacity-60">Pick a date and time that works for you</p>
+          <p className="text-lg opacity-60">Apne hisaab se date aur time chunein — doctor ghar par aayega ya video par milega</p>
         </div>
       </section>
 
@@ -72,7 +71,7 @@ export function BookingPage({ brand }: { brand: any }) {
             {/* Service */}
             <h3 className="font-bold text-sm mb-3" style={{ color: primary }}>Service Type</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-6">
-              {["General Consultation", "Premium Service", "Follow-up Visit"].map((s) => (
+              {["Video Consultation", "Home Visit", "Lab Test Booking", "Follow-up"].map((s) => (
                 <button key={s} onClick={() => setService(s)} className={`text-left text-sm py-3 px-4 rounded-xl transition-all ${service === s ? 'font-bold border-2' : 'border hover:border-gray-300'}`} style={service === s ? { borderColor: primary, backgroundColor: `${primary}08` } : { borderColor: `${accent}25` }}>
                   {s}
                 </button>
@@ -82,12 +81,12 @@ export function BookingPage({ brand }: { brand: any }) {
             {/* Confirm */}
             {!booked ? (
               <button onClick={() => setBooked(true)} className="btn-primary w-full py-3.5 text-sm">
-                Confirm Booking for {selectedTime} on June {selectedDay}
+                Confirm Appointment: {selectedTime} June {selectedDay}
               </button>
             ) : (
               <div className="rounded-2xl p-6 text-center border-2 border-green-200" style={{ backgroundColor: "#f0fdf4" }}>
                 <div className="text-4xl mb-2">✅</div>
-                <p className="font-bold text-green-800">Booking Confirmed!</p>
+                <p className="font-bold text-green-800">Appointment Confirmed!</p>
                 <p className="text-sm text-green-600 mt-1">{service} · June {selectedDay}, 2026 at {selectedTime}</p>
                 <p className="text-xs text-green-500 mt-2">A confirmation has been sent to your phone</p>
                 <button onClick={() => setBooked(false)} className="mt-4 text-xs opacity-60 hover:opacity-100">Book another →</button>

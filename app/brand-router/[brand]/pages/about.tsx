@@ -107,7 +107,7 @@ export function AboutPage({ brand }: { brand: any }) {
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
               <p className="text-caption mb-3" style={{ color: primary }}>हमारे मूल्य</p>
-              <h2 className="heading-md" style={{ color: primary }}>SarkarDost को अलग बनाने वाली चीज़ें</h2>
+              <h2 className="heading-md" style={{ color: primary }}>{brand.name} ko alag banane wali cheezein</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {about.values.map((v, i) => (
@@ -128,10 +128,10 @@ export function AboutPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-8 md:p-12" style={{ background: `linear-gradient(135deg, ${primary}08, ${secondary}05)` }}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { v: "500+", l: "स्थानीय व्यवसाय" },
-                { v: "25,000+", l: "सक्रिय उपयोगकर्ता" },
-                { v: "4.8★", l: "औसत रेटिंग" },
-                { v: "15+", l: "इंदौर इलाके" },
+                { v: "50+", l: "Verified Doctors" },
+                { v: "5,000+", l: "Active Patients" },
+                { v: "4.9★", l: "Avg Rating" },
+                { v: "15+", l: "Indore Areas" },
               ].map((s) => (
                 <div key={s.l} className="text-center rounded-2xl border p-6 bg-white" style={{ borderColor: `${accent}30` }}>
                   <div className="text-3xl md:text-4xl font-extrabold mb-1" style={{ color: primary }}>{s.v}</div>
@@ -170,9 +170,9 @@ export function AboutPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">साथ बढ़ने को तैयार?</h2>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Saathe badhne ko taiyar?</h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">
-                {brand.name} के साथ अपने व्यापार को नई ऊंचाई दें।
+                {brand.name} ke saath apni sehat ka khayal rakhein — aaj hi download karein.
               </p>
               <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>बातचीत शुरू करें →</a>
             </div>

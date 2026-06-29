@@ -1,5 +1,16 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 
+const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rating: number; role?: string }>> = {
+  sarkarhealth: [
+    { name: "Sunita Sharma", text: "Bahut aasan! Ghar baithke doctor se mil payin, dawai bhi darwaze par aa gayi. Mujhe Indore mein kabhi aisi suvidha nahi mili.", rating: 5, role: "Housewife, Rajwada" },
+    { name: "Ramesh Patel", text: "Papa ka ECG ghar par hua — report bhi online aa gayi. Bahut pareshani se bach liya — dhanyavaad SarkarHealth!", rating: 5, role: "Son of patient, Palasia" },
+    { name: "Dr. Anant Mishra", text: "Ek mahine se 50+ marizon ka ilaj kar raha hoon. Mariz khush hain, main khush hoon.", rating: 5, role: "MBBS Doctor, SarkarHealth Partner" },
+    { name: "Priyanka Jain", text: "Video call par consultation — koi parking, koi line. 30 minute mein doctor mil payi — badhiya!", rating: 4, role: "Working Professional, Vijay Nagar" },
+    { name: "Mohanlal Yadav", text: "Budhurg hoon, akele jaane mein dikkat hoti thi. SarkarHealth se home visit aayi — doctor bahut acche hain.", rating: 5, role: "Retired Teacher, Sudama Nagar" },
+    { name: "Neha Agarwal", text: "Dawaiyaan 40% sasti gayin! Generic option bhi mila — bahut bachat ho rahi hai maasik.", rating: 4, role: "Mother, Saket Nagar" },
+  ],
+};
+
 const DEFAULT_TESTIMONIALS = [
   { name: "Rahul S.", text: "Amazing service! Highly recommended to everyone.", rating: 5 },
   { name: "Priya M.", text: "Best experience ever. Will definitely come back.", rating: 5 },
@@ -15,18 +26,17 @@ export function TestimonialsPage({ brand }: { brand: any }) {
   const secondary = t.secondary ?? "#8b5cf6";
   const accent = t.accent ?? "#c4b5fd";
   const bg = t.bg ?? "#faf5ff";
-  const testimonials = (brand.testimonials_json ?? DEFAULT_TESTIMONIALS) as any[];
+  const testimonials = BRAND_TESTIMONIALS[brand.slug] ?? (brand.testimonials_json ?? DEFAULT_TESTIMONIALS) as any[];
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
       <BrandHeader brand={brand} />
-
       <section className="relative overflow-hidden px-6 py-20 md:py-28">
         <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full blur-3xl opacity-10" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }} />
         <div className="relative mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>Testimonials</div>
-          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>What Our Customers Say</span></h1>
-          <p className="text-lg opacity-60 max-w-2xl mx-auto">Real reviews from real people who trust {brand.name}</p>
+          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>Hamare Mariz Kya Kehte Hain</span></h1>
+          <p className="text-lg opacity-60 max-w-2xl mx-auto">Asli vichar — SarkarHealth par bharosha karne wale mariz ke</p>
         </div>
       </section>
 
@@ -52,8 +62,8 @@ export function TestimonialsPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Join our happy customers</h2>
-              <p className="text-white/80 mb-8">Experience the {brand.name} difference today.</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Join our happy patients</h2>
+              <p className="text-white/80 mb-8">Experience the {brand.name} difference today — 5000+ mariz already trust us.</p>
               <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get Started →</a>
             </div>
           </div>
