@@ -2,6 +2,7 @@
 // Brand folders under public/sites that contain a static index.html.
 export const SITE_FOLDERS = new Set<string>([
   "ayurvedicwebsite",
+  "cloudplayer",
   "followup",
   "hyperframes-realestate",
   "justdial-agent",

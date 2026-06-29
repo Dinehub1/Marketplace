@@ -29,14 +29,23 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   cloudplayer: [
     { name: "Vikram M.", text: "4K streaming with zero buffering — best cloud player I've used. Period.", rating: 5, role: "Tech Enthusiast" },
     { name: "Sneha K.", text: "Family plan is amazing — all of us watch different things, no conflicts!", rating: 5, role: "Mother of two" },
+    { name: "Alex Rivera", text: "The adaptive bitrate is incredible — switched from hotel WiFi to 5G without missing a frame. My viewers noticed the quality jump immediately.", rating: 5, role: "Live Streamer" },
+    { name: "Priya Desai", text: "Cloud storage means I never worry about device storage again. My entire 4K library is accessible instantly from any device.", rating: 5, role: "Content Creator" },
+    { name: "Marcus Chen", text: "Parental controls gave me peace of mind. My kids can explore safely while I enjoy my own content in 4K HDR.", rating: 4, role: "Father of Three" },
   ],
   paisaflow: [
     { name: "Rohit Jain", text: "PaisaFlow ki wajah se mutual fund investment start kiya — returns acche aa rahe hain.", rating: 4, role: "First-time Investor" },
     { name: "Pooja Sharma", text: "Goal-based planning ne retirement ka tension hataya — ab confident hoon.", rating: 5, role: "Working Professional" },
+    { name: "Amit Patel", text: "PaisaFlow ke SIP ne mere mutual fund investment ko systematic banaya — 12% returns p.a. on large-cap funds.", rating: 5, role: "Software Engineer, Indore" },
+    { name: "Anita Joshi", text: "PaisaFlow ke FD scheme se 7.5% annual interest mil raha hai — bank se zyada return!", rating: 4, role: "Retired Teacher, Bhopal" },
+    { name: "Vikram Singh", text: "PaisaFlow ke stock recommendations ne 6 months mein 18% return diya — research reports bahut helpful!", rating: 5, role: "Stock Trader, Jaipur" },
   ],
   yaadrakh: [
     { name: "Karan T.", text: "YaadRakh ke baad kuch bhi miss nahi hota — AI notes bhi ban jaate hain automatically.", rating: 5, role: "Student" },
     { name: "Anita D.", text: "Smart reminders context samajhte hain — bahut useful hai daily life mein.", rating: 4, role: "Homemaker" },
+    { name: "Rohan S.", text: "YaadRakh ki AI notes se lecture notes automatically organize ho jate hain — ab revision me 50% kam time lagta hai.", rating: 5, role: "Computer Science Student" },
+    { name: "Priya M.", text: "Meeting notes automatically summarize ho jate hain — ab follow-up emails bhejne me 10 minute kam lagte hain.", rating: 5, role: "Project Manager" },
+    { name: "Dadi Sunder", text: "Dawa ki yaad-delivery reminders nahi chhootati — dawaiyon ka schedule perfect hai, dadi-maa ki sehat mein sudhar.", rating: 5, role: "Retired Teacher" },
   ],
   "sarkar-ai": [
     { name: "Deepak C.", text: "Sarkar AI ne mere business ka data analysis kar diya — manually 10 ghanta lagta tha!", rating: 5, role: "Business Owner" },
