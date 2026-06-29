@@ -11,6 +11,121 @@ const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
     { q: "Doctor kaun hain?", a: "Sabhi MBBS/MD/BAMS doctors — verified, experienced aur registered practitioners." },
     { q: "Kya mera health data secure hai?", a: "Bilkul. End-to-end encrypted — sirf aap aur aapka doctor dekh sakte hain." },
   ],
+  sarkardost: [
+    { q: "Listing kaise banayein?", a: "Mobile number se sign up karein, business details bharein aur submit karein — 5 minute mein live!" },
+    { q: "Kya listing free hai?", a: "Haan! Basic listing bilkul free hai. Premium features ke liye paid plans hain." },
+    { q: "Customer kaise milenge?", a: "Jab koi aapki category mein search karta hai, aapki listing dikhti hai — WhatsApp ya call se contact karte hain." },
+  ],
+  followup: [
+    { q: "Reminder kaise set karein?", a: "App mein task add karein, date/time set karein, channel choose karein — WhatsApp, SMS ya Email." },
+    { q: "Kya automated messages bhej sakte hain?", a: "Haan! AI aapki typing pattern seekhta hai aur automated follow-up messages bhejta hai." },
+    { q: "Team members ko kaise add karein?", a: "Business plan mein up to 5 team members add kar sakte hain — tasks assign karein aur track karein." },
+  ],
+  cloudplayer: [
+    { q: "Kya offline download hai?", a: "Haan! Premium plan mein aap content download karke bina internet dekh sakte hain." },
+    { q: "Kitne devices par chal sakta hai?", a: "Family plan mein 5 devices — sab alag-alag content dekh sakte hain simultaneously." },
+    { q: "Kya Smart TV par chalega?", a: "Bilkul! Android TV, Fire Stick, Samsung TV — sab par Cloud Player available hai." },
+  ],
+  paisaflow: [
+    { q: "Investment shuru kitne se kar sakte hain?", a: "₹100 se shuru kar sakte hain — SIP, FD, mutual fund sab options available hain." },
+    { q: "Kya risk analysis hota hai?", a: "Haan! AI aapke risk profile ke hisaab se portfolio suggest karta hai — safe se aggressive." },
+    { q: " Paisa nikalna hai toh?", a: "Kisi bhi time withdraw kar sakte hain — T+1 mein bank account mein paisa aa jata hai." },
+  ],
+  yaadrakh: [
+    { q: "AI notes kaise ban ta hai?", a: "Aap bolte hain ya likhte hain — AI samajhta hai aur organized notes bana deta hai." },
+    { q: "Kya cross-device sync hota hai?", a: "Haan! Phone, tablet, laptop — sab jagah aapke notes synchronized hain." },
+    { q: "Data secure hai?", a: "Bilkul — end-to-end encrypted. Aapka sirf aapka hai." },
+  ],
+  "sarkar-ai": [
+    { q: "AI kitni bhasha samajhta hai?", a: "Hindi, English aur 10+ Indian bhashaen — aapki bhasha mein baat karein." },
+    { q: "API access kaise milega?", a: "Pro plan se API access milta hai — documentation aur SDK available hai." },
+    { q: "Kya business data safe hai?", a: "Haan! Aapka data train nahi hota — privacy first approach." },
+  ],
+  sarkarfood: [
+    { q: "Delivery time kitna hai?", a: "30 minute mein guaranteed — late hai toh free delivery coupon milta hai." },
+    { q: "Kya COD available hai?", a: "Haan! Cash on delivery sabhi restaurants par available hai." },
+    { q: "Premium plan kya deta hai?", a: "Free delivery, special offers aur 10% cashback har order pe." },
+  ],
+  sarkarfinance: [
+    { q: "Loan approval kitne mein hoti hai?", a: "10 minute mein — AI-based verification se instant approval." },
+    { q: "Kya documents zaroori hain?", a: "Bas Aadhar aur PAN — baar baar nahi maanga jayega." },
+    { q: "EMI kaise bayenge?", a: "Auto-debit se — NACH mandate set karein, har mahina auto deduct ho jayega." },
+  ],
+  sarkarpay: [
+    { q: "Settlement time kitna hai?", a: "T+0 — aaj ka sale aaj hi bank mein." },
+    { q: "Kya international payments accept hote hain?", a: "Haan! Business plan se international cards bhi accept kar sakte hain." },
+    { q: "Chargeback kaise handle hota hai?", a: "Dashboard se track karein — automated dispute resolution available hai." },
+  ],
+  sarkarmart: [
+    { q: "Delivery kab tak hoti hai?", a: "Indore mein 24 ghante ke andar — free delivery ₹499+ orders pe." },
+    { q: "Return policy kya hai?", a: "7 din mein return — full refund, no questions asked." },
+    { q: "Cashback kaise milta hai?", a: "Har purchase pe 5-20% cashback — directly wallet mein credit hota hai." },
+  ],
+  sarkarlegal: [
+    { q: "First consultation free hai?", a: "Haan! 15 minute ki first consultation bilkul free hai." },
+    { q: "Online consultation kaise hoti hai?", a: "Video call par — WhatsApp ya Zoom se connect hote hain." },
+    { q: "Kya court representation milta hai?", a: "Pro plan mein experienced lawyers court mein represent karte hain." },
+  ],
+  sarkarmarketplace: [
+    { q: "Business kaise list karein?", a: "Free sign up — business details bharein aur turant live ho jayega." },
+    { q: "Kya verification hoti hai?", a: "Haan! Hum har business verify karte hain — GST, address check." },
+    { q: "Lead kaise milte hain?", a: "Jab koi aapki category mein search karta hai — aapka contact detail dikhta hai." },
+  ],
+  ayurvedicwebsite: [
+    { q: "Kya products genuine hain?", a: "100%! AYUSH certified — batch number aur expiry check kar sakte hain." },
+    { q: "Vaidya consultation free hai?", a: "Haan! Free 15-minute consultation — aapki prakriti ke hisaab se upay." },
+    { q: "Shipping charges kitne?", a: "₹499+ orders pe free shipping — 3-5 din mein delivery." },
+  ],
+  sarkarghar: [
+    { q: "Virtual tour kaise dekhein?", a: "Property page par 'Virtual Tour' button — 360° walkthrough." },
+    { q: "Loan facility available hai?", a: "Haan! 15+ bank partners — application se approval tak support." },
+    { q: "Kya verified listings hain?", a: "Sabhi listings verified — owner documents check kiye jate hain." },
+  ],
+  sarkarskills: [
+    { q: "Certificate milta hai?", a: "Haan! Course complete karne par government-recognized certificate milta hai." },
+    { q: "Placement assistance hai?", a: "Haan! 60% students ko placement milta hai — tie-ups with 100+ companies." },
+    { q: "Installment option hai?", a: "Haan! ₹500/month se start — education loan bhi available hai." },
+  ],
+  sikshahub: [
+    { q: "Kya CBSE board covered hai?", a: "Haan! CBSE, ICSE aur MP Board — class 1 se 12 tak." },
+    { q: "Live classes hain?", a: "Haan! Weekly live sessions — teacher se directly pooch sakte hain." },
+    { q: "Progress report milti hai?", a: "Haan! Monthly report parents ko — weak areas bhi batate hain." },
+  ],
+  sarkartravel: [
+    { q: "Best rates kaise milte hain?", a: "100+ airlines aur hotels se compare — lowest price guarantee." },
+    { q: "Cancellation flexible hai?", a: "Haan! 24 ghante tak free cancellation — full refund." },
+    { q: "Travel insurance included?", a: "Premium plan mein free travel insurance — medical aur trip cover." },
+  ],
+  sarkardukaan: [
+    { q: "Store kaise banayein?", a: "Sign up karein, products add karein, payment link set karein — 10 minute mein live!" },
+    { q: "Delivery kaise manage karein?", a: "Humara delivery network — ya khud bhi deliver kar sakte hain." },
+    { q: "Kya custom domain milta hai?", a: "Pro plan mein — apna naam, apna brand, apna store." },
+  ],
+  sarkarbazaar: [
+    { q: "Export kaise shuru karein?", a: "Bazaar export program join — international buyers se connect." },
+    { q: "B2B orders kaise aate hain?", a: "Wholesale listing karein — bulk buyers directly contact karte hain." },
+    { q: "Payment secure hai?", a: "Haan! Escrow system — buyer confirm hone ke baad payment release." },
+  ],
+  sarkarjobs: [
+    { q: "Profile kaise banayein?", a: "Sign up — education, experience, skills bharein — 5 minute mein ready!" },
+    { q: "Companies verified hain?", a: "Haan! Sabhi companies GST verified — fraud nahi hoga." },
+    { q: "Resume builder hai?", a: "Haan! Professional templates — one-click apply bhi." },
+  ],
+  sarkared: [
+    { q: "Konsi courses hain?", a: "Digital Marketing, AI, Web Development, Data Science — industry-ready skills." },
+    { q: "Job guarantee hai?", a: "70% placement rate — 100+ hiring partners ke saath." },
+    { q: "Kitne time ki courses?", a: "4-12 weeks — self-paced, lifetime access." },
+  ],
+  sarkarsarkar: [
+    { q: "Kaun si services hain?", a: "Aadhar, PAN, Passport, Ration Card, Driving License — sab ek jagah." },
+    { q: "Application kaise karein?", a: "Form fill karein, documents upload karein — hum baaki kaam karenge." },
+    { q: "Status kaise check karein?", a: "Dashboard se live tracking — SMS aur email alerts bhi milte hain." },
+  ],
+  sarkarwellness: [
+    { q: "Panchkarma kya hai?", a: "Ayurvedic detox therapy — 5 steps, natural healing, no side effects." },
+    { q: "Yoga classes online hain?", a: "Haan! Daily live classes — beginner se advanced level tak." },
+    { q: "Diet plan milta hai?", a: "Haan! Vaidya aapki prakriti ke hisaab se customized diet plan deta hai." },
+  ],
 };
 
 const DEFAULT_FAQ = [

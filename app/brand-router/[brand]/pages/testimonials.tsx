@@ -9,6 +9,94 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
     { name: "Mohanlal Yadav", text: "Budhurg hoon, akele jaane mein dikkat hoti thi. SarkarHealth se home visit aayi — doctor bahut acche hain.", rating: 5, role: "Retired Teacher, Sudama Nagar" },
     { name: "Neha Agarwal", text: "Dawaiyaan 40% sasti gayin! Generic option bhi mila — bahut bachat ho rahi hai maasik.", rating: 4, role: "Mother, Saket Nagar" },
   ],
+  sarkardost: [
+    { name: "Raju Tea Stall", text: "SarkarDost par listing karne ke baad mere customers badh gaye — log directly call karte hain ab.", rating: 5, role: "Chaiwala, Rajwada" },
+    { name: "Meena Tailor", text: "Pehle sirf mile jo aate the — ab naye customers bhi mil rahe hain. Bahut achha platform hai!", rating: 5, role: "Tailor, Palasia" },
+  ],
+  followup: [
+    { name: "Amit Sales", text: "FollowUp se mere clients ko kabhi miss nahi karna padta — automated messages sab yaad dilate hain.", rating: 5, role: "Sales Executive" },
+    { name: "Dr. Priya", text: "Patients ko appointment yaad dilwana mushkil tha — FollowUp ne sab aasan kar diya.", rating: 5, role: "Dentist" },
+  ],
+  cloudplayer: [
+    { name: "Vikram M.", text: "4K streaming with zero buffering — best cloud player I've used. Period.", rating: 5, role: "Tech Enthusiast" },
+    { name: "Sneha K.", text: "Family plan is amazing — all of us watch different things, no conflicts!", rating: 5, role: "Mother of two" },
+  ],
+  paisaflow: [
+    { name: "Rohit Jain", text: "PaisaFlow ki wajah se mutual fund investment start kiya — returns acche aa rahe hain.", rating: 4, role: "First-time Investor" },
+    { name: "Pooja Sharma", text: "Goal-based planning ne retirement ka tension hataya — ab confident hoon.", rating: 5, role: "Working Professional" },
+  ],
+  yaadrakh: [
+    { name: "Karan T.", text: "YaadRakh ke baad kuch bhi miss nahi hota — AI notes bhi ban jaate hain automatically.", rating: 5, role: "Student" },
+    { name: "Anita D.", text: "Smart reminders context samajhte hain — bahut useful hai daily life mein.", rating: 4, role: "Homemaker" },
+  ],
+  "sarkar-ai": [
+    { name: "Deepak C.", text: "Sarkar AI ne mere business ka data analysis kar diya — manually 10 ghanta lagta tha!", rating: 5, role: "Business Owner" },
+    { name: "Neha P.", text: "Hindi mein AI chatbot — finally koi hamari bhai mein baat karta hai!", rating: 5, role: "Content Creator" },
+  ],
+  sarkarfood: [
+    { name: "Ravi I.", text: "Indore ki best poha-jalebi mil gayi app se — 30 minute mein garam garam!", rating: 5, role: "Foodie" },
+    { name: "Sunita J.", text: "Budget menu se ₹99 mein full meal — students ke liye best hai.", rating: 4, role: "College Student" },
+  ],
+  sarkarfinance: [
+    { name: "Manoj K.", text: "₹2 lakh loan 10 minute mein account mein — no branch visit, no paperwork!", rating: 5, role: "Small Business Owner" },
+    { name: "Geeta S.", text: "Credit score check free mein — improve karne ke tips bhi mile. Bahut helpful!", rating: 4, role: "Homemaker" },
+  ],
+  sarkarpay: [
+    { name: "Rajesh M.", text: "Sab ek jagah — UPI, card, net banking. Settlement bhi same day milta hai.", rating: 5, role: "Shop Owner" },
+    { name: "Pooja T.", text: "Analytics dashboard se pata chalta hai kaunsa product zada bik raha hai.", rating: 4, role: "Online Seller" },
+  ],
+  sarkarmart: [
+    { name: "Anil S.", text: "Indore ke local brands mil gaye ek jagah — shopping bahut aasan ho gayi.", rating: 5, role: "Customer" },
+    { name: "Kavita D.", text: "Cashback mila har purchase pe — achhi savings ho rahi hai.", rating: 4, role: "Regular Buyer" },
+  ],
+  sarkarlegal: [
+    { name: "Ramesh L.", text: "Free consultation se samajh aaya case kaise hoga — paisa bhi bachaya, tension bhi nahi.", rating: 5, role: "Small Business Dispute" },
+    { name: "Sita R.", text: "Online video call par lawyer se mili — ghar baithke sab solve ho gaya.", rating: 5, role: "Property Issue" },
+  ],
+  "justdial-agent": [
+    { name: "Suresh A.", text: "Listing ke baad calls aane lage — business 30% badh gayi 2 mahine mein.", rating: 5, role: "AC Repair Business" },
+  ],
+  sarkarmarketplace: [
+    { name: "Meera J.", text: "Indore ka sabse bada directory — har category mein verified businesses mil gayi.", rating: 5, role: "Customer" },
+  ],
+  ayurvedicwebsite: [
+    { name: "Ashok P.", text: "Ashwagandha ne energy badhayi — AYUSH certified hai toh bharosa bhi hai.", rating: 5, role: "Fitness Enthusiast" },
+    { name: "Radha K.", text: "Triphal ne digestion theek kiya — ₹99 se start ho raha hai, best value.", rating: 4, role: "Senior Citizen" },
+  ],
+  sarkarghar: [
+    { name: "Vikram S.", text: "Virtual tour dekhke decide kiya — ghar jaane ka time bachaya aur perfect mill gaya.", rating: 5, role: "Home Buyer" },
+  ],
+  sarkarskills: [
+    { name: "Rahul Y.", text: "Digital marketing course pura kiya — ab freelance se ₹25,000/month kamata hoon.", rating: 5, role: "Graduate" },
+    { name: "Neha G.", text: "Certificate mila course complete karne par — interview mein impression ban gaya.", rating: 4, role: "Job Seeker" },
+  ],
+  "hyperframes-realestate": [
+    { name: "Sanjay M.", text: "Video tour se property dekh liya — Indore aane ki zarurat nahi padi. Time and money dono bachaya!", rating: 5, role: "NRI Buyer" },
+  ],
+  sikshahub: [
+    { name: "Priyanka T.", text: "Beti ke liye SikshaHub liya — CBSE syllabus, video classes, sab ₹199 mein. Best investment!", rating: 5, role: "Parent" },
+  ],
+  sarkartravel: [
+    { name: "Amit J.", text: "Flight + hotel package compare kiya — ₹3,000 bachaye!", rating: 5, role: "Frequent Traveler" },
+  ],
+  sarkardukaan: [
+    { name: "Ganesh P.", text: "Dukaan online ho gayi 10 minute mein — ab poore sheher mein orders aate hain.", rating: 5, role: "Kirana Shop Owner" },
+  ],
+  sarkarbazaar: [
+    { name: "Lata S.", text: "Local crafts online bech pa rahi hain — Bazaar ne reach di worldwide.", rating: 5, role: "Handicraft Seller" },
+  ],
+  sarkarjobs: [
+    { name: "Ravi K.", text: "Verified companies mil gayi — pehle fraud ka darr tha, ab nahi.", rating: 5, role: "Fresh Graduate" },
+  ],
+  sarkared: [
+    { name: "Pooja M.", text: "Web development seekha — ab apna khud ka website bana leti hoon. ₹499/mein best course!", rating: 5, role: "Aspiring Developer" },
+  ],
+  sarkarsarkar: [
+    { name: "Bhagirath J.", text: "Aadhar card correction ke liye SarkarSarkar use kiya — ghar baithke ho gaya kaam!", rating: 5, role: "Senior Citizen" },
+  ],
+  sarkarwellness: [
+    { name: "Meera D.", text: "Panchkarma treatment ne back pain door kiya — natural aur effective.", rating: 5, role: "Yoga Practitioner" },
+  ],
 };
 
 const DEFAULT_TESTIMONIALS = [

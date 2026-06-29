@@ -7,9 +7,9 @@
 //
 // Configure in Supabase Dashboard → Authentication → Hooks → "Send SMS hook"
 // → point it at this Edge Function. Set these Function secrets:
-//   NEXTEL_API_KEY        – Bearer key from app.nextel.io
-//   NEXTEL_SENDER         – your sender, e.g. 91XXXXXXXXXX
-//   NEXTEL_ENDPOINT       – https://api.nextel.io/API_V2/Whatsapp/send_template/MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09
+//   NEXTEL_API_KEY        – key from app.nextel.io (goes in URL path, NOT as Bearer header)
+//   NEXTEL_SENDER         – your sender as BARE 10-DIGIT only (e.g. 6263461179, NO country code!)
+//   NEXTEL_ENDPOINT       – base URL WITHOUT token: https://api.nextel.io/API_V2/Whatsapp/send_template
 //   NEXTEL_RECIPIENT_FIELD– recipient JSON key Nextel expects (default "to")
 //   SEND_SMS_HOOK_SECRET  – the signing secret Supabase shows when you create the hook (v1,whsec_...)
 
@@ -17,10 +17,24 @@ import { Webhook } from "https://esm.sh/standardwebhooks@1.0.0";
 
 const HOOK_SECRET = Deno.env.get("SEND_SMS_HOOK_SECRET") ?? "";
 const NEXTEL_API_KEY = Deno.env.get("NEXTEL_API_KEY") ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
-const NEXTEL_SENDER = Deno.env.get("NEXTEL_SENDER") ?? "6263461179";
-const NEXTEL_ENDPOINT =
-  Deno.env.get("NEXTEL_ENDPOINT") ??
-  "https://api.nextel.io/API_V2/Whatsapp/send_template/MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
+// Meta's WhatsApp Business API REQUIRES sender_phone as bare 10-digit (no country code).
+// Strip any leading "91" if someone stored the 12-digit format in the env var.
+function normalizeSender(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  return digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+}
+const NEXTEL_SENDER = normalizeSender(Deno.env.get("NEXTEL_SENDER") ?? "6263461179");
+// NEXTEL_ENDPOINT must be the base URL WITHOUT the token. Strip any trailing token
+// if someone stored the full URL in the env var (avoids double-token URL bug).
+function normalizeEndpoint(raw: string): string {
+  // If the URL ends with /send_template/<TOKEN>, strip the token part
+  const base = "https://api.nextel.io/API_V2/Whatsapp/send_template";
+  if (raw.length > base.length) return base;
+  return raw;
+}
+const NEXTEL_ENDPOINT = normalizeEndpoint(
+  Deno.env.get("NEXTEL_ENDPOINT") ?? "https://api.nextel.io/API_V2/Whatsapp/send_template"
+);
 // Nextel's request body in the dashboard sample omits the recipient key; set
 // this to whatever Nextel expects ("to" | "number" | "recipient" | "mobile").
 const RECIPIENT_FIELD = Deno.env.get("NEXTEL_RECIPIENT_FIELD") ?? "to";

@@ -9,7 +9,13 @@ const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0
 const NEXTEL_ENDPOINT =
   process.env.NEXTEL_ENDPOINT ??
   "https://api.nextel.io/API_V2/Whatsapp/send_template";
-const SENDER = process.env.NEXTEL_SENDER ?? "6263461179";
+// Meta's WhatsApp Business API REQUIRES sender_phone as bare 10-digit (no country code).
+// Strip any leading "91" if someone stored the 12-digit format in the env var.
+function normalizeSender(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  return digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+}
+const SENDER = normalizeSender(process.env.NEXTEL_SENDER ?? "6263461179");
 
 // Candidate keys Nextel might use for the recipient, tried in order.
 const CANDIDATE_FIELDS = ["to", "number", "phone", "recipient", "mobile", "contact", "user_phone", "contact_number", "send_to"];
