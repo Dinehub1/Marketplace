@@ -4,13 +4,17 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 
 const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
   sarkarhealth: [
-    { q: "Video consultation kaise book karein?", a: "App ya Website par jaayein, doctor choose karein, samay choose karein aur UPI se payment karein. Link mil jayega — click karein aur consult karein." },
-    { q: "Kya dawai asli hoti hai?", a: "100%! Hum sirf licensed chemists aur authorized distributors se lete hain. Har dawai ka batch number aur expiry check kar sakte hain." },
-    { q: "Lab test kaise hota hai?", a: "Aapke ghar se technician aata hai — sample collect karta hai. Report 24-48 ghanton mein online aa jaati hai." },
-    { q: "Kya emergency mein madad milti hai?", a: "Haan! 24/7 helpline — ambulance bhi book kar sakte hain. Nearest hospital ki bhi jaankari milti hai." },
-    { q: "Doctor kaun hain?", a: "Sabhi MBBS/MD/BAMS doctors — verified, experienced aur registered practitioners." },
-    { q: "Kya mera health data secure hai?", a: "Bilkul. End-to-end encrypted — sirf aap aur aapka doctor dekh sakte hain." },
-  ],
+      { q: "Video consultation kaise book karein?", a: "App ya Website par jaayein, doctor choose karein, samay choose karein aur UPI se payment karein. Link mil jayega — click karein aur consult karein." },
+      { q: "Kya dawai asli hoti hai?", a: "100%! Hum sirf licensed chemists aur authorized distributors se lete hain. Har dawai ka batch number aur expiry check kar sakte hain." },
+      { q: "Lab test kaise hota hai?", a: "Aapke ghar se technician aata hai — sample collect karta hai. Report 24-48 ghanton mein online aa jaati hai." },
+      { q: "Kya emergency mein madad milti hai?", a: "Haan! 24/7 helpline — ambulance bhi book kar sakte hain. Nearest hospital ki bhi jaankari milti hai." },
+      { q: "Doctor kaun hain?", a: "Sabhi MBBS/MD/BAMS doctors — verified, experienced aur registered practitioners." },
+      { q: "Kya mera health data secure hai?", a: "Bilkul. End-to-end encrypted — sirf aap aur aapka doctor dekh sakte hain." },
+      { q: "Dawai ka order kaise karein aur delivery kitni li?", a: "Doctor ki prescription upload karein, generic ya brand choose karein, address confirm karein. Express delivery mein 2-4 ghante, standard mein 24 ghante tak." },
+      { q: "Lab test kaise book karein?", a: "App se test choose karein, time slot book karein, technician ghar aata hai. Report secure PDF mein email/WhatsApp par milta hai." },
+      { q: "Mere medical records kaise access kar sakta hoon?", a: "App ke 'My Health' section mein sab reports, prescriptions aur consult history secure storage mein hai. Doctor ko share karne ka option bhi hai." },
+      { q: "Consultation baad prescription ya follow-up kaise milega?", a: "Video consult ke baad prescription PDF mein chat mein milta hai. Follow-up appointment video call se book kar sakte hain." }
+    ],
   sarkardost: [
     { q: "Listing kaise banayein?", a: "Mobile number se sign up karein, business details bharein aur submit karein — 5 minute mein live!" },
     { q: "Kya listing free hai?", a: "Haan! Basic listing bilkul free hai. Premium features ke liye paid plans hain." },

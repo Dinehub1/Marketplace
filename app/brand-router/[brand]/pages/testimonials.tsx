@@ -8,6 +8,10 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
     { name: "Priyanka Jain", text: "Video call par consultation — koi parking, koi line. 30 minute mein doctor mil payi — badhiya!", rating: 4, role: "Working Professional, Vijay Nagar" },
     { name: "Mohanlal Yadav", text: "Budhurg hoon, akele jaane mein dikkat hoti thi. SarkarHealth se home visit aayi — doctor bahut acche hain.", rating: 5, role: "Retired Teacher, Sudama Nagar" },
     { name: "Neha Agarwal", text: "Dawaiyaan 40% sasti gayin! Generic option bhi mila — bahut bachat ho rahi hai maasik.", rating: 4, role: "Mother, Saket Nagar" },
+    { name: "अनीता खान", text: "डॉक्टर ने मेरी मधुमेह की जाँच की और ऑनलाइन दवा लिखी। घर बैठे इलाज मिला।", rating: 5, role: "Patient, Geeta Bhawan" },
+    { name: "Dr. Sunil Joshi", text: "SarkarHealth ne mere clinic ko online layaya. Ab mein roz 20+ online mareez dekhta hoon.", rating: 5, role: "MD Physician, Partner Doctor" },
+    { name: "विजय कुमार", text: "Mere bete ka tonsillitis treatment video call par hua. Dawai bhi ghar tak aayi. Bahut aasan!", rating: 4, role: "Father, Navlakha" },
+    { name: "SarkarHealth Trust Badge", text: "5000+ मरीज़ों की सेवा | 50+ वेरिफ़ाइड डॉक्टर", rating: 5, role: "Trusted Healthcare Partner" },
   ],
   sarkardost: [
     { name: "Raju Tea Stall", text: "SarkarDost par listing karne ke baad mere customers badh gaye — log directly call karte hain ab.", rating: 5, role: "Chaiwala, Rajwada" },
