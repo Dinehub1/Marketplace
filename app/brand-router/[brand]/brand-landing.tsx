@@ -40,6 +40,42 @@ export async function BrandLanding({ brand }: { brand: any }) {
         "📋 हेल्थ रिकॉर्ड — आपकी पूरी मेडिकल जानकारी सुरक्षित एक जगह",
       ],
     },
+    "followup": {
+      headline: "फॉलो-अप न भूलें, काम न गवाएं",
+      subheadline: "FollowUp आपकी प्रोडक्टिविटी का साथी — याद दिलाएं, टास्क ट्रैक करें, हर काम पूरा करें।",
+      highlights: [
+        "📅 स्मार्ट रिमाइंडर — WhatsApp और SMS से याद दिलाव",
+        "📋 टास्क ट्रैकिंग — हर फॉलो-अप का रिकॉर्ड",
+        "📊 प्रग्रेस रिपोर्ट — दैनिन, साप्ताहिक और मासिक डैशबोर्ड",
+      ],
+    },
+    "cloudplayer": {
+      headline: "स्ट्रीमिंग का नया स्टैंडर्ड",
+      subheadline: "Cloud Player — क्लाउड-पावर्ड मीडिया प्लेयर, बिना बफ़रिंग के आपका पसंदीदा कंटेंट।",
+      highlights: [
+        "⚡ ज़ीरो बफ़रिंग — तुरंत प्ले, कोई इंतज़ार नहीं",
+        "☁️ क्लाउड स्टोरेज — कहीं से भी, कोई भी डिवाइस से",
+        "🎬 4K सपोर्ट — उच्च गुणवत्ता कंटेंट बिना रुकावट",
+      ],
+    },
+    "paisaflow": {
+      headline: "हर रुपये पर स्मार्ट रिटर्न",
+      subheadline: "PaisaFlow — आपकी बचत को निवेश में बदलें, रोज़ाना रिटर्न कमाएं।",
+      highlights: [
+        "💸 स्मार्ट रिटर्न — FD से लेकर म्यूचुअल फंड तक",
+        "📈 पोर्फ़ोलियो ट्रैकिंग — रियल-टाइम अपडेट",
+        "🎯 गोल-बेस्ड इन्वेस्टमेंट — आपके लक्ष्य के अनुसार",
+      ],
+    },
+    "yaadrakh": {
+      headline: "याद रखें, आगे बढ़ें",
+      subheadline: "YaadRakh — आपकी प्रोडक्टिविटी का AI साथी जो आपकी याददाश्त को ताकत बनाता है।",
+      highlights: [
+        "🧠 स्मार्ट नोट्स — AI से संगठित और खोजने योग्य",
+        "⏰ इंटेलिजेंट रिमाइंडर — समय पर याद दिलाव",
+        "🔄 क्रॉस-डिवाइस सिंक — फोन, टैबलेट और लैपटॉप पर",
+      ],
+    },
   };
 
   const hero = brandHero[brand.slug] || {
@@ -129,10 +165,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
         <div className="mx-auto max-w-5xl px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
-              { v: "10,000+", label: "वेरिफ़ाइड बिज़नेस", icon: "🏢" },
-              { v: "50,000+", label: "सक्रिय कनेक्शन", icon: "🔗" },
-              { v: "500+", label: "मासिक डील्स", icon: "🤝" },
-              { v: "25+", label: "इंडस्ट्री सेक्टर", icon: "📊" },
+              { v: "10,000+", label: "सक्रिय उपयोगकर्ता", icon: "👥" },
+              { v: "5,000+", label: "सफल इंटरैक्शन", icon: "✅" },
+              { v: "4.9★", label: "औसत रेटिंग", icon: "⭐" },
+              { v: "24/7", label: "समर्थन उपलब्ध", icon: "🛟" },
             ].map((s, i) => (
               <div key={i} className="rounded-2xl p-6 border bg-white" style={{ borderColor: `${accent}20` }}>
                 <div className="text-2xl mb-2">{s.icon}</div>
@@ -153,9 +189,9 @@ export async function BrandLanding({ brand }: { brand: any }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { n: "1", t: "डिजिटल कार्ड बनाएं", d: "अपने व्यापार का प्रोफ़ेशनल डिजिटल कार्ड बनाएं — QR कोड के साथ तुरंत शेयर करें।" },
-              { n: "2", t: "B2B पार्टनर खोजें", d: "AI-आधारित मैचिंग से सही सप्लायर, बायर और डिस्ट्रीब्यूटर से जुड़ें।" },
-              { n: "3", t: "डील क्लोज़ करें और बढ़ें", d: "लीड ट्रैक करें, प्रपोज़ल भेजें और सीधे डील क्लोज़ करें — पूरा रिकॉर्ड एक जगह।" },
+              { n: "1", t: "साइन अप करें", d: "मिनटों में अपना अकाउंट बनाएं — बिना किसी जटिलता के, बस मोबाइल नंबर से।" },
+              { n: "2", t: "सेवाएं खोजें या बेचें", d: "अपनी ज़रूरत के अनुसार सेवाएं खोजें या अपने व्यापार को प्रमोट करें।" },
+              { n: "3", t: "जुड़ें और बढ़ें", d: "कनेक्शन बनाएं, डील्स करें और अपने समुदाय में प्रगति करें।" },
             ].map((step) => (
               <div key={step.n} className="text-center relative">
                 <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-white text-3xl font-extrabold shadow-lg" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
@@ -169,19 +205,19 @@ export async function BrandLanding({ brand }: { brand: any }) {
         </div>
       </section>
 
-      {/* Who Uses SarkarConnect */}
+      {/* Community */}
       <section className="border-t" style={{ borderColor: `${accent}20` }}>
         <div className="mx-auto max-w-5xl px-6 py-20">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>भारत के व्यापारियों का नेटवर्क</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>SarkarConnect का उपयोग कौन करता है?</h2>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>समुदाय का हिस्सा बनें</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>{brand.name} का उपयोग कौन करता है?</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { icon: "🏭", t: "मैन्युफैक्चरर", d: "अपने उत्पादों को सही बायर तक पहुंचाएं — सीधे कनेक्शन" },
-              { icon: "📦", t: "डिस्ट्रीब्यूटर", d: "नए मार्केट में विस्तार करें और रिटेयल नेटवर्क बनाएं" },
-              { icon: "🛒", t: "रिटेयलर", d: "वेरिफ़ाइड सप्लायर खोजें और बेस्ट डील्स पाएं" },
-              { icon: "💼", t: "सर्विस प्रोवाइडर", d: "B2B सेवाएं बेचें और कॉर्पोरेट क्लाइंट्स से जुड़ें" },
+              { icon: "👤", t: "उपयोगकर्ता", d: "अपनी ज़रूरतों के अनुसार सेवाएं खोजें और भरोसेमंद पार्टनर पाएं" },
+              { icon: "🏪", t: "व्यापारी", d: "अपने व्यापार को ऑनलाइन ले जाएं और नए ग्राहकों तक पहुंचें" },
+              { icon: "👨‍💼", t: "पेशेवर", d: "अपनी कौशल को प्रमोट करें और सही अवसर पाएं" },
+              { icon: "🏠", t: "परिवार", d: "परिवार की ज़रूरतों के लिए सही सेवा — एक ही जगह" },
             ].map((u, i) => (
               <div key={i} className="rounded-2xl border bg-white p-6 text-center" style={{ borderColor: `${accent}30` }}>
                 <div className="text-4xl mb-3">{u.icon}</div>
@@ -219,10 +255,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
           <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
-            आज ही कनेक्ट करें — भारत के सबसे बड़े B2B नेटवर्क से
+            आज ही शुरू करें — {brand.name} के साथ जुड़ें
           </h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            अपने व्यापार को मुफ्त में रजिस्टर करें और हज़ारों वेरिफ़ाइड पार्टनर्स तक पहुंचें।
+            मुफ्त में रजिस्टर करें और हज़ारों उपयोगकर्ताओं तक पहुंचें।
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
