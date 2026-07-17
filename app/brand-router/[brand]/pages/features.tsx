@@ -247,10 +247,10 @@ export function FeaturesPage({ brand }: { brand: any }) {
   // Brand-specific stats for the stats bar
     const brandStatsBar: Record<string, Array<{ v: string; l: string }>> = {
       sarkarhealth: [
-        { v: "50+", l: "वेरिफ़ा�ड �ॉक्टर" },
-        { v: "5,000+", l: "सक्रि� मरीज�" },
-        { v: "4.9★", l: "औसत रे�िं�" },
-        { v: "24/7", l: "हेल्�लाइन" },
+        { v: "50+", l: "वेरिफ़ाइड डॉक्टर" },
+        { v: "5,000+", l: "सक्रिय मरीज़" },
+        { v: "4.9★", l: "औसत रेटिंग" },
+        { v: "24/7", l: "हेल्पलाइन" },
       ],
     };
     const statsBar = brandStatsBar[brand.slug] ?? [
@@ -263,9 +263,9 @@ export function FeaturesPage({ brand }: { brand: any }) {
   // Brand-specific how it works
     const brandHowItWorks: Record<string, Array<{ t: string; d: string }>> = {
       sarkarhealth: [
-        { t: "लक्ष� बताएं", d: "�पनी �ीमा�ी के बा�े में बताएं — AI �पको सही �ॉक्टर से मिलाएगा�" },
-        { t: "वीडियो कॉल पर मिलें", d: "सुरक्�ित वीडियो कंसल्टेशन — अपनी प्रा�वेसी �नी रहे�ी।" },
-        { t: "प्रिस्क्रिप्शन और दवा�", d: "डि�िटल प्रिस्क्�िप्�न पाएं, दवा� दरवाजे पर ऑर्�र करें�" },
+        { t: "लक्षण बताएं", d: "अपनी बीमारी के बारे में बताएं — AI आपको सही डॉक्टर से मिलाएगा।" },
+        { t: "वीडियो कॉल पर मिलें", d: "सुरक्षित वीडियो कंसल्टेशन — अपनी प्राइवेसी बनी रहेगी।" },
+        { t: "प्रिस्क्रिप्शन और दवाई", d: "डिजिटल प्रिस्क्रिप्शन पाएं, दवाई दरवाजे पर ऑर्डर करें।" },
       ],
     };
     const howItWorks = brandHowItWorks[brand.slug] ?? [

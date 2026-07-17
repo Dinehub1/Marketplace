@@ -180,8 +180,8 @@ export function FAQPage({ brand }: { brand: any }) {
         <div className="absolute top-10 right-1/4 w-72 h-72 rounded-full blur-3xl opacity-10" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }} />
         <div className="relative mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>FAQ</div>
-          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>�क्सर प�छे जाने वा�े सवाल</span></h1>
-          <p className="text-lg opacity-60 max-w-2xl mx-auto">SarkarHealth के बारे में कुछ सवा�ों के जवा�</p>
+          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>अक्सर पूछे जाने वाले सवाल</span></h1>
+          <p className="text-lg opacity-60 max-w-2xl mx-auto">SarkarHealth के बारे में कुछ सवालों के जवाब</p>
         </div>
       </section>
 

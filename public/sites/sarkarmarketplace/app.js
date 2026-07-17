@@ -411,116 +411,69 @@
     }
 
     // ========== AI SEARCH RESULTS PANEL ==========
-    // Business database for realistic search simulation
-    var BUSINESS_DB = [
-        { name: "Sharma Sweets & Restaurant", category: "Food & Dining", emoji: "🍽️", rating: 4.5, reviews: 2847, area: "Connaught Place, Delhi", price: "₹₹", tags: ["North Indian", "Sweets", "Family"], openNow: true },
-        { name: "Biryani House", category: "Food & Dining", emoji: "🍛", rating: 4.7, reviews: 5123, area: "Banjara Hills, Hyderabad", price: "₹₹", tags: ["Biryani", "Hyderabadi", "Non-Veg"], openNow: true },
-        { name: "Cafe Coffee Day", category: "Food & Dining", emoji: "☕", rating: 4.2, reviews: 8934, area: "Multiple Locations", price: "₹₹", tags: ["Cafe", "Coffee", "Hangout"], openNow: true },
-        { name: "Apollo Clinic", category: "Healthcare", emoji: "🏥", rating: 4.6, reviews: 3421, area: "MG Road, Bangalore", price: "₹₹₹", tags: ["Clinic", "General", "24/7"], openNow: true },
-        { name: "Dr. Mehta's Dental Clinic", category: "Healthcare", emoji: "🦷", rating: 4.8, reviews: 1256, area: "Andheri West, Mumbai", price: "₹₹", tags: ["Dental", "Orthodontist", "Painless"], openNow: false },
-        { name: "Patel Auto Repair", category: "Automotive", emoji: "🔧", rating: 4.3, reviews: 892, area: "Sector 18, Noida", price: "₹", tags: ["AC Repair", "General Service", "All Brands"], openNow: true },
-        { name: "QuickFix AC Service", category: "Home Services", emoji: "❄️", rating: 4.4, reviews: 1567, area: "Gurgaon, Haryana", price: "₹", tags: ["AC Repair", "Installation", "AMC"], openNow: true },
-        { name: "Reliance Digital", category: "Shopping & Retail", emoji: "📱", rating: 4.1, reviews: 12453, area: "Multiple Locations", price: "₹₹₹", tags: ["Electronics", "Mobile", "Laptop"], openNow: true },
-        { name: "Style Studio Salon", category: "Beauty & Wellness", emoji: "💇", rating: 4.6, reviews: 2134, area: "Jubilee Hills, Hyderabad", price: "₹₹", tags: ["Haircut", "Spa", "Bridal"], openNow: true },
-        { name: "Vijaya College", category: "Education", emoji: "📚", rating: 4.4, reviews: 4521, area: "Vijayanagar, Bangalore", price: "₹₹", tags: ["Degree", "Engineering", "PU College"], openNow: true },
-        { name: "Royal Dhaba", category: "Food & Dining", emoji: "🚗", rating: 4.5, reviews: 6723, area: "NH-8, Delhi-Jaipur Highway", price: "₹", tags: ["Dhaba", "Punjabi", "Highway", "24/7"], openNow: true },
-        { name: "PetroMax Fuel Station", category: "Automotive", emoji: "⛽", rating: 4.0, reviews: 3456, area: "Multiple Locations", price: "₹", tags: ["Petrol", "Diesel", "CNG", "Air Check"], openNow: true },
-        { name: "Green Valley School", category: "Education", emoji: "🎓", rating: 4.7, reviews: 1890, area: "Whitefield, Bangalore", price: "₹₹₹", tags: ["CBSE", "Day School", "Sports"], openNow: true },
-        { name: "MedPlus Pharmacy", category: "Healthcare", emoji: "💊", rating: 4.3, reviews: 5678, area: "Multiple Locations", price: "₹", tags: ["Medicine", "Lab Test", "Online Order"], openNow: true },
-        { name: "OYO Townhouse", category: "Travel & Hotels", emoji: "🏨", rating: 4.2, reviews: 8234, area: "Multiple Locations", price: "₹₹", tags: ["Hotel", "Budget", "Business"], openNow: true },
-        { name: "Punjab Da Dhaba", category: "Food & Dining", emoji: "🍲", rating: 4.6, reviews: 4521, area: "Kilpauk, Chennai", price: "₹", tags: ["Punjabi", "Thali", "Non-Veg"], openNow: true },
-        { name: "Sri Krishna Medicals", category: "Healthcare", emoji: "🏥", rating: 4.1, reviews: 2345, area: "T. Nagar, Chennai", price: "₹", tags: ["Pharmacy", "Doctor", "Lab"], openNow: true },
-        { name: "TechZone Mobile Repair", category: "Home Services", emoji: "📱", rating: 4.4, reviews: 1234, area: "Indiranagar, Bangalore", price: "₹", tags: ["Mobile Repair", "Accessories", "All Brands"], openNow: true },
-        { name: "Dominos Pizza", category: "Food & Dining", emoji: "🍕", rating: 4.3, reviews: 15678, area: "Multiple Locations", price: "₹₹", tags: ["Pizza", "Fast Food", "Delivery"], openNow: true },
-        { name: "Huda Beauty Lounge", category: "Beauty & Wellness", emoji: "💄", rating: 4.7, reviews: 987, area: "Bandra West, Mumbai", price: "₹₹₹", tags: ["Makeup", "Facial", "Bridal"], openNow: true },
-        { name: "Agarwal Bhojnalaya", category: "Food & Dining", emoji: "🍛", rating: 4.4, reviews: 3456, area: "Johari Bazaar, Jaipur", price: "₹", tags: ["Pure Veg", "Rajasthani", "Thali"], openNow: true },
-        { name: "City Hospital", category: "Healthcare", emoji: "🏥", rating: 4.5, reviews: 6789, area: "Civil Lines, Allahabad", price: "₹₹₹", tags: ["Multi-Specialty", "Emergency", "Surgery"], openNow: true },
-        { name: "Bike Point", category: "Automotive", emoji: "🏍️", rating: 4.2, reviews: 2345, area: "Koramangala, Bangalore", price: "₹", tags: ["Bike Service", "Accessories", "Insurance"], openNow: true },
-        { name: "Home Cleaning Pro", category: "Home Services", emoji: "🧹", rating: 4.5, reviews: 1567, area: "Noida, UP", price: "₹", tags: ["Deep Cleaning", "Sofa", "Carpet"], openNow: true },
-        { name: "Fashion Factory", category: "Shopping & Retail", emoji: "👗", rating: 4.1, reviews: 4567, area: "Commercial Street, Bangalore", price: "₹₹", tags: ["Clothing", "Ethnic", "Western"], openNow: true },
-        { name: "Sunshine Play School", category: "Education", emoji: "🧒", rating: 4.6, reviews: 890, area: "Salt Lake, Kolkata", price: "₹₹", tags: ["Play School", "Day Care", "Activity"], openNow: true },
-        { name: "Taj Restaurant", category: "Food & Dining", emoji: "🍽️", rating: 4.8, reviews: 8901, area: "Park Street, Kolkata", price: "₹₹₹", tags: ["Fine Dining", "Mughlai", "Bengali"], openNow: true },
-        { name: "FitLife Gym", category: "Beauty & Wellness", emoji: "💪", rating: 4.5, reviews: 2345, area: "HSR Layout, Bangalore", price: "₹₹", tags: ["Gym", "Personal Trainer", "Yoga"], openNow: true },
-        { name: "AutoCare Express", category: "Automotive", emoji: "🚗", rating: 4.3, reviews: 1234, area: "Thane, Mumbai", price: "₹", tags: ["Car Service", "Wash", "Detailing"], openNow: true },
-        { name: "Book World", category: "Shopping & Retail", emoji: "📖", rating: 4.4, reviews: 3456, area: "College Street, Kolkata", price: "₹", tags: ["Books", "Stationery", "Academic"], openNow: true }
-    ];
+    // Live search against the real Supabase `businesses` table (read-only
+    // publishable key — safe to expose client-side, matches the RLS policy
+    // used by the rest of the site).
+    var SUPABASE_URL = 'https://xpfmqpmhmcouwzebfwhb.supabase.co';
+    var SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_XN_U25XfcBdLbXVJhraMsQ_1RQtM_Nc';
+
+    var CATEGORY_EMOJI = {
+        'restaurant': '🍽️', 'cafe': '☕', 'hospital': '🏥', 'dentist': '🦷',
+        'pharmacy': '💊', 'gynecologist': '🩺', 'plumber': '🔧', 'electrician': '💡',
+        'real estate agent': '🏠', 'furniture store': '🛋️', 'home decor': '🛋️',
+        'interior designer': '🛋️', 'architect': '🏗️', 'ac repairing service': '❄️',
+        'salon': '💇', 'gym': '💪'
+    };
+    function emojiForCategory(cat) {
+        return CATEGORY_EMOJI[(cat || '').toLowerCase()] || '🏢';
+    }
 
     /**
-     * Scores and filters businesses based on the search query.
-     * Uses keyword matching against name, category, tags, and area.
-     * Returns sorted results with match scores.
+     * Detects a category keyword in the query (used to widen the search to
+     * the whole category, e.g. "ac repair near me" -> category ilike ac%).
+     */
+    var CATEGORY_KEYWORDS = {
+        'restaurant': 'restaurant', 'food': 'restaurant', 'cafe': 'cafe',
+        'hospital': 'hospital', 'doctor': 'hospital', 'clinic': 'hospital',
+        'dentist': 'dentist', 'pharmacy': 'pharmacy', 'chemist': 'pharmacy',
+        'gynecologist': 'gynecologist', 'plumber': 'plumber',
+        'electrician': 'electrician', 'real estate': 'real estate agent',
+        'property': 'real estate agent', 'furniture': 'furniture store',
+        'salon': 'salon', 'gym': 'gym', 'ac repair': 'ac repairing service',
+        'ac': 'ac repairing service'
+    };
+    function detectCategory(q) {
+        for (var kw in CATEGORY_KEYWORDS) {
+            if (q.indexOf(kw) !== -1) return CATEGORY_KEYWORDS[kw];
+        }
+        return null;
+    }
+
+    /**
+     * Queries the live `businesses` table (status=active) by name/category/
+     * area/city, returning up to 8 matches sorted by rating.
      */
     function searchBusinesses(query) {
-        var q = query.toLowerCase();
-        var keywords = q.split(/\s+/).filter(function (w) { return w.length > 1; });
+        var q = query.toLowerCase().trim();
+        var category = detectCategory(q);
+        var like = '*' + q.replace(/[*,()]/g, ' ').trim() + '*';
+        var orFilter = 'name.ilike.' + like + ',category.ilike.' + like +
+            ',area.ilike.' + like + ',city.ilike.' + like;
 
-        // Category keyword mapping
-        var categoryMap = {
-            "restaurant": "Food & Dining", "food": "Food & Dining", "khana": "Food & Dining",
-            "biryani": "Food & Dining", "pizza": "Food & Dining", "dhaba": "Food & Dining",
-            "cafe": "Food & Dining", "sweet": "Food & Dining", "hotel": "Food & Dining",
-            "hospital": "Healthcare", "doctor": "Healthcare", "clinic": "Healthcare",
-            "medical": "Healthcare", "pharmacy": "Healthcare", "dental": "Healthcare",
-            "chemist": "Healthcare", "health": "Healthcare",
-            "ac": "Home Services", "repair": "Home Services", "plumber": "Home Services",
-            "electrician": "Home Services", "cleaning": "Home Services",
-            "shop": "Shopping & Retail", "store": "Shopping & Retail", "mall": "Shopping & Retail",
-            "market": "Shopping & Retail", "mobile": "Shopping & Retail",
-            "school": "Education", "college": "Education", "coaching": "Education",
-            "tuition": "Education", "institute": "Education",
-            "salon": "Beauty & Wellness", "spa": "Beauty & Wellness", "gym": "Beauty & Wellness",
-            "beauty": "Beauty & Wellness", "hair": "Beauty & Wellness",
-            "mechanic": "Automotive", "car": "Automotive", "bike": "Automotive",
-            "petrol": "Automotive", "fuel": "Automotive",
-            "travel": "Travel & Hotels", "taxi": "Travel & Hotels", "cab": "Travel & Hotels"
-        };
-
-        // Detect category from query
-        var detectedCategory = null;
-        for (var kw in categoryMap) {
-            if (q.indexOf(kw) !== -1) {
-                detectedCategory = categoryMap[kw];
-                break;
-            }
-        }
-
-        // Detect location from query (simple "in/near/paas" pattern)
-        var locationMatch = q.match(/(?:in|near|paas|close to|around)\s+([a-z\s]+?)(?:\s|$)/);
-        var detectedLocation = locationMatch ? locationMatch[1].trim() : null;
-
-        // Score each business
-        var results = BUSINESS_DB.map(function (biz) {
-            var score = 0;
-            var bizText = (biz.name + ' ' + biz.category + ' ' + biz.tags.join(' ') + ' ' + biz.area).toLowerCase();
-
-            // Keyword match
-            keywords.forEach(function (kw) {
-                if (bizText.indexOf(kw) !== -1) score += 10;
-                // Partial match
-                if (biz.name.toLowerCase().indexOf(kw) !== -1) score += 15;
-            });
-
-            // Category match (strong boost)
-            if (detectedCategory && biz.category === detectedCategory) score += 30;
-
-            // Location match
-            if (detectedLocation && biz.area.toLowerCase().indexOf(detectedLocation) !== -1) score += 25;
-
-            // Rating boost
-            score += biz.rating * 2;
-
-            // Review count boost (logarithmic)
-            score += Math.log(biz.reviews) * 1.5;
-
-            return { business: biz, score: score };
+        var params = new URLSearchParams({
+            select: 'id,name,category,phone,website,address,area,city,rating,google_maps,slug,status',
+            or: '(' + orFilter + ')',
+            order: 'rating.desc.nullslast',
+            limit: '8'
         });
+        if (category) params.set('category', 'ilike.*' + category + '*');
 
-        // Filter to only results with some match, sort by score
-        results = results.filter(function (r) { return r.score > 5; });
-        results.sort(function (a, b) { return b.score - a.score; });
-
-        // Return top results (max 8)
-        return results.slice(0, 8).map(function (r) { return r.business; });
+        return fetch(SUPABASE_URL + '/rest/v1/businesses?' + params.toString(), {
+            headers: { apikey: SUPABASE_PUBLISHABLE_KEY }
+        }).then(function (res) {
+            if (!res.ok) throw new Error('Search failed (' + res.status + ')');
+            return res.json();
+        });
     }
 
     /**
@@ -559,32 +512,36 @@
         results.forEach(function (biz) {
             var card = document.createElement('div');
             card.className = 'ai-result-card';
+            if (biz.id) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function (e) {
+                    if (e.target.closest('a')) return; // let call/map/site buttons work
+                    window.location.href = '/business/' + biz.id;
+                });
+            }
 
-            var tagsHtml = biz.tags.map(function (t) { return '<span class="ai-result-tag">' + escapeHtml(t) + '</span>'; }).join('');
-            var statusHtml = biz.openNow ?
-                '<span class="ai-result-status open">● Open Now</span>' :
-                '<span class="ai-result-status closed">● Closed</span>';
-            var stars = '★'.repeat(Math.floor(biz.rating)) + (biz.rating % 1 >= 0.5 ? '½' : '');
+            var rating = biz.rating ? Number(biz.rating) : null;
+            var stars = rating ? '★'.repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? '½' : '') : '';
+            var ratingHtml = rating ? '<span class="ai-result-rating">' + stars + ' ' + rating + '</span>' : '';
+            var verifiedHtml = '<span class="ai-result-status open">✓ Verified listing</span>';
+            var tagHtml = '<span class="ai-result-tag">' + escapeHtml(biz.category || '') + '</span>';
+
+            var callBtn = biz.phone ? '<a class="ai-result-btn call" href="tel:' + escapeHtml(biz.phone) + '" aria-label="Call">📞</a>' : '';
+            var dirBtn = biz.google_maps ? '<a class="ai-result-btn dir" href="' + escapeHtml(biz.google_maps) + '" target="_blank" rel="noopener" aria-label="Directions">🧭</a>' : '';
+            var webBtn = biz.website ? '<a class="ai-result-btn share" href="' + escapeHtml(biz.website) + '" target="_blank" rel="noopener" aria-label="Website">↗</a>' : '';
+            var viewBtn = biz.id ? '<a class="ai-result-btn view" href="/business/' + biz.id + '" aria-label="View details">→</a>' : '';
 
             card.innerHTML =
                 '<div class="ai-result-left">' +
-                    '<span class="ai-result-emoji">' + biz.emoji + '</span>' +
+                    '<span class="ai-result-emoji">' + emojiForCategory(biz.category) + '</span>' +
                 '</div>' +
                 '<div class="ai-result-info">' +
                     '<div class="ai-result-name">' + escapeHtml(biz.name) + '</div>' +
-                    '<div class="ai-result-meta">' +
-                        '<span class="ai-result-rating">' + stars + ' ' + biz.rating + '</span>' +
-                        '<span class="ai-result-reviews">(' + biz.reviews.toLocaleString() + ' reviews)</span>' +
-                        statusHtml +
-                    '</div>' +
-                    '<div class="ai-result-area">📍 ' + escapeHtml(biz.area) + ' · ' + escapeHtml(biz.price) + '</div>' +
-                    '<div class="ai-result-tags">' + tagsHtml + '</div>' +
+                    '<div class="ai-result-meta">' + ratingHtml + verifiedHtml + '</div>' +
+                    '<div class="ai-result-area">📍 ' + escapeHtml(biz.area || biz.city || '') + '</div>' +
+                    '<div class="ai-result-tags">' + tagHtml + '</div>' +
                 '</div>' +
-                '<div class="ai-result-actions">' +
-                    '<button class="ai-result-btn call" aria-label="Call">📞</button>' +
-                    '<button class="ai-result-btn dir" aria-label="Directions">🧭</button>' +
-                    '<button class="ai-result-btn share" aria-label="Share">↗</button>' +
-                '</div>';
+                '<div class="ai-result-actions">' + callBtn + dirBtn + webBtn + viewBtn + '</div>';
 
             list.appendChild(card);
         });
@@ -594,7 +551,7 @@
         // Footer
         var footer = document.createElement('div');
         footer.className = 'ai-results-footer';
-        footer.innerHTML = '<span>Powered by Sarkar AI · Results are simulated for demo</span>';
+        footer.innerHTML = '<span>Powered by Sarkar AI · Live data — <a href="/marketplace" style="color:inherit;text-decoration:underline">browse the full directory</a></span>';
         panel.appendChild(footer);
 
         // Insert after the search suggestions
@@ -626,22 +583,18 @@
         var q = query.toLowerCase();
         var topResult = results[0];
         var insights = [];
+        var rated = results.filter(function (r) { return r.rating; });
 
-        if (q.indexOf('near') !== -1 || q.indexOf('paas') !== -1) {
-            insights.push("Found " + results.length + " options near you");
-        } else if (q.indexOf('best') !== -1 || q.indexOf('top') !== -1 || q.indexOf('achha') !== -1) {
-            insights.push("Top rated: " + topResult.name + " (" + topResult.rating + "★)");
-        } else if (q.indexOf('cheap') !== -1 || q.indexOf('sasta') !== -1) {
-            insights.push("Budget-friendly options found");
+        if (q.indexOf('best') !== -1 || q.indexOf('top') !== -1 || q.indexOf('achha') !== -1) {
+            insights.push(topResult.rating ? "Top rated: " + topResult.name + " (" + topResult.rating + "★)" : "Top match: " + topResult.name);
         } else {
             insights.push("Found " + results.length + " matching businesses");
         }
 
-        var openCount = results.filter(function (r) { return r.openNow; }).length;
-        if (openCount > 0) insights.push(openCount + " open now");
-
-        var avgRating = (results.reduce(function (s, r) { return s + r.rating; }, 0) / results.length).toFixed(1);
-        insights.push("Avg rating: " + avgRating + "★");
+        if (rated.length) {
+            var avgRating = (rated.reduce(function (s, r) { return s + Number(r.rating); }, 0) / rated.length).toFixed(1);
+            insights.push("Avg rating: " + avgRating + "★");
+        }
 
         return insights.join(' · ');
     }
@@ -677,26 +630,27 @@
             searchBtn.disabled = true;
         }
 
-        // Simulate AI processing delay
-        showToast('🔍 AI is analyzing "' + query + '"...');
+        showToast('🔍 Searching "' + query + '"...');
 
-        setTimeout(function () {
-            // Restore button
+        searchBusinesses(query).then(function (results) {
             if (searchBtn) {
                 searchBtn.innerHTML = originalBtnText;
                 searchBtn.disabled = false;
             }
-
-            // Run search
-            var results = searchBusinesses(query);
-
             if (results.length > 0) {
                 showSearchResults(query, results);
                 showToast('✅ Found ' + results.length + ' results!');
             } else {
-                showToast('No results found. Try: "restaurant near Delhi" or "AC repair"');
+                showToast('No results found. Try: "furniture store", "plumber", or "restaurant"');
             }
-        }, 1200);
+        }).catch(function (err) {
+            if (searchBtn) {
+                searchBtn.innerHTML = originalBtnText;
+                searchBtn.disabled = false;
+            }
+            showToast('Search unavailable right now — please try again shortly.');
+            console.error('Business search failed:', err);
+        });
     };
 
     // Global function for setting search text
@@ -845,6 +799,8 @@
     };
 
     window.openSignupModal = function () {
+        window.location.href = '/register';
+        return;
         openModal('signupModal');
     };
 
@@ -853,6 +809,8 @@
     };
 
     window.openLoginModal = function () {
+        window.location.href = '/login';
+        return;
         openModal('loginModal');
     };
 
@@ -1153,4 +1111,17 @@
         });
     }
 
+})();
+
+// Live stats: replace static counter targets with real numbers from the API.
+(function () {
+    fetch('/api/stats').then(function (r) { return r.json(); }).then(function (s) {
+        var el = document.getElementById('statBusinesses');
+        if (el && s.businesses) {
+            el.setAttribute('data-target', String(s.businesses));
+            if (/^[\d,]+\+?$/.test(el.textContent.trim()) && el.textContent.trim() !== '0') {
+                el.textContent = s.businesses.toLocaleString() + '+';
+            }
+        }
+    }).catch(function () {});
 })();

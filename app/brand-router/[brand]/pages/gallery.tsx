@@ -1,9 +1,9 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 
 const DEFAULT_GALLERY = [
-  { title: "Project Alpha", emoji: "🏗️" }, { title: "Workspace", emoji: "�" },
-  { title: "Team Event", emoji: "🎉" }, { title: "Product Launch", emoji: "�" },
-  { title: "Client Meet", emoji: "�" }, { title: "Office Tour", emoji: "🏛️" },
+  { title: "Project Alpha", emoji: "🏗️" }, { title: "Workspace", emoji: "🏢" },
+  { title: "Team Event", emoji: "🎉" }, { title: "Product Launch", emoji: "🚀" },
+  { title: "Client Meet", emoji: "🤝" }, { title: "Office Tour", emoji: "🏛️" },
   { title: "Award Ceremony", emoji: "🏆" }, { title: "Innovation Lab", emoji: "🔬" },
 ];
 
@@ -51,7 +51,7 @@ export function GalleryPage({ brand }: { brand: any }) {
                   <img src={item.img} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${primary}${12 + (i % 4) * 3}, ${secondary}${8 + (i % 3) * 2})` }}>
-                    <span className="text-6xl group-hover:scale-125 transition-transform duration-500">{item.emoji ?? "�️"}</span>
+                    <span className="text-6xl group-hover:scale-125 transition-transform duration-500">{item.emoji ?? "🖼️"}</span>
                   </div>
                 )}
                 {/* Overlay */}

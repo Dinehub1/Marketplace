@@ -107,6 +107,7 @@
 
             <!-- Desktop Navigation Links -->
             <ul class="nav-links" id="navLinks">
+                <li><a href="/marketplace">Directory</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#categories">Categories</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
@@ -179,11 +180,11 @@
 
                 <div class="hero-stats">
                     <div class="stat">
-                        <span class="stat-number" data-target="50" data-suffix="L+">0</span>
-                        <span class="stat-label">Businesses</span>
+                        <span class="stat-number" data-target="2355" data-suffix="+" id="statBusinesses">0</span>
+                        <span class="stat-label">Verified Businesses</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-number" data-target="1000" data-suffix="+">0</span>
+                        <span class="stat-number" data-target="31" data-suffix="+" id="statCategories">0</span>
                         <span class="stat-label">Categories</span>
                     </div>
                     <div class="stat">
@@ -334,52 +335,52 @@
             </div>
 
             <div class="categories-grid">
-                <div class="category-card" data-category="food">
+                <div class="category-card" data-category="food" onclick="window.location.href='/marketplace?q=restaurant'" style="cursor:pointer">
                     <div class="category-icon">🍽️</div>
                     <h3 class="category-name">Food & Dining</h3>
-                    <p class="category-count">12.5L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Restaurants • Dhabas • Cafes • Bakeries • Street Food</div>
                 </div>
-                <div class="category-card" data-category="health">
+                <div class="category-card" data-category="health" onclick="window.location.href='/marketplace?q=hospital'" style="cursor:pointer">
                     <div class="category-icon">🏥</div>
                     <h3 class="category-name">Healthcare</h3>
-                    <p class="category-count">8.2L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Hospitals • Clinics • Pharmacies • Labs • Dentists</div>
                 </div>
-                <div class="category-card" data-category="retail">
+                <div class="category-card" data-category="retail" onclick="window.location.href='/marketplace?cat=Furniture%20Store'" style="cursor:pointer">
                     <div class="category-icon">🛍️</div>
                     <h3 class="category-name">Shopping & Retail</h3>
-                    <p class="category-count">15.7L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Clothing • Electronics • Grocery • Jewelry • Furniture</div>
                 </div>
-                <div class="category-card" data-category="services">
+                <div class="category-card" data-category="services" onclick="window.location.href='/marketplace?q=plumber'" style="cursor:pointer">
                     <div class="category-icon">🔧</div>
                     <h3 class="category-name">Home Services</h3>
-                    <p class="category-count">6.8L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Plumbers • Electricians • AC Repair • Cleaning • Carpenters</div>
                 </div>
-                <div class="category-card" data-category="education">
+                <div class="category-card" data-category="education" onclick="window.location.href='/marketplace?cat=School'" style="cursor:pointer">
                     <div class="category-icon">📚</div>
                     <h3 class="category-name">Education</h3>
-                    <p class="category-count">4.3L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Schools • Coaching • Tuitions • Online Courses • Libraries</div>
                 </div>
-                <div class="category-card" data-category="beauty">
+                <div class="category-card" data-category="beauty" onclick="window.location.href='/marketplace?cat=Salon'" style="cursor:pointer">
                     <div class="category-icon">💇</div>
                     <h3 class="category-name">Beauty & Wellness</h3>
-                    <p class="category-count">3.9L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Salons • Spas • Gyms • Yoga • Skin Care</div>
                 </div>
-                <div class="category-card" data-category="auto">
+                <div class="category-card" data-category="auto" onclick="window.location.href=\'/marketplace\'" style="cursor:pointer">
                     <div class="category-icon">🚗</div>
                     <h3 class="category-name">Automotive</h3>
-                    <p class="category-count">5.1L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Mechanics • Car Wash • Spare Parts • Dealers • Insurance</div>
                 </div>
-                <div class="category-card" data-category="travel">
+                <div class="category-card" data-category="travel" onclick="window.location.href=\'/marketplace\'" style="cursor:pointer">
                     <div class="category-icon">✈️</div>
                     <h3 class="category-name">Travel & Hotels</h3>
-                    <p class="category-count">2.8L businesses</p>
+                    <p class="category-count">Browse listings →</p>
                     <div class="category-examples">Hotels • Travel Agencies • Taxis • Tours • Homestays</div>
                 </div>
             </div>

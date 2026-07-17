@@ -308,7 +308,7 @@ export function PricingPage({ brand }: { brand: any }) {
           </div>
           <div className="space-y-4">
             {[
-              { q: "Kya main free mein doctor se baat kar sakta hoon?", a: "Pehla consultation free hai! Uske baad Health Pro plan mein unlimited video consultations milte hain sirf �299/maheene." },
+              { q: "Kya main free mein doctor se baat kar sakta hoon?", a: "Pehla consultation free hai! Uske baad Health Pro plan mein unlimited video consultations milte hain sirf ₹299/maheene." },
               { q: "Kya doctor ghar par aayega?", a: "Haan, Family Plan (₹699/mein) mein monthly 1 doctor home visit shamil hai — specialist physician aapke ghar aayega." },
               { q: "Dawai kaise order karein?", a: "Prescription upload karein ya direct order karein — generic options mein 40% tak bachat. Same-day delivery Indore mein." },
               { q: "Kya insurance claim hoga?", a: "Hum TPA tie-up ke saath hain — cashless claims aram se process hoti hain. Billing documents milte hain directly app mein." },

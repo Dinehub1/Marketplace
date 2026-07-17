@@ -66,8 +66,8 @@ export function BrandRegister({ brand }: { brand: any }) {
                 <div className="relative flex justify-center"><span className="bg-white px-3 text-xs opacity-40">or continue with</span></div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <button className="flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium hover:bg-gray-50" style={{ borderColor: `${accent}25` }}>� WhatsApp</button>
-                <button className="flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium hover:bg-gray-50" style={{ borderColor: `${accent}25` }}>� Google</button>
+                <button className="flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium hover:bg-gray-50" style={{ borderColor: `${accent}25` }}>💬 WhatsApp</button>
+                <button className="flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium hover:bg-gray-50" style={{ borderColor: `${accent}25` }}>🌐 Google</button>
               </div>
               <p className="text-xs text-center mt-5 opacity-50">
                 Already have an account? <a href={`https://${brand.slug}.cashcard.live/login`} style={{ color: primary }} className="font-medium">Login →</a>

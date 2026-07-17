@@ -20,7 +20,7 @@ export function ForgotPassword({ brand }: { brand: any }) {
           <div className="relative">
             <div className="text-center mb-8 animate-scale-in">
               <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center text-4xl animate-pulse-glow" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
-                �
+                🔑
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold mb-2" style={{ color: primary }}>Reset Password</h1>
               <p className="text-sm opacity-60">Enter your WhatsApp number and we'll send you a reset link</p>

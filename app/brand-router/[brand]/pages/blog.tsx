@@ -95,7 +95,7 @@ export function BlogPage({ brand }: { brand: any }) {
               <div className="h-40 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}10, ${secondary}05)` }}>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-5xl group-hover:scale-110 transition-transform duration-500">
-                    {post.tag === "Guide" ? "�" : post.tag === "Story" ? "⭐" : post.tag === "News" ? "�" : post.tag === "Insights" ? "�" : post.tag === "Culture" ? "�" : post.tag === "Product" ? "�" : "📝"}
+                    {post.tag === "Guide" ? "📘" : post.tag === "Story" ? "⭐" : post.tag === "News" ? "📰" : post.tag === "Insights" ? "💡" : post.tag === "Culture" ? "🎭" : post.tag === "Product" ? "🚀" : "📝"}
                   </div>
                 </div>
               </div>

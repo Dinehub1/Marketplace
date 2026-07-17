@@ -17,17 +17,17 @@ module.exports = {
       NODE_ENV: 'production',
       NEXT_TELEMETRY_DISABLED: '1'
     },
-    // --- Crash loop prevention ---
-    // Wait 5s before first restart, then add 2s each time (up to 30s)
+    // Stability: wait before restart, stop after 5 rapid crashes
     max_restarts: 5,
     restart_delay: 5000,
     exp_backoff_restart_delay: 2000,
-    // Give Next.js 20s to finish booting before calling it "ready"
     wait_ready: true,
     listen_timeout: 20000,
-    // Graceful shutdown: wait 25s for cleanup before hard kill
     kill_timeout: 25000,
-    // If it crashes 5 times in a row, stop and alert instead of looping forever
-    stop_exit_codes: [1]
+    stop_exit_codes: [1],
+    // don't crash loop forever
+    // PM2 will stop restarting after max_restarts consecutive failures
+    // within a 60s window
+    min_uptime: '30s',
   }]
 }

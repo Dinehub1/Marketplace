@@ -50,7 +50,14 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/services" || subPath === "/products") { if (!isEnabled(brand, "services")) return <ComingSoon brand={brand} pageName="Services" />; const { ServicesPage } = await import("./pages/services"); return <ServicesPage brand={brand} />; }
   if (subPath === "/pricing") { if (!isEnabled(brand, "pricing")) return <ComingSoon brand={brand} pageName="Pricing" />; const { PricingPage } = await import("./pages/pricing"); return <PricingPage brand={brand} />; }
   if (subPath === "/features") { if (!isEnabled(brand, "features")) return <ComingSoon brand={brand} pageName="Features" />; const { FeaturesPage } = await import("./pages/features"); return <FeaturesPage brand={brand} />; }
-  if (subPath === "/marketplace" || subPath === "/listings") { if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} />; }
+  if (subPath === "/marketplace" || subPath === "/listings") { if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} sp={sp} />; }
+  if (subPath.startsWith("/business/")) {
+    const businessId = Number(subPath.slice("/business/".length).split("/")[0]);
+    if (Number.isFinite(businessId) && businessId > 0) {
+      const { BusinessDetailPage } = await import("./pages/business-detail");
+      return <BusinessDetailPage brand={brand} businessId={businessId} />;
+    }
+  }
   if (subPath === "/blog" || subPath === "/news") { if (!isEnabled(brand, "blog")) return <ComingSoon brand={brand} pageName="Blog" />; const { BlogPage } = await import("./pages/blog"); return <BlogPage brand={brand} />; }
   if (subPath === "/careers" || subPath === "/jobs") { if (!isEnabled(brand, "careers")) return <ComingSoon brand={brand} pageName="Careers" />; const { CareersPage } = await import("./pages/careers"); return <CareersPage brand={brand} />; }
   if (subPath === "/contact") { if (!isEnabled(brand, "contact")) return <ComingSoon brand={brand} pageName="Contact" />; const { ContactPage } = await import("./pages/contact"); return <ContactPage brand={brand} />; }

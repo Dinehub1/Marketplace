@@ -39,7 +39,7 @@ export function SupportPage({ brand }: { brand: any }) {
           {[
             { icon: "❓", title: "FAQ", desc: "Find quick answers to common questions", link: `/faq` },
             { icon: "💬", title: "WhatsApp", desc: "Chat with us instantly", link: `https://wa.me/${(brand.social || {}).whatsapp || brand.contact_phone || ""}` },
-            { icon: "�", title: "Email", desc: "Send us a detailed message", link: `/contact` },
+            { icon: "✉️", title: "Email", desc: "Send us a detailed message", link: `/contact` },
           ].map((c) => (
             <a key={c.title} href={`https://${brand.slug}.cashcard.live${c.link}`} className="card-lift rounded-2xl border bg-white p-6 text-center shadow-sm group" style={{ borderColor: `${accent}20` }}>
               <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{c.icon}</div>

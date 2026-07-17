@@ -8,12 +8,12 @@ const DEFAULT_JOBS = [
 ];
 
 const BENEFITS = [
-  { icon: "�️", title: "Flexible Work", desc: "Work from anywhere with flexible hours" },
+  { icon: "🏖️", title: "Flexible Work", desc: "Work from anywhere with flexible hours" },
   { icon: "💰", title: "Competitive Pay", desc: "Top-of-market compensation and bonuses" },
-  { icon: "�", title: "Learning Budget", desc: "Annual budget for courses and conferences" },
-  { icon: "�", title: "Health Coverage", desc: "Comprehensive health insurance for you and family" },
-  { icon: "�", title: "Growth Focus", desc: "Clear career paths and mentorship programs" },
-  { icon: "�", title: "Impact Driven", desc: "Your work directly shapes our product" },
+  { icon: "📚", title: "Learning Budget", desc: "Annual budget for courses and conferences" },
+  { icon: "🏥", title: "Health Coverage", desc: "Comprehensive health insurance for you and family" },
+  { icon: "📈", title: "Growth Focus", desc: "Clear career paths and mentorship programs" },
+  { icon: "🎯", title: "Impact Driven", desc: "Your work directly shapes our product" },
 ];
 
 export function CareersPage({ brand }: { brand: any }) {
@@ -55,7 +55,7 @@ export function CareersPage({ brand }: { brand: any }) {
               <p className="text-body leading-relaxed mb-6">We believe in transparency, ownership, and continuous growth. At {brand.name}, every voice matters and every contribution shapes our future.</p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-white shadow-sm" style={{ color: primary }}>🌟 No micromanagement</span>
-                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-white shadow-sm" style={{ color: primary }}>� Results-focused</span>
+                <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-white shadow-sm" style={{ color: primary }}>✓ Results-focused</span>
                 <span className="px-3 py-1.5 rounded-full text-xs font-medium bg-white shadow-sm" style={{ color: primary }}>🤝 Collaborative</span>
               </div>
             </div>

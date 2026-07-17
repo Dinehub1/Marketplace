@@ -180,32 +180,32 @@ export async function BrandLanding({ brand }: { brand: any }) {
 
   const hero = brandHero[brand.slug] || {
     headline: brand.tagline || brand.name,
-    subheadline: brand.description || `${brand.name} — आपकी विश्वसनी� प्�ेटफउर्म�`,
+    subheadline: brand.description || `${brand.name} — आपकी विश्वसनीय प्लेटफ़ॉर्म।`,
     highlights: [],
   };
 
   // Brand-specific stats
     const brandStats: Record<string, Array<{ v: string; label: string; icon: string }>> = {
       sarkarhealth: [
-        { v: "50+", label: "वेरि�़ाइड डॉक्टर", icon: "�" },
+        { v: "50+", label: "वेरिफ़ाइड डॉक्टर", icon: "🩺" },
         { v: "5,000+", label: "सक्रिय मरीज़", icon: "👥" },
-        { v: "4.9★", label: "डॉक्�र रेटिंग", icon: "⭐" },
+        { v: "4.9★", label: "डॉक्टर रेटिंग", icon: "⭐" },
         { v: "24/7", label: "हेल्पलाइन", icon: "🚑" },
       ],
     };
     const stats = brandStats[brand.slug] ?? [
-      { v: "10,000+", label: "सक्रिय उप�ोगकर्ता", icon: "👥" },
-      { v: "5,000+", label: "सफल �ंटरैक्शन", icon: "✅" },
-      { v: "4.9★", label: "�सत रेटिंग", icon: "⭐" },
-      { v: "24/7", label: "समर्�न उपलब्ध", icon: "🛟" },
+      { v: "10,000+", label: "सक्रिय उपयोगकर्ता", icon: "👥" },
+      { v: "5,000+", label: "सफल इंटरैक्शन", icon: "✅" },
+      { v: "4.9★", label: "औसत रेटिंग", icon: "⭐" },
+      { v: "24/7", label: "समर्थन उपलब्ध", icon: "🛟" },
     ];
 
   // Brand-specific steps
     const brandSteps: Record<string, Array<{ n: string; t: string; d: string }>> = {
       sarkarhealth: [
-        { n: "1", t: "डॉक्�र चुनें", d: "विशे�ज्�ता �र �नु�व के अनुसार सही डॉक्टर खो�ें — प्रो�़ाइल पढ़ें, रेटिंग देखें।" },
-        { n: "2", t: "�पॉइं�मेंट बुक करें", d: "वीडियो या इन-पर्सन — �पनी सुविधा के अनुसा� �ुनें� तुरंत कन्फर्मेशन�" },
-        { n: "3", t: "कंसल्ट करें", d: "�ॉक्टर से मिलें, प्�िस्�्रिप्शन पाएं, दवाई �र्डर करें — सब �क �गह।" },
+        { n: "1", t: "डॉक्टर चुनें", d: "विशेषज्ञता और अनुभव के अनुसार सही डॉक्टर खोजें — प्रोफ़ाइल पढ़ें, रेटिंग देखें।" },
+        { n: "2", t: "अपॉइंटमेंट बुक करें", d: "वीडियो या इन-पर्सन — अपनी सुविधा के अनुसार चुनें। तुरंत कन्फर्मेशन।" },
+        { n: "3", t: "कंसल्ट करें", d: "डॉक्टर से मिलें, प्रिस्क्रिप्शन पाएं, दवाई ऑर्डर करें — सब एक जगह।" },
       ],
     };
     const steps = brandSteps[brand.slug] ?? [
@@ -217,10 +217,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
   // Brand-specific community
     const brandCommunity: Record<string, Array<{ icon: string; t: string; d: string }>> = {
       sarkarhealth: [
-        { icon: "�", t: "हॉस्�िटल �र क्लीनिक", d: "50+ पार्टनर हॉस्�िटल — �ंद�र में सबसे बड़ा नेटवर्क" },
-        { icon: "�‍⚕️", t: "ड�क्टर्�", d: "MBBS, MD, BAMS — सभी वि�ेषज्ञता के वेरिफ�ाइड प्र�क्टिशनर" },
-        { icon: "👨‍👩‍�‍👦", t: "परिवार", d: "हर �म्र के मरीज़ — ब�्चों से बु�़ुर्गों तक पूरा ख्�ाल" },
-        { icon: "�", t: "लै� पा�्टनर्स", d: "NABL सर्टि�़ाइड लैब — सटीक रिपोर्ट, तेज़ �िलवरी" },
+        { icon: "🏥", t: "हॉस्पिटल और क्लीनिक", d: "50+ पार्टनर हॉस्पिटल — इंदौर में सबसे बड़ा नेटवर्क" },
+        { icon: "👨‍⚕️", t: "डॉक्टर्स", d: "MBBS, MD, BAMS — सभी विशेषज्ञता के वेरिफ़ाइड प्रैक्टिशनर" },
+        { icon: "👨‍👩‍👧‍👦", t: "परिवार", d: "हर उम्र के मरीज़ — बच्चों से बुज़ुर्गों तक पूरा ख्याल" },
+        { icon: "🔬", t: "लैब पार्टनर्स", d: "NABL सर्टिफ़ाइड लैब — सटीक रिपोर्ट, तेज़ डिलीवरी" },
       ],
     };
     const community = brandCommunity[brand.slug] ?? [

@@ -5,8 +5,8 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 const NOTIFICATIONS = [
   { title: "Welcome!", msg: "Thanks for joining our platform", time: "Just now", read: false, icon: "👋" },
   { title: "Profile updated", msg: "Your profile was updated successfully", time: "1 hour ago", read: false, icon: "✅" },
-  { title: "New feature available", msg: "AI Assistant is now available. Try it out!", time: "2 days ago", read: true, icon: "�" },
-  { title: "Order confirmed", msg: "Your order #1234 has been confirmed", time: "3 days ago", read: true, icon: "�" },
+  { title: "New feature available", msg: "AI Assistant is now available. Try it out!", time: "2 days ago", read: true, icon: "🔔" },
+  { title: "Order confirmed", msg: "Your order #1234 has been confirmed", time: "3 days ago", read: true, icon: "🔔" },
   { title: "Payment received", msg: "Payment of ₹1,179 for Pro Plan received", time: "1 week ago", read: true, icon: "💰" },
   { title: "Review requested", msg: "How was your experience? Leave a review", time: "2 weeks ago", read: true, icon: "⭐" },
 ];
@@ -34,7 +34,7 @@ export function Notifications({ brand }: { brand: any }) {
             <p className="text-sm opacity-50">{unreadCount} unread</p>
           </div>
           <div className="relative">
-            <span className="text-3xl animate-pulse">�</span>
+            <span className="text-3xl animate-pulse">🔔</span>
             {unreadCount > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center animate-scale-in">{unreadCount}</span>}
           </div>
         </div>

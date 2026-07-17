@@ -3,7 +3,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
   try {
-    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    // Load service role key directly from .env to avoid env var shadowing
+const envText = Deno.readTextFileSync('C:/Users/Administrator/hermes-web/.env');
+const lines = envText.split(/\r?\n/).filter(l=>l && !l.startsWith('#'));
+const kv = lines.find(l=>l.startsWith('SUPABASE_SERVICE_ROLE_KEY='))||'';
+const serviceKey = kv.split('=')[1]?.trim() ?? '';
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       serviceKey,
