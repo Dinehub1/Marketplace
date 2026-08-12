@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import { ReviewsBox } from "./reviews-box";
 
 type Lead = { id: string; business_id: number; name: string; phone: string; message: string; status: string; created_at: string };
 type Biz = { id: number; name: string; category: string | null; rating: number | null; address: string | null };
+type EditFields = { name: string; description: string; address: string; area: string; city: string; business_phone: string; category: string };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -28,6 +30,9 @@ export function BusinessDashboard({ brand }: { brand: any }) {
   const [info, setInfo] = useState("");
   const [businesses, setBusinesses] = useState<Biz[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [verifiedPhone, setVerifiedPhone] = useState("");
+  const [verifiedToken, setVerifiedToken] = useState("");
+  const [reviewsById, setReviewsById] = useState<Record<number, any[]>>({});
 
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
@@ -55,9 +60,111 @@ export function BusinessDashboard({ brand }: { brand: any }) {
       if (!lres.ok) { setError(lj.error ?? "Leads load nahi hue"); return; }
       setBusinesses(lj.businesses ?? []);
       setLeads(lj.leads ?? []);
+      setVerifiedPhone(vj.phone ?? "");
+      setVerifiedToken(vj.token ?? "");
+      const ids = (lj.businesses ?? []).map((b: any) => b.id).filter(Boolean);
+      if (ids.length) loadReviewsFor(ids);
       setStep("dash");
     } finally { setBusy(false); }
   }
+
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supaKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+  async function loadBiz(id: number): Promise<EditFields | null> {
+    if (!supaUrl || !supaKey) return null;
+    const res = await fetch(`${supaUrl}/rest/v1/businesses?id=eq.${id}&select=name,description,address,area,city,phone,category`, {
+      headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` },
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as any[];
+    const b = rows[0];
+    return b ? { name: b.name ?? "", description: b.description ?? "", address: b.address ?? "", area: b.area ?? "", city: b.city ?? "", business_phone: b.phone ?? "", category: b.category ?? "" } : null;
+  }
+
+  async function loadBizReviews(id: number): Promise<any[]> {
+    if (!supaUrl || !supaKey) return [];
+    const res = await fetch(
+      `${supaUrl}/rest/v1/reviews?business_id=eq.${id}&is_approved=eq.true` +
+        `&select=id,reviewer_name,rating,comment,created_at,owner_reply&order=created_at.desc&limit=50`,
+      { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } },
+    );
+    if (!res.ok) return [];
+    const rows = (await res.json()) as any[];
+    return rows.map((r) => ({
+      id: r.id,
+      author_name: r.reviewer_name,
+      body: r.comment,
+      rating: r.rating,
+      created_at: r.created_at,
+      owner_reply: r.owner_reply ?? null,
+    }));
+  }
+
+  async function loadReviewsFor(ids: number[]) {
+    for (const id of ids) {
+      const rs = await loadBizReviews(id);
+      setReviewsById((m) => ({ ...m, [id]: rs }));
+    }
+  }
+
+  // Edit-listing state (keyed by business id so each card manages its own form).
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editFields, setEditFields] = useState<EditFields | null>(null);
+  const [editBusy, setEditBusy] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editInfo, setEditInfo] = useState("");
+
+  async function startEdit(id: number) {
+    setEditError(""); setEditInfo("");
+    const f = await loadBiz(id);
+    if (!f) { setEditError("Listing load nahi hui"); return; }
+    setEditFields(f);
+    setEditingId(id);
+  }
+
+  function setField(k: keyof EditFields, v: string) {
+    setEditFields((f) => (f ? { ...f, [k]: v } : f));
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editFields || editingId == null) return;
+    setEditError(""); setEditBusy(true);
+    try {
+      const res = await fetch(`/api/businesses/${editingId}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ ...editFields, phone: verifiedPhone, token: verifiedToken }),
+      });
+      const j = await res.json();
+      if (!res.ok) { setEditError(j.error ?? "Listing update nahi hui"); return; }
+      setEditInfo("Listing update ho gayi ✓");
+      setEditingId(null);
+      setEditFields(null);
+    } finally { setEditBusy(false); }
+  }
+
+  const [boostId, setBoostId] = useState<number | null>(null);
+  const [boostBusy, setBoostBusy] = useState(false);
+  const [boostInfo, setBoostInfo] = useState("");
+
+  async function boostListing(id: number) {
+    setBoostBusy(true); setBoostInfo(""); setBoostId(id);
+    try {
+      const res = await fetch(`/api/businesses/${id}/feature`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ phone: verifiedPhone, token: verifiedToken }),
+      });
+      const j = await res.json().catch(() => ({}));
+      const price = j?.price ?? j?.data?.price;
+      setBoostInfo(price ? `Boost price: ₹${price}` : (j?.message ?? "Boost request bhej di gayi"));
+    } catch {
+      setBoostInfo("Boost request bhejne mein dikkat aayi");
+    } finally { setBoostBusy(false); setBoostId(null); }
+  }
+
 
   if (step !== "dash") {
     return (
@@ -175,12 +282,41 @@ export function BusinessDashboard({ brand }: { brand: any }) {
             ) : (
               <div className="space-y-3">
                 {businesses.map((b) => (
-                  <a key={b.id} href={`/business/${b.id}`}
-                     className="block rounded-xl border p-4 hover:shadow-md transition-shadow" style={{ borderColor: `${accent}30` }}>
-                    <p className="font-semibold text-sm" style={{ color: primary }}>{b.name}</p>
-                    <p className="text-xs opacity-50 mt-0.5">{[b.category, b.rating ? `★ ${b.rating}` : null].filter(Boolean).join(" · ")}</p>
-                    {b.address && <p className="text-xs opacity-40 mt-0.5 truncate">📍 {b.address}</p>}
-                  </a>
+                  <div key={b.id} className="rounded-xl border p-4" style={{ borderColor: `${accent}30` }}>
+                    <a href={`/business/${b.id}`} className="block hover:shadow-md transition-shadow">
+                      <p className="font-semibold text-sm" style={{ color: primary }}>{b.name}</p>
+                      <p className="text-xs opacity-50 mt-0.5">{[b.category, b.rating ? `★ ${b.rating}` : null].filter(Boolean).join(" · ")}</p>
+                      {b.address && <p className="text-xs opacity-40 mt-0.5 truncate">📍 {b.address}</p>}
+                    </a>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <button onClick={() => startEdit(b.id)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow"
+                              style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
+                        ✏️ Edit listing
+                      </button>
+                      <button onClick={() => boostListing(b.id)} disabled={boostBusy && boostId === b.id} className="rounded-lg border px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
+                              style={{ borderColor: `${accent}60`, color: primary }}>
+                        {boostBusy && boostId === b.id ? "..." : "🚀 Boost listing"}
+                      </button>
+                    </div>
+                    {boostBusy && boostId === b.id && boostInfo && <p className="text-xs opacity-60 mt-1">{boostInfo}</p>}
+                    {!(boostBusy && boostId === b.id) && boostInfo && <p className="text-xs opacity-60 mt-1">{boostInfo}</p>}
+
+                    <ReviewsBox
+                      businessId={b.id}
+                      initialReviews={reviewsById[b.id] ?? []}
+                      avg={null}
+                      count={0}
+                      primary={primary}
+                      secondary={secondary}
+                      accent={accent}
+                      brandName={brand.name}
+                      canReply
+                      replyPhone={verifiedPhone}
+                      replyToken={verifiedToken}
+                      key={`rev-${b.id}`}
+                    />
+                  </div>
                 ))}
               </div>
             )}

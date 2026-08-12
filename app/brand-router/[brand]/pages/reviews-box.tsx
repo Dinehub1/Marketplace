@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Review = { id: string; author_name: string; rating: number; body: string; created_at: string };
+type Review = { id: string; author_name: string; rating: number; body: string; created_at: string; owner_reply?: string | null };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -20,9 +20,14 @@ type Props = {
   secondary: string;
   accent: string;
   brandName: string;
+  /** When true, the viewer owns this business and may post owner replies. */
+  canReply?: boolean;
+  /** Verified owner phone + token, required for posting replies when canReply. */
+  replyPhone?: string;
+  replyToken?: string;
 };
 
-export function ReviewsBox({ businessId, initialReviews, avg, count, primary, secondary, accent, brandName }: Props) {
+export function ReviewsBox({ businessId, initialReviews, avg, count, primary, secondary, accent, brandName, canReply, replyPhone, replyToken }: Props) {
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [step, setStep] = useState<"view" | "input" | "otp" | "done">("view");
   const [name, setName] = useState("");
@@ -33,6 +38,35 @@ export function ReviewsBox({ businessId, initialReviews, avg, count, primary, se
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
+
+  const [replyTo, setReplyTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replyBusy, setReplyBusy] = useState(false);
+  const [replyError, setReplyError] = useState("");
+
+  async function sendReply(e: React.FormEvent) {
+    e.preventDefault();
+    setReplyError("");
+    if (!replyTo) return;
+    if (!replyText.trim()) { setReplyError("Reply likhein"); return; }
+    if (!replyPhone || !replyToken) { setReplyError("Owner verify nahi hua"); return; }
+    setReplyBusy(true);
+    try {
+      const res = await fetch(`/api/businesses/${businessId}/reviews/${replyTo}`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ reply: replyText.trim(), phone: replyPhone, token: replyToken }),
+      });
+      const j = await res.json();
+      if (!res.ok) { setReplyError(j.error ?? "Reply save nahi hui"); return; }
+      if (j.review) {
+        const r = j.review as Review;
+        setReviews((rs) => rs.map((x) => (x.id === r.id ? { ...x, owner_reply: r.owner_reply } : x)));
+      }
+      setReplyTo(null);
+      setReplyText("");
+    } finally { setReplyBusy(false); }
+  }
 
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
@@ -106,6 +140,36 @@ export function ReviewsBox({ businessId, initialReviews, avg, count, primary, se
                   </div>
                   <p className="text-sm opacity-70 mt-1">{r.body}</p>
                   <p className="text-xs opacity-40 mt-1">{timeAgo(r.created_at)}</p>
+
+                  {r.owner_reply ? (
+                    <div className="mt-2 ml-4 pl-3 border-l-2 text-sm" style={{ borderColor: `${accent}60`, color: primary }}>
+                      <p className="text-xs font-semibold opacity-80">Owner replies:</p>
+                      <p className="opacity-80 mt-0.5">{r.owner_reply}</p>
+                    </div>
+                  ) : null}
+
+                  {canReply && (
+                    <div className="mt-2">
+                      {replyTo === r.id ? (
+                        <form onSubmit={sendReply} className="space-y-2">
+                          <textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} maxLength={2000} required rows={2}
+                                    placeholder="Apna reply likhein…"
+                                    className="w-full rounded-xl border px-3 py-2 text-sm" style={{ borderColor: `${accent}50` }} />
+                          {replyError && <p className="text-xs text-red-500">{replyError}</p>}
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => { setReplyTo(null); setReplyText(""); }} className="rounded-xl px-3 py-1.5 text-xs font-semibold opacity-60">Cancel</button>
+                            <button type="submit" disabled={replyBusy} className="flex-1 rounded-xl px-3 py-1.5 text-xs font-bold text-white shadow disabled:opacity-50"
+                                    style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>{replyBusy ? "..." : "Reply karein"}</button>
+                          </div>
+                        </form>
+                      ) : (
+                        <button onClick={() => { setReplyTo(r.id); setReplyText(""); setReplyError(""); }}
+                                className="text-xs font-semibold underline opacity-70" style={{ color: primary }}>
+                          {r.owner_reply ? "Edit reply" : "Reply karein"}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
