@@ -197,7 +197,7 @@ export function TestimonialsPage({ brand }: { brand: any }) {
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Join our happy patients</h2>
               <p className="text-white/80 mb-8">Experience the {brand.name} difference today — 5000+ mariz already trust us.</p>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get Started →</a>
+              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get Started →</a>
             </div>
           </div>
         </div>

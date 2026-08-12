@@ -27,7 +27,7 @@ export function ForgotPassword({ brand }: { brand: any }) {
             </div>
 
             <div className="rounded-3xl border bg-white p-8 shadow-lg animate-scale-in" style={{ borderColor: `${accent}20`, animationDelay: "0.1s" }}>
-              <form className="space-y-5" action={`https://${brand.slug}.cashcard.live/login`} method="GET">
+              <form className="space-y-5" action={`/login`} method="GET">
                 <div>
                   <label className="block text-sm font-medium opacity-70 mb-1">WhatsApp Number</label>
                   <input type="tel" required placeholder="+91 98765 43210" className="w-full rounded-xl border px-4 py-3.5 text-sm outline-none focus:border-transparent focus:ring-2 shadow-sm" style={{ borderColor: `${accent}50` }} />
@@ -37,7 +37,7 @@ export function ForgotPassword({ brand }: { brand: any }) {
                 </button>
               </form>
               <p className="text-xs text-center mt-5 opacity-50">
-                Remember your password? <a href={`https://${brand.slug}.cashcard.live/login`} style={{ color: primary }} className="font-medium">Login →</a>
+                Remember your password? <a href={`/login`} style={{ color: primary }} className="font-medium">Login →</a>
               </p>
             </div>
           </div>

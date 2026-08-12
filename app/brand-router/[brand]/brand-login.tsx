@@ -25,7 +25,7 @@ export function BrandLogin({ brand }: { brand: any }) {
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else router.push(`https://${brand.slug}.cashcard.live/dashboard`);
+      else router.push("/dashboard");
     } else {
       const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `https://${brand.slug}.cashcard.live/dashboard` } });
       if (error) setError(error.message);

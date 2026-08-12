@@ -41,7 +41,7 @@ export function SupportPage({ brand }: { brand: any }) {
             { icon: "💬", title: "WhatsApp", desc: "Chat with us instantly", link: `https://wa.me/${(brand.social || {}).whatsapp || brand.contact_phone || ""}` },
             { icon: "✉️", title: "Email", desc: "Send us a detailed message", link: `/contact` },
           ].map((c) => (
-            <a key={c.title} href={`https://${brand.slug}.cashcard.live${c.link}`} className="card-lift rounded-2xl border bg-white p-6 text-center shadow-sm group" style={{ borderColor: `${accent}20` }}>
+            <a key={c.title} href={`${c.link}`} className="card-lift rounded-2xl border bg-white p-6 text-center shadow-sm group" style={{ borderColor: `${accent}20` }}>
               <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{c.icon}</div>
               <h3 className="font-bold mb-1" style={{ color: primary }}>{c.title}</h3>
               <p className="text-sm opacity-50">{c.desc}</p>
@@ -64,7 +64,7 @@ export function SupportPage({ brand }: { brand: any }) {
             "Cancellation policy",
             "Privacy & data protection",
           ].map((topic) => (
-            <a key={topic} href={`https://${brand.slug}.cashcard.live/faq`} className="card-lift flex items-center gap-3 px-5 py-4 rounded-xl border bg-white text-sm font-medium shadow-sm group" style={{ borderColor: `${accent}15` }}>
+            <a key={topic} href={`/faq`} className="card-lift flex items-center gap-3 px-5 py-4 rounded-xl border bg-white text-sm font-medium shadow-sm group" style={{ borderColor: `${accent}15` }}>
               <span style={{ color: primary }} className="group-hover:translate-x-1 transition-transform">→</span>
               <span className="opacity-70">{topic}</span>
             </a>
@@ -80,7 +80,7 @@ export function SupportPage({ brand }: { brand: any }) {
             <div className="relative">
               <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Still need help?</h2>
               <p className="text-white/80 mb-6 max-w-lg mx-auto">Our support team is available 24/7 to assist you with anything you need.</p>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg inline-block" style={{ color: primary }}>
+              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg inline-block" style={{ color: primary }}>
                 Contact Support →
               </a>
             </div>

@@ -23,9 +23,9 @@ export async function BrandStaticSite({ brand }: { brand: Awaited<ReturnType<typ
           <div className="flex items-center gap-4">
             <span className="font-bold" style={{ color: primary }}>{brand.name}</span>
             <nav className="flex gap-3 text-xs opacity-60">
-              <a href={`https://${brand.slug}.cashcard.live/`} className="hover:opacity-100">Home</a>
-              <a href={`https://${brand.slug}.cashcard.live/dashboard`} className="hover:opacity-100">Dashboard</a>
-              <a href={`https://${brand.slug}.cashcard.live/login`} className="hover:opacity-100">Login</a>
+              <a href={`/`} className="hover:opacity-100">Home</a>
+              <a href={`/dashboard`} className="hover:opacity-100">Dashboard</a>
+              <a href={`/login`} className="hover:opacity-100">Login</a>
             </nav>
           </div>
           <span className="text-xs opacity-40">{brand.tagline}</span>

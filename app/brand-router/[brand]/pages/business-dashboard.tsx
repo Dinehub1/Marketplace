@@ -170,12 +170,12 @@ export function BusinessDashboard({ brand }: { brand: any }) {
             {businesses.length === 0 ? (
               <div className="text-sm opacity-60 py-6 text-center">
                 <p>Is number se koi business listed nahi hai.</p>
-                <a href={`https://${brand.slug}.cashcard.live/contact`} className="underline mt-1 inline-block" style={{ color: primary }}>Apna business list karwayein →</a>
+                <a href={`/contact`} className="underline mt-1 inline-block" style={{ color: primary }}>Apna business list karwayein →</a>
               </div>
             ) : (
               <div className="space-y-3">
                 {businesses.map((b) => (
-                  <a key={b.id} href={`https://${brand.slug}.cashcard.live/business/${b.id}`}
+                  <a key={b.id} href={`/business/${b.id}`}
                      className="block rounded-xl border p-4 hover:shadow-md transition-shadow" style={{ borderColor: `${accent}30` }}>
                     <p className="font-semibold text-sm" style={{ color: primary }}>{b.name}</p>
                     <p className="text-xs opacity-50 mt-0.5">{[b.category, b.rating ? `★ ${b.rating}` : null].filter(Boolean).join(" · ")}</p>

@@ -13,7 +13,7 @@ export async function BrandDashboard({ brand }: { brand: any }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect(`https://${brand.slug}.cashcard.live/login`);
+  if (!user) redirect(`/login`);
 
   const { rows, total } = await getBrandBusinesses(brand.slug, 8);
 
@@ -52,7 +52,7 @@ export async function BrandDashboard({ brand }: { brand: any }) {
 
         {!user && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700">
-            You are viewing the demo dashboard. <a href={`https://${brand.slug}.cashcard.live/login`} className="underline">Log in</a> for full access.
+            You are viewing the demo dashboard. <a href={`/login`} className="underline">Log in</a> for full access.
           </div>
         )}
       </main>

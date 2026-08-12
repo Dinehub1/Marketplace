@@ -76,7 +76,7 @@ export function GalleryPage({ brand }: { brand: any }) {
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Want to be part of our story?</h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">Join the families who trust {brand.name} for their needs</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get in Touch →</a>
+                <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get in Touch →</a>
               </div>
             </div>
           </div>

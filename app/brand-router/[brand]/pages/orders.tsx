@@ -35,7 +35,7 @@ export function Orders({ brand }: { brand: any }) {
             <h1 className="text-2xl font-bold" style={{ color: primary }}>My Orders</h1>
             <p className="text-sm opacity-50">{ORDERS.length} orders placed</p>
           </div>
-          <a href={`https://${brand.slug}.cashcard.live/marketplace`} className="btn-primary text-xs py-2.5 px-5">
+          <a href={`/marketplace`} className="btn-primary text-xs py-2.5 px-5">
             Browse More →
           </a>
         </div>

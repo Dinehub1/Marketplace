@@ -102,7 +102,7 @@ export function CareersPage({ brand }: { brand: any }) {
                   </div>
                   <div className="mt-5 pt-4 border-t flex items-center justify-between" style={{ borderColor: `${accent}15` }}>
                     {job.salary && <span className="text-sm font-medium" style={{ color: primary }}>{job.salary}</span>}
-                    <a href={`https://${brand.slug}.cashcard.live/contact?job=${encodeURIComponent(job.title)}`} className="btn-primary text-xs py-2 px-4">Apply Now →</a>
+                    <a href={`/contact?job=${encodeURIComponent(job.title)}`} className="btn-primary text-xs py-2 px-4">Apply Now →</a>
                   </div>
                 </div>
               ))}

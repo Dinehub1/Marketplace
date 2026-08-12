@@ -148,7 +148,7 @@ function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
           <div className="text-6xl mb-4">🚧</div>
           <h1 className="text-3xl font-bold mb-2" style={{ color: primary }}>{pageName}</h1>
           <p className="opacity-60 mb-6">This page is coming soon for {brand.name}.</p>
-          <a href={`https://${brand.slug}.cashcard.live/`} className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow" style={{ backgroundColor: primary }}>← Back to Home</a>
+          <a href={`/`} className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow" style={{ backgroundColor: primary }}>← Back to Home</a>
         </div>
       </div>
     </div>

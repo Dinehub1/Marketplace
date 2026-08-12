@@ -26,7 +26,7 @@ export default async function NotFound() {
     const theme = (brand.theme ?? {}) as Record<string, string>;
     const primary = theme.primary ?? "#6d28d9";
     const secondary = theme.secondary ?? "#8b5cf6";
-    const origin = `https://${brand.slug}.cashcard.live`;
+    const origin = ``;
 
     return (
       <div className="min-h-screen flex flex-col bg-[#fbfbfc]">

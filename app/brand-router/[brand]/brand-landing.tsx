@@ -289,14 +289,14 @@ export async function BrandLanding({ brand }: { brand: any }) {
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <a
-              href={`https://${brand.slug}.cashcard.live/login`}
+              href={`/login`}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all"
               style={{ backgroundColor: primary }}
             >
               शुरू करें →
             </a>
             <a
-              href={`https://${brand.slug}.cashcard.live/about`}
+              href={`/about`}
               className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold border-2 hover:bg-gray-50 transition-all"
               style={{ borderColor: accent, color: primary }}
             >
@@ -393,10 +393,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
             Free mein register karein aur {brand.name} ke saath apna safar shuru karein — ghar baithe.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
+            <a href={`/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
               मुफ्त में शुरू करें →
             </a>
-            <a href={`https://${brand.slug}.cashcard.live/contact`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
+            <a href={`/contact`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
               संपर्क करें
             </a>
           </div>

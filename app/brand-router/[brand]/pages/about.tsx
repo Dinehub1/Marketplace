@@ -319,8 +319,8 @@ export function AboutPage({ brand }: { brand: any }) {
           </h1>
           <p className="text-lg md:text-xl opacity-60 max-w-2xl mx-auto leading-relaxed">{brand.tagline}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href={`https://${brand.slug}.cashcard.live/contact`} className="btn-primary">संपर्क करें</a>
-            <a href={`https://${brand.slug}.cashcard.live/services`} className="btn-secondary">हमारी सेवाएं</a>
+            <a href={`/contact`} className="btn-primary">संपर्क करें</a>
+            <a href={`/services`} className="btn-secondary">हमारी सेवाएं</a>
           </div>
         </div>
       </section>
@@ -431,7 +431,7 @@ export function AboutPage({ brand }: { brand: any }) {
               <p className="text-white/80 mb-8 max-w-lg mx-auto">
                 {brand.name} ke saath apni sehat ka khayal rakhein — aaj hi download karein.
               </p>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>बातचीत शुरू करें →</a>
+              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>बातचीत शुरू करें →</a>
             </div>
           </div>
         </div>

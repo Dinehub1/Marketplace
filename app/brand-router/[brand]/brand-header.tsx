@@ -38,7 +38,7 @@ export function BrandHeader({ brand }: { brand: any }) {
       <header className="sticky top-0 z-50 glass">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 md:px-6 py-3">
           {/* Logo */}
-          <a href={`https://${brand.slug}.cashcard.live/`} className="flex items-center gap-2.5 group">
+          <a href={`/`} className="flex items-center gap-2.5 group">
             {brand.logo_url ? (
               <img src={brand.logo_url} alt={brand.name} className="h-9 w-9 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform" />
             ) : (
@@ -52,7 +52,7 @@ export function BrandHeader({ brand }: { brand: any }) {
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {visible.map((item) => (
-              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} className="press on-material px-3 py-2 text-sm rounded-lg opacity-75">
+              <a key={item.key} href={`${item.path}`} className="press on-material px-3 py-2 text-sm rounded-lg opacity-75">
                 {item.label}
               </a>
             ))}
@@ -60,10 +60,10 @@ export function BrandHeader({ brand }: { brand: any }) {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <a href={`https://${brand.slug}.cashcard.live/login`} className="press hidden sm:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
+            <a href={`/login`} className="press hidden sm:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
               Login
             </a>
-            <a href={`https://${brand.slug}.cashcard.live/contact`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
+            <a href={`/contact`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
               Get Started
             </a>
             {/* Hit target is 44px, and the label states what it does rather
@@ -98,13 +98,13 @@ export function BrandHeader({ brand }: { brand: any }) {
         >
           <div className="px-4 py-4 space-y-1">
             {visible.map((item) => (
-              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} onClick={() => setMobileOpen(false)} className="press flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium">
+              <a key={item.key} href={`${item.path}`} onClick={() => setMobileOpen(false)} className="press flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium">
                 <span className="text-neutral-400"><NavIcon d={item.d} /></span> {item.label}
               </a>
             ))}
             <div className="pt-3 flex gap-2">
-              <a href={`https://${brand.slug}.cashcard.live/login`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>Login</a>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
+              <a href={`/login`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>Login</a>
+              <a href={`/contact`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
             </div>
           </div>
         </div>
@@ -155,10 +155,10 @@ export function BrandFooter({ brand }: { brand: any }) {
             </h2>
             <p className="text-white/85 mb-6 max-w-lg mx-auto" style={{ lineHeight: 1.6 }}>{cta.subtitle}</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <a href={`https://${brand.slug}.cashcard.live/register`} className="press bg-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg" style={{ color: primary }}>
+              <a href={`/register`} className="press bg-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg" style={{ color: primary }}>
                 {cta.primary_label} →
               </a>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="press border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm">
+              <a href={`/contact`} className="press border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm">
                 {cta.secondary_label}
               </a>
             </div>
@@ -186,22 +186,22 @@ export function BrandFooter({ brand }: { brand: any }) {
         <div>
           <p className="font-bold text-xs uppercase tracking-wider mb-3" style={{ color: primary }}>Pages</p>
           <div className="flex flex-col gap-2 text-sm opacity-60">
-            {flags.about !== false && <a href={`https://${brand.slug}.cashcard.live/about`} className="hover:opacity-100 transition-opacity">About</a>}
-            {flags.services !== false && <a href={`https://${brand.slug}.cashcard.live/services`} className="hover:opacity-100 transition-opacity">Services</a>}
-            {flags.pricing !== false && <a href={`https://${brand.slug}.cashcard.live/pricing`} className="hover:opacity-100 transition-opacity">Pricing</a>}
-            {flags.blog !== false && <a href={`https://${brand.slug}.cashcard.live/blog`} className="hover:opacity-100 transition-opacity">Blog</a>}
-            {brand.features?.listings && <a href={`https://${brand.slug}.cashcard.live/marketplace`} className="hover:opacity-100 transition-opacity">Listings</a>}
+            {flags.about !== false && <a href={`/about`} className="hover:opacity-100 transition-opacity">About</a>}
+            {flags.services !== false && <a href={`/services`} className="hover:opacity-100 transition-opacity">Services</a>}
+            {flags.pricing !== false && <a href={`/pricing`} className="hover:opacity-100 transition-opacity">Pricing</a>}
+            {flags.blog !== false && <a href={`/blog`} className="hover:opacity-100 transition-opacity">Blog</a>}
+            {brand.features?.listings && <a href={`/marketplace`} className="hover:opacity-100 transition-opacity">Listings</a>}
           </div>
         </div>
 
         <div>
           <p className="font-bold text-xs uppercase tracking-wider mb-3" style={{ color: primary }}>Support</p>
           <div className="flex flex-col gap-2 text-sm opacity-60">
-            {flags.faq !== false && <a href={`https://${brand.slug}.cashcard.live/faq`} className="hover:opacity-100 transition-opacity">FAQ</a>}
-            {flags.support !== false && <a href={`https://${brand.slug}.cashcard.live/support`} className="hover:opacity-100 transition-opacity">Help Center</a>}
-            {flags.contact !== false && <a href={`https://${brand.slug}.cashcard.live/contact`} className="hover:opacity-100 transition-opacity">Contact</a>}
-            <a href={`https://${brand.slug}.cashcard.live/privacy`} className="hover:opacity-100 transition-opacity">Privacy</a>
-            <a href={`https://${brand.slug}.cashcard.live/terms`} className="hover:opacity-100 transition-opacity">Terms</a>
+            {flags.faq !== false && <a href={`/faq`} className="hover:opacity-100 transition-opacity">FAQ</a>}
+            {flags.support !== false && <a href={`/support`} className="hover:opacity-100 transition-opacity">Help Center</a>}
+            {flags.contact !== false && <a href={`/contact`} className="hover:opacity-100 transition-opacity">Contact</a>}
+            <a href={`/privacy`} className="hover:opacity-100 transition-opacity">Privacy</a>
+            <a href={`/terms`} className="hover:opacity-100 transition-opacity">Terms</a>
           </div>
         </div>
 

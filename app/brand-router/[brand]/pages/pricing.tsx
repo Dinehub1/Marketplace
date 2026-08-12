@@ -291,7 +291,7 @@ export function PricingPage({ brand }: { brand: any }) {
                     </li>
                   ))}
                 </ul>
-                <a href={`https://${brand.slug}.cashcard.live/register`} className={`block text-center rounded-xl py-3 text-sm font-bold transition-all hover:translate-y-[-2px] ${plan.highlighted ? "bg-white" : "text-white"}`} style={!plan.highlighted ? { background: `linear-gradient(135deg, ${primary}, ${secondary})` } : { color: primary }}>
+                <a href={`/register`} className={`block text-center rounded-xl py-3 text-sm font-bold transition-all hover:translate-y-[-2px] ${plan.highlighted ? "bg-white" : "text-white"}`} style={!plan.highlighted ? { background: `linear-gradient(135deg, ${primary}, ${secondary})` } : { color: primary }}>
                   {plan.price === "मुफ्त" ? "अभी शुरू करें" : "सब्सक्राइब करें"}
                 </a>
               </div>
@@ -329,7 +329,7 @@ export function PricingPage({ brand }: { brand: any }) {
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Custom Plan Chahiye?</h2>
           <p className="text-white/80 mb-8">Badho hospitals, clinics aur chains ke liye special pricing available hai.</p>
-              <a href={`https://${brand.slug}.cashcard.live/quote`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>कस्टम कोट मांगें →</a>
+              <a href={`/quote`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>कस्टम कोट मांगें →</a>
             </div>
           </div>
         </div>

@@ -202,7 +202,7 @@ export function FAQPage({ brand }: { brand: any }) {
 
         <div className="mt-10 text-center rounded-2xl p-8" style={{ backgroundColor: `${primary}08` }}>
           <p className="opacity-70 mb-2">Aur sawal hain? Hamare doctor se baat karein.</p>
-          <a href={`https://${brand.slug}.cashcard.live/contact`} className="font-bold" style={{ color: primary }}>Contact us →</a>
+          <a href={`/contact`} className="font-bold" style={{ color: primary }}>Contact us →</a>
         </div>
       </section>
 

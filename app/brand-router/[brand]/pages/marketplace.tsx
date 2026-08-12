@@ -2,6 +2,7 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 import { categoriesForBrand } from "@/lib/brand-categories";
 import { categoryPath, cleanBusinessName } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
+import { CategoryCover } from "@/components/category-cover";
 
 const PAGE_SIZE = 24;
 // Yelp carries 1,500+ categories and surfaces 22 on its homepage. This page was
@@ -13,7 +14,7 @@ async function fetchDirectory(q: string, cat: string, page: number, allowed: str
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   if (allowed && allowed.length === 0) return { rows: [], total: 0 };
-  const filters: string[] = ["select=id,name,category,area,address,phone,rating,city", "status=eq.active"];
+  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city", "status=eq.active"];
   if (q) {
     const term = encodeURIComponent(`*${q}*`);
     filters.push(`or=(name.ilike.${term},category.ilike.${term})`);
@@ -84,7 +85,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
   const categories = allowed ? allCategories.filter((c) => allowed.includes(c.category)) : allCategories;
   const { rows, total } = await fetchDirectory(q, cat, page, allowed);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const origin = `https://${brand.slug}.cashcard.live`;
+  const origin = ``;
   const base = `${origin}/marketplace`;
   const filtered = Boolean(q || cat);
   const qs = (over: Record<string, string | number>) => {
@@ -218,8 +219,9 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rows.map((b: any) => (
                   <article key={b.id}
-                    className="card-lift group relative flex flex-col rounded-2xl bg-white p-5 ring-1 ring-black/[0.05] shadow-[0_1px_2px_rgba(16,16,24,0.04)]">
-                    <div className="flex items-start gap-3">
+                    className="card-lift group relative flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.05] shadow-[0_1px_2px_rgba(16,16,24,0.04)]">
+                    <CategoryCover category={b.category} primary={primary} secondary={secondary} className="-mx-5 -mt-5 mb-4 h-28 w-full" />
+                    <div className="flex items-start gap-3 px-5">
                       <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl"
                             style={{ backgroundColor: `${primary}10`, color: primary }}>
                         <CategoryIcon category={b.category ?? ""} size={19} />
@@ -239,6 +241,9 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
                                 <path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z" />
                               </svg>
                               {b.rating}
+                              {b.reviews_count != null && (
+                                <span className="font-medium text-neutral-400">({b.reviews_count.toLocaleString("en-IN")})</span>
+                              )}
                             </span>
                           )}
                           {b.category && <span className="truncate">{titleize(b.category)}</span>}
@@ -247,14 +252,14 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
                     </div>
 
                     {b.address && (
-                      <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-neutral-500">{b.address}</p>
+                      <p className="mt-3 px-5 line-clamp-2 text-xs leading-relaxed text-neutral-500">{b.address}</p>
                     )}
 
                     {/* Above the stretched link so it stays independently
                         tappable — calling is the conversion. */}
                     {b.phone && (
                       <a href={telHref(b.phone)}
-                         className="press relative z-10 mt-auto pt-4 inline-flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-white"
+                         className="press relative z-10 mt-auto px-5 pb-5 pt-4 inline-flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-white"
                          style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                           <path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z" />

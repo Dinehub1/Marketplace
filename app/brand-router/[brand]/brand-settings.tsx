@@ -10,7 +10,7 @@ export async function BrandSettings({ brand }: { brand: any }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect(`https://${brand.slug}.cashcard.live/login`);
+  if (!user) redirect(`/login`);
 
   async function updateBrand(formData: FormData) {
     "use server";

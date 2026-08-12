@@ -112,7 +112,7 @@ export function ReviewsPage({ brand }: { brand: any }) {
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Share your experience</h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">Your feedback helps us improve and helps others discover {brand.name}</p>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg inline-block" style={{ color: primary }}>
+              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg inline-block" style={{ color: primary }}>
                 Write a Review →
               </a>
             </div>

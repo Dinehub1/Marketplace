@@ -10,7 +10,7 @@ export async function BrandProfile({ brand }: { brand: any }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect(`https://${brand.slug}.cashcard.live/login`);
+  if (!user) redirect(`/login`);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>

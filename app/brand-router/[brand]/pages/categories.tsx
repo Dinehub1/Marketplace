@@ -18,7 +18,7 @@ function titleize(s: string) {
 export async function CategoriesPage({ brand }: { brand: any }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
-  const origin = `https://${brand.slug}.cashcard.live`;
+  const origin = ``;
 
   const index = await getCategoryIndex();
 

@@ -23,7 +23,7 @@ export function UserDashboard({ brand }: { brand: any }) {
             <h1 className="text-2xl font-bold" style={{ color: primary }}>Welcome back! 👋</h1>
             <p className="text-sm opacity-60">Your activity on {brand.name}</p>
           </div>
-          <a href={`https://${brand.slug}.cashcard.live/business-dashboard`} className="text-sm font-medium px-4 py-2 rounded-xl border hover:bg-gray-50 transition-colors" style={{ borderColor: `${accent}50`, color: primary }}>
+          <a href={`/business-dashboard`} className="text-sm font-medium px-4 py-2 rounded-xl border hover:bg-gray-50 transition-colors" style={{ borderColor: `${accent}50`, color: primary }}>
             Business View →
           </a>
         </div>
@@ -40,15 +40,15 @@ export function UserDashboard({ brand }: { brand: any }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <a href={`https://${brand.slug}.cashcard.live/orders`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
+          <a href={`/orders`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
             <p className="font-bold" style={{ color: primary }}>My Orders</p>
             <p className="text-xs opacity-50 mt-1">View order history</p>
           </a>
-          <a href={`https://${brand.slug}.cashcard.live/booking`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
+          <a href={`/booking`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
             <p className="font-bold" style={{ color: primary }}>Book Appointment</p>
             <p className="text-xs opacity-50 mt-1">Schedule a visit</p>
           </a>
-          <a href={`https://${brand.slug}.cashcard.live/support`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
+          <a href={`/support`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
             <p className="font-bold" style={{ color: primary }}>Get Help</p>
             <p className="text-xs opacity-50 mt-1">Contact support</p>
           </a>

@@ -367,10 +367,10 @@ export function FeaturesPage({ brand }: { brand: any }) {
                 Indore ke hazaron rogi pahle se jude chuke hain — aap ab kab rahenge?
               </p>
               <div className="flex flex-wrap justify-center gap-3">
-                <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
+                <a href={`/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
                   मुफ्त में शुरू करें →
                 </a>
-                <a href={`https://${brand.slug}.cashcard.live/contact`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
+                <a href={`/contact`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
                   संपर्क करें
                 </a>
               </div>

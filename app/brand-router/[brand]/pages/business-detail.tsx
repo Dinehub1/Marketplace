@@ -2,6 +2,7 @@
 import { LeadForm } from "./lead-form";
 import { CITY_LABEL, categoryPath, cleanArea, cleanBusinessName, localityOf } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
+import { CategoryCover } from "@/components/category-cover";
 
 async function getBusiness(id: number) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -22,7 +23,7 @@ async function getRelated(category: string | null, excludeId: number) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   const res = await fetch(
-    `${url}/rest/v1/businesses?select=id,name,area,rating,phone` +
+    `${url}/rest/v1/businesses?select=id,name,area,rating,reviews_count,phone` +
       `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
       `&id=neq.${excludeId}&order=rating.desc.nullslast&limit=6`,
     { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: 1800 } },
@@ -45,7 +46,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
   const secondary = t.secondary ?? "#8b5cf6";
   const accent = t.accent ?? "#c4b5fd";
   const bg = t.bg ?? "#faf5ff";
-  const origin = `https://${brand.slug}.cashcard.live`;
+  const origin = ``;
 
   const biz = await getBusiness(businessId);
 
@@ -97,7 +98,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
     ...(biz.phone ? { telephone: biz.phone } : {}),
     ...(biz.website ? { url: biz.website } : {}),
     ...(biz.lat && biz.lng ? { geo: { "@type": "GeoCoordinates", latitude: biz.lat, longitude: biz.lng } } : {}),
-    ...(biz.rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: biz.rating, bestRating: 5 } } : {}),
+    ...(biz.rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: biz.rating, bestRating: 5, ...(biz.reviews_count != null ? { reviewCount: biz.reviews_count } : {}) } } : {}),
   };
 
   const breadcrumbs = {
@@ -120,6 +121,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
       <BrandHeader brand={brand} />
 
       <section className="border-b border-black/[0.06] px-6 pt-8 pb-7" style={{ background: `linear-gradient(135deg, ${primary}10, ${secondary}06)` }}>
+        <CategoryCover category={biz.category} primary={primary} secondary={secondary} className="-mx-6 -mt-8 mb-6 h-36 w-full rounded-b-2xl" />
         <div className="mx-auto max-w-5xl">
           {/* Wayfinding: the trail leads back to the category the visitor most
               likely arrived from, not just to the directory root. */}
@@ -147,7 +149,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                     {titleize(biz.category)}
                   </a>
                 )}
-                {biz.rating != null && <span className="text-amber-500 font-semibold">★ {biz.rating}</span>}
+                {biz.rating != null && <span className="text-amber-500 font-semibold">★ {biz.rating}{biz.reviews_count != null && <span className="font-normal text-neutral-400"> ({biz.reviews_count.toLocaleString("en-IN")})</span>}</span>}
                 {(biz.area || biz.city) && <span className="text-xs opacity-50 capitalize">{localityOf(biz)}</span>}
               </div>
             </div>
@@ -203,7 +205,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                 {biz.rating != null && (
                   <div className="flex items-center gap-3">
                     <span className="flex-shrink-0 text-amber-500"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z"/></svg></span>
-                    <p className="opacity-75">{biz.rating} out of 5, from public Google Maps reviews</p>
+                     <p className="opacity-75">{biz.rating} out of 5, from {biz.reviews_count != null ? `${biz.reviews_count.toLocaleString("en-IN")} public Google Maps reviews` : "public Google Maps reviews"}</p>
                   </div>
                 )}
               </div>
@@ -248,7 +250,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                 <a key={r.id} href={`${origin}/business/${r.id}`} className="card-lift rounded-2xl border bg-white p-4 shadow-sm block" style={{ borderColor: `${accent}30` }}>
                   <h3 className="font-semibold text-sm leading-snug" style={{ color: primary }}>{r.name}</h3>
                   <div className="mt-1.5 flex items-center gap-2 text-xs">
-                    {r.rating != null && <span className="text-amber-500 font-semibold">★ {r.rating}</span>}
+                    {r.rating != null && <span className="text-amber-500 font-semibold">★ {r.rating}{r.reviews_count != null && <span className="font-normal text-neutral-400"> ({r.reviews_count.toLocaleString("en-IN")})</span>}</span>}
                     {cleanArea(r.area) && <span className="opacity-50 capitalize">{cleanArea(r.area)}</span>}
                     {r.phone && <span className="text-neutral-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/></svg></span>}
                   </div>

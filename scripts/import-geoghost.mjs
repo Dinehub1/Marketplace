@@ -39,7 +39,8 @@ function validateKey() {
 }
 loadEnv('.env');
 loadEnv('.env.local');
-validateKey();
+// --dry-run only parses CSVs, so it must not require the write key.
+if (!DRY) validateKey();
 
 const URL_BASE = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 // KEY is loaded from process.env after loadEnv() called above
@@ -76,6 +77,8 @@ function parseCsv(text) {
 }
 
 function num(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; }
+function int(v) { const n = parseInt(String(v ?? "").replace(/[^\d-]/g, ""), 10); return Number.isFinite(n) ? n : null; }
+function str(v) { const s = (v ?? "").trim(); return s || null; }
 
 // ---------- FILE DISCOVERY ----------
 const fileFlag = process.argv.indexOf('--file');
@@ -129,36 +132,66 @@ for (const file of files) {
     seen.add(dedupeKey);
     records.push({
       name,
-      category: (r[col['category']] ?? '').trim() || null,
+      category: str(r[col['category']]),
       phone,
-      address: (r[col['address']] ?? '').trim() || null,
-      website: (r[col['website']] ?? '').trim() || null,
+      address: str(r[col['address']]),
+      website: str(r[col['website']]),
       area: (r[col['location']] ?? '').trim().toLowerCase() || 'indore',
       city: 'Indore',
       rating: num(r[col['reviews_average']]),
+      // Carried since 2026-08-12: a rating with no review count behind it is
+      // not showable, and a listing with no photo is not scannable.
+      reviews_count: int(r[col['reviews_count']]),
+      image_url: str(r[col['image_url']]),
+      google_maps: str(r[col['google_maps_url']]),
       lat: num(r[col['latitude']]),
       lng: num(r[col['longitude']]),
       source: 'geoghost-google-maps',
       status: 'active',
+      raw: { csv_file: path.basename(file), domain: str(r[col['domain']]) },
     });
   }
 }
 console.log(`Parsed ${records.length} unique businesses from ${files.length} CSV(s)`);
-if (DRY) { console.log(records.slice(0, 3)); process.exit(0); }
+if (DRY) {
+  const has = (f) => records.filter((r) => r[f] != null).length;
+  console.log('COVERAGE:', JSON.stringify({
+    image_url: has('image_url'),
+    reviews_count: has('reviews_count'),
+    rating: has('rating'),
+    phone: has('phone'),
+    google_maps: has('google_maps'),
+    of: records.length,
+  }));
+  console.log(records.slice(0, 2));
+  process.exit(0);
+}
 
-// ---------- INSERT TO SUPABASE (LOCAL DEDUP) ----------
-// Fetch existing rows (name, phone) in pages of 1000
-const existing = new Set();
+// ---------- SYNC TO SUPABASE ----------
+// Two jobs: insert rows we've never seen, and backfill image_url /
+// reviews_count / google_maps onto rows that predate those columns. Previously
+// this only did the first, so re-running enriched nothing.
+const existing = new Map(); // "name|phone" -> { id, image_url, reviews_count, google_maps }
 let offset = 0;
 while (true) {
-  const r = await fetch(`${URL_BASE}/rest/v1/businesses?select=name,phone&limit=1000&offset=${offset}`, {
-    headers: {apikey: KEY, Authorization: `Bearer ${KEY}`},
-  });
+  const r = await fetch(
+    `${URL_BASE}/rest/v1/businesses?select=id,name,phone,image_url,reviews_count,google_maps&limit=1000&offset=${offset}`,
+    { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } },
+  );
+  if (!r.ok) {
+    const txt = await r.text();
+    if (/image_url|reviews_count/.test(txt)) {
+      console.error('The image_url / reviews_count columns do not exist yet.');
+      console.error('Run supabase/migrations/20260812120000_listing_media.sql first.');
+      process.exit(1);
+    }
+    console.error(`Failed to read existing rows: ${r.status} ${txt}`);
+    process.exit(1);
+  }
   const rows = await r.json();
   for (const x of rows) {
-    const n = (x.name || '').trim().toLowerCase();
-    const p = x.phone ? x.phone : '';
-    existing.add(`${n}|${p}`);
+    const key = `${(x.name || '').trim().toLowerCase()}|${x.phone || ''}`;
+    existing.set(key, x);
   }
   if (rows.length < 1000) break;
   offset += 1000;
@@ -171,38 +204,61 @@ await fetch(`${URL_BASE}/rest/v1/businesses?name=eq.ZZTEST`, {
   headers: {apikey: KEY, Authorization: `Bearer ${KEY}`},
 });
 
-// Filter out already‑existing records
-const fresh = records.filter(r => {
+// Split into rows to create and rows that only need the new media fields.
+const fresh = [];
+const enrich = [];
+for (const r of records) {
   const key = `${r.name.trim().toLowerCase()}|${r.phone || ''}`;
-  return !existing.has(key);
-});
-console.log('NEW TO INSERT:', fresh.length);
+  const row = existing.get(key);
+  if (!row) { fresh.push(r); continue; }
 
-if (fresh.length === 0) { console.log('Nothing new. Done.'); process.exit(0); }
+  // Only fill gaps — never overwrite a value already in the table, which may
+  // have been corrected by hand or by an owner claiming the listing.
+  const patch = { id: row.id };
+  if (!row.image_url && r.image_url) patch.image_url = r.image_url;
+  if (row.reviews_count == null && r.reviews_count != null) patch.reviews_count = r.reviews_count;
+  if (!row.google_maps && r.google_maps) patch.google_maps = r.google_maps;
+  if (Object.keys(patch).length > 1) enrich.push(patch);
+}
+console.log('NEW TO INSERT:', fresh.length);
+console.log('EXISTING TO ENRICH:', enrich.length);
 
 const BATCH = 100;
-let inserted = 0;
-for (let i = 0; i < fresh.length; i += BATCH) {
-  const batch = fresh.slice(i, i + BATCH);
-  const res = await fetch(`${URL_BASE}/rest/v1/businesses`, {
-    method: 'POST',
-    headers: {
-      apikey: KEY,
-      Authorization: `Bearer ${KEY}`,
-      'Content-Type': 'application/json',
-      Prefer: 'return=representation',
-    },
-    body: JSON.stringify(batch),
-  });
-  if (res.status === 201) {
+
+async function send(rows, prefer, label) {
+  let done = 0;
+  for (let i = 0; i < rows.length; i += BATCH) {
+    const batch = rows.slice(i, i + BATCH);
+    const res = await fetch(`${URL_BASE}/rest/v1/businesses`, {
+      method: 'POST',
+      headers: {
+        apikey: KEY,
+        Authorization: `Bearer ${KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: prefer,
+      },
+      body: JSON.stringify(batch),
+    });
+    if (res.status !== 200 && res.status !== 201) {
+      console.error(`${label} batch ${i / BATCH + 1} failed: ${res.status} ${await res.text()}`);
+      process.exit(1);
+    }
     const back = await res.json();
-    inserted += back.length;
-    console.log(`Inserted ${inserted}/${fresh.length}`);
-  } else {
-    const txt = await res.text();
-    console.error(`Batch ${i / BATCH + 1} failed: ${res.status} ${txt}`);
-    process.exit(1);
+    done += Array.isArray(back) ? back.length : batch.length;
+    console.log(`${label} ${done}/${rows.length}`);
   }
+  return done;
 }
-console.log(`Done. Inserted=${inserted}`);
+
+let inserted = 0;
+let updated = 0;
+if (fresh.length) {
+  inserted = await send(fresh, 'return=representation', 'Inserted');
+}
+if (enrich.length) {
+  // Upsert on the primary key: touches only the columns present in each row.
+  updated = await send(enrich, 'return=representation,resolution=merge-duplicates', 'Enriched');
+}
+if (!fresh.length && !enrich.length) console.log('Nothing to do — every row is present and already has media.');
+console.log(`Done. Inserted=${inserted} Enriched=${updated}`);
 

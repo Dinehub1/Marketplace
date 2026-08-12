@@ -217,6 +217,7 @@ export type Listing = {
   address: string | null;
   phone: string | null;
   rating: number | null;
+  reviews_count: number | null;
   city: string | null;
   website: string | null;
 };
@@ -232,7 +233,7 @@ export async function getCategoryListings(
   try {
     const res = await fetch(
       `${url}/rest/v1/businesses` +
-        `?select=id,name,category,area,address,phone,rating,city,website` +
+        `?select=id,name,category,area,address,phone,rating,reviews_count,city,website` +
         `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
         `&order=rating.desc.nullslast,name.asc`,
       {

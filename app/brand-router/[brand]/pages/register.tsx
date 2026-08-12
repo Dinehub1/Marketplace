@@ -40,7 +40,7 @@ export function BrandRegister({ brand }: { brand: any }) {
             </div>
             <div className="rounded-2xl border bg-white p-6 md:p-8 shadow-sm" style={{ borderColor: `${accent}20` }}>
               <h2 className="hidden md:block text-xl font-bold mb-6" style={{ color: primary }}>Create your account</h2>
-              <form className="space-y-4" action={`https://${brand.slug}.cashcard.live/login`} method="GET">
+              <form className="space-y-4" action={`/login`} method="GET">
                 <div>
                   <label className="block text-sm font-medium opacity-70 mb-1">Full Name</label>
                   <input type="text" required placeholder="Your full name" className="w-full rounded-xl border px-4 py-3 text-sm outline-none focus:border-transparent focus:ring-2" style={{ borderColor: `${accent}50` }} />
@@ -70,7 +70,7 @@ export function BrandRegister({ brand }: { brand: any }) {
                 <button className="flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium hover:bg-gray-50" style={{ borderColor: `${accent}25` }}>🌐 Google</button>
               </div>
               <p className="text-xs text-center mt-5 opacity-50">
-                Already have an account? <a href={`https://${brand.slug}.cashcard.live/login`} style={{ color: primary }} className="font-medium">Login →</a>
+                Already have an account? <a href={`/login`} style={{ color: primary }} className="font-medium">Login →</a>
               </p>
             </div>
           </div>

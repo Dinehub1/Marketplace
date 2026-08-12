@@ -301,8 +301,8 @@ export function ServicesPage({ brand }: { brand: any }) {
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">शुरू करने को तैयार?</h2>
               <p className="text-white/80 mb-8">Aaj hi apni family ka health profile banaayein — pehla consultation free!</p>
               <div className="flex flex-wrap justify-center gap-3">
-                <a href={`https://${brand.slug}.cashcard.live/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>संपर्क करें →</a>
-                <a href={`https://${brand.slug}.cashcard.live/pricing`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">प्राइसिंग देखें</a>
+                <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>संपर्क करें →</a>
+                <a href={`/pricing`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">प्राइसिंग देखें</a>
               </div>
             </div>
           </div>

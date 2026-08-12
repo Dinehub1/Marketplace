@@ -66,7 +66,7 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
       return;
     }
     // Full reload so the new session cookie is picked up server-side.
-    window.location.assign(`https://${brand.slug}.cashcard.live/dashboard`);
+    window.location.assign(`/dashboard`);
   }
 
   return (

@@ -3,11 +3,16 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 serve(async (req) => {
   try {
-    // Load service role key directly from .env to avoid env var shadowing
-const envText = Deno.readTextFileSync('C:/Users/Administrator/hermes-web/.env');
-const lines = envText.split(/\r?\n/).filter(l=>l && !l.startsWith('#'));
-const kv = lines.find(l=>l.startsWith('SUPABASE_SERVICE_ROLE_KEY='))||'';
-const serviceKey = kv.split('=')[1]?.trim() ?? '';
+    // Edge functions get their secrets from the environment. This previously
+    // read C:/Users/Administrator/hermes-web/.env, a path that cannot exist in
+    // the Deno runtime, so every invocation threw before doing any work.
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    if (!serviceKey) {
+      return new Response(
+        JSON.stringify({ error: "SUPABASE_SERVICE_ROLE_KEY is not set for this function" }),
+        { status: 500 },
+      );
+    }
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       serviceKey,
