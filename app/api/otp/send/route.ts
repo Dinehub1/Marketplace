@@ -20,16 +20,36 @@ export async function POST(req: NextRequest) {
   const ins = await db("otp_codes", {
     method: "POST",
     body: JSON.stringify({ phone, code, expires_at: expires }),
-    headers: { Prefer: "return=minimal" },
+    headers: { Prefer: "return=representation" },
   });
-  if (!ins.ok) return NextResponse.json({ error: "Could not create code" }, { status: 500, headers: noStore });
+  const insRow = ins.ok ? ((await ins.json()) as any[])[0] : null;
+  if (!insRow) return NextResponse.json({ error: "Could not create code" }, { status: 500, headers: noStore });
 
   const sent = await sendTemplate(phone, "auth", [code]);
-  // Dev convenience: surface the code so local e2e tests can verify without
-  // intercepting WhatsApp. Never sent in production.
+  // Visibility: log the raw Nextel response so delivery failures are observable
+  // in the dev terminal and .next/dev/logs/next-development.log.
+  console.log(`[otp/send] phone=${phone} delivered=${sent.ok} nextel=${sent.detail}`);
+  // Best-effort: persist delivery status once the migration columns exist; never
+  // let a missing column break the OTP flow.
+  if (insRow.id != null) {
+    db(`otp_codes?id=eq.${insRow.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ delivered: sent.ok, nextel_detail: sent.detail }),
+      headers: { Prefer: "return=minimal" },
+    }).catch(() => {});
+  }
+
   const devCode = process.env.NODE_ENV !== "production" ? { devCode: code } : {};
+  const extra =
+    process.env.NODE_ENV !== "production" && !sent.ok ? { nextelDetail: sent.detail } : {};
   return NextResponse.json(
-    { ok: true, delivered: sent.ok, ...devCode, ...(sent.ok ? {} : { deliveryError: "WhatsApp delivery failed — try again shortly" }) },
+    {
+      ok: true,
+      delivered: sent.ok,
+      ...devCode,
+      ...extra,
+      ...(sent.ok ? {} : { deliveryError: "WhatsApp delivery failed — see logs / otp_codes.nextel_detail" }),
+    },
     { headers: noStore },
   );
 }
