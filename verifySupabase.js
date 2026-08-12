@@ -1,4 +1,4 @@
-const {loadKey}=require('./keyLoader');
+const {loadKey}=require('./lib/keyLoader');
 const fs=require('fs');
 const raw=fs.readFileSync('C:/Users/Administrator/hermes-web/.env','utf8');
 const urlLine=raw.split(/\r?\n/).find(l=>l.startsWith('SUPABASE_URL='));

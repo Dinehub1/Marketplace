@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://yaadrakh.com/sitemap.xml
+
+# Crawl-delay for respectful bots
+Crawl-delay: 1
+
+# Disallow common non-content paths (future-proofing)
+Disallow: /api/
+Disallow: /admin/

@@ -1,5 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { SITE_FOLDERS } from "./lib/site-folders";
+import { isCategoryPath } from "./lib/categories";
 
 const ADMIN_HOSTS = ["dashboard.cashcard.live", "admin.cashcard.live"];
 
@@ -14,7 +15,7 @@ const APP_PATHS = [
   "/notifications", "/orders", "/bookings",
   "/business-dashboard",
   "/about", "/services", "/products", "/pricing", "/features",
-  "/marketplace", "/listings", "/business",
+  "/marketplace", "/listings", "/business", "/categories",
   "/blog", "/news", "/careers", "/jobs",
   "/contact", "/faq", "/faqs", "/testimonials", "/reviews",
   "/gallery", "/portfolio",
@@ -84,7 +85,26 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(`https://sarkarmarketplace.cashcard.live${pathname}${request.nextUrl.search}`, 308);
   }
 
-  const isAppPath = APP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
+  // Crawler entry points. Every brand has a static folder, so without these two
+  // the requests would be rewritten to /sites/<brand>/sitemap.xml and 404 —
+  // leaving 320 category pages with no way for Google to discover them.
+  if (pathname === "/sitemap.xml") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/api/sitemap";
+    url.searchParams.set("brand", brandSlug);
+    return NextResponse.rewrite(url);
+  }
+  if (pathname === "/robots.txt") {
+    return new NextResponse(
+      `User-agent: *\nAllow: /\n\nSitemap: https://${brandSlug}.cashcard.live/sitemap.xml\n`,
+      { headers: { "Content-Type": "text/plain" } },
+    );
+  }
+
+  // /<category>-in-indore is dynamic, so it cannot live in the APP_PATHS list.
+  const isAppPath =
+    isCategoryPath(pathname) ||
+    APP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
   if (isAppPath || !SITE_FOLDERS.has(brandSlug)) {
     const url = request.nextUrl.clone();
     url.searchParams.set("__brand_path", pathname);

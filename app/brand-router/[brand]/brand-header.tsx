@@ -1,13 +1,22 @@
 "use client";
 import { useState } from "react";
 
+/* Stroked SVG marks rather than emoji. The emoji set rendered as tofu boxes
+   wherever the font lacked the glyph, and it carried its own colour, which
+   fought every brand palette. These inherit currentColor. */
+const NavIcon = ({ d }: { d: string }) => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
+       aria-hidden="true" dangerouslySetInnerHTML={{ __html: d }} />
+);
+
 const NAV = [
-  { key: "services", label: "Services", path: "/services", icon: "✦" },
-  { key: "pricing", label: "Pricing", path: "/pricing", icon: "💰" },
-  { key: "marketplace", label: "Listings", path: "/marketplace", icon: "🗂️" },
-  { key: "about", label: "About", path: "/about", icon: "ℹ️" },
-  { key: "blog", label: "Blog", path: "/blog", icon: "📝" },
-  { key: "contact", label: "Contact", path: "/contact", icon: "📞" },
+  { key: "services", label: "Services", path: "/services", d: '<path d="M12 3l2.2 6.3L20.5 11l-6.3 1.9L12 19l-2.2-6.1L3.5 11l6.3-1.7z"/>' },
+  { key: "pricing", label: "Pricing", path: "/pricing", d: '<path d="M12 2v20M17 6.5c0-1.9-2.2-3-5-3s-5 1-5 3 2.2 2.7 5 3.2 5 1.3 5 3.3-2.2 3-5 3-5-1.1-5-3"/>' },
+  { key: "marketplace", label: "Listings", path: "/marketplace", d: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 13h9M8 16.5h6"/>' },
+  { key: "about", label: "About", path: "/about", d: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.6v.1"/>' },
+  { key: "blog", label: "Blog", path: "/blog", d: '<path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5M8 13h8M8 16.5h5"/>' },
+  { key: "contact", label: "Contact", path: "/contact", d: '<path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/>' },
 ];
 
 export function BrandHeader({ brand }: { brand: any }) {
@@ -43,7 +52,7 @@ export function BrandHeader({ brand }: { brand: any }) {
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {visible.map((item) => (
-              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} className="px-3 py-2 text-sm font-medium rounded-lg hover:bg-gray-100 transition-colors opacity-70 hover:opacity-100">
+              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} className="press on-material px-3 py-2 text-sm rounded-lg opacity-75">
                 {item.label}
               </a>
             ))}
@@ -51,29 +60,51 @@ export function BrandHeader({ brand }: { brand: any }) {
 
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
-            <a href={`https://${brand.slug}.cashcard.live/login`} className="hidden sm:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold text-white shadow-sm hover:shadow-md hover:translate-y-[-1px] transition-all" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
+            <a href={`https://${brand.slug}.cashcard.live/login`} className="press hidden sm:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
               Login
             </a>
-            <a href={`https://${brand.slug}.cashcard.live/contact`} className="hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2 hover:bg-gray-50 transition-all" style={{ borderColor: accent, color: primary }}>
+            <a href={`https://${brand.slug}.cashcard.live/contact`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
               Get Started
             </a>
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100">
+            {/* Hit target is 44px, and the label states what it does rather
+                than relying on the icon alone. */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              aria-expanded={mobileOpen}
+              aria-controls="brand-mobile-nav"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              className="press lg:hidden p-2.5 rounded-lg">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={primary} strokeWidth="2">{mobileOpen ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M4 6h16M4 12h16M4 18h16" />}</svg>
             </button>
           </div>
         </div>
 
-        {/* Mobile drawer */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-96 border-t" : "max-h-0"}`} style={{ borderColor: `${accent}20` }}>
+        {/* Mobile drawer.
+            Was animating max-height, which is a layout property: it cannot be
+            composited, janks on low-end phones, and `max-h-96` silently clips
+            the menu once a brand has more than ~6 nav items. Now it animates
+            opacity + transform (both compositor-only) and the drawer is
+            removed from the a11y tree when closed rather than merely clipped. */}
+        <div
+          id="brand-mobile-nav"
+          hidden={!mobileOpen}
+          className="lg:hidden border-t"
+          style={{
+            borderColor: `${accent}20`,
+            opacity: mobileOpen ? 1 : 0,
+            transform: mobileOpen ? "translateY(0)" : "translateY(-6px)",
+            transition: "opacity var(--dur-fast) var(--ease-settle), transform var(--dur-fast) var(--ease-settle)",
+          }}
+        >
           <div className="px-4 py-4 space-y-1">
             {visible.map((item) => (
-              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
-                <span className="text-lg">{item.icon}</span> {item.label}
+              <a key={item.key} href={`https://${brand.slug}.cashcard.live${item.path}`} onClick={() => setMobileOpen(false)} className="press flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium">
+                <span className="text-neutral-400"><NavIcon d={item.d} /></span> {item.label}
               </a>
             ))}
             <div className="pt-3 flex gap-2">
-              <a href={`https://${brand.slug}.cashcard.live/login`} className="flex-1 text-center rounded-xl py-2.5 text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>Login</a>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="flex-1 text-center rounded-xl py-2.5 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
+              <a href={`https://${brand.slug}.cashcard.live/login`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>Login</a>
+              <a href={`https://${brand.slug}.cashcard.live/contact`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
             </div>
           </div>
         </div>
@@ -91,6 +122,21 @@ export function BrandFooter({ brand }: { brand: any }) {
   const social = (brand.social ?? {}) as Record<string, string>;
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
 
+  // Brand-driven call to action. Labels are direct and specific rather than
+  // generic ("Get started with X", not "Learn more") — a specific label lets
+  // someone predict what happens before they tap it.
+  const ctaOverride = ((brand.page_content ?? {}) as Record<string, any>).cta ?? {};
+  const cta = {
+    title: ctaOverride.title ?? `Get started with ${brand.name}`,
+    subtitle:
+      ctaOverride.subtitle ??
+      brand.tagline ??
+      brand.description ??
+      `Join ${brand.name} today — it takes less than a minute.`,
+    primary_label: ctaOverride.primary_label ?? "Create free account",
+    secondary_label: ctaOverride.secondary_label ?? "Talk to us",
+  };
+
   return (
     <footer className="mt-auto" style={{ backgroundColor: `${primary}08` }}>
       {/* CTA Banner */}
@@ -98,14 +144,22 @@ export function BrandFooter({ brand }: { brand: any }) {
         <div className="rounded-3xl p-8 md:p-12 text-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
           <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
           <div className="relative">
-            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">भूख लगी? अभी ऑर्डर करो!</h2>
-            <p className="text-white/80 mb-6 max-w-lg mx-auto">इंदौर के बेस्ट किचन से अपना पसंदीदा खाना पाएं — 30 मिनट में दरवाज़े पर।</p>
+            {/* This block used to hard-code SarkarFood's Hindi food-delivery
+                copy ("भूख लगी? अभी ऑर्डर करो!" / "फ्री डिलीवरी पाएं"), which the
+                shared footer then rendered on all 27 brands — so a legal, health
+                or fintech site invited you to order dinner. Copy now comes from
+                the brand row, with a neutral fallback. Set page_content.cta =
+                { title, subtitle, primary_label, secondary_label } to override. */}
+            <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3" style={{ letterSpacing: "-0.022em", lineHeight: 1.12, textWrap: "balance" }}>
+              {cta.title}
+            </h2>
+            <p className="text-white/85 mb-6 max-w-lg mx-auto" style={{ lineHeight: 1.6 }}>{cta.subtitle}</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <a href={`https://${brand.slug}.cashcard.live/register`} className="bg-white px-8 py-3 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
-                फ्री डिलीवरी पाएं →
+              <a href={`https://${brand.slug}.cashcard.live/register`} className="press bg-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg" style={{ color: primary }}>
+                {cta.primary_label} →
               </a>
-              <a href={`https://${brand.slug}.cashcard.live/contact`} className="border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
-                संपर्क करें
+              <a href={`https://${brand.slug}.cashcard.live/contact`} className="press border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm">
+                {cta.secondary_label}
               </a>
             </div>
           </div>

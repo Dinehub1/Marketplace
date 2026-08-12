@@ -1,10 +1,141 @@
 import { existsSync } from "fs";
 import path from "path";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getBrand } from "@/lib/brands";
+import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
+import {
+  CITY_LABEL,
+  categoryPath,
+  categorySlugFromPath,
+  businessExists,
+  cleanBusinessName,
+  findCategory,
+  getActiveListingCount,
+  getCategoryIndex,
+  localityOf,
+} from "@/lib/categories";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 300; // Revalidate every 5 minutes (ISR cache)
+
+function titleize(s: string): string {
+  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+}
+
+/**
+ * Per-page metadata.
+ *
+ * Without this every page on every brand inherited the root layout's
+ * "SarkarDash — One Platform" title, which makes 320 category pages
+ * indistinguishable to a search engine and effectively unrankable. The title
+ * and description ARE the product here, so they are built from real counts.
+ */
+export async function generateMetadata(
+  { params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> },
+): Promise<Metadata> {
+  const { brand: slug } = await params;
+  const brand = await getBrand(slug.toLowerCase());
+  if (!brand) return {};
+
+  const sp = await searchParams;
+  const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+  const origin = `https://${brand.slug}.cashcard.live`;
+
+  const catSlug = categorySlugFromPath(subPath);
+  if (catSlug) {
+    const category = await findCategory(catSlug);
+    if (category) {
+      const label = titleize(category.category);
+      const page = Math.max(1, Number(sp.page) || 1);
+      const suffix = page > 1 ? ` — Page ${page}` : "";
+      const canonical = `${origin}${categoryPath(category.category)}`;
+      return {
+        title: `${category.count} Best ${label} in ${CITY_LABEL} (2026) | ${brand.name}${suffix}`,
+        description:
+          `Compare ${label.toLowerCase()} in ${CITY_LABEL}, Madhya Pradesh — ratings, ` +
+          `addresses and phone numbers. Call directly, no signup needed.`,
+        alternates: { canonical: page > 1 ? `${canonical}?page=${page}` : canonical },
+        openGraph: {
+          title: `${category.count} Best ${label} in ${CITY_LABEL}`,
+          description: `Verified ${label.toLowerCase()} listings in ${CITY_LABEL} with ratings and phone numbers.`,
+          url: canonical,
+          type: "website",
+        },
+      };
+    }
+  }
+
+  // The two directory hubs earn their own titles rather than inheriting the
+  // brand default — they are the pages that rank for "business directory
+  // indore" and for the long tail of category browsing.
+  if (subPath === "/marketplace" || subPath === "/listings") {
+    const listings = await getActiveListingCount();
+    return {
+      title: `Business Directory in ${CITY_LABEL} — ${listings.toLocaleString("en-IN")} Local Listings | ${brand.name}`,
+      description:
+        `Search ${listings.toLocaleString("en-IN")} businesses in ${CITY_LABEL} — plumbers, electricians, ` +
+        `doctors, tutors and more. Ratings, addresses and phone numbers you can call directly.`,
+      alternates: { canonical: `${origin}/marketplace` },
+    };
+  }
+  if (subPath === "/categories") {
+    const index = await getCategoryIndex();
+    return {
+      title: `All Business Categories in ${CITY_LABEL} | ${brand.name}`,
+      description:
+        `Browse every type of business listed in ${CITY_LABEL}, A to Z — ${index.length} categories, ` +
+        `each with the highest-rated local options and phone numbers you can call.`,
+      alternates: { canonical: `${origin}/categories` },
+    };
+  }
+
+  // Business detail: ~19k pages that all shared one title until now, which
+  // makes them duplicates to a search engine. The name + locality + category
+  // is exactly what someone types when looking for this specific business.
+  if (subPath.startsWith("/business/")) {
+    const id = Number(subPath.slice("/business/".length).split("/")[0]);
+    if (Number.isFinite(id) && id > 0) {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/businesses` +
+            `?id=eq.${id}&select=name,category,area,city,phone,address`,
+          {
+            headers: {
+              apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!}`,
+            },
+            next: { revalidate: 300 },
+          },
+        );
+        const biz = res.ok ? (await res.json())[0] : null;
+        if (biz) {
+          const where = localityOf(biz);
+          const cat = biz.category ? titleize(biz.category) : "Business";
+          // Same cleaning as the page body — the raw scraped name leads with
+          // stray quotes and emoji, and a <title> is the worst place for them.
+          const name = cleanBusinessName(biz.name);
+          return {
+            title: `${name} — ${cat} in ${where} | ${brand.name}`,
+            description:
+              `${name}, ${cat.toLowerCase()} in ${where}.` +
+              (biz.address ? ` ${biz.address}.` : "") +
+              (biz.phone ? ` Phone ${biz.phone} — call directly.` : " Contact details and directions."),
+            alternates: { canonical: `${origin}/business/${id}` },
+          };
+        }
+      } catch {
+        /* fall through to the brand default */
+      }
+    }
+  }
+
+  return {
+    title: brand.seo_title ?? `${brand.name}${brand.tagline ? ` — ${brand.tagline}` : ""}`,
+    description: brand.seo_description ?? brand.description ?? undefined,
+    alternates: { canonical: `${origin}${subPath === "/" ? "" : subPath}` },
+  };
+}
 
 function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
@@ -50,12 +181,42 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/services" || subPath === "/products") { if (!isEnabled(brand, "services")) return <ComingSoon brand={brand} pageName="Services" />; const { ServicesPage } = await import("./pages/services"); return <ServicesPage brand={brand} />; }
   if (subPath === "/pricing") { if (!isEnabled(brand, "pricing")) return <ComingSoon brand={brand} pageName="Pricing" />; const { PricingPage } = await import("./pages/pricing"); return <PricingPage brand={brand} />; }
   if (subPath === "/features") { if (!isEnabled(brand, "features")) return <ComingSoon brand={brand} pageName="Features" />; const { FeaturesPage } = await import("./pages/features"); return <FeaturesPage brand={brand} />; }
-  if (subPath === "/marketplace" || subPath === "/listings") { if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} sp={sp} />; }
+  if (subPath === "/marketplace" || subPath === "/listings") { if (!brandPublishesDirectory(brand)) notFound(); if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} sp={sp} />; }
   if (subPath.startsWith("/business/")) {
     const businessId = Number(subPath.slice("/business/".length).split("/")[0]);
     if (Number.isFinite(businessId) && businessId > 0) {
+      // A deleted or unknown listing must answer 404, not 200 with a
+      // "not found" body. A soft 404 keeps the URL indexed, and with ~19k
+      // listing pages that churn as the scraper runs, that is a lot of dead
+      // results pointing at this site.
+      const exists = await businessExists(businessId);
+      if (!exists) notFound();
       const { BusinessDetailPage } = await import("./pages/business-detail");
       return <BusinessDetailPage brand={brand} businessId={businessId} />;
+    }
+  }
+  if (subPath === "/categories") {
+    if (!brandPublishesDirectory(brand)) notFound();
+    const { CategoriesPage } = await import("./pages/categories");
+    return <CategoriesPage brand={brand} />;
+  }
+  // SEO landing pages: /<category>-in-indore, one per directory category.
+  // Checked before the generic page list because the shape is dynamic.
+  {
+    const catSlug = categorySlugFromPath(subPath);
+    if (catSlug) {
+      if (!brandPublishesDirectory(brand)) notFound();
+      const category = await findCategory(catSlug);
+      if (!category) notFound();
+      // A vertical brand only owns its own categories. Without this,
+      // sarkarfood served /plumber-in-indore — the same page as ten other
+      // brands, competing with all of them for the same query.
+      const index = await getCategoryIndex();
+      const allowed = categoriesForBrand(brand.slug, index.map((c) => c.category));
+      if (allowed && !allowed.includes(category.category)) notFound();
+      const page = Math.max(1, Number(sp.page) || 1);
+      const { CategoryLandingPage } = await import("./pages/category-landing");
+      return <CategoryLandingPage brand={brand} category={category} page={page} />;
     }
   }
   if (subPath === "/blog" || subPath === "/news") { if (!isEnabled(brand, "blog")) return <ComingSoon brand={brand} pageName="Blog" />; const { BlogPage } = await import("./pages/blog"); return <BlogPage brand={brand} />; }

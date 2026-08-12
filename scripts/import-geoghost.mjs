@@ -115,6 +115,10 @@ const records = [];
 const seen = new Set();
 for (const file of files) {
   const [header, ...rows] = parseCsv(readFileSync(file, 'utf8'));
+  // A query that returned no results leaves a 2-byte, header-less CSV. Without
+  // this guard header is undefined and the whole import dies on header.map,
+  // so one empty file blocks every other file's rows. (2026-08-08)
+  if (!header || !header.length) { console.warn('SKIP empty CSV', file); continue; }
   const col = Object.fromEntries(header.map((h, i) => [h.trim().toLowerCase(), i]));
   for (const r of rows) {
     const name = (r[col['name']] ?? '').trim();

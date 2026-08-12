@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="YaadRakh - Smart Personal Finance & Expense Tracker. Track expenses, set budgets, visualize spending patterns, and achieve financial goals with our AI-powered dashboard.">
+    <meta name="keywords" content="expense tracker, personal finance, budget manager, money tracker, financial goals, spending analyzer">
+    <meta name="author" content="YaadRakh">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yaadrakh.com/index.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="YaadRakh - Smart Personal Finance & Expense Tracker">
+    <meta property="og:description" content="Track expenses, set budgets, visualize spending patterns, and achieve financial goals.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yaadrakh.com">
+    <meta property="og:image" content="https://yaadrakh.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="YaadRakh">
+    <meta property="og:locale" content="en_IN">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="YaadRakh - Smart Personal Finance & Expense Tracker">
+    <meta name="twitter:description" content="Track expenses, set budgets, visualize spending patterns, and achieve financial goals.">
+    <meta name="twitter:image" content="https://yaadrakh.com/og-image.png">
+
+    <title>YaadRakh - Smart Personal Finance & Expense Tracker</title>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "YaadRakh",
+        "description": "Smart Personal Finance & Expense Tracker with AI-powered insights",
+        "url": "https://yaadrakh.com",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "INR"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "reviewCount": "12500"
+        }
+    }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ========== SKIP TO CONTENT (Accessibility) ========== -->
+    <a href="#dashboard" class="skip-link" aria-label="Skip to main content">Skip to main content</a>
+
+    <!-- ========== TOAST CONTAINER ========== -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-brand" aria-label="YaadRakh Home">
+                <i class="fas fa-wallet" aria-hidden="true"></i>
+                <span>YaadRakh</span>
+            </a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+            <ul class="nav-menu" role="menubar">
+                <li role="none"><a href="#dashboard" role="menuitem" class="nav-link active">Dashboard</a></li>
+                <li role="none"><a href="#transactions" role="menuitem" class="nav-link">Transactions</a></li>
+                <li role="none"><a href="#budgets" role="menuitem" class="nav-link">Budgets</a></li>
+                <li role="none"><a href="#goals" role="menuitem" class="nav-link">Goals</a></li>
+                <li role="none"><a href="#insights" role="menuitem" class="nav-link">Insights</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="btn btn-primary btn-sm" onclick="openUpiPaymentModal()" aria-label="Upgrade to Premium">
+                    <i class="fas fa-crown" aria-hidden="true"></i> Upgrade
+                </button>
+                <button class="btn btn-outline" id="darkToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" aria-hidden="true"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HERO SECTION ========== -->
+    <header class="hero" id="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Smart Personal Finance<br><span class="text-gradient">Tracker</span></h1>
+                <p class="hero-subtitle">Track expenses, set budgets, visualize spending patterns, and achieve your financial goals with AI-powered insights.</p>
+                <div class="hero-cta">
+                    <button class="btn btn-primary btn-lg" onclick="scrollToSection('dashboard')">
+                        <i class="fas fa-chart-pie" aria-hidden="true"></i> Open Dashboard
+                    </button>
+                    <button class="btn btn-ghost btn-lg" onclick="scrollToSection('insights')">
+                        <i class="fas fa-lightbulb" aria-hidden="true"></i> AI Insights
+                    </button>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">&#8377;2.5L</span>
+                        <span class="hero-stat-label">Saved by Users</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">50K+</span>
+                        <span class="hero-stat-label">Active Users</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-number">4.8&#9733;</span>
+                        <span class="hero-stat-label">User Rating</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="hero-card">
+                    <div class="card-balance">
+                        <span class="label">Total Balance</span>
+                        <span class="amount">&#8377;1,45,230</span>
+                    </div>
+                    <div class="card-chart">
+                        <div class="chart-bar" style="height: 60%;"></div>
+                        <div class="chart-bar" style="height: 80%;"></div>
+                        <div class="chart-bar" style="height: 45%;"></div>
+                        <div class="chart-bar" style="height: 90%;"></div>
+                        <div class="chart-bar" style="height: 70%;"></div>
+                        <div class="chart-bar" style="height: 55%;"></div>
+                        <div class="chart-bar" style="height: 85%;"></div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="income"><i class="fas fa-arrow-up"></i> &#8377;85,000</span>
+                        <span class="expense"><i class="fas fa-arrow-down"></i> &#8377;32,450</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== AD SLOT 1 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space</span>
+            <small>728x90 Leaderboard</small>
+        </div>
+    </div>
+
+    <!-- ========== DASHBOARD SECTION ========== -->
+    <section class="section dashboard-section" id="dashboard" aria-labelledby="dashboard-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="dashboard-title">Financial <span class="text-gradient">Dashboard</span></h2>
+                <p>Your complete financial overview at a glance</p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card income-card">
+                    <div class="card-icon"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i></div>
+                    <div class="card-info">
+                        <span class="card-label">Monthly Income</span>
+                        <span class="card-value" id="monthlyIncome">&#8377;85,000</span>
+                    </div>
+                    <span class="card-trend positive">+12%</span>
+                </div>
+                <div class="summary-card expense-card">
+                    <div class="card-icon"><i class="fas fa-arrow-trend-down" aria-hidden="true"></i></div>
+                    <div class="card-info">
+                        <span class="card-label">Monthly Expenses</span>
+                        <span class="card-value" id="monthlyExpense">&#8377;32,450</span>
+                    </div>
+                    <span class="card-trend negative">-5%</span>
+                </div>
+                <div class="summary-card savings-card">
+                    <div class="card-icon"><i class="fas fa-piggy-bank" aria-hidden="true"></i></div>
+                    <div class="card-info">
+                        <span class="card-label">Total Savings</span>
+                        <span class="card-value" id="totalSavings">&#8377;52,550</span>
+                    </div>
+                    <span class="card-trend positive">+22%</span>
+                </div>
+                <div class="summary-card balance-card">
+                    <div class="card-icon"><i class="fas fa-wallet" aria-hidden="true"></i></div>
+                    <div class="card-info">
+                        <span class="card-label">Net Balance</span>
+                        <span class="card-value" id="netBalance">&#8377;52,550</span>
+                    </div>
+                    <span class="card-trend positive">+8%</span>
+                </div>
+                <!-- Budget Health Card: total budget vs total spent -->
+                <div class="summary-card budget-card">
+                    <div class="card-icon"><i class="fas fa-chart-pie" aria-hidden="true"></i></div>
+                    <div class="card-info">
+                        <span class="card-label">Budget Health</span>
+                        <span class="card-value" id="budgetHealthValue">&#8377;0 / &#8377;0</span>
+                    </div>
+                    <span class="card-trend" id="budgetHealthTrend">0%</span>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie" aria-hidden="true"></i> Spending by Category</h3>
+                    <div class="chart-container" id="categoryChart">
+                        <!-- Dynamic donut chart rendered via JS -->
+                        <canvas id="donutCanvas" width="180" height="180" role="img" aria-label="Spending breakdown by category"></canvas>
+                        <div class="chart-legend" id="categoryLegend"></div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-line" aria-hidden="true"></i> Weekly Spending Trend</h3>
+                    <div class="chart-container line-chart-container">
+                        <div class="line-chart" id="weeklyChart" role="img" aria-label="Weekly spending trend showing Mon 4200, Tue 3800, Wed 5100, Thu 2900, Fri 4500, Sat 6200, Sun 3100">
+                            <!-- Bars rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Month-over-Month Spending Comparison -->
+            <div class="chart-card chart-card-full">
+                <h3><i class="fas fa-chart-column" aria-hidden="true"></i> Monthly Spending Comparison</h3>
+                <div class="monthly-chart-container">
+                    <div class="monthly-chart" id="monthlyChart" role="img" aria-label="Month-over-month spending comparison">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+                <div class="monthly-chart-legend" id="monthlyChartLegend">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 2 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space</span>
+            <small>728x90 Leaderboard</small>
+        </div>
+    </div>
+
+    <!-- ========== TRANSACTIONS SECTION ========== -->
+    <section class="section transactions-section" id="transactions" aria-labelledby="transactions-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="transactions-title">Recent <span class="text-gradient">Transactions</span></h2>
+                <p>Track and manage all your transactions</p>
+            </div>
+
+            <!-- Add Transaction Form -->
+            <div class="transaction-form-card">
+                <h3>Add New Transaction</h3>
+                <form id="transactionForm" class="transaction-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="txnDescription">Description</label>
+                            <input type="text" id="txnDescription" placeholder="e.g., Grocery shopping" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="txnAmount">Amount (&#8377;)</label>
+                            <input type="number" id="txnAmount" placeholder="0.00" min="0.01" step="0.01" required aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="txnCategory">Category</label>
+                            <select id="txnCategory" required aria-required="true">
+                                <option value="">Select category</option>
+                                <option value="food">&#127828; Food & Dining</option>
+                                <option value="transport">&#128663; Transport</option>
+                                <option value="shopping">&#128722; Shopping</option>
+                                <option value="bills">&#128196; Bills & Utilities</option>
+                                <option value="entertainment">&#127916; Entertainment</option>
+                                <option value="health">&#128150; Health</option>
+                                <option value="education">&#127891; Education</option>
+                                <option value="others">&#128188; Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txnType">Type</label>
+                            <select id="txnType" required aria-required="true">
+                                <option value="expense">Expense</option>
+                                <option value="income">Income</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="txnDate">Date</label>
+                            <input type="date" id="txnDate" required aria-required="true">
+                        </div>
+                        <div class="form-group btn-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus" aria-hidden="true"></i> Add Transaction
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label for="filterCategory">Filter:</label>
+                    <select id="filterCategory" aria-label="Filter by category">
+                        <option value="all">All Categories</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="transport">Transport</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="health">Health</option>
+                        <option value="education">Education</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterMonth">Month:</label>
+                    <select id="filterMonth" aria-label="Filter by month">
+                        <option value="all">All Time</option>
+                        <option value="2026-06">June 2026</option>
+                        <option value="2026-05">May 2026</option>
+                        <option value="2026-04">April 2026</option>
+                    </select>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="searchTransactions" placeholder="Search transactions..." aria-label="Search transactions">
+                </div>
+            </div>
+
+            <!-- Export / Import Bar -->
+            <div class="data-toolbar" role="group" aria-label="Data export and import">
+                <div class="data-toolbar-label">
+                    <i class="fas fa-database" aria-hidden="true"></i>
+                    <span>Data Management</span>
+                </div>
+                <div class="data-toolbar-actions">
+                    <button class="btn btn-outline btn-sm" id="exportCsvBtn" type="button" aria-label="Export transactions as CSV">
+                        <i class="fas fa-file-csv" aria-hidden="true"></i> Export CSV
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="exportJsonBtn" type="button" aria-label="Export all data as JSON">
+                        <i class="fas fa-file-code" aria-hidden="true"></i> Export JSON
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="exportReportBtn" type="button" aria-label="Export monthly summary report">
+                        <i class="fas fa-file-invoice" aria-hidden="true"></i> Summary Report
+                    </button>
+                    <label class="btn btn-outline btn-sm" for="importFileInput" aria-label="Import transactions from CSV">
+                        <i class="fas fa-file-import" aria-hidden="true"></i> Import CSV
+                    </label>
+                    <input type="file" id="importFileInput" accept=".csv" hidden aria-hidden="true">
+                </div>
+            </div>
+
+            <!-- Transactions List -->
+            <div class="transactions-list" id="transactionsList" role="list" aria-label="Transaction records">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 3 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space</span>
+            <small>728x90 Leaderboard</small>
+        </div>
+    </div>
+
+    <!-- ========== BUDGETS SECTION ========== -->
+    <section class="section budgets-section" id="budgets" aria-labelledby="budgets-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="budgets-title">Budget <span class="text-gradient">Manager</span></h2>
+                <p>Set and track your monthly budgets</p>
+            </div>
+
+            <!-- Add Budget Form -->
+            <div class="budget-form-inline">
+                <select id="budgetCategory" aria-label="Budget category">
+                    <option value="food">Food & Dining</option>
+                    <option value="transport">Transport</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="bills">Bills & Utilities</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="health">Health</option>
+                    <option value="education">Education</option>
+                    <option value="others">Others</option>
+                </select>
+                <input type="number" id="budgetAmount" placeholder="Monthly budget &#8377;" min="100" aria-label="Budget amount">
+                <button class="btn btn-primary" id="addBudgetBtn">
+                    <i class="fas fa-plus" aria-hidden="true"></i> Set Budget
+                </button>
+            </div>
+
+            <!-- Budget Progress Cards -->
+            <div class="budget-cards" id="budgetCards">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== GOALS SECTION ========== -->
+    <section class="section goals-section" id="goals" aria-labelledby="goals-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="goals-title">Financial <span class="text-gradient">Goals</span></h2>
+                <p>Set targets and track your progress</p>
+            </div>
+
+            <!-- Add Goal Form -->
+            <div class="goal-form-card">
+                <h3>Create New Goal</h3>
+                <form id="goalForm" class="goal-form" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="goalName">Goal Name</label>
+                            <input type="text" id="goalName" placeholder="e.g., Emergency Fund" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalTarget">Target Amount (&#8377;)</label>
+                            <input type="number" id="goalTarget" placeholder="500000" min="1000" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="goalCurrent">Current Amount (&#8377;)</label>
+                            <input type="number" id="goalCurrent" placeholder="0" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="goalDeadline">Target Date</label>
+                            <input type="date" id="goalDeadline" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group btn-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-bullseye" aria-hidden="true"></i> Create Goal
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Goals Grid -->
+            <div class="goals-grid" id="goalsGrid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== AD SLOT 4 ========== -->
+    <div class="ad-slot" aria-label="Advertisement">
+        <div class="ad-placeholder">
+            <span>Ad Space</span>
+            <small>728x90 Leaderboard</small>
+        </div>
+    </div>
+
+    <!-- ========== AI INSIGHTS SECTION ========== -->
+    <section class="section insights-section" id="insights" aria-labelledby="insights-title">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="insights-title">AI <span class="text-gradient">Insights</span></h2>
+                <p>Smart recommendations based on your spending patterns</p>
+            </div>
+
+            <div class="insights-grid" id="insightsGrid">
+                <div class="insight-card">
+                    <div class="insight-icon"><i class="fas fa-brain" aria-hidden="true"></i></div>
+                    <h3>Spending Pattern</h3>
+                    <p>Your food expenses are 25% higher than last month. Consider meal prepping to save &#8377;2,500/month.</p>
+                    <span class="insight-tag warning">Needs Attention</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon"><i class="fas fa-lightbulb" aria-hidden="true"></i></div>
+                    <h3>Saving Tip</h3>
+                    <p>By cutting entertainment spending by 20%, you could reach your emergency fund goal 3 months earlier.</p>
+                    <span class="insight-tag positive">Actionable</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon"><i class="fas fa-chart-bar" aria-hidden="true"></i></div>
+                    <h3>Budget Health</h3>
+                    <p>You're on track with 7 out of 8 budgets this month. Shopping category is 15% over limit.</p>
+                    <span class="insight-tag neutral">On Track</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon"><i class="fas fa-shield-halved" aria-hidden="true"></i></div>
+                    <h3>Investment Alert</h3>
+                    <p>Based on your savings rate, you could invest &#8377;15,000/month in mutual funds for long-term growth.</p>
+                    <span class="insight-tag positive">Recommended</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="nav-brand">
+                        <i class="fas fa-wallet" aria-hidden="true"></i>
+                        <span>YaadRakh</span>
+                    </a>
+                    <p>Smart personal finance tracker with AI-powered insights. Take control of your money today.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Features</h4>
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#transactions">Transactions</a></li>
+                        <li><a href="#budgets">Budget Manager</a></li>
+                        <li><a href="#goals">Financial Goals</a></li>
+                        <li><a href="#insights">AI Insights</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">API Docs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="mailto:hello@yaadrakh.com"><i class="fas fa-envelope"></i> hello@yaadrakh.com</a></li>
+                        <li><a href="#"><i class="fas fa-phone"></i> +91 98765 43210</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> Mumbai, India</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 YaadRakh. All rights reserved. Made with &#10084; in India</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="modal-close" onclick="closeConfirmModal()" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="confirmCancelBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmOkBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div class="modal-overlay" id="editTransactionModal" role="dialog" aria-modal="true" aria-labelledby="editTxnTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="editTxnTitle"><i class="fas fa-edit" aria-hidden="true"></i> Edit Transaction</h3>
+                <button class="modal-close" onclick="closeEditTransactionModal()" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTransactionForm" novalidate>
+                    <input type="hidden" id="editTxnId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTxnDescription">Description</label>
+                            <input type="text" id="editTxnDescription" placeholder="e.g., Grocery shopping" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="editTxnAmount">Amount (&#8377;)</label>
+                            <input type="number" id="editTxnAmount" placeholder="0.01" min="0.01" step="0.01" required aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTxnCategory">Category</label>
+                            <select id="editTxnCategory" required aria-required="true">
+                                <option value="">Select category</option>
+                                <option value="food">&#127828; Food & Dining</option>
+                                <option value="transport">&#128663; Transport</option>
+                                <option value="shopping">&#128722; Shopping</option>
+                                <option value="bills">&#128196; Bills & Utilities</option>
+                                <option value="entertainment">&#127916; Entertainment</option>
+                                <option value="health">&#128150; Health</option>
+                                <option value="education">&#127891; Education</option>
+                                <option value="others">&#128188; Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTxnType">Type</label>
+                            <select id="editTxnType" required aria-required="true">
+                                <option value="expense">Expense</option>
+                                <option value="income">Income</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editTxnDate">Date</label>
+                            <input type="date" id="editTxnDate" required aria-required="true">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeEditTransactionModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveEditTxnBtn">
+                    <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Goal Modal -->
+    <div class="modal-overlay" id="editGoalModal" role="dialog" aria-modal="true" aria-labelledby="editGoalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="editGoalTitle"><i class="fas fa-bullseye" aria-hidden="true"></i> Edit Goal</h3>
+                <button class="modal-close" onclick="closeEditGoalModal()" aria-label="Close dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editGoalForm" novalidate>
+                    <input type="hidden" id="editGoalId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editGoalName">Goal Name</label>
+                            <input type="text" id="editGoalName" placeholder="e.g., Emergency Fund" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editGoalTarget">Target Amount (&#8377;)</label>
+                            <input type="number" id="editGoalTarget" placeholder="500000" min="1000" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editGoalCurrent">Current Amount (&#8377;)</label>
+                            <input type="number" id="editGoalCurrent" placeholder="0" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="editGoalDeadline">Target Date</label>
+                            <input type="date" id="editGoalDeadline" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeEditGoalModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveEditGoalBtn">
+                    <i class="fas fa-save" aria-hidden="true"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ========== UPI PAYMENT MODAL ========== -->
+    <div class="modal-overlay" id="paymentModal" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="paymentTitle"><i class="fas fa-rupee-sign" aria-hidden="true"></i> Upgrade to Premium</h3>
+                <button class="modal-close" onclick="closeUpiPaymentModal()" aria-label="Close payment dialog">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pricing-card-mini">
+                    <div class="pricing-plan-name">YaadRakh Premium</div>
+                    <div class="pricing-plan-price">₹199<span>/month</span></div>
+                    <ul class="pricing-plan-features">
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited transactions</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> AI-powered insights</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Export & backup</li>
+                        <li><i class="fas fa-check" aria-hidden="true"></i> Priority support</li>
+                    </ul>
+                </div>
+
+                <!-- UPI Payment Details -->
+                <div class="upi-payment-section">
+                    <h4><i class="fas fa-mobile-alt" aria-hidden="true"></i> Pay via UPI</h4>
+
+                    <!-- UPI ID Copy -->
+                    <div class="upi-id-box">
+                        <span class="upi-id-label">UPI ID:</span>
+                        <span class="upi-id-value" id="paymentUpiId">yaadrakh@paytm</span>
+                        <button class="btn btn-sm btn-outline" onclick="copyUpiId()" aria-label="Copy UPI ID">
+                            <i class="fas fa-copy" aria-hidden="true"></i> Copy
+                        </button>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="upi-qr-code">
+                        <div class="qr-placeholder">
+                            <i class="fas fa-qrcode" aria-hidden="true"></i>
+                            <span>Scan QR to Pay</span>
+                        </div>
+                    </div>
+
+                    <!-- App Selector -->
+                    <div class="upi-apps">
+                        <p>Open in your preferred app:</p>
+                        <div class="upi-app-buttons">
+                            <a href="upi://pay?pa=yaadrakh@paypn&pn=YaadRakh&am=199&cu=INR" class="upi-app-btn" aria-label="Pay with any UPI app">
+                                <i class="fas fa-wallet" aria-hidden="true"></i> Any UPI App
+                            </a>
+                            <a href="phonepe://pay?pa=yaadrakh@paytm&pn=YaadRakh&am=199&cu=INR" class="upi-app-btn" aria-label="Pay with PhonePe">
+                                <i class="fas fa-mobile" aria-hidden="true"></i> PhonePe
+                            </a>
+                            <a href="paytmmp://pay?pa=yaadrakh@paytm&pn=YaadRakh&am=199&cu=INR" class="upi-app-btn" aria-label="Pay with Paytm">
+                                <i class="fas fa-rupee-sign" aria-hidden="true"></i> Paytm
+                            </a>
+                            <a href="gpay://upi/pay?pa=yaadrakh@paytm&pn=YaadRakh&am=199&cu=INR" class="upi-app-btn" aria-label="Pay with Google Pay">
+                                <i class="fab fa-google-pay" aria-hidden="true"></i> Google Pay
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="closeUpiPaymentModal()">Maybe Later</button>
+                <button class="btn btn-primary" onclick="showToast('Payment verification in progress...', 'info'); closeUpiPaymentModal();">
+                    <i class="fas fa-check-circle" aria-hidden="true"></i> I've Paid
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

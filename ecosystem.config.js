@@ -17,17 +17,13 @@ module.exports = {
       NODE_ENV: 'production',
       NEXT_TELEMETRY_DISABLED: '1'
     },
-    // Stability: wait before restart, stop after 5 rapid crashes
-    max_restarts: 5,
+    // `next start` never calls process.send('ready'), so wait_ready must stay
+    // off -- with it on, pm2 kills the healthy process at listen_timeout.
+    wait_ready: false,
+    max_restarts: 50,
     restart_delay: 5000,
     exp_backoff_restart_delay: 2000,
-    wait_ready: true,
-    listen_timeout: 20000,
     kill_timeout: 25000,
-    stop_exit_codes: [1],
-    // don't crash loop forever
-    // PM2 will stop restarting after max_restarts consecutive failures
-    // within a 60s window
     min_uptime: '30s',
   }]
 }
