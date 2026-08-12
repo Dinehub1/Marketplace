@@ -196,6 +196,12 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                     Verified
                   </span>
                 )}
+                {biz.featured && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z"/></svg>
+                    Featured
+                  </span>
+                )}
                 {(biz.area || biz.city) && <span className="text-xs opacity-50 capitalize">{localityOf(biz)}</span>}
               </div>
             </div>

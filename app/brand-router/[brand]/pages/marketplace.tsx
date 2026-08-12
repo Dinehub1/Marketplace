@@ -25,7 +25,7 @@ async function fetchDirectory(
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   if (allowed && allowed.length === 0) return { rows: [], total: 0 };
-  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city", "status=eq.active"];
+  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active"];
   if (q) {
     const term = encodeURIComponent(`*${q}*`);
     filters.push(`or=(name.ilike.${term},category.ilike.${term})`);
@@ -36,10 +36,13 @@ async function fetchDirectory(
   }
   if (area) filters.push(`area=eq.${encodeURIComponent(area)}`);
   if (rating > 0) filters.push(`rating=gte.${rating}`);
-  const order =
+  // Featured/priority placement always wins, then the chosen sort. Expose the
+  // new columns in select so cards can render the Featured badge too.
+  const tail =
     sort === "reviews" ? "reviews_count.desc.nullslast,name.asc"
     : sort === "name" ? "name.asc"
     : "rating.desc.nullslast,name.asc";
+  const order = `featured.desc,priority.desc,${tail}`;
   filters.push(`order=${order}`);
   const from = (page - 1) * PAGE_SIZE;
   const res = await fetch(`${url}/rest/v1/businesses?${filters.join("&")}`, {
