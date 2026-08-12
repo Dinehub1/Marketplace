@@ -1,6 +1,7 @@
 ﻿import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
 import { ClaimBox } from "./claim-box";
+import { ReviewsBox } from "./reviews-box";
 import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryIcon } from "@/lib/icons";
@@ -43,6 +44,26 @@ async function getRelated(category: string | null, excludeId: number) {
   }
 }
 
+async function getBusinessReviews(id: number) {
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (!url || !key) return { reviews: [], avg: null, count: 0 };
+    const res = await fetch(
+      `${url}/rest/v1/reviews?business_id=eq.${id}&status=eq.approved` +
+        `&select=id,author_name,rating,body,created_at&order=created_at.desc&limit=50`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "count=exact" }, next: { revalidate: 120 } },
+    );
+    if (!res.ok) return { reviews: [], avg: null, count: 0 };
+    const reviews = (await res.json()) as any[];
+    const count = Number((res.headers.get("content-range") ?? "").split("/")[1] ?? 0) || reviews.length;
+    const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : null;
+    return { reviews, avg, count };
+  } catch {
+    return { reviews: [], avg: null, count: 0 };
+  }
+}
+
 export async function BusinessDetailPage({ brand, businessId }: { brand: any; businessId: number }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
@@ -74,6 +95,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
   }
 
   const related = await getRelated(biz.category, biz.id);
+  const { reviews, avg, count: reviewCount } = await getBusinessReviews(biz.id);
   const mapsUrl =
     biz.lat && biz.lng
       ? `https://www.google.com/maps?q=${biz.lat},${biz.lng}`
@@ -153,6 +175,11 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                   </a>
                 )}
                 {biz.rating != null && <span className="text-amber-500 font-semibold">★ {biz.rating}{biz.reviews_count != null && <span className="font-normal text-neutral-400"> ({biz.reviews_count.toLocaleString("en-IN")})</span>}</span>}
+                {reviewCount > 0 && (
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                    {reviewCount} review{reviewCount === 1 ? "" : "s"} on {brand.name}
+                  </span>
+                )}
                 {/* Verified is data-driven: only renders once a business has been
                     claimed and verified (Phase 3). No fake "✓ Verified" badges —
                     those were removed because every row carried one. */}
@@ -282,6 +309,19 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
             </div>
           </div>
         </div>
+
+        <section className="mt-12">
+          <ReviewsBox
+            businessId={biz.id}
+            initialReviews={reviews}
+            avg={avg}
+            count={reviewCount}
+            primary={primary}
+            secondary={secondary}
+            accent={accent}
+            brandName={brand.name}
+          />
+        </section>
 
         {related.length > 0 && (
           <section className="mt-12">
