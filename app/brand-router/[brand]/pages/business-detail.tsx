@@ -50,12 +50,19 @@ async function getBusinessReviews(id: number) {
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
     if (!url || !key) return { reviews: [], avg: null, count: 0 };
     const res = await fetch(
-      `${url}/rest/v1/reviews?business_id=eq.${id}&status=eq.approved` +
-        `&select=id,author_name,rating,body,created_at&order=created_at.desc&limit=50`,
+      `${url}/rest/v1/reviews?business_id=eq.${id}&is_approved=eq.true` +
+        `&select=id,reviewer_name,rating,comment,created_at&order=created_at.desc&limit=50`,
       { headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "count=exact" }, next: { revalidate: 120 } },
     );
     if (!res.ok) return { reviews: [], avg: null, count: 0 };
-    const reviews = (await res.json()) as any[];
+    const rows = (await res.json()) as any[];
+    const reviews = rows.map((r) => ({
+      id: r.id,
+      author_name: r.reviewer_name,
+      body: r.comment,
+      rating: r.rating,
+      created_at: r.created_at,
+    }));
     const count = Number((res.headers.get("content-range") ?? "").split("/")[1] ?? 0) || reviews.length;
     const avg = reviews.length ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length : null;
     return { reviews, avg, count };

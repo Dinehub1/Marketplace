@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
 const NEXTEL_ENDPOINT =
+  process.env.NEXTEL_API_URL ??
   process.env.NEXTEL_ENDPOINT ??
   "https://api.nextel.io/API_V2/Whatsapp/send_template";
 // Meta's WhatsApp Business API REQUIRES sender_phone as bare 10-digit (no country code).

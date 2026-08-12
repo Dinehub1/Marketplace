@@ -2,7 +2,10 @@
 import { createHmac } from "crypto";
 
 const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "";
-const NEXTEL_ENDPOINT = process.env.NEXTEL_ENDPOINT ?? "https://api.nextel.io/API_V2/Whatsapp/send_template";
+const NEXTEL_ENDPOINT =
+  process.env.NEXTEL_API_URL ??
+  process.env.NEXTEL_ENDPOINT ??
+  "https://api.nextel.io/API_V2/Whatsapp/send_template";
 const NEXTEL_SENDER = (process.env.NEXTEL_SENDER ?? "6263461179").replace(/\D/g, "").replace(/^91(\d{10})$/, "$1");
 
 // Nextel deployments differ on the recipient field name; try in order.
