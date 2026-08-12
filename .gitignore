@@ -34,3 +34,6 @@ next-env.d.ts
 
 # archive
 _archive/
+
+# local editor/agent config
+.claude/
