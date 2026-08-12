@@ -25,8 +25,11 @@ export async function POST(req: NextRequest) {
   if (!ins.ok) return NextResponse.json({ error: "Could not create code" }, { status: 500, headers: noStore });
 
   const sent = await sendTemplate(phone, "auth", [code]);
+  // Dev convenience: surface the code so local e2e tests can verify without
+  // intercepting WhatsApp. Never sent in production.
+  const devCode = process.env.NODE_ENV !== "production" ? { devCode: code } : {};
   return NextResponse.json(
-    { ok: true, delivered: sent.ok, ...(sent.ok ? {} : { deliveryError: "WhatsApp delivery failed — try again shortly" }) },
+    { ok: true, delivered: sent.ok, ...devCode, ...(sent.ok ? {} : { deliveryError: "WhatsApp delivery failed — try again shortly" }) },
     { headers: noStore },
   );
 }
