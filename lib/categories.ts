@@ -240,6 +240,14 @@ export function telHref(phone: string): string {
   return `tel:${d.startsWith("+") ? d : `+91${d.replace(/^0+/, "")}`}`;
 }
 
+/** Build a wa.me href (WhatsApp click-to-chat) with an optional prefilled message. */
+export function waHref(phone: string, message?: string): string {
+  const d = phone.replace(/[^\d+]/g, "");
+  const num = d.startsWith("+") ? d.slice(1) : `91${d.replace(/^0+/, "")}`;
+  const base = `https://wa.me/${num}`;
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base;
+}
+
 export type Listing = {
   id: number;
   name: string;

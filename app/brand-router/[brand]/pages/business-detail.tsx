@@ -1,6 +1,6 @@
 ﻿import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
-import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref } from "@/lib/categories";
+import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
@@ -152,6 +152,15 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                   </a>
                 )}
                 {biz.rating != null && <span className="text-amber-500 font-semibold">★ {biz.rating}{biz.reviews_count != null && <span className="font-normal text-neutral-400"> ({biz.reviews_count.toLocaleString("en-IN")})</span>}</span>}
+                {/* Verified is data-driven: only renders once a business has been
+                    claimed and verified (Phase 3). No fake "✓ Verified" badges —
+                    those were removed because every row carried one. */}
+                {biz.verified && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-600/20">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.5 16.2 4.8 11.5l1.4-1.4 3.3 3.3 8.3-8.3 1.4 1.4z"/></svg>
+                    Verified
+                  </span>
+                )}
                 {(biz.area || biz.city) && <span className="text-xs opacity-50 capitalize">{localityOf(biz)}</span>}
               </div>
             </div>
@@ -164,6 +173,14 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
             <div className="mt-5 flex flex-wrap gap-2.5">
               <a href={telHref(biz.phone)} className="btn-primary" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/></svg> {biz.phone}
+              </a>
+              <a
+                href={waHref(biz.phone, `Hi ${biz.name}, I found you on ${brand.name} and would like to enquire.`)}
+                target="_blank" rel="noopener noreferrer"
+                className="btn-secondary"
+                style={{ borderColor: "#25D366", color: "#1faa52" }}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.37a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.97 6.45 17.5 2 12.04 2zm5.8 14.13c-.25.69-1.45 1.32-1.99 1.36-.53.04-1.07.24-3.62-.75-2.99-1.13-4.9-4.02-5.05-4.21-.15-.19-1.19-1.58-1.19-3.01 0-1.43.75-2.13 1.02-2.42.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.51.25.6.85 2.07.92 2.22.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.45.5-.15.14-.3.3-.13.58.17.28.75 1.24 1.61 2.01 1.11 1.11 2.04 1.45 2.32 1.61.28.16.44.14.6-.09.17-.23.71-.83.9-1.11.19-.29.38-.24.64-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.18 1.38z"/></svg> WhatsApp
               </a>
               {mapsUrl && (
                 <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ borderColor: accent, color: primary }}>
@@ -206,8 +223,20 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                 )}
                 {biz.rating != null && (
                   <div className="flex items-center gap-3">
-                    <span className="flex-shrink-0 text-amber-500"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z"/></svg></span>
-                     <p className="opacity-75">{biz.rating} out of 5, from {biz.reviews_count != null ? `${biz.reviews_count.toLocaleString("en-IN")} public Google Maps reviews` : "public Google Maps reviews"}</p>
+                    <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-500">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z"/></svg>
+                    </span>
+                    <div>
+                      <p className="font-semibold text-neutral-900">
+                        {biz.rating} <span className="font-normal text-neutral-400">/ 5</span>
+                        {biz.reviews_count != null && <span className="ml-1 font-normal text-neutral-500">· {biz.reviews_count.toLocaleString("en-IN")} reviews</span>}
+                      </p>
+                      {mapsUrl && (
+                        <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="press text-xs underline" style={{ color: primary }}>
+                          Read reviews on Google Maps
+                        </a>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
@@ -272,7 +301,14 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
       {biz.phone && (
         <div className="md:hidden sticky bottom-0 z-40 flex items-stretch gap-2.5 border-t border-black/[0.08] bg-white px-4 py-3 shadow-[0_-6px_20px_-8px_rgba(16,16,24,0.16)]" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
           <a href={telHref(biz.phone)} className="btn-primary flex-1" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/></svg> Call now
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/></svg> Call
+          </a>
+          <a
+            href={waHref(biz.phone, `Hi ${biz.name}, I found you on ${brand.name} and would like to enquire.`)}
+            target="_blank" rel="noopener noreferrer"
+            className="btn-secondary" style={{ borderColor: "#25D366", color: "#1faa52" }} aria-label="WhatsApp"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.37a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.97 6.45 17.5 2 12.04 2zm5.8 14.13c-.25.69-1.45 1.32-1.99 1.36-.53.04-1.07.24-3.62-.75-2.99-1.13-4.9-4.02-5.05-4.21-.15-.19-1.19-1.58-1.19-3.01 0-1.43.75-2.13 1.02-2.42.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.51.25.6.85 2.07.92 2.22.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.45.5-.15.14-.3.3-.13.58.17.28.75 1.24 1.61 2.01 1.11 1.11 2.04 1.45 2.32 1.61.28.16.44.14.6-.09.17-.23.71-.83.9-1.11.19-.29.38-.24.64-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.18 1.38z"/></svg>
           </a>
           {mapsUrl && (
             <a href={mapsUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ borderColor: accent, color: primary }} aria-label="Directions"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 4 6 2 5-2v14l-5 2-6-2-5 2V6z"/><path d="M9 4v14M15 6v14"/></svg></a>

@@ -1,4 +1,4 @@
-import { categoryPath, cleanBusinessName, telHref } from "@/lib/categories";
+import { categoryPath, cleanBusinessName, telHref, waHref } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
 
@@ -76,6 +76,16 @@ export function BusinessCard({
               <path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z" />
             </svg>
             {b.phone}
+          </a>
+          <a
+            href={waHref(b.phone, `Hi ${b.name ?? "there"}, I found you on a local business directory and would like to enquire.`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Message ${b.name ?? "business"} on WhatsApp`}
+            className="press relative z-10 inline-flex items-center justify-center rounded-xl px-3 py-2.5"
+            style={{ backgroundColor: "#25D3661a", color: "#1faa52" }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.37a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.97 6.45 17.5 2 12.04 2zm5.8 14.13c-.25.69-1.45 1.32-1.99 1.36-.53.04-1.07.24-3.62-.75-2.99-1.13-4.9-4.02-5.05-4.21-.15-.19-1.19-1.58-1.19-3.01 0-1.43.75-2.13 1.02-2.42.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.66.51.25.6.85 2.07.92 2.22.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.45.5-.15.14-.3.3-.13.58.17.28.75 1.24 1.61 2.01 1.11 1.11 2.04 1.45 2.32 1.61.28.16.44.14.6-.09.17-.23.71-.83.9-1.11.19-.29.38-.24.64-.14.26.09 1.65.78 1.93.92.28.14.47.21.54.33.07.12.07.69-.18 1.38z"/></svg>
           </a>
           {b.website && (
             <a
