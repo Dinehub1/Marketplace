@@ -1,5 +1,6 @@
 ﻿import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
+import { ClaimBox } from "./claim-box";
 import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryIcon } from "@/lib/icons";
@@ -253,13 +254,24 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
               </p>
             </div>
 
-            <div className="rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: `${accent}30` }}>
-              <h2 className="font-bold mb-2" style={{ color: primary }}>Own this business?</h2>
-              <p className="text-sm opacity-60 mb-3">See your leads and manage this listing — sign in with your WhatsApp number.</p>
-              <a href={`${origin}/business-dashboard`} className="press inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold" style={{ borderColor: `${accent}50`, color: primary }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg> Open business dashboard
-              </a>
-            </div>
+            {biz.phone ? (
+              <ClaimBox
+                businessId={biz.id}
+                businessName={biz.name}
+                businessPhone={biz.phone}
+                primary={primary}
+                secondary={secondary}
+                accent={accent}
+              />
+            ) : (
+              <div className="rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: `${accent}30` }}>
+                <h2 className="font-bold mb-2" style={{ color: primary }}>Own this business?</h2>
+                <p className="text-sm opacity-60 mb-3">See your leads and manage this listing — sign in with your WhatsApp number.</p>
+                <a href={`${origin}/business-dashboard`} className="press inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold" style={{ borderColor: `${accent}50`, color: primary }}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg> Open business dashboard
+                </a>
+              </div>
+            )}
           </div>
 
           <div className="md:col-span-2">
