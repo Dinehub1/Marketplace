@@ -100,6 +100,8 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
       try {
         localStorage.setItem("hermes_otp_token", j.token);
         document.cookie = `hermes_otp_token=${j.token}; path=/; max-age=3600`;
+        localStorage.setItem("hermes_customer_phone", phone);
+        document.cookie = `hermes_customer_phone=${phone}; path=/; max-age=3600`;
       } catch {}
       window.location.assign(`/dashboard`);
       return;

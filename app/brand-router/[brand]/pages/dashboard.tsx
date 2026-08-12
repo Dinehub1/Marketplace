@@ -1,76 +1,187 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import { createClient } from "@/lib/supabase/client";
+
+type Lead = {
+  id: string;
+  business_id: number | null;
+  name: string;
+  phone: string;
+  message: string;
+  status: string;
+  created_at: string;
+};
+type Biz = {
+  id: number;
+  name: string;
+  category: string | null;
+  status: string | null;
+  city: string | null;
+};
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "अभी";
+  if (m < 60) return `${m} मिनट पहले`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} घंटे पहले`;
+  return `${Math.floor(h / 24)} दिन पहले`;
+}
+
+function readStored(key: string): string | null {
+  try {
+    const ls = localStorage.getItem(key);
+    if (ls) return ls;
+    const c = document.cookie.split("; ").find((x) => x.startsWith(key + "="));
+    return c ? decodeURIComponent(c.split("=")[1]) : null;
+  } catch {
+    return null;
+  }
+}
 
 export function UserDashboard({ brand }: { brand: any }) {
-  const t = (brand.theme ?? {}) as Record<string, string>;
-  const primary = t.primary ?? "#6d28d9";
-  const secondary = t.secondary ?? "#8b5cf6";
-  const accent = t.accent ?? "#c4b5fd";
-  const bg = t.bg ?? "#faf5ff";
+  const theme = (brand.theme ?? {}) as Record<string, string>;
+  const primary = theme.primary ?? "#6d28d9";
+  const secondary = theme.secondary ?? "#db2777";
+  const accent = theme.accent ?? primary;
+  const bg = theme.bg ?? "#f9fafb";
+  const supabase = createClient();
 
-  const stats = [
-    { label: "Orders", value: "12", icon: "📦", change: "+3 this week" },
-    { label: "Bookings", value: "3", icon: "📅", change: "1 upcoming" },
-    { label: "Messages", value: "5", icon: "💬", change: "2 unread" },
-    { label: "Points", value: "2,450", icon: "⭐", change: "Redeemable" },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [noAuth, setNoAuth] = useState(false);
+  const [phone, setPhone] = useState<string | null>(null);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [biz, setBiz] = useState<Biz[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      let userPhone: string | null = readStored("hermes_customer_phone");
+      let token: string | null = readStored("hermes_otp_token");
+      let bearer: string | null = null;
+
+      const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
+      if (data.session?.user?.phone) {
+        userPhone = data.session.user.phone.replace(/^\+/, "");
+        bearer = data.session.access_token;
+      }
+      if (!userPhone) {
+        if (!cancelled) { setNoAuth(true); setLoading(false); }
+        return;
+      }
+      const q = new URLSearchParams({ phone: userPhone });
+      if (token) q.set("token", token);
+      const headers: Record<string, string> = {};
+      if (bearer) headers.Authorization = `Bearer ${bearer}`;
+      try {
+        const res = await fetch(`/api/customer?${q.toString()}`, { headers });
+        const j = await res.json().catch(() => ({}));
+        if (!res.ok || !j.ok) {
+          if (!cancelled) { setNoAuth(true); setLoading(false); }
+          return;
+        }
+        if (!cancelled) {
+          setPhone(userPhone);
+          setLeads(j.leads ?? []);
+          setBiz(j.businesses ?? []);
+        }
+      } catch {
+        if (!cancelled) setNoAuth(true);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+  }, []);
+
+  const phoneDisplay = phone ? (phone.startsWith("91") ? phone.slice(2) : phone) : "";
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
       <BrandHeader brand={brand} />
-      <main className="flex-1 mx-auto max-w-6xl px-6 py-8 w-full">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold" style={{ color: primary }}>Welcome back! 👋</h1>
-            <p className="text-sm opacity-60">Your activity on {brand.name}</p>
+      <main className="flex-1 mx-auto max-w-5xl px-6 py-8 w-full">
+        {loading ? (
+          <p className="py-20 text-center text-sm opacity-50">लोड हो रहा है…</p>
+        ) : noAuth || !phone ? (
+          <div className="mx-auto mt-12 max-w-md rounded-2xl border bg-white p-8 text-center shadow-sm" style={{ borderColor: `${accent}30` }}>
+            <div className="mb-3 text-4xl">👋</div>
+            <h1 className="text-xl font-bold" style={{ color: primary }}>अपना डैशबोर्ड देखें</h1>
+            <p className="mt-2 text-sm opacity-60">साइन इन करें और देखें कि आपने कितने बिज़नेस से पूछताछ की है।</p>
+            <a href="/login" className="mt-6 inline-block w-full rounded-xl px-6 py-3 text-sm font-bold text-white shadow" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>साइन इन करें</a>
           </div>
-          <a href={`/business-dashboard`} className="text-sm font-medium px-4 py-2 rounded-xl border hover:bg-gray-50 transition-colors" style={{ borderColor: `${accent}50`, color: primary }}>
-            Business View →
-          </a>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {stats.map((s) => (
-            <div key={s.label} className="card-lift rounded-2xl border bg-white p-5 text-center" style={{ borderColor: `${accent}30` }}>
-              <div className="text-2xl mb-2">{s.icon}</div>
-              <div className="text-2xl font-bold" style={{ color: primary }}>{s.value}</div>
-              <div className="text-xs opacity-50">{s.label}</div>
-              <div className="text-xs mt-1" style={{ color: secondary }}>{s.change}</div>
+        ) : (
+          <>
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold" style={{ color: primary }}>आपका डैशबोर्ड</h1>
+              <p className="text-sm opacity-60">+91 {phoneDisplay} के लिए — आपकी पूछताछ और लिस्टिंग।</p>
             </div>
-          ))}
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <a href={`/orders`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
-            <p className="font-bold" style={{ color: primary }}>My Orders</p>
-            <p className="text-xs opacity-50 mt-1">View order history</p>
-          </a>
-          <a href={`/booking`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
-            <p className="font-bold" style={{ color: primary }}>Book Appointment</p>
-            <p className="text-xs opacity-50 mt-1">Schedule a visit</p>
-          </a>
-          <a href={`/support`} className="card-lift rounded-2xl border bg-white p-5" style={{ borderColor: `${accent}30` }}>
-            <p className="font-bold" style={{ color: primary }}>Get Help</p>
-            <p className="text-xs opacity-50 mt-1">Contact support</p>
-          </a>
-        </div>
+            <div className="mb-8 grid grid-cols-2 gap-4">
+              {[
+                { label: "आपकी पूछताछ", value: String(leads.length), icon: "💬" },
+                { label: "आपकी लिस्टिंग", value: String(biz.length), icon: "🏢" },
+              ].map((s) => (
+                <div key={s.label} className="rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: `${accent}20` }}>
+                  <span className="text-2xl">{s.icon}</span>
+                  <p className="mt-2 text-2xl font-extrabold" style={{ color: primary }}>{s.value}</p>
+                  <p className="mt-1 text-xs opacity-50">{s.label}</p>
+                </div>
+              ))}
+            </div>
 
-        <div className="rounded-2xl border bg-white p-6" style={{ borderColor: `${accent}30` }}>
-          <h2 className="text-lg font-bold mb-4" style={{ color: primary }}>Recent Activity</h2>
-          <div className="space-y-3">
-            {[
-              { text: "Order #1234 confirmed", time: "2 hours ago", icon: "✅" },
-              { text: "Appointment scheduled for tomorrow", time: "1 day ago", icon: "📅" },
-              { text: "New message from support", time: "2 days ago", icon: "💬" },
-              { text: "Profile updated successfully", time: "3 days ago", icon: "👤" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm py-2 border-b last:border-0" style={{ borderColor: `${accent}10` }}>
-                <span className="text-lg">{item.icon}</span>
-                <span className="opacity-70 flex-1">{item.text}</span>
-                <span className="text-xs opacity-40">{item.time}</span>
+            <div className="mb-6 rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: `${accent}20` }}>
+              <h2 className="mb-4 flex items-center gap-2 font-bold" style={{ color: primary }}>
+                <span className="flex h-6 w-6 items-center justify-center rounded-md text-xs text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>💬</span>
+                आपकी पूछताछ
+              </h2>
+              {leads.length === 0 ? (
+                <p className="py-6 text-center text-sm opacity-50">अभी कोई पूछताछ नहीं। किसी भी बिज़नेस को मैसेज करें और वो यहाँ दिखेगा।</p>
+              ) : (
+                <div className="space-y-4">
+                  {leads.map((l) => (
+                    <div key={l.id} className="flex items-start gap-3">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>{l.name.charAt(0).toUpperCase()}</div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium">{l.name}</p>
+                        <p className="break-words text-xs opacity-50">{l.message}</p>
+                      </div>
+                      <span className="flex-shrink-0 text-xs opacity-40">{timeAgo(l.created_at)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-2xl border bg-white p-6 shadow-sm" style={{ borderColor: `${accent}20` }}>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="flex items-center gap-2 font-bold" style={{ color: primary }}>
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md text-xs text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>🏢</span>
+                  आपकी लिस्टिंग
+                </h2>
+                {biz.length > 0 && (
+                  <a href="/business-dashboard" className="text-xs font-semibold" style={{ color: primary }}>मैनेज करें →</a>
+                )}
               </div>
-            ))}
-          </div>
-        </div>
+              {biz.length === 0 ? (
+                <p className="py-6 text-center text-sm opacity-50">आपने अभी कोई बिज़नेस क्लेम नहीं किया।</p>
+              ) : (
+                <div className="space-y-3">
+                  {biz.map((b) => (
+                    <div key={b.id} className="flex items-center justify-between rounded-xl border px-4 py-3" style={{ borderColor: `${accent}20` }}>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{b.name}</p>
+                        <p className="text-xs opacity-50">{[b.category, b.city].filter(Boolean).join(" · ")}</p>
+                      </div>
+                      <span className={`flex-shrink-0 rounded-full px-2 py-1 text-xs ${b.status === "approved" ? "bg-green-50 text-green-600" : "bg-amber-50 text-amber-600"}`}>{b.status ?? "pending"}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </main>
       <BrandFooter brand={brand} />
     </div>
