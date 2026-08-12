@@ -17,11 +17,16 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
   const bg = theme.bg ?? "#f9fafb";
   const supabase = createClient();
 
+  // Dev-only: use our custom OTP API so the code is visible on the page
+  // (Supabase native OTP never returns the code to the client). Prod keeps
+  // the Supabase flow untouched.
+  const isDev = process.env.NODE_ENV !== "production";
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [devOtp, setDevOtp] = useState<string | null>(null);
 
   // Normalise to E.164 for India: 10 digits → +91XXXXXXXXXX.
   function e164(raw: string): string | null {
@@ -35,12 +40,36 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
   async function sendOtp(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const p = e164(phone);
-    if (!p) {
+    const raw = phone.replace(/[^\d]/g, "");
+    if (raw.length !== 10) {
       setError("Enter a valid 10-digit mobile number.");
       return;
     }
     setLoading(true);
+    if (isDev) {
+      // Dev: send via our custom OTP API so the code is visible (devCode).
+      const res = await fetch("/api/otp/send", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ phone: raw }),
+      });
+      const j = await res.json();
+      setLoading(false);
+      if (!res.ok) {
+        setError(j.error ?? "Could not send code");
+        return;
+      }
+      if (j.devCode) setDevOtp(j.devCode);
+      setPhone(raw);
+      setStep("otp");
+      return;
+    }
+    const p = e164(phone);
+    if (!p) {
+      setError("Enter a valid 10-digit mobile number.");
+      setLoading(false);
+      return;
+    }
     const { error } = await supabase.auth.signInWithOtp({ phone: p });
     setLoading(false);
     if (error) {
@@ -55,6 +84,26 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    if (isDev) {
+      // Dev: verify via our custom OTP API and stash the token for dev tools.
+      const res = await fetch("/api/otp/verify", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ phone, code: code.replace(/[^\d]/g, "") }),
+      });
+      const j = await res.json();
+      setLoading(false);
+      if (!res.ok) {
+        setError(j.error ?? "Wrong code");
+        return;
+      }
+      try {
+        localStorage.setItem("hermes_otp_token", j.token);
+        document.cookie = `hermes_otp_token=${j.token}; path=/; max-age=3600`;
+      } catch {}
+      window.location.assign(`/dashboard`);
+      return;
+    }
     const { error } = await supabase.auth.verifyOtp({
       phone,
       token: code.replace(/[^\d]/g, ""),
@@ -114,8 +163,14 @@ export function WhatsAppLogin({ brand }: { brand: any }) {
               <h2 className="text-lg font-semibold" style={{ color: primary }}>Enter the code</h2>
               <p className="text-xs opacity-60">
                 Sent to <span className="font-medium">{phone}</span>{" "}
-                <button type="button" onClick={() => { setStep("phone"); setCode(""); setError(null); }} className="underline" style={{ color: primary }}>change</button>
+                <button type="button" onClick={() => { setStep("phone"); setCode(""); setError(null); setDevOtp(null); }} className="underline" style={{ color: primary }}>change</button>
               </p>
+              {isDev && devOtp && (
+                <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-center">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-amber-700">DEV OTP — WhatsApp may not deliver in dev</p>
+                  <p className="mt-1 text-3xl font-bold tracking-[0.5em] text-amber-800">{devOtp}</p>
+                </div>
+              )}
               <input
                 type="text"
                 inputMode="numeric"
