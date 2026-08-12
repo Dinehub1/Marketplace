@@ -3,9 +3,9 @@ import {
   CITY_LABEL,
   categoryPath,
   categoryAreaPath,
-  getCategoryIndex,
   getCategoryAreaIndex,
-  getCategoryListings,
+  getCategoryAreaListings,
+  getCategoryIndex,
   titleize,
   type CategoryStat,
   type Listing,
@@ -18,13 +18,15 @@ import { SectionHeading } from "@/components/directory/SectionHeading";
 const PAGE_SIZE = 30;
 const RELATED = 10;
 
-export async function CategoryLandingPage({
+export async function CategoryAreaPage({
   brand,
   category,
+  area,
   page,
 }: {
   brand: any;
   category: CategoryStat;
+  area: string;
   page: number;
 }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
@@ -32,26 +34,23 @@ export async function CategoryLandingPage({
   const secondary = theme.secondary ?? "#8b5cf6";
 
   const label = titleize(category.category);
+  const areaLabel = titleize(area);
   const origin = ``;
-  const base = `${origin}${categoryPath(category.category)}`;
+  const base = `${origin}${categoryAreaPath(category.category, area)}`;
 
-  const [{ rows, total }, index] = await Promise.all([
-    getCategoryListings(category.category, page, PAGE_SIZE),
+  const [{ rows, total }, index, areaIdx] = await Promise.all([
+    getCategoryAreaListings(category.category, area, page, PAGE_SIZE),
     getCategoryIndex(),
+    getCategoryAreaIndex(category.category),
   ]);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  // Ten related categories, not twenty-four. Enough to keep the crawl graph
-  // connected without turning the foot of every page into another link wall.
   const related = index.filter((c) => c.slug !== category.slug).slice(0, RELATED);
-  // Localities this category actually exists in — used for the "by area" links
-  // that point at the neighbourhood landing pages.
-  const areaIdx = await getCategoryAreaIndex(category.category);
-  const topAreas = areaIdx.slice(0, 10);
+  const otherAreas = areaIdx.filter((a) => a.area !== area).slice(0, 12);
 
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${label} in ${CITY_LABEL}`,
+    name: `${label} in ${areaLabel}, ${CITY_LABEL}`,
     numberOfItems: total,
     itemListElement: rows.slice(0, 20).map((b: Listing, i: number) => ({
       "@type": "ListItem",
@@ -73,7 +72,8 @@ export async function CategoryLandingPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: brand.name, item: origin },
       { "@type": "ListItem", position: 2, name: "Directory", item: `${origin}/marketplace` },
-      { "@type": "ListItem", position: 3, name: `${label} in ${CITY_LABEL}`, item: base },
+      { "@type": "ListItem", position: 3, name: `${label} in ${CITY_LABEL}`, item: `${origin}${categoryPath(category.category)}` },
+      { "@type": "ListItem", position: 4, name: `${label} in ${areaLabel}`, item: base },
     ],
   };
 
@@ -94,7 +94,9 @@ export async function CategoryLandingPage({
               <span aria-hidden="true">›</span>
               <a href={`${origin}/categories`} className="press hover:text-neutral-600">Categories</a>
               <span aria-hidden="true">›</span>
-              <span className="text-neutral-500">{label}</span>
+              <a href={`${origin}${categoryPath(category.category)}`} className="press hover:text-neutral-600">{label}</a>
+              <span aria-hidden="true">›</span>
+              <span className="text-neutral-500">{areaLabel}</span>
             </nav>
 
             <div className="flex items-start gap-4">
@@ -105,10 +107,10 @@ export async function CategoryLandingPage({
               <div className="min-w-0">
                 <h1 className="text-[1.9rem] md:text-[2.7rem] font-extrabold text-neutral-900"
                     style={{ letterSpacing: "-0.034em", lineHeight: 1.06, textWrap: "balance" }}>
-                  {label} in {CITY_LABEL}
+                  {label} in {areaLabel}
                 </h1>
                 <p className="mt-2.5 max-w-2xl text-base text-neutral-500" style={{ lineHeight: 1.6 }}>
-                  Sorted by rating, with phone numbers you can call straight away.
+                  {label.toLowerCase()} businesses in {areaLabel}, {CITY_LABEL}, sorted by rating — with phone numbers you can call straight away.
                 </p>
               </div>
             </div>
@@ -120,9 +122,11 @@ export async function CategoryLandingPage({
                     <circle cx="11" cy="11" r="7" /><path d="m20 20-3.6-3.6" />
                   </svg>
                 </span>
-                <input name="q" placeholder={`Search ${label.toLowerCase()} or anything else`}
+                <input name="q" placeholder={`Search ${label.toLowerCase()} in ${areaLabel.toLowerCase()}`}
                        aria-label="Search businesses"
                        className="flex-1 bg-transparent px-1.5 py-2.5 text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none" />
+                <input type="hidden" name="cat" value={category.category} />
+                <input type="hidden" name="area" value={area} />
                 <button type="submit" className="press rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
                         style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
                   Search
@@ -136,15 +140,16 @@ export async function CategoryLandingPage({
         <section className="mx-auto max-w-6xl px-6 py-11">
           {rows.length === 0 ? (
             <div className="rounded-2xl bg-white px-6 py-16 text-center ring-1 ring-black/[0.05]">
-              <p className="text-lg font-semibold text-neutral-900">No listings in this category yet</p>
-              <a href={`${origin}/categories`} className="press mt-3 inline-block text-sm font-semibold" style={{ color: primary }}>
-                Browse all categories →
+              <p className="text-lg font-semibold text-neutral-900">No listings here yet</p>
+              <a href={`${origin}${categoryPath(category.category)}`} className="press mt-3 inline-block text-sm font-semibold" style={{ color: primary }}>
+                See all {label.toLowerCase()} in {CITY_LABEL} →
               </a>
             </div>
           ) : (
             <>
               <SectionHeading
-                title={page > 1 ? `${label} — page ${page}` : `Top rated ${label.toLowerCase()}`}
+                title={page > 1 ? `${label} in ${areaLabel} — page ${page}` : `${label} in ${areaLabel}`}
+                subtitle={`${total.toLocaleString("en-IN")} ${total === 1 ? "business" : "businesses"} in ${areaLabel}`}
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -170,41 +175,14 @@ export async function CategoryLandingPage({
           )}
         </section>
 
-        {/* ── ABOUT ────────────────────────────────────────────────────── */}
-        <section className="mx-auto max-w-6xl px-6 pb-4">
-          <div className="rounded-2xl bg-white p-6 md:p-8 ring-1 ring-black/[0.05]">
-            <h2 className="mb-3 text-base font-bold text-neutral-900">
-              Finding {label.toLowerCase()} in {CITY_LABEL}
-            </h2>
-            <p className="max-w-3xl text-sm leading-relaxed text-neutral-500">
-              This page lists {label.toLowerCase()} businesses operating in {CITY_LABEL} and the
-              surrounding areas of Madhya Pradesh, ordered by their public customer rating.
-              Details come from publicly available Google Maps listings and may be out of date —
-              please confirm with the business before travelling.
-            </p>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-neutral-500">
-              Own one of these businesses?{" "}
-              <a href={`${origin}/contact`} className="press font-semibold underline" style={{ color: primary }}>
-                Claim or correct your listing
-              </a>.
-            </p>
-          </div>
-        </section>
-
-        {/* ── AREAS ───────────────────────────────────────────────────── */}
-        {topAreas.length > 0 && (
+        {/* ── OTHER AREAS ──────────────────────────────────────────────── */}
+        {otherAreas.length > 0 && (
           <section className="mx-auto max-w-6xl px-6 pb-4">
-            <SectionHeading
-              title={`${label} by area`}
-              subtitle={`Browse ${label.toLowerCase()} across neighbourhoods in ${CITY_LABEL}`}
-            />
+            <SectionHeading title={`More areas for ${label.toLowerCase()}`} subtitle={`Browse ${label.toLowerCase()} across ${CITY_LABEL}`} />
             <div className="flex flex-wrap gap-2">
-              {topAreas.map((a) => (
-                <a
-                  key={a.slug}
-                  href={categoryAreaPath(category.category, a.area)}
-                  className="press inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-neutral-700 ring-1 ring-black/[0.05] hover:bg-neutral-50"
-                >
+              {otherAreas.map((a) => (
+                <a key={a.slug} href={categoryAreaPath(category.category, a.area)}
+                   className="press inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-xs font-semibold text-neutral-700 ring-1 ring-black/[0.05] hover:bg-neutral-50">
                   {titleize(a.area)} <span className="text-neutral-400">({a.count})</span>
                 </a>
               ))}

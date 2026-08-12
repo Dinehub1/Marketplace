@@ -3,25 +3,25 @@ import path from "path";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getBrand } from "@/lib/brands";
+import { titleize } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
 import {
   CITY_LABEL,
   categoryPath,
+  categoryAreaPath,
   categorySlugFromPath,
+  categoryAreaSlugFromPath,
   businessExists,
   cleanBusinessName,
   findCategory,
   getActiveListingCount,
   getCategoryIndex,
+  getCategoryAreaIndex,
   localityOf,
 } from "@/lib/categories";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 300; // Revalidate every 5 minutes (ISR cache)
-
-function titleize(s: string): string {
-  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
-}
 
 /**
  * Per-page metadata.
@@ -41,6 +41,36 @@ export async function generateMetadata(
   const sp = await searchParams;
   const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
   const origin = `https://${brand.slug}.cashcard.live`;
+
+  // Category within a neighbourhood: "/plumber-in-vijay-nagar". Checked before
+  // the city-level category page so the area is picked out of the same slug.
+  const caSlug = categoryAreaSlugFromPath(subPath);
+  if (caSlug) {
+    const category = await findCategory(caSlug.categorySlug);
+    if (category) {
+      const areaRaw = (await getCategoryAreaIndex(category.category)).find((a) => a.slug === caSlug.areaSlug)?.area;
+      if (areaRaw) {
+        const label = titleize(category.category);
+        const areaLabel = titleize(areaRaw);
+        const page = Math.max(1, Number(sp.page) || 1);
+        const suffix = page > 1 ? ` — Page ${page}` : "";
+        const canonical = `${origin}${categoryAreaPath(category.category, areaRaw)}`;
+        return {
+          title: `${category.count} Best ${label} in ${areaLabel}, ${CITY_LABEL} (2026) | ${brand.name}${suffix}`,
+          description:
+            `Compare ${label.toLowerCase()} in ${areaLabel}, ${CITY_LABEL} — ratings, ` +
+            `addresses and phone numbers. Call directly, no signup needed.`,
+          alternates: { canonical: page > 1 ? `${canonical}?page=${page}` : canonical },
+          openGraph: {
+            title: `${category.count} Best ${label} in ${areaLabel}, ${CITY_LABEL}`,
+            description: `Verified ${label.toLowerCase()} listings in ${areaLabel}, ${CITY_LABEL} with ratings and phone numbers.`,
+            url: canonical,
+            type: "website",
+          },
+        };
+      }
+    }
+  }
 
   const catSlug = categorySlugFromPath(subPath);
   if (catSlug) {
@@ -200,6 +230,27 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     const { CategoriesPage } = await import("./pages/categories");
     return <CategoriesPage brand={brand} />;
   }
+  // Category within a neighbourhood: "/plumber-in-vijay-nagar". Same slug
+  // shape as the city-level category page but with a real locality, so it is
+  // checked first.
+  {
+    const caSlug = categoryAreaSlugFromPath(subPath);
+    if (caSlug) {
+      if (!brandPublishesDirectory(brand)) notFound();
+      const category = await findCategory(caSlug.categorySlug);
+      if (!category) notFound();
+      // A vertical brand only owns its own categories.
+      const index = await getCategoryIndex();
+      const allowed = categoriesForBrand(brand.slug, index.map((c) => c.category));
+      if (allowed && !allowed.includes(category.category)) notFound();
+      const areaRaw = (await getCategoryAreaIndex(category.category)).find((a) => a.slug === caSlug.areaSlug)?.area ?? null;
+      if (!areaRaw) notFound();
+      const page = Math.max(1, Number(sp.page) || 1);
+      const { CategoryAreaPage } = await import("./pages/category-area");
+      return <CategoryAreaPage brand={brand} category={category} area={areaRaw} page={page} />;
+    }
+  }
+
   // SEO landing pages: /<category>-in-indore, one per directory category.
   // Checked before the generic page list because the shape is dynamic.
   {
@@ -234,9 +285,11 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/privacy" || subPath === "/privacy-policy") { const { PrivacyPage } = await import("./pages/privacy"); return <PrivacyPage brand={brand} />; }
   if (subPath === "/terms" || subPath === "/terms-conditions") { const { TermsPage } = await import("./pages/terms"); return <TermsPage brand={brand} />; }
 
-  // Root: serve static site if folder exists
+  // Root: directory-publishing brands render the dynamic directory homepage
+  // (live listings); other brands with a static folder keep their prebuilt
+  // marketing site. Brands with neither fall back to the generic landing.
   const folder = brand.folder;
-  if (folder) {
+  if (folder && !brandPublishesDirectory(brand)) {
     const sitePath = path.join(process.cwd(), "public", "sites", folder, "index.html");
     if (existsSync(sitePath)) {
       const { BrandStaticSite } = await import("./brand-static");

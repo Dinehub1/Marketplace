@@ -2,290 +2,290 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 
 const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: string; values: Array<{ icon: string; title: string; desc: string }>; whyChoose?: Array<{ title: string; desc: string }>; stats?: Array<{ label: string; value: string }> }> = {
   sarkarconnect: {
-    story: "SarkarConnect का जन्म एक सवाल से हुआ — भारत में करोड़ों छोटे और मध्यम व्यापारी हैं, फिर भी उनके पास सही B2B नेटवर्क तक पहुंच नहीं।\n\n2024 में, हमने SarkarConnect लॉन्च किया — एक प्लेटफ़ॉर्म जो व्यापारियों को उनके इंडस्ट्री, लोकेशन और ज़रूरत के आधार पर जोड़ता है।\n\nआज, SarkarConnect 10,000+ वेरिफ़ाइड बिज़नेस को जोड़ता है — मैन्युफैक्चरिंग, इलेक्ट्रॉनिक्स, टेक्सटाइल, खाद्य प्रसंस्करण और दर्जनों अन्य सेक्टर में। हर महीने सैकड़ों नए डील क्लोज़ होते हैं।",
-    mission: "हमारा मिशन भारत के MSME के लिए B2B ट्रेड को डिजिटल और पारदर्शी बनाना है — ताकि हर व्यापारी सही पार्टनर तक पहुंच सके, बिना बिचौलियों के।",
+    story: "SarkarConnect was born from a question — millions of small and medium businesses across India exist, yet they lack access to the right B2B network.\n\nIn 2024, we launched SarkarConnect — a platform that connects merchants based on their industry, location, and needs.\n\nToday, SarkarConnect connects 10,000+ verified businesses across manufacturing, electronics, textiles, food processing, and dozens of other sectors. Hundreds of new deals close every month.",
+    mission: "Our mission is to make B2B trade digital and transparent for India's MSMEs — so every merchant can reach the right partner, without middlemen.",
     values: [
-      { icon: "🔗", title: "कनेक्शन", desc: "हम सिर्फ प्लेटफ़ॉर्म नहीं, रिश्ते बनाते हैं — हर कनेक्शन को मानते हैं।" },
-      { icon: "✅", title: "सत्यापन", desc: "हर बिज़नेस वेरिफ़ाइड है — असली व्यापारियों के लिए असली नेटवर्क।" },
-      { icon: "📈", title: "ग्रोथ", desc: "हमारा लक्ष्य आपकी ग्रोथ है — हर फीचर व्यापार बढ़ाने के लिए बना है।" },
-      { icon: "🇮🇳", title: "भारत परंपरा", desc: "स्वदेशी व्यापार को बढ़ावा — हम Make in India के प्रति प्रतिबद्ध हैं।" },
+      { icon: "🔗", title: "Connection", desc: "We don't just build a platform, we build relationships — we value every connection." },
+      { icon: "✅", title: "Verification", desc: "Every business is verified — a real network for real merchants." },
+      { icon: "📈", title: "Growth", desc: "Our goal is your growth — every feature is built to grow your business." },
+      { icon: "🇮🇳", title: "India Tradition", desc: "We promote indigenous business — we are committed to Make in India." },
     ],
   },
   sarkarhealth: {
-    story: "SarkarHealth की शुरुआत इंदौर के एक सरकारी हॉस्पिटल में हुई — जहाँ एक युवा डॉक्टर ने देखा कि मरीज़ों को सही डॉक्टर मिलने में घंटों इंतज़ार करना पड़ता है।\n\n2025 में, हमने SarkarHealth लॉन्च किया — एक डिजिटल हेल्थकेयर प्लेटफ़ॉर्म जो मरीज़ों को वेरिफ़ाइड डॉक्टरों, लैब टेस्ट और दवाई डिलीवरी से जोड़ता है।\n\nआज, SarkarHealth 50+ वेरिफ़ाइड डॉक्टरों, 10+ लैब पार्टनर्स और 5,000+ सक्रिय मरीज़ों की सेवा कर रहा है — इंदौर में सबसे तेज़ी से बढ़ता डिजिटल हेल्थकेयर नेटवर्क।",
-    mission: "हमारा मिशन हर इंदौरवासी को किफ़ायती और गुणवत्तापूर्ण स्वास्थ्य सेवा देना है — चाहे वह कोई भी इलाका हो या आय का स्तर।",
+    story: "SarkarHealth began in a government hospital in Indore — where a young doctor noticed patients waiting hours to see the right doctor.\n\nIn 2025, we launched SarkarHealth — a digital healthcare platform that connects patients with verified doctors, lab tests, and medicine delivery.\n\nToday, SarkarHealth serves 50+ verified doctors, 10+ lab partners, and 5,000+ active patients — Indore's fastest-growing digital healthcare network.",
+    mission: "Our mission is to provide every resident of Indore with affordable, quality healthcare — regardless of neighborhood or income level.",
     values: [
-      { icon: "🩺", title: "चिकित्सा उत्तरदायित्व", desc: "हर डॉक्टर लाइसेंस्ड और वेरिफ़ाइड है — आपकी सेहत हमारी ज़िम्मेदारी।" },
-      { icon: "💰", title: "किफ़ायत", desc: "सार्वजनिक हॉस्पिटल जैसे दर — बिना किसी छुपी फीस के।" },
-      { icon: "🔒", title: "गोपनीयता", desc: "आपका हेल्थ डेटा पूरी तरह एन्क्रिप्टेड और सुरक्षित है।" },
-      { icon: "❤️", title: "मरीज़ केंद्रित", desc: "हर फीचर मरीज़ की सुविधा के लिए बना है — आराम से स्वास्थ्य सेवा।" },
+      { icon: "🩺", title: "Medical Responsibility", desc: "Every doctor is licensed and verified — your health is our responsibility." },
+      { icon: "💰", title: "Affordability", desc: "Rates like a public hospital — with no hidden fees." },
+      { icon: "🔒", title: "Privacy", desc: "Your health data is fully encrypted and secure." },
+      { icon: "❤️", title: "Patient-Centric", desc: "Every feature is built for patient convenience — healthcare made easy." },
     ],
   },
   sarkardost: {
-      story: "SarkarDost की शुरुआत इंदौर में हुई — जहाँ एक सामान्य चाय की दुकान से मिले दो दोस्तों ने देखा कि स्थानीय व्यापारियों को अपने ग्राहकों तक पहुंचने के लिए रोज़गार का संघर्ष करना पड़ता है।\\n\\n2024 में, हमने तय किया कि इंदौर के हर दुकानदार, सेवा प्रदाता और विशेषज्ञ को एक समान मंच मिलना चाहिए — जहाँ वे अपनी क्षमता से ग्राहक पा सकें, बिना बड़े प्लेटफ़ॉर्मों की भारी फीस चुकाए।\\n\\nआज SarkarDost इंदौर के 800+ स्थानीय व्यापारों, 40,000+ सक्रिय उपयोगकर्ताओं और 25+ इलाकों को जोड़ता है — एक समुदाय जहाँ भरोसा, स्थानीयता और तकनीक मिलती है। हमारी यात्रा राजवाड़ा की छोटी चाय की दुकान से शुरू हुई, जहाँ राजू भाई ने अपनी दुकान की ऑनलाइन उपस्थिति बनाकर अपने दैनिक ग्राहकों में 3倍增长 देखी। आज, हम उसी espírito के साथ हर छोटे व्यापारी को डिजिटल सफलता दिलाने के लिए प्रतिबद्ध हैं।",
-      mission: "हमारा मिशन इंदौर के हर व्यापार को डिजिटल रूप से सशक्त बनाना है — ताकि वे अपनी कार्यक्षेत्र से सीमित न रहें और पूरे शहर के ग्राहकों तक पहुंच सकें। हम विश्वास करते हैं कि हर स्थानीय दुकान, चाहे वह चाय की दुकान हो या प्रोफेशनल सर्विस, डिजिटल युग में विकास का हकदार है।",
-      vision: "इंदौर का सबसे भरोसेमंद स्थानीय व्यवसाय नेटवर्क बनना, जहाँ हर व्यापारी अपने पड़ोस के ग्राहक से जुड़ सके और हर नागरिक अपने पड़ोस की सेवाओं को आसानी से खोज सके।",
+      story: "SarkarDost started in Indore — where two friends who met at a humble tea stall saw that local merchants struggled to reach their customers.\\n\\nIn 2024, we decided that every shopkeeper, service provider, and specialist in Indore deserves an equal platform — where they can find customers through their own merit, without paying the heavy fees of large platforms.\\n\\nToday SarkarDost connects 800+ local businesses, 40,000+ active users, and 25+ neighborhoods in Indore — a community where trust, locality, and technology come together. Our journey began at a small tea stall in Rajwada, where Raju bhai built his shop's online presence and saw 3x growth in his daily customers. Today, with that same spirit, we are committed to bringing digital success to every small business.",
+      mission: "Our mission is to digitally empower every business in Indore — so they are no longer confined to their locality and can reach customers across the whole city. We believe every local shop, whether a tea stall or a professional service, deserves to grow in the digital age.",
+      vision: "To become Indore's most trusted local business network, where every merchant can connect with customers in their neighborhood and every citizen can easily discover services near them.",
       values: [
-        { icon: "🤝", title: "भरोसा", desc: "हर लिस्टिंग और समीक्षा सत्यापित है — हम पारदर्शिता को प्राथमिकता देते हैं।" },
-        { icon: "📍", title: "स्थानीयता", desc: "इंदौर पहले — हमारी हर विशेषता शहर की ज़रूरतों के अनुसार बनी है।" },
-        { icon: "🚀", title: "सादगी", desc: "टेक्नोलॉジー आसान होनी चाहिए — हमारा प्लेटफ़ॉर्म किसी भी उम्र के व्यापारी को चला सके।" },
-        { icon: "💚", title: "समुदाय", desc: "हम व्यापार नहीं, रिश्ते बनाते हैं — हर इंटरैक्शन को बराबरी का मानते हैं।" },
-        { icon: "📈", title: "वृद्धि", desc: "हमारे प्लेटफ़ॉर्म पर सूचीबद्ध व्यापारियों को औसतन 60% अधिक ग्राहक मिलते हैं।" },
+        { icon: "🤝", title: "Trust", desc: "Every listing and review is verified — we prioritize transparency." },
+        { icon: "📍", title: "Localness", desc: "Indore first — every feature is built around the city's needs." },
+        { icon: "🚀", title: "Simplicity", desc: "Technology should be simple — our platform can be run by merchants of any age." },
+        { icon: "💚", title: "Community", desc: "We build relationships, not just business — we treat every interaction as equal." },
+        { icon: "📈", title: "Growth", desc: "Merchants listed on our platform get an average of 60% more customers." },
       ],
       whyChoose: [
-        { title: "विश्वासीय समुदाय", desc: "सत्यापित सूचियों और वास्तविक ग्राहक समीक्षाओं के माध्यम से भरोसा बनाएं।" },
-        { title: "स्थानीय फोकस", desc: "इंदौर के प्रत्येक क्षेत्र — विजय नगर से राजवाड़ा तक — विशेष रूप से सेवा प्रदान की जाती है।" },
-        { title: "सरल प्रबंधन", desc: "एकल डैशबोर्ड से अपनी सूची, अपॉइंटमेंट और ग्राहक संदेशों का प्रबंधन करें।" },
-        { title: "विकास-केंद्रित", desc: "हमारे विपणन टूल्स और विश्लेषिकी आपके व्यवसाय के विस्तार में मदद करते हैं।" },
-        { title: "सस्ता समाधान", desc: "महंगे प्लेटफ़ॉर्म शुल्क के बिना आवश्यक सुविधाएँ प्राप्त करें — हमारी मूल्य निर्धारण स्थानीय व्यापारियों के लिए डिज़ाइन की गई है।" },
+        { title: "Trusted Community", desc: "Build trust through verified listings and genuine customer reviews." },
+        { title: "Local Focus", desc: "Every area of Indore — from Vijay Nagar to Rajwada — is served specially." },
+        { title: "Simple Management", desc: "Manage your listings, appointments, and customer messages from a single dashboard." },
+        { title: "Growth-Focused", desc: "Our marketing tools and analytics help expand your business." },
+        { title: "Affordable Solution", desc: "Get the essential features without expensive platform fees — our pricing is designed for local merchants." },
       ],
       stats: [
-        { label: "सक्रिय व्यापारियों", value: "800+" },
-        { label: "मासिक उपयोगकर्ता", value: "40,000+" },
-        { label: "सेवा वाले क्षेत्र", value: "25+" },
-        { label: "औसत ग्राहक वृद्धि", value: "60%" },
-        { label: "सत्यापित समीक्षाएँ", value: "15,000+" },
-        { label: "टीम सदस्य", value: "15+" },
+        { label: "Active Merchants", value: "800+" },
+        { label: "Monthly Users", value: "40,000+" },
+        { label: "Areas Served", value: "25+" },
+        { label: "Avg Customer Growth", value: "60%" },
+        { label: "Verified Reviews", value: "15,000+" },
+        { label: "Team Members", value: "15+" },
       ],
     },
   followup: {
-    story: "FollowUp का जन्म एक सामान्य समस्या से हुआ — व्यापारी, डॉक्टर, लॉयर और प्रोफेशनल्स के पास सैकड़ों क्लाइंट हैं, लेकिन फॉलो-अप भूलने से डील नहीं होती।\n\n2025 में, हमने FollowUp लॉन्च किया — एक स्मार्ट रिमाइंडर और टास्क मैनेजमेंट प्लेटफ़ॉर्म जो AI से चलता है।\n\nआज, FollowUp 2,000+ प्रोफेशनल्स को उनके कार्य को व्यवस्थित करने में मदद करता है — इंदौर में सबसे तेज़ी से बढ़ता प्रोडक्टिविटी टूल।",
-    mission: "हमारा मिशन हर प्रोफेशनल को उनके कार्य को स्वचालित करना है — ताकि वे फॉलो-अप ना भूलें और अपने बिज़नेस को बढ़ा सकें।",
+    story: "FollowUp was born from a common problem — merchants, doctors, lawyers, and professionals have hundreds of clients, but deals fall through when follow-ups are forgotten.\n\nIn 2025, we launched FollowUp — a smart reminder and task management platform powered by AI.\n\nToday, FollowUp helps 2,000+ professionals organize their work — Indore's fastest-growing productivity tool.",
+    mission: "Our mission is to help every professional automate their work — so they never miss a follow-up and can grow their business.",
     values: [
-      { icon: "📅", title: "स्मार्ट", desc: "AI-संचालित रिमाइंडर — सही समय पर सही संदेश।" },
-      { icon: "🔄", title: "स्वचालन", desc: "दोहराए जाने वाले कार्य स्वचालित — समय बचाएं।" },
-      { icon: "📊", title: "डेटा", desc: "प्रोडक्टिविटी का डेटा — सुधारने के सुझाव।" },
-      { icon: "🤝", title: "टीम", desc: "टीम के साथ सहयोग — सबको एक साथ।" },
+      { icon: "📅", title: "Smart", desc: "AI-powered reminders — the right message at the right time." },
+      { icon: "🔄", title: "Automation", desc: "Repetitive tasks automated — save time." },
+      { icon: "📊", title: "Data", desc: "Productivity data — suggestions to improve." },
+      { icon: "🤝", title: "Team", desc: "Collaborate with your team — all together." },
     ],
   },
   cloudplayer: {
-    story: "Cloud Player की शुरुआत तब हुई जब एक मीडिया कंपनी ने देखा कि उपयोगकर्ता क्लाउड स्ट्रीमिंग में बफ़रिंग और लैग से तंग आ चुके हैं।\n\n2024 में, हमने Cloud Player लॉन्च किया — क्लाउड-नेटिव आर्किटेक्चर के साथ ज़ीरो बफ़रिंग स्ट्रीमिंग।\n\nआज, Cloud Player 10,000+ सक्रिय उपयोगकर्ताओं को 4K HDR कंटेंट प्रदान करता है — इंडिया में सबसे तेज़ क्लाउड स्ट्रीमिंग प्लेटफ़ॉर्म।",
-    mission: "हमारा मिशन हर भारतीय को अविश्वसनीय मूल्य पर प्रीमियम मीडिया अनुभव देना है — बफ़रिंग के बिना।",
+    story: "Cloud Player began when a media company saw that users were frustrated with buffering and lag in cloud streaming.\n\nIn 2024, we launched Cloud Player — zero-buffering streaming built on cloud-native architecture.\n\nToday, Cloud Player delivers 4K HDR content to 10,000+ active users — India's fastest cloud streaming platform.",
+    mission: "Our mission is to give every Indian a premium media experience at an unbeatable value — without buffering.",
     values: [
-      { icon: "⚡", title: "गति", desc: "ज़ीरो बफ़रिंग — तुरंत प्ले।" },
-      { icon: "☁️", title: "क्लाउड", desc: "कहीं से भी, किसी भी डिवाइस से।" },
-      { icon: "🎬", title: "गुणवत्ता", desc: "4K HDR — सिनेमा जैसा अनुभव।" },
-      { icon: "🔊", title: "ध्वनि", desc: "Dolby Atmos — श्रवण अनुभव।" },
+      { icon: "⚡", title: "Speed", desc: "Zero buffering — instant play." },
+      { icon: "☁️", title: "Cloud", desc: "Anywhere, on any device." },
+      { icon: "🎬", title: "Quality", desc: "4K HDR — a cinematic experience." },
+      { icon: "🔊", title: "Audio", desc: "Dolby Atmos — an immersive sound experience." },
     ],
   },
   paisaflow: {
-    story: "PaisaFlow का जन्म एक सवाल से हुआ — भारत में करोड़ों लोग हैं जो निवेश करना चाहते हैं, लेकिन सही मार्गदर्शन नहीं मिलता।\n\n2025 में, हमने PaisaFlow लॉन्च किया — एक स्मार्ट इन्वेस्टमेंट प्लेटफ़ॉर्म जो AI-आधारित रिस्क एनालिसिस प्रदान करता है।\n\nआज, PaisaFlow 5,000+ निवेशकों को सही निवेश निर्णय लेने में मदद करता है — इंदौर में सबसे विश्वसनीय वित्तीय प्लेटफ़ॉर्म।",
-    mission: "हमारा मिशन हर भारतीय को सुरक्षित और लाभदायक निवेश के अवसर प्रदान करना है — छोटे निवेशकों से बड़े निवेशकों तक।",
+    story: "PaisaFlow was born from a question — millions of Indians want to invest, but lack the right guidance.\n\nIn 2025, we launched PaisaFlow — a smart investment platform offering AI-based risk analysis.\n\nToday, PaisaFlow helps 5,000+ investors make the right investment decisions — Indore's most trusted financial platform.",
+    mission: "Our mission is to provide every Indian with safe and profitable investment opportunities — from small investors to large.",
     values: [
-      { icon: "💸", title: "लाभ", desc: "स्मार्ट निवेश — बेहतर रिटर्न।" },
-      { icon: "🛡️", title: "सुरक्षा", desc: "AI रिस्क स्कोर — सुरक्षित निवेश।" },
-      { icon: "📈", title: "ट्रैकिंग", desc: "रियल-टाइम पोर्टफोलियो।" },
-      { icon: "🏦", title: "बैंक", desc: "सभी प्रमुख बैंकों से जुड़ाव।" },
+      { icon: "💸", title: "Profit", desc: "Smart investing — better returns." },
+      { icon: "🛡️", title: "Security", desc: "AI risk score — safe investing." },
+      { icon: "📈", title: "Tracking", desc: "Real-time portfolio." },
+      { icon: "🏦", title: "Bank", desc: "Connected to all major banks." },
     ],
   },
   yaadrakh: {
-    story: "YaadRakh का जन्म एक व्यक्ति की समस्या से हुआ — ज़िंदगी में इतने काम होते हैं कि कुछ ना कुछ भूल ही जाता है।\n\n2025 में, हमने YaadRakh लॉन्च किया — एक AI-संचालित नोट्स और रिमाइंडर ऐप जो आपकी बातें सुकर नोट्स बनाता है।\n\nआज, YaadRakh 3,000+ उपयोगकर्ताओं को उनकी दैनिक ज़िम्मेदारियां याद रखने में मदद करता है — इंदौर में सबसे अच्छा प्रोडक्टिविटी ऐप।",
-    mission: "हमारा मिशन हर व्यक्ति को उनकी दैनिक ज़िम्मेदारियां याद रखने में मदद करना है — AI की सहायता से।",
+    story: "YaadRakh was born from a personal problem — life is so busy that something or the other is always forgotten.\n\nIn 2025, we launched YaadRakh — an AI-powered notes and reminder app that turns your thoughts into easy notes.\n\nToday, YaadRakh helps 3,000+ users remember their daily responsibilities — Indore's best productivity app.",
+    mission: "Our mission is to help every person remember their daily responsibilities — with the help of AI.",
     values: [
-      { icon: "🧠", title: "AI", desc: "AI नोट्स — संगठित और खोजने योग्य।" },
-      { icon: "⏰", title: "रिमाइंडर", desc: "स्मार्ट रिमाइंडर — कभी ना भूलें।" },
-      { icon: "🔄", title: "सिंक", desc: "क्रॉस-डिवाइस — हर जगह।" },
-      { icon: "🔒", title: "सुरक्षा", desc: "एन्क्रिप्टेड — सिर्फ आपका।" },
+      { icon: "🧠", title: "AI", desc: "AI notes — organized and searchable." },
+      { icon: "⏰", title: "Reminder", desc: "Smart reminders — never forget." },
+      { icon: "🔄", title: "Sync", desc: "Cross-device — everywhere." },
+      { icon: "🔒", title: "Security", desc: "Encrypted — just yours." },
     ],
   },
   "sarkar-ai": {
-    story: "Sarkar AI का जन्म 2024 में हुआ — जब AI तकनीक ने भारत में तेज़ी से प्रगति की।\n\nहमने देखा कि छोटे व्यापारियों और शिक्षकों के पास AI का उपयोग करने का साधन नहीं — Sarkar AI ने इस अंतर को दूर किया।\n\nआज, Sarkar AI 2,000+ उपयोगकर्ताओं को AI असिस्टेंट, कार्य स्वचालन और बहुभाषी समर्थन प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को AI तकनीक का लाभ प्रदान करना है — सरल, किफ़ायती और प्रभावी।",
+    story: "Sarkar AI was born in 2024 — when AI technology advanced rapidly in India.\n\nWe saw that small merchants and teachers lacked the means to use AI — Sarkar AI bridged that gap.\n\nToday, Sarkar AI provides 2,000+ users with an AI assistant, task automation, and multilingual support.",
+    mission: "Our mission is to give every Indian the benefit of AI technology — simple, affordable, and effective.",
     values: [
-      { icon: "🤖", title: "AI", desc: "24/7 उपलब्ध — बुद्धिमान सहायक।" },
-      { icon: "⚡", title: "तेज़", desc: "मिलीसेकंड में उत्तर।" },
-      { icon: "🌐", title: "भाषा", desc: "हिंदी और 10+ भाषाएं।" },
-      { icon: "🔧", title: "स्वचालन", desc: "कार्य स्वचालित — समय बचाएं।" },
+      { icon: "🤖", title: "AI", desc: "Available 24/7 — an intelligent assistant." },
+      { icon: "⚡", title: "Fast", desc: "Answers in milliseconds." },
+      { icon: "🌐", title: "Language", desc: "Hindi and 10+ languages." },
+      { icon: "🔧", title: "Automation", desc: "Tasks automated — save time." },
     ],
   },
   sarkarfood: {
-    story: "SarkarFood की शुरुआत 2024 में हुई — इंदौर के स्वादिष्ट भोजन को हर घर तक पहुंचाने के लिए।\n\nहमने देखा कि स्थानीय रेस्टोरेंट और घरेलू खाना बनाने वालों को ग्राहकों तक पहुंचने के लिए बड़े प्लेटफ़ॉर्मों की भारी फीस चुकानी पड़ती है।\n\nआज, SarkarFood 50+ रेस्टोरेंट और 10,000+ सक्रिय ग्राहकों को जोड़ता है — इंदौर का अपना खाद्य प्लेटफ़ॉर्म।",
-    mission: "हमारा मिशन इंदौर के स्वादिष्ट भोजन को हर घर तक पहुंचाना है — तेज़ डिलीवरी और किफ़ायती मूल्य पर।",
+    story: "SarkarFood began in 2024 — to bring Indore's delicious food to every home.\n\nWe saw that local restaurants and home cooks have to pay heavy fees to large platforms just to reach customers.\n\nToday, SarkarFood connects 50+ restaurants and 10,000+ active customers — Indore's own food platform.",
+    mission: "Our mission is to bring Indore's delicious food to every home — with fast delivery and affordable prices.",
     values: [
-      { icon: "🍔", title: "स्वाद", desc: "50+ किचन — हर स्वाद के अनुसार।" },
-      { icon: "⚡", title: "तेज़", desc: "30 मिनट डिलीवरी।" },
-      { icon: "💰", title: "किफ़ायती", desc: "₹99 से शुरू।" },
-      { icon: "🎁", title: "रिवॉर्ड्स", desc: "हर ऑर्डर पर पॉइंट्स।" },
+      { icon: "🍔", title: "Taste", desc: "50+ kitchens — for every palate." },
+      { icon: "⚡", title: "Fast", desc: "30-minute delivery." },
+      { icon: "💰", title: "Affordable", desc: "Starting at ₹99." },
+      { icon: "🎁", title: "Rewards", desc: "Points on every order." },
     ],
   },
   sarkarfinance: {
-    story: "SarkarFinance का जन्म 2025 में हुआ — जब भारत में छोटे व्यापारियों और व्यक्तियों को समय पर लोन नहीं मिलता था।\n\nहमने देखा कि पारंपरिक बैंकों की प्रक्रिया जटिल और समय लेने वाली है — SarkarFinance ने इसे सरल बनाया।\n\nआज, SarkarFinance 3,000+ ग्राहकों को तत्काल लोन और वित्तीय सलाह प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को समय पर वित्तीय सहायता प्रदान करना है — जटिल प्रक्रिया के बिना।",
+    story: "SarkarFinance was born in 2025 — when small merchants and individuals in India couldn't get loans on time.\n\nWe saw that traditional bank processes are complex and time-consuming — SarkarFinance simplified them.\n\nToday, SarkarFinance provides 3,000+ customers with instant loans and financial advice.",
+    mission: "Our mission is to provide every Indian with timely financial assistance — without complex procedures.",
     values: [
-      { icon: "🏦", title: "तत्काल", desc: "तत्काल मंजूरी — कम दस्तावेज़।" },
-      { icon: "📱", title: "डिजिटल", desc: "ऑनलाइन प्रक्रिया — घर बैठे।" },
-      { icon: "💳", title: "लचीलापन", desc: "3-36 महीने की EMI।" },
-      { icon: "🔒", title: "सुरक्षा", desc: "बैंक-स्तरीय एन्क्रिप्शन।" },
+      { icon: "🏦", title: "Instant", desc: "Instant approval — minimal documents." },
+      { icon: "📱", title: "Digital", desc: "Online process — from home." },
+      { icon: "💳", title: "Flexibility", desc: "EMI from 3 to 36 months." },
+      { icon: "🔒", title: "Security", desc: "Bank-level encryption." },
     ],
   },
   sarkarpay: {
-    story: "SarkarPay का जन्म 2024 में हुआ — जब UPI और डिजिटल पेमेंट ने भारत को बदल दिया।\n\nहमने देखा कि छोटे व्यापारियों को पेमेंट कलेक्ट करने में समस्या होती है — SarkarPay ने एक सरल समाधान दिया।\n\nआज, SarkarPay 5,000+ व्यापारियों को सभी पेमेंट मोड एक जगह प्रदान करता है।",
-    mission: "हमारा मिशन हर व्यापारी को सरल और सुरक्षित पेमेंट समाधान देना है — बिना किसी छुपी फीस के।",
+    story: "SarkarPay was born in 2024 — when UPI and digital payments transformed India.\n\nWe saw that small merchants struggle to collect payments — SarkarPay offered a simple solution.\n\nToday, SarkarPay gives 5,000+ merchants every payment mode in one place.",
+    mission: "Our mission is to give every merchant a simple and secure payment solution — with no hidden fees.",
     values: [
-      { icon: "💰", title: "सब कुछ", desc: "UPI, कार्ड, नेट बैंकिंग।" },
-      { icon: "⚡", title: "तुरंत", desc: "T+0 सेटलमेंट।" },
-      { icon: "🔒", title: "सुरक्षा", desc: "PCI DSS कंप्लायंट।" },
-      { icon: "📈", title: "विश्लेषण", desc: "बिक्री डेटा एक जगह।" },
+      { icon: "💰", title: "Everything", desc: "UPI, card, net banking." },
+      { icon: "⚡", title: "Instant", desc: "T+0 settlement." },
+      { icon: "🔒", title: "Security", desc: "PCI DSS compliant." },
+      { icon: "📈", title: "Analytics", desc: "Sales data in one place." },
     ],
   },
   sarkarmart: {
-    story: "SarkarMart का जन्म 2024 में हुआ — इंदौर के स्थानीय व्यापारियों को ऑनलाइन मंच देने के लिए।\n\nहमने देखा कि स्थानीय ब्रांड और व्यापारी बड़े प्लेटफ़ॉर्मों के सामने मजबूर थे — SarkarMart ने उन्हें सशक्त बनाया।\n\nआज, SarkarMart 200+ स्थानीय ब्रांड और 15,000+ ग्राहकों को जोड़ता है।",
-    mission: "हमारा मिशन इंदौर के स्थानीय व्यापारियों को वैश्विक बाज़ार तक पहुंचाना है।",
+    story: "SarkarMart was born in 2024 — to give Indore's local merchants an online platform.\n\nWe saw that local brands and merchants were helpless before large platforms — SarkarMart empowered them.\n\nToday, SarkarMart connects 200+ local brands and 15,000+ customers.",
+    mission: "Our mission is to bring Indore's local merchants to the global market.",
     values: [
-      { icon: "🛍️", title: "स्थानीय", desc: "200+ स्थानीय ब्रांड।" },
-      { icon: "🚚", title: "डिलीवरी", desc: "24 घंटे के भीतर।" },
-      { icon: "💸", title: "कैशबैक", desc: "5-20% हर खरीदारी पर।" },
-      { icon: "🔄", title: "रिटर्न", desc: "7 दिन आसान रिटर्न।" },
+      { icon: "🛍️", title: "Local", desc: "200+ local brands." },
+      { icon: "🚚", title: "Delivery", desc: "Within 24 hours." },
+      { icon: "💸", title: "Cashback", desc: "5-20% on every purchase." },
+      { icon: "🔄", title: "Returns", desc: "7-day easy returns." },
     ],
   },
   sarkarlegal: {
-    story: "SarkarLegal का जन्म 2025 में हुआ — जब भारत में सामान्य लोगों को कानूनी मदद की सबसे अधिक जरूरत थी।\n\nहमने देखा कि वकीलों तक पहुंचना महंगा और जटिल है — SarkarLegal ने इसे सरल और किफ़ायती बनाया।\n\nआज, SarkarLegal 1,000+ ग्राहकों को वकील परामर्श और दस्तावेज़ सहायता प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को कानूनी मदद की सुविधा प्रदान करना है — घर बैठे, किफ़ायती शुल्क पर।",
+    story: "SarkarLegal was born in 2025 — when ordinary people in India most needed legal help.\n\nWe saw that reaching lawyers is expensive and complex — SarkarLegal made it simple and affordable.\n\nToday, SarkarLegal provides 1,000+ customers with lawyer consultations and document assistance.",
+    mission: "Our mission is to provide every Indian with easy access to legal help — from home, at affordable fees.",
     values: [
-      { icon: "⚖️", title: "परामर्श", desc: "अनुभवी वकील।" },
-      { icon: "📋", title: "दस्तावेज़", desc: "मुफ्त टेम्पलेट।" },
-      { icon: "📱", title: "ऑनलाइन", desc: "वीडियो कॉल पर।" },
-      { icon: "💰", title: "शुल्क", desc: "पहली कंसल्टेशन मुफ्त।" },
+      { icon: "⚖️", title: "Consultation", desc: "Experienced lawyers." },
+      { icon: "📋", title: "Documents", desc: "Free templates." },
+      { icon: "📱", title: "Online", desc: "Over video call." },
+      { icon: "💰", title: "Fees", desc: "First consultation free." },
     ],
   },
   "justdial-agent": {
-    story: "JustDial Agent का जन्म 2024 में हुआ — इंदौर के व्यापारियों को सही ग्राहकों तक पहुंचाने के लिए।\n\nहमने देखा कि स्थानीय व्यापारियों को अपने ग्राहकों तक पहुंचने के लिए डेटा की जरूरत है — JustDial Agent ने इसे पूरा किया।\n\nआज, JustDial Agent 3,233+ व्यापारों और 50,000+ उपयोगकर्ताओं को जोड़ता है।",
-    mission: "हमारा मिशन इंदौर के हर व्यापार को डिजिटल डायरेक्टरी में दृश्य बनाना है।",
+    story: "JustDial Agent was born in 2024 — to connect Indore's merchants with the right customers.\n\nWe saw that local merchants need data to reach their customers — JustDial Agent fulfilled that need.\n\nToday, JustDial Agent connects 3,233+ businesses and 50,000+ users.",
+    mission: "Our mission is to make every business in Indore visible in a digital directory.",
     values: [
-      { icon: "📇", title: "डायरेक्टरी", desc: "3,233+ व्यापार।" },
-      { icon: "📊", title: "एनालिटिक्स", desc: "बाज़ार डेटा।" },
-      { icon: "🎯", title: "लीड", desc: "संभावित ग्राहक।" },
-      { icon: "🏆", title: "रैंकिंग", desc: "प्रीमियम लिस्टिंग।" },
+      { icon: "📇", title: "Directory", desc: "3,233+ businesses." },
+      { icon: "📊", title: "Analytics", desc: "Market data." },
+      { icon: "🎯", title: "Leads", desc: "Potential customers." },
+      { icon: "🏆", title: "Ranking", desc: "Premium listing." },
     ],
   },
   sarkarmarketplace: {
-    story: "SarkarMarketplace का जन्म 2024 में हुआ — इंदौर की सबसे बड़ी डिजिटल डायरेक्टरी बनाने के लिए।\n\nहमने देखा कि इंदौर के व्यापारियों को एक केंद्रीकृत मंच चाहिए — SarkarMarketplace ने इसे सशक्त बनाया।\n\nआज, SarkarMarketplace 3,233+ व्यापारों और 100,000+ मासिक उपयोगकर्ताओं को सेवा देता है।",
-    mission: "हमारा मिशन इंदौर के हर व्यापार को एक ही मंच पर लाना है — सरल और प्रभावी।",
+    story: "SarkarMarketplace was born in 2024 — to build Indore's largest digital directory.\n\nWe saw that Indore's merchants needed a centralized platform — SarkarMarketplace empowered it.\n\nToday, SarkarMarketplace serves 3,233+ businesses and 100,000+ monthly users.",
+    mission: "Our mission is to bring every business in Indore onto a single platform — simple and effective.",
     values: [
-      { icon: "🧭", title: "व्यापार", desc: "3,233+ व्यापार।" },
-      { icon: "🔍", title: "सर्च", desc: "तुरंत खोजें।" },
-      { icon: "⭐", title: "रिव्यू", desc: "समुदाय रेटिंग।" },
-      { icon: "🤝", title: "नेटवर्क", desc: "व्यापारी जुड़ें।" },
+      { icon: "🧭", title: "Business", desc: "3,233+ businesses." },
+      { icon: "🔍", title: "Search", desc: "Instant search." },
+      { icon: "⭐", title: "Review", desc: "Community ratings." },
+      { icon: "🤝", title: "Network", desc: "Connect with merchants." },
     ],
   },
   ayurvedicwebsite: {
-    story: "Mera Ayurvedic का जन्म 2024 में हुआ — शुद्ध आयुर्वेदिक उत्पादों को हर भारतीय तक पहुंचाने के लिए।\n\nहमने देखा कि बाज़ार में नकली आयुर्वेदिक उत्पादों की भरमार है — Mera Ayurvedic ने असली और प्रमाणित उत्पादों का मंच बनाया।\n\nआज, Mera Ayurvedic 5,000+ ग्राहकों को AYUSH प्रमाणित उत्पाद प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को शुद्ध और प्रमाणित आयुर्वेदिक उत्पाद देना है — किफ़ायती मूल्य पर।",
+    story: "Mera Ayurvedic was born in 2024 — to bring pure Ayurvedic products to every Indian.\n\nWe saw that the market is flooded with fake Ayurvedic products — Mera Ayurvedic built a platform for genuine, certified products.\n\nToday, Mera Ayurvedic provides AYUSH-certified products to 5,000+ customers.",
+    mission: "Our mission is to give every Indian pure and certified Ayurvedic products — at affordable prices.",
     values: [
-      { icon: "🪷", title: "शुद्ध", desc: "100% प्राकृतिक।" },
-      { icon: "🏆", title: "प्रमाणन", desc: "AYUSH प्रमाणित।" },
-      { icon: "👨‍⚕️", title: "परामर्श", desc: "वैद्य निःशुल्क।" },
-      { icon: "💰", title: "मूल्य", desc: "₹99 से शुरू।" },
+      { icon: "🪷", title: "Pure", desc: "100% natural." },
+      { icon: "🏆", title: "Certification", desc: "AYUSH certified." },
+      { icon: "👨‍⚕️", title: "Consultation", desc: "Free vaidya consultation." },
+      { icon: "💰", title: "Value", desc: "Starting at ₹99." },
     ],
   },
   sarkarghar: {
-    story: "SarkarGhar का जन्म 2025 में हुआ — इंदौर में घर खोजने की प्रक्रिया को सरल बनाने के लिए।\n\nहमने देखा कि संपत्ति खोजना और खरीदना जटिल है — SarkarGhar ने इसे सरल और पारदर्शी बनाया।\n\nआज, SarkarGhar 500+ संपत्तियों और 2,000+ सक्रिय उपयोगकर्ताओं को सेवा देता है।",
-    mission: "हमारा मिशन हर इंदौरवासी को उनका सपनों का घर देना है — बिना किसी परेशानी के।",
+    story: "SarkarGhar was born in 2025 — to simplify the home-finding process in Indore.\n\nWe saw that finding and buying property is complex — SarkarGhar made it simple and transparent.\n\nToday, SarkarGhar serves 500+ properties and 2,000+ active users.",
+    mission: "Our mission is to give every resident of Indore their dream home — without any hassle.",
     values: [
-      { icon: "🏠", title: "संपत्ति", desc: "500+ सत्यापित।" },
-      { icon: "🔍", title: "खोज", desc: "स्थान अनुसार।" },
-      { icon: "📊", title: "मूल्य", desc: "AI अनुमान।" },
-      { icon: "🏦", title: "लोन", desc: "बैंक सहायता।" },
+      { icon: "🏠", title: "Property", desc: "500+ verified." },
+      { icon: "🔍", title: "Search", desc: "By location." },
+      { icon: "📊", title: "Value", desc: "AI estimate." },
+      { icon: "🏦", title: "Loan", desc: "Bank assistance." },
     ],
   },
   sarkarskills: {
-    story: "SarkarSkills का जन्म 2024 में हुआ — भारत के युवाओं को रोज़गार कौशल सिखाने के लिए।\n\nहमने देखा कि हज़ारों युवा पढ़ाई पूरी कर बैठे हैं बिना कौशल के — SarkarSkills ने उन्हें शक्ति दी।\n\nआज, SarkarSkills 2,000+ विद्यार्थियों को व्यावसायिक प्रशिक्षण और प्लेसमेंट प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय युवा को रोज़गार कौशल सिखाना है — किफ़ायती शुल्क पर।",
+    story: "SarkarSkills was born in 2024 — to teach India's youth employable skills.\n\nWe saw that thousands of young people finish their studies without skills — SarkarSkills empowered them.\n\nToday, SarkarSkills provides vocational training and placement to 2,000+ students.",
+    mission: "Our mission is to teach every Indian youth employable skills — at affordable fees.",
     values: [
-      { icon: "🛠️", title: "कौशल", desc: "व्यावसायिक प्रशिक्षण।" },
-      { icon: "🎓", title: "प्रमाण-पत्र", desc: "प्रशिक्षण पूर्ण पर।" },
-      { icon: "💼", title: "नौकरी", desc: "60% प्लेसमेंट।" },
-      { icon: "💰", title: "किश्त", desc: "₹500/माह से।" },
+      { icon: "🛠️", title: "Skill", desc: "Vocational training." },
+      { icon: "🎓", title: "Certificate", desc: "On training completion." },
+      { icon: "💼", title: "Job", desc: "60% placement." },
+      { icon: "💰", title: "Installment", desc: "From ₹500/month." },
     ],
   },
   "hyperframes-realestate": {
-    story: "Hyperframes Real Estate का जन्म 2025 में हुआ — रियल एस्टेट को वीडियो-आधारित बनाने के लिए।\n\nहमने देखा कि संपत्ति देखने के लिए घूमना पड़ता है — Hyperframes ने वीडियो टूर से इसे आसान बनाया।\n\nआज, Hyperframes 200+ संपत्तियों और 5,000+ उपयोगकर्ताओं को वीडियो-आधारित सेवा प्रदान करता है।",
-    mission: "हमारा मिशन रियल एस्टेट को वीडियो-आधारित और पारदर्शी बनाना है — घर बैठे संपत्ति देखें।",
+    story: "Hyperframes Real Estate was born in 2025 — to make real estate video-based.\n\nWe saw that you have to travel to view properties — Hyperframes made it easy with video tours.\n\nToday, Hyperframes provides video-based services to 200+ properties and 5,000+ users.",
+    mission: "Our mission is to make real estate video-based and transparent — view properties from home.",
     values: [
-      { icon: "🎥", title: "वीडियो", desc: "4K वीडियो टूर।" },
-      { icon: "🗺️", title: "लोकेशन", desc: "Google Maps।" },
-      { icon: "📊", title: "मूल्य", desc: "बाज़ार रुझान।" },
-      { icon: "💰", title: "लोन", desc: "15+ बैंक पार्टनर।" },
+      { icon: "🎥", title: "Video", desc: "4K video tours." },
+      { icon: "🗺️", title: "Location", desc: "Google Maps." },
+      { icon: "📊", title: "Value", desc: "Market trends." },
+      { icon: "💰", title: "Loan", desc: "15+ bank partners." },
     ],
   },
   sikshahub: {
-    story: "SikshaHub का जन्म 2024 में हुआ — गुणवत्तापूर्ण शिक्षा को हर घर तक पहुंचाने के लिए।\n\nहमने देखा कि छोटे शहरों में शिक्षा की गुणवत्ता कम है — SikshaHub ने ऑनलाइन मंच बनाया।\n\nआज, SikshaHub 3,000+ विद्यार्थियों को CBSE/ICSE/MP Board सामग्री और वीडियो कक्षाएं प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय बच्चे को गुणवत्तापूर्ण शिक्षा देना है — किफ़ायती शुल्क पर।",
+    story: "SikshaHub was born in 2024 — to bring quality education to every home.\n\nWe saw that the quality of education in small towns is low — SikshaHub built an online platform.\n\nToday, SikshaHub provides CBSE/ICSE/MP Board material and video classes to 3,000+ students.",
+    mission: "Our mission is to give every Indian child quality education — at affordable fees.",
     values: [
-      { icon: "📚", title: "सामग्री", desc: "CBSE, ICSE, MP Board।" },
-      { icon: "🎥", title: "कक्षाएं", desc: "वीडियो कक्षाएं।" },
-      { icon: "👨‍🏫", title: "ट्यूशन", desc: "लाइव सत्र।" },
-      { icon: "💰", title: "शुल्क", desc: "₹199/माह से।" },
+      { icon: "📚", title: "Content", desc: "CBSE, ICSE, MP Board." },
+      { icon: "🎥", title: "Classes", desc: "Video classes." },
+      { icon: "👨‍🏫", title: "Tuition", desc: "Live sessions." },
+      { icon: "💰", title: "Fees", desc: "From ₹199/month." },
     ],
   },
   sarkartravel: {
-    story: "SarkarTravel का जन्म 2024 में हुआ — यात्रा को सरल और किफ़ायती बनाने के लिए।\n\nहमने देखा कि यात्रा बुकिंग में कई मध्यस्थ हैं — SarkarTravel ने सीधा मंच बनाया।\n\nआज, SarkarTravel 2,000+ यात्रियों को फ्लाइट, होटल और पैकेज बुकिंग प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को यात्रा को सरल और किफ़ायती बनाना है।",
+    story: "SarkarTravel was born in 2024 — to make travel simple and affordable.\n\nWe saw that travel booking has many middlemen — SarkarTravel built a direct platform.\n\nToday, SarkarTravel provides flight, hotel, and package booking to 2,000+ travelers.",
+    mission: "Our mission is to make travel simple and affordable for every Indian.",
     values: [
-      { icon: "✈️", title: "बुकिंग", desc: "फ्लाइट, होटल, पैकेज।" },
-      { icon: "💰", title: "दर", desc: "सर्वोत्तम दर।" },
-      { icon: "📅", title: "लचीलापन", desc: "बदलें या रद्द करें।" },
-      { icon: "🛡️", title: "बीमा", desc: "यात्रा बीमा।" },
+      { icon: "✈️", title: "Booking", desc: "Flight, hotel, package." },
+      { icon: "💰", title: "Rate", desc: "Best rates." },
+      { icon: "📅", title: "Flexibility", desc: "Change or cancel." },
+      { icon: "🛡️", title: "Insurance", desc: "Travel insurance." },
     ],
   },
   sarkardukaan: {
-    story: "SarkarDukaan का जन्म 2024 में हुआ — छोटे दुकानदारों को डिजिटल बनाने के लिए।\n\nहमने देखा कि दुकानदार ऑनलाइन जाना चाहते हैं लेकिन तकनीक नहीं आती — SarkarDukaan ने आसान समाधान दिया।\n\nआज, SarkarDukaan 1,000+ दुकानदारों को डिजिटल स्टोर और डिलीवरी नेटवर्क प्रदान करता है।",
-    mission: "हमारा मिशन हर छोटे दुकानदार को डिजिटल बनाना है — सरल और किफ़ायती तरीके से।",
+    story: "SarkarDukaan was born in 2024 — to digitize small shopkeepers.\n\nWe saw that shopkeepers want to go online but lack the technical know-how — SarkarDukaan offered an easy solution.\n\nToday, SarkarDukaan provides a digital store and delivery network to 1,000+ shopkeepers.",
+    mission: "Our mission is to digitize every small shopkeeper — in a simple and affordable way.",
     values: [
-      { icon: "🛒", title: "स्टोर", desc: "मिनटों में तैयार।" },
-      { icon: "📱", title: "प्रबंधन", desc: "फोन से सब कुछ।" },
-      { icon: "🚚", title: "डिलीवरी", desc: "शहर भर में।" },
-      { icon: "💳", title: "भुगतान", desc: "UPI, कार्ड, COD।" },
+      { icon: "🛒", title: "Store", desc: "Ready in minutes." },
+      { icon: "📱", title: "Management", desc: "Everything from your phone." },
+      { icon: "🚚", title: "Delivery", desc: "Across the city." },
+      { icon: "💳", title: "Payment", desc: "UPI, card, COD." },
     ],
   },
   sarkarbazaar: {
-    story: "SarkarBazaar का जन्म 2024 में हुआ — इंदौर के स्थानीय व्यापारियों को वैश्विक बाज़ार तक पहुंचाने के लिए।\n\nहमने देखा कि स्थानीय उत्पादों को वैश्विक मंच नहीं मिलता — SarkarBazaar ने निर्यात का मंच बनाया।\n\nआज, SarkarBazaar 1,000+ व्यापारियों को B2B और B2C दोनों मंच प्रदान करता है।",
-    mission: "हमारा मिशन इंदौर के स्थानीय उत्पादों को विश्व भर में पहुंचाना है।",
+    story: "SarkarBazaar was born in 2024 — to bring Indore's local merchants to the global market.\n\nWe saw that local products don't get a global platform — SarkarBazaar built an export platform.\n\nToday, SarkarBazaar provides both B2B and B2C platforms to 1,000+ merchants.",
+    mission: "Our mission is to take Indore's local products across the world.",
     values: [
-      { icon: "🏪", title: "स्थानीय", desc: "1,000+ व्यापारी।" },
-      { icon: "🌐", title: "निर्यात", desc: "वैश्विक पहुंच।" },
-      { icon: "💰", title: "मूल्य", desc: "थोक दर।" },
-      { icon: "🚚", title: "शिपिंग", desc: "भारत भर में।" },
+      { icon: "🏪", title: "Local", desc: "1,000+ merchants." },
+      { icon: "🌐", title: "Export", desc: "Global reach." },
+      { icon: "💰", title: "Value", desc: "Wholesale rates." },
+      { icon: "🚚", title: "Shipping", desc: "Across India." },
     ],
   },
   sarkarjobs: {
-    story: "SarkarJobs का जन्म 2024 में हुआ — भारत के युवाओं को सही नौकरी से जोड़ने के लिए।\n\nहमने देखा कि नौकरी खोजने में धोखाधड़ी होती है — SarkarJobs ने वेरिफ़ाइड नियोक्ताओं का मंच बनाया।\n\nआज, SarkarJobs 500+ कंपनियों और 10,000+ उम्मीदवारों को जोड़ता है।",
-    mission: "हमारा मिशन हर भारतीय युवा को सही और वेरिफ़ाइड नौकरी देना है।",
+    story: "SarkarJobs was born in 2024 — to connect India's youth with the right jobs.\n\nWe saw that job hunting involves fraud — SarkarJobs built a platform of verified employers.\n\nToday, SarkarJobs connects 500+ companies and 10,000+ candidates.",
+    mission: "Our mission is to give every Indian youth the right and verified job.",
     values: [
-      { icon: "💼", title: "नौकरी", desc: "योग्यता के अनुसार।" },
-      { icon: "🏢", title: "कंपनियां", desc: "500+ वेरिफ़ाइड।" },
-      { icon: "📝", title: "रिज्यूमे", desc: "प्रोफ़ेशनल टेम्पलेट।" },
-      { icon: "💰", title: "वेतन", desc: "उद्योग मानक।" },
+      { icon: "💼", title: "Job", desc: "As per your qualification." },
+      { icon: "🏢", title: "Companies", desc: "500+ verified." },
+      { icon: "📝", title: "Resume", desc: "Professional template." },
+      { icon: "💰", title: "Salary", desc: "Industry standard." },
     ],
   },
   sarkared: {
-    story: "SarkarEd का जन्म 2024 में हुआ — भारत के युवाओं को करियर-ओरिएंटेड कौशल सिखाने के लिए।\n\nहमने देखा कि पारंपरिक शिक्षा रोज़गार के लिए पर्याप्त नहीं — SarkarEd ने व्यावसायिक प्रशिक्षण शुरू किया।\n\nआज, SarkarEd 3,000+ विद्यार्थियों को डिजिटल मार्केटिंग, AI और वेब डेवलपमेंट सिखाता है।",
-    mission: "हमारा मिशन हर भारतीय युवा को करियर-ओरिएंटेड कौशल सिखाना है।",
+    story: "SarkarEd was born in 2024 — to teach India's youth career-oriented skills.\n\nWe saw that traditional education is not enough for employment — SarkarEd started vocational training.\n\nToday, SarkarEd teaches 3,000+ students digital marketing, AI, and web development.",
+    mission: "Our mission is to teach every Indian youth career-oriented skills.",
     values: [
-      { icon: "🎓", title: "कोर्स", desc: "AI, वेब, मार्केटिंग।" },
-      { icon: "👨‍🏫", title: "शिक्षक", desc: "10+ वर्ष अनुभव।" },
-      { icon: "📜", title: "प्रमाण-पत्र", desc: "प्रशिक्षण पूर्ण पर।" },
-      { icon: "💼", title: "नौकरी", desc: "70% प्लेसमेंट।" },
+      { icon: "🎓", title: "Courses", desc: "AI, web, marketing." },
+      { icon: "👨‍🏫", title: "Teacher", desc: "10+ years experience." },
+      { icon: "📜", title: "Certificate", desc: "On training completion." },
+      { icon: "💼", title: "Job", desc: "70% placement." },
     ],
   },
   sarkarsarkar: {
-    story: "SarkarSarkar का जन्म 2025 में हुआ — सरकारी सेवाओं को हर भारतीय तक पहुंचाने के लिए।\n\nहमने देखा कि सरकारी सेवाओं में कतार और देरी है — SarkarSarkar ने इसे डिजिटल बनाया।\n\nआज, SarkarSarkar 5,000+ नागरिकों को आधार, पैन, पासपोर्ट और अन्य सेवाएं प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को सरकारी सेवाओं की सुविधा देना है — घर बैठे।",
+    story: "SarkarSarkar was born in 2025 — to bring government services to every Indian.\n\nWe saw that government services involve queues and delays — SarkarSarkar made them digital.\n\nToday, SarkarSarkar provides Aadhaar, PAN, passport, and other services to 5,000+ citizens.",
+    mission: "Our mission is to give every Indian easy access to government services — from home.",
     values: [
-      { icon: "🏛️", title: "सेवाएं", desc: "आधार, पैन, पासपोर्ट।" },
-      { icon: "📋", title: "आवेदन", desc: "फॉर्म भरने में सहायता।" },
-      { icon: "📱", title: "ट्रैकिंग", desc: "स्थिति लाइव।" },
-      { icon: "💰", title: "योजनाएं", desc: "सरकारी योजनाएं।" },
+      { icon: "🏛️", title: "Services", desc: "Aadhaar, PAN, passport." },
+      { icon: "📋", title: "Application", desc: "Help filling forms." },
+      { icon: "📱", title: "Tracking", desc: "Live status." },
+      { icon: "💰", title: "Schemes", desc: "Government schemes." },
     ],
   },
   sarkarwellness: {
-    story: "SarkarWellness का जन्म 2024 में हुआ — आयुर्वेद और योग को आधुनिक विधि से जोड़ने के लिए।\n\nहमने देखा कि लोग स्वास्थ्य के लिए प्राकृतिक तरीके खोज रहे हैं — SarkarWellness ने पंचकर्म, योग और पोषण का मंच बनाया।\n\nआज, SarkarWellness 2,000+ ग्राहकों को आयुर्वेदिक उपचार और स्वास्थ्य योजना प्रदान करता है।",
-    mission: "हमारा मिशन हर भारतीय को प्राकृतिक और आयुर्वेदिक स्वास्थ्य सेवा देना है।",
+    story: "SarkarWellness was born in 2024 — to combine Ayurveda and yoga with modern methods.\n\nWe saw that people are seeking natural ways for health — SarkarWellness built a platform for panchakarma, yoga, and nutrition.\n\nToday, SarkarWellness provides Ayurvedic treatments and wellness plans to 2,000+ customers.",
+    mission: "Our mission is to give every Indian natural and Ayurvedic health services.",
     values: [
-      { icon: "🌿", title: "उपचार", desc: "पंचकर्म, योग।" },
-      { icon: "👨‍⚕️", title: "परामर्श", desc: "वैद्य सलाह।" },
-      { icon: "🥗", title: "आहार", desc: "आयुर्वेदिक पोषण।" },
-      { icon: "📊", title: "ट्रैकिंग", desc: "स्वास्थ्य प्रगति।" },
+      { icon: "🌿", title: "Treatment", desc: "Panchakarma, yoga." },
+      { icon: "👨‍⚕️", title: "Consultation", desc: "Vaidya advice." },
+      { icon: "🥗", title: "Diet", desc: "Ayurvedic nutrition." },
+      { icon: "📊", title: "Tracking", desc: "Health progress." },
     ],
   },
 };
@@ -311,16 +311,16 @@ export function AboutPage({ brand }: { brand: any }) {
         <div className="relative mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: primary }} />
-            {brand.name} के बारे में
+            {brand.name} — About
           </div>
           <h1 className="heading-xl mb-6">
             <span style={{ color: primary }}>{brand.name}</span>{" "}
-            <span className="gradient-text">— कहानी</span>
+            <span className="gradient-text">— Our Story</span>
           </h1>
           <p className="text-lg md:text-xl opacity-60 max-w-2xl mx-auto leading-relaxed">{brand.tagline}</p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <a href={`/contact`} className="btn-primary">संपर्क करें</a>
-            <a href={`/services`} className="btn-secondary">हमारी सेवाएं</a>
+            <a href={`/contact`} className="btn-primary">Contact Us</a>
+            <a href={`/services`} className="btn-secondary">Our Services</a>
           </div>
         </div>
       </section>
@@ -330,14 +330,14 @@ export function AboutPage({ brand }: { brand: any }) {
         <section className="section">
           <div className="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-caption mb-3" style={{ color: primary }}>हमारी कहानी</p>
-              <h2 className="heading-md mb-4" style={{ color: primary }}>इंदौर से, इंदौर के लिए</h2>
+              <p className="text-caption mb-3" style={{ color: primary }}>Our Story</p>
+              <h2 className="heading-md mb-4" style={{ color: primary }}>From Indore, for Indore</h2>
               <p className="text-body leading-relaxed whitespace-pre-line mb-4">
                 {about.story}
               </p>
               {about.mission && (
                 <div className="rounded-2xl p-5 border-l-4" style={{ borderColor: primary, backgroundColor: `${primary}05` }}>
-                  <p className="text-sm font-semibold mb-1" style={{ color: primary }}>हमारा मिशन</p>
+                  <p className="text-sm font-semibold mb-1" style={{ color: primary }}>Our Mission</p>
                   <p className="text-sm opacity-70">{about.mission}</p>
                 </div>
               )}
@@ -348,7 +348,7 @@ export function AboutPage({ brand }: { brand: any }) {
                   <div className="text-center">
                     <div className="text-8xl mb-4">{brand.emoji ?? "🤝"}</div>
                     <p className="text-2xl font-bold" style={{ color: primary }}>{brand.name}</p>
-                    <p className="text-sm opacity-50 mt-1">इंदौर का समुदाय नेटवर्क</p>
+                    <p className="text-sm opacity-50 mt-1">Indore's Community Network</p>
                   </div>
                 </div>
               </div>
@@ -363,8 +363,8 @@ export function AboutPage({ brand }: { brand: any }) {
         <section className="section-tight">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <p className="text-caption mb-3" style={{ color: primary }}>हमारे मूल्य</p>
-              <h2 className="heading-md" style={{ color: primary }}>{brand.name} ko alag banane wali cheezein</h2>
+              <p className="text-caption mb-3" style={{ color: primary }}>Our Values</p>
+              <h2 className="heading-md" style={{ color: primary }}>What Makes Us Different</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {about.values.map((v, i) => (
@@ -405,8 +405,8 @@ export function AboutPage({ brand }: { brand: any }) {
         <section className="section">
           <div className="mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <p className="text-caption mb-3" style={{ color: primary }}>लोग</p>
-              <h2 className="heading-md mb-4" style={{ color: primary }}>हमारी टीम से मिलें</h2>
+              <p className="text-caption mb-3" style={{ color: primary }}>People</p>
+              <h2 className="heading-md mb-4" style={{ color: primary }}>Meet Our Team</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {team.map((m: any, i: number) => (
@@ -427,11 +427,11 @@ export function AboutPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Saathe badhne ko taiyar?</h2>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Ready to Grow Together?</h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">
-                {brand.name} ke saath apni sehat ka khayal rakhein — aaj hi download karein.
+                {brand.name} — take care of your health, download today.
               </p>
-              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>बातचीत शुरू करें →</a>
+              <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Start the Conversation →</a>
             </div>
           </div>
         </div>

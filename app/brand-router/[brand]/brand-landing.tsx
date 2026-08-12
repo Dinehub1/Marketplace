@@ -1,5 +1,7 @@
 import { BrandHeader, BrandFooter } from "./brand-header";
 import { getBrandBusinesses } from "@/lib/brands";
+import { BusinessCard } from "@/components/directory/BusinessCard";
+import { SectionHeading } from "@/components/directory/SectionHeading";
 
 export async function BrandLanding({ brand }: { brand: any }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
@@ -14,162 +16,162 @@ export async function BrandLanding({ brand }: { brand: any }) {
   // Brand-specific hero content
   const brandHero: Record<string, { headline: string; subheadline: string; highlights: string[] }> = {
     "sarkardost": {
-      headline: "इंदौर की ताकत, आपकी जुड़ान",
-      subheadline: "SarkarDost आपको आपने समुदाय से जोड़ता है — सेवाएं, अवसर और भरोसे के नेता, एक ही खिड़की पर।",
+      headline: "Indore's strength, your connection",
+      subheadline: "SarkarDost connects you with your community — services, opportunities and trusted local leaders, all in one place.",
       highlights: [
-        "📍 इंदौर की स्थानीय खोज — दूकान, सेवा, और विशेषज्ञ",
-        "🤝 समुदाय भरोसा — समीक्षाएं, रेटिंग और वास्तविक फीडबैक",
-        "📢 अवसर और सूचनाएं — रोज़गार, आयोजन और प्रशिक्षण की जानकारी",
+        "📍 Local Indore search — shops, services, and experts",
+        "🤝 Community trust — reviews, ratings and real feedback",
+        "📢 Opportunities & updates — jobs, events and training",
       ],
     },
     "sarkarconnect": {
-      headline: "B2B कनेक्शन जो काम करते हैं",
-      subheadline: "SarkarConnect भारत के व्यापारियों को जोड़ता है — सप्लायर से लेकर डिस्ट्रीब्यूटर तक, एक ही प्लेटफ़ॉर्म पर।",
+      headline: "B2B connections that work",
+      subheadline: "SarkarConnect links Indian businesses — from supplier to distributor, all on one platform.",
       highlights: [
-        "🔗 वेरिफ़ाइड बिज़नेस नेटवर्क — हज़ारों सक्रिय व्यापारी",
-        "📈 डील ट्रैकिंग — सीधे लीड से क्लोज़ तक का रिकॉर्ड",
-        "💼 डिजिटल कार्ड — अपने व्यापार को प्रोफ़ेशनल तरीके से प्रेज़ेंट करें",
+        "🔗 Verified business network — thousands of active traders",
+        "📈 Deal tracking — a clear record from lead to close",
+        "💼 Digital cards — present your business professionally",
       ],
     },
     "sarkarhealth": {
-      headline: "आपकी सेहत, हमारी ज़िम्मेदारी",
-      subheadline: "SarkarHealth इंदौर के लिए पूर्ण हेल्थकेयर समाधान — डॉक्टर से लेकर दवाई तक, एक ही ऐप में।",
+      headline: "Your health, our responsibility",
+      subheadline: "SarkarHealth is a complete healthcare solution for Indore — from doctor to medicine, all in one app.",
       highlights: [
-        "🩺 वीडियो कंसल्टेशन — कहीं भी, कभी भी डॉक्टर से मिलें",
-        "💊 ऑनलाइन दवाई ऑर्डर — घर बैठे दवाई पाएं",
-        "📋 हेल्थ रिकॉर्ड — आपकी पूरी मेडिकल जानकारी सुरक्षित एक जगह",
+        "🩺 Video consultation — meet a doctor anywhere, anytime",
+        "💊 Online medicine orders — get medicines delivered home",
+        "📋 Health records — all your medical info, safely in one place",
       ],
     },
     "followup": {
-      headline: "फॉलो-अप न भूलें, काम न गवाएं",
-      subheadline: "FollowUp आपकी प्रोडक्टिविटी का साथी — याद दिलाएं, टास्क ट्रैक करें, हर काम पूरा करें।",
+      headline: "Never miss a follow-up, never waste work",
+      subheadline: "FollowUp is your productivity partner — reminders, task tracking, every job done.",
       highlights: [
-        "📅 स्मार्ट रिमाइंडर — WhatsApp और SMS से याद दिलाव",
-        "📋 टास्क ट्रैकिंग — हर फॉलो-अप का रिकॉर्ड",
-        "📊 प्रग्रेस रिपोर्ट — दैनिन, साप्ताहिक और मासिक डैशबोर्ड",
+        "📅 Smart reminders — via WhatsApp and SMS",
+        "📋 Task tracking — a record of every follow-up",
+        "📊 Progress reports — daily, weekly and monthly dashboards",
       ],
     },
     "cloudplayer": {
-      headline: "स्ट्रीमिंग का नया स्टैंडर्ड",
-      subheadline: "Cloud Player — क्लाउड-पावर्ड मीडिया प्लेयर, बिना बफ़रिंग के आपका पसंदीदा कंटेंट।",
+      headline: "A new standard for streaming",
+      subheadline: "Cloud Player — a cloud-powered media player that streams your favourite content without buffering.",
       highlights: [
-        "⚡ ज़ीरो बफ़रिंग — तुरंत प्ले, कोई इंतज़ार नहीं",
-        "☁️ क्लाउड स्टोरेज — कहीं से भी, कोई भी डिवाइस से",
-        "🎬 4K सपोर्ट — उच्च गुणवत्ता कंटेंट बिना रुकावट",
+        "⚡ Zero buffering — play instantly, no waiting",
+        "☁️ Cloud storage — anywhere, on any device",
+        "🎬 4K support — high-quality content, uninterrupted",
       ],
     },
     "paisaflow": {
-      headline: "हर रुपये पर स्मार्ट रिटर्न",
-      subheadline: "PaisaFlow — आपकी बचत को निवेश में बदलें, रोज़ाना रिटर्न कमाएं।",
+      headline: "Smart returns on every rupee",
+      subheadline: "PaisaFlow — turn your savings into investments and earn daily returns.",
       highlights: [
-        "💸 स्मार्ट रिटर्न — FD से लेकर म्यूचुअल फंड तक",
-        "📈 पोर्फ़ोलियो ट्रैकिंग — रियल-टाइम अपडेट",
-        "🎯 गोल-बेस्ड इन्वेस्टमेंट — आपके लक्ष्य के अनुसार",
+        "💸 Smart returns — from FDs to mutual funds",
+        "📈 Portfolio tracking — real-time updates",
+        "🎯 Goal-based investment — tailored to your aims",
       ],
     },
     "yaadrakh": {
-      headline: "याद रखें, आगे बढ़ें",
-      subheadline: "YaadRakh — आपकी प्रोडक्टिविटी का AI साथी जो आपकी याददाश्त को ताकत बनाता है।",
+      headline: "Remember, move forward",
+      subheadline: "YaadRakh — your AI productivity companion that turns memory into strength.",
       highlights: [
-        "🧠 स्मार्ट नोट्स — AI से संगठित और खोजने योग्य",
-        "⏰ इंटेलिजेंट रिमाइंडर — समय पर याद दिलाव",
-        "🔄 क्रॉस-डिवाइस सिंक — फोन, टैबलेट और लैपटॉप पर",
+        "🧠 Smart notes — organised and searchable with AI",
+        "⏰ Intelligent reminders — at the right time",
+        "🔄 Cross-device sync — phone, tablet and laptop",
       ],
     },
     "sarkar-ai": {
-      headline: "AI है तो सरकार है — आपका AI, आपका एम्पायर",
-      subheadline: "Sarkar AI — बिना कोड लिखे AI पावर्ड बिज़नेस टूल्स। कंटेंट बनाएं, डेटा एनालाइज़ करें — सब एक ही प्लेटफ़ॉर्म पर।",
-      highlights: ["🤖 AI कंटेंट जनरेटर — पोस्ट, इमेल और एड्स सेकंड में", "📊 स्मार्ट एनालिटिक्स — इंसाइट्स और रिपोर्ट्स", "💬 AI चैटबॉट — 24/7 स्वचालिक सपोर्ट"],
+      headline: "With AI, the government is your empire",
+      subheadline: "Sarkar AI — build AI-powered business tools without writing code. Create content, analyse data, all on one platform.",
+      highlights: ["🤖 AI content generator — posts, emails and ads in seconds", "📊 Smart analytics — insights and reports", "💬 AI chatbot — automated 24/7 support"],
     },
     "sarkarfinance": {
-      headline: "पैसा मिले, सही वक्त पर — वित्तीय सुविया अब आसान",
-      subheadline: "SarkarFinance — लोन, म्यूचुअल फंड और वित्तीय सेवाएं अब डिजिटल और पारदर्शी।",
-      highlights: ["📈 लोन कैलकुलेटर — तुरंत EMI और इंटरेस्ट रेट", "💳 क्रेडिट स्कोर चेक — फ्री में चेक करें", "🏦 डिजिटल बैंकिंग — बिना शाखा विज़िट के"],
+      headline: "Money when you need it — finance made easy",
+      subheadline: "SarkarFinance — loans, mutual funds and financial services, now digital and transparent.",
+      highlights: ["📈 Loan calculator — instant EMI and interest rates", "💳 Check credit score — free", "🏦 Digital banking — no branch visit needed"],
     },
     "sarkarpay": {
-      headline: "पेमेंट आए, बिज़नेस बढ़े — तेज़ और सुरक्षित",
-      subheadline: "SarkarPay — UPI, QR कोड और ऑनलाइन पेमेंट सोल्यूशन आपके बिज़नेस के लिए।",
-      highlights: ["⚡ UPI पेमेंट — तुरंत ट्रांसफ़र, कोई देरी नहीं", "📱 QR कोड — स्कैन करें और पे करें", "🔒 100% सुरक्षित — बैंक-ग्रेड एन्क्रिप्शन"],
+      headline: "Payments in, business grows — fast and secure",
+      subheadline: "SarkarPay — UPI, QR codes and online payment solutions for your business.",
+      highlights: ["⚡ UPI payments — instant transfers, no delay", "📱 QR code — scan and pay", "🔒 100% secure — bank-grade encryption"],
     },
     "sarkarmart": {
-      headline: "इंदौर का अपना मार्ट — लोकल बिज़नेस, ग्लोबल रीच",
-      subheadline: "SarkarMart — अपनी दुकान को डिजिटल करें, पूरे इंदौर तक पहुंचें।",
-      highlights: ["🛒 ऑनलाइन स्टोर — मिनटों में सेटअप", "📦 इन्वेंट्री मैनेजमेंट — स्टॉक ऑटो-ट्रैक", "📊 सेल्स डैशबोर्ड — रियल-टाइम एनालिटिक्स"],
+      headline: "Indore's own mart — local business, global reach",
+      subheadline: "SarkarMart — take your shop digital and reach all of Indore.",
+      highlights: ["🛒 Online store — set up in minutes", "📦 Inventory management — auto-tracked stock", "📊 Sales dashboard — real-time analytics"],
     },
     "sarkarlegal": {
-      headline: "कानूनी मदद, अब आसान — आपका कानूनी साथी",
-      subheadline: "SarkarLegal — वकील से बात करें, डॉक्यूमेंट बनाएं, सलाह पाएं घर बैठे।",
-      highlights: ["⚖️ ऑनलाइन वकील कंसल्टेशन — रियल-टाइम", "📄 डॉक्यूमेंट जनरेटर — अग्रीमेंट, नोटिस", "🔍 कानूनी खोज — हज़ारों केस लॉ एक जगह"],
+      headline: "Legal help, now easy — your legal companion",
+      subheadline: "SarkarLegal — talk to a lawyer, generate documents, get advice from home.",
+      highlights: ["⚖️ Online lawyer consultation — real-time", "📄 Document generator — agreements, notices", "🔍 Legal search — thousands of case laws in one place"],
     },
     "justdial-agent": {
-      headline: "डेटा है तो डील है — डेटा-ड्रिवन बिज़नेस इंटेलिजेंस",
-      subheadline: "JustDial Agent — बिज़नेस डेटा से स्मार्ट डिसीज़न लें और लीड जनरेट करें।",
-      highlights: ["📊 बिज़नेस एनालिटिक्स — ट्रेंड और इंसाइट्स", "🎯 लीड जनरेशन — पोटेंशियल कस्टमर खोजें", "📱 मोबाइल डैशबोर्ड — हर जगह से मॉनिटर करें"],
+      headline: "Data means deals — data-driven business intelligence",
+      subheadline: "JustDial Agent — make smart decisions from business data and generate leads.",
+      highlights: ["📊 Business analytics — trends and insights", "🎯 Lead generation — find potential customers", "📱 Mobile dashboard — monitor from anywhere"],
     },
     "sarkarmarketplace": {
-      headline: "इंदौर का सबसे बड़ा डायरेक्टरी — हज़ारों बिज़नेस, एक प्लेटफ़ॉर्म",
-      subheadline: "SarkarMarketplace — 3,233+ वेरिफ़ाइड बिज़नेस को एक ही जगह पाएं।",
-      highlights: ["🔍 स्मार्ट सर्च — ज़िप कोड और कैटेगरी से", "⭐ वेरिफ़ाइड रेटिंग — असली कस्टमर रिव्यू", "📍 लोकल डिस्कवरी — पास का बेस्ट ढूंढें"],
+      headline: "Indore's largest directory — thousands of businesses, one platform",
+      subheadline: "SarkarMarketplace — find 3,233+ verified businesses in one place.",
+      highlights: ["🔍 Smart search — by zip code and category", "⭐ Verified ratings — real customer reviews", "📍 Local discovery — find the best nearby"],
     },
     "ayurvedicwebsite": {
-      headline: "100% प्राकृतिक, 100% भरोसेमंद — आयुर्वेदिक स्वास्थ्य",
-      subheadline: "Mera Ayurvedic — 5,000 साल पुरानी आयुर्वेदिक परंपरा, आधुनिक विज्ञान के साथ।",
-      highlights: ["🌿 प्राकृतिक उत्पाद — बिना रसायन के", "👨‍⚕️ आयुर्वेदिक परामर्श — ऑनलाइन डॉक्टर", "💊 व्यक्तिगत उपचार — आपकी देह प्रकृति के अनुसार"],
+      headline: "100% natural, 100% trustworthy — Ayurvedic wellness",
+      subheadline: "Mera Ayurvedic — 5,000 years of Ayurvedic tradition, with modern science.",
+      highlights: ["🌿 Natural products — no chemicals", "👨‍⚕️ Ayurvedic consultation — online doctor", "💊 Personalised treatment — for your body type"],
     },
     "sarkarghar": {
-      headline: "घर मिले, ना कोई टेंशन — इंदौर का परफ़ेक्ट होम",
-      subheadline: "SarkarGhar — रियल एस्टेट खोजें, किराया या खरीदें, सब डिजिटल।",
-      highlights: ["🏠 स्मार्ट सर्च — बजट और लोकेशन के अनुसार", "📊 प्राइस एनालिटिक्स — मार्केट ट्रेंड जानें", "🔑 वर्चुअल टूर — घर देखो बिना जाए"],
+      headline: "Find a home, no tension — Indore's perfect home",
+      subheadline: "SarkarGhar — search real estate, rent or buy, all digital.",
+      highlights: ["🏠 Smart search — by budget and location", "📊 Price analytics — know the market trend", "🔑 Virtual tour — see the home without going"],
     },
     "sarkarskills": {
-      headline: "स्किल बनाओ, ज़िंदगी बदलो — सीखो कुछ नया",
-      subheadline: "SarkarSkills — ऑनलाइन कोर्स, सर्टिफिकेशन और करियर गाइडेंस एक ही जगह।",
-      highlights: ["📚 500+ कोर्स — टेक, बिज़नेस, क्रिएटिव", "🏅 सर्टिफिकेट — जॉब-रेडी क्रेडेंशियल", "👨‍🏫 एक्सपर्ट मेंटरिंग — वन-ऑन-वन गाइडेंस"],
+      headline: "Build skills, change life — learn something new",
+      subheadline: "SarkarSkills — online courses, certification and career guidance in one place.",
+      highlights: ["📚 500+ courses — tech, business, creative", "🏅 Certificate — job-ready credentials", "👨‍🏫 Expert mentoring — one-on-one guidance"],
     },
     "hyperframes-realestate": {
-      headline: "घर देखो, वीडियो से — वर्चुअल टूर, रियल डिसीज़न",
-      subheadline: "Hyperframes — 3D वर्चुअल टूर और वीडियो विज़ुअलाइज़ेशन से रियल एस्टेट में क्रांति।",
-      highlights: ["🎥 3D वर्चुअल टूर — घर में घूमो बिना जाए", "📹 प्रोफ़ेशनल वीडियो — प्रॉपर्टी को स्टार बनाएं", "🗺️ इंटरैक्टिव मैप — प्रॉपर्टी लेआउट देखें"],
+      headline: "See the home on video — virtual tour, real decision",
+      subheadline: "Hyperframes — revolutionising real estate with 3D virtual tours and video visualisation.",
+      highlights: ["🎥 3D virtual tour — walk the home without going", "📹 Professional video — make the property a star", "🗺️ Interactive map — see the property layout"],
     },
     "sikshahub": {
-      headline: "पढ़ाई हर घर पर — एजुकेशन फॉर एवरीवन",
-      subheadline: "SikshaHub — ऑनलाइन क्लासेस, ट्यूटर और स्टडी मटेरियल — बिना कोई सीमा के।",
-      highlights: ["📖 लाइव क्लासेस — रियल-टाइम इंटरैक्शन", "🎯 प्रैक्टिस टेस्ट — हर वीक मॉक एग्ज़ाम", "👨‍🏫 एक्सपर्ट टीचर्स — टॉप एजुकेटर्स से सीखें"],
+      headline: "Education for every home — study anywhere",
+      subheadline: "SikshaHub — online classes, tutors and study material — without limits.",
+      highlights: ["📖 Live classes — real-time interaction", "🎯 Practice tests — weekly mock exams", "👨‍🏫 Expert teachers — learn from top educators"],
     },
     "sarkartravel": {
-      headline: "सफर करो, यादें बनाओ — ट्रैवल मोर, वरी लेस",
-      subheadline: "SarkarTravel — बुकिंग, प्लानिंग और ट्रैवल गाइड — सब एक ही ऐप में।",
-      highlights: ["✈️ फ्लाइट बुकिंग — सस्ते टिकट पाएं", "🏨 होटल रिज़र्वेशन — बेस्ट डील्स", "🗺️ ट्रैवल प्लानर — AI-बेस्ड इटिनरी"],
+      headline: "Travel more, make memories — travel, worry less",
+      subheadline: "SarkarTravel — booking, planning and travel guides, all in one app.",
+      highlights: ["✈️ Flight booking — find cheap tickets", "🏨 Hotel reservation — best deals", "🗺️ Travel planner — AI-based itinerary"],
     },
     "sarkardukaan": {
-      headline: "अपनी दुकान, अब डिजिटल — यूज़र-फ्रेंडली ऑनलाइन स्टोर",
-      subheadline: "SarkarDukaan — अपने व्यापार को डिजिटल करें, मिनटों में ऑनलाइन स्टोर बनाएं।",
-      highlights: ["🛍️ ऑनलाइन स्टोर बिल्डर — ड्रैग-एंड-ड्रॉप", "📦 इन्वेंट्री ट्रैकिंग — स्टॉक ऑटो-मैनेज", "💳 पेमेंट गेटवे — UPI, कार्ड, नेट बैंकिंग"],
+      headline: "Your shop, now digital — a user-friendly online store",
+      subheadline: "SarkarDukaan — take your business digital and build an online store in minutes.",
+      highlights: ["🛍️ Online store builder — drag and drop", "📦 Inventory tracking — auto-managed stock", "💳 Payment gateway — UPI, card, net banking"],
     },
     "sarkarbazaar": {
-      headline: "इंदौर का बाज़ार, अब ऑनलाइन — लोकल बिज़नेस, ग्लोबल रीच",
-      subheadline: "SarkarBazaar — लोकल व्यापारियों को ग्लोबल मार्केट से जोड़ता है।",
-      highlights: ["🏪 मल्टी-वेंडर मार्केटप्लेस — सैकड़ों विक्रेता", "📦 लॉजिस्टिक सपोर्ट — डिलीवरी पार्टनर नेटवर्क", "📊 मार्केट एनालिटिक्स — सेल्स ट्रेंड और इंसाइट्स"],
+      headline: "Indore's market, now online — local business, global reach",
+      subheadline: "SarkarBazaar — connects local traders with the global market.",
+      highlights: ["🏪 Multi-vendor marketplace — hundreds of sellers", "📦 Logistics support — delivery partner network", "📊 Market analytics — sales trends and insights"],
     },
     "sarkarjobs": {
-      headline: "नौकरी ढूंढो, करियर बनाओ — जॉब्स दैटा मैचिंग",
-      subheadline: "SarkarJobs — AI-पावर्ड जॉब मैचिंग, रिज़्यूमे बिल्डर और करियर गाइडेंस।",
-      highlights: ["🎯 AI जॉब मैच — आपकी स्किल के अनुसार", "📝 रिज़्यूमे बिल्डर — प्रोफ़ेशनल टेम्पलेट", "📊 सैलरी इंसाइट — इंडस्ट्री बेंचमार्क"],
+      headline: "Find a job, build a career — jobs that match",
+      subheadline: "SarkarJobs — AI-powered job matching, resume builder and career guidance.",
+      highlights: ["🎯 AI job match — by your skills", "📝 Resume builder — professional templates", "📊 Salary insight — industry benchmarks"],
     },
     "sarkared": {
-      headline: "सीखो, बढ़ो, बनो — स्किल्स दैट पे",
-      subheadline: "SarkarEd — ऑनलाइन सर्टिफिकेशन, स्किल डेवलपमेंट और करियर-फोकस्ड कोर्सेज।",
-      highlights: ["🎓 सर्टिफिकेट कोर्स — ग्लोबली रिकग्नाइज़्ड", "💻 लाइव प्रोजेक्ट्स — रियल-वर्ल्ड एक्सपीरियंस", "🤝 प्लेसमेंट सपोर्ट — इंटरव्यू प्रिप"],
+      headline: "Learn, grow, become — skills that pay",
+      subheadline: "SarkarEd — online certification, skill development and career-focused courses.",
+      highlights: ["🎓 Certificate courses — globally recognised", "💻 Live projects — real-world experience", "🤝 Placement support — interview prep"],
     },
     "sarkarsarkar": {
-      headline: "आपकी सरकार, आपके हाथ — गवर्नमेंट सेवाएं अब डिजिटल",
-      subheadline: "SarkarSarkar — सरकारी सेवाएं, दस्तावेज़ और अधिकार — सब एक खिड़की पर।",
-      highlights: ["🏛️ डिजिटल सेवाएं — आधार, पैन कार्ड, पासपोर्ट", "📄 दस्तावेज़ जनरेटर — फॉर्म और अप्लिकेशन", "🔍 RTI ऑनलाइन — सूचना का अधिकार, आसानी से"],
+      headline: "Your government, in your hands — government services, now digital",
+      subheadline: "SarkarSarkar — government services, documents and rights — all in one window.",
+      highlights: ["🏛️ Digital services — Aadhaar, PAN, passport", "📄 Document generator — forms and applications", "🔍 RTI online — right to information, made easy"],
     },
     "sarkarwellness": {
-      headline: "आयुर्वेद से स्वास्थ्य — एंशिएंट वेलनेस, मॉडर्न हीलिंग",
-      subheadline: "SarkarWellness — योग, आयुर्वेद और प्राकृतिक उपचार आपके लिए।",
-      highlights: ["🧘 योग क्लासेस — ऑनलाइन और ऑफलाइन", "🌿 आयुर्वेदिक उपचार — व्यक्तिगत प्लान", "🧠 मेंटल वेलनेस — मेडिटेशन और काउंसलिंग"],
+      headline: "Wellness from Ayurveda — ancient wellness, modern healing",
+      subheadline: "SarkarWellness — yoga, Ayurveda and natural treatment for you.",
+      highlights: ["🧘 Yoga classes — online and offline", "🌿 Ayurvedic treatment — personalised plans", "🧠 Mental wellness — meditation and counselling"],
     },
     "sarkarfood": {
       headline: "Indore's Best Food, Delivered to Your Door in 30 Minutes",
@@ -180,55 +182,66 @@ export async function BrandLanding({ brand }: { brand: any }) {
 
   const hero = brandHero[brand.slug] || {
     headline: brand.tagline || brand.name,
-    subheadline: brand.description || `${brand.name} — आपकी विश्वसनीय प्लेटफ़ॉर्म।`,
+    subheadline: brand.description || `${brand.name} — your trusted platform.`,
     highlights: [],
   };
 
   // Brand-specific stats
     const brandStats: Record<string, Array<{ v: string; label: string; icon: string }>> = {
       sarkarhealth: [
-        { v: "50+", label: "वेरिफ़ाइड डॉक्टर", icon: "🩺" },
-        { v: "5,000+", label: "सक्रिय मरीज़", icon: "👥" },
-        { v: "4.9★", label: "डॉक्टर रेटिंग", icon: "⭐" },
-        { v: "24/7", label: "हेल्पलाइन", icon: "🚑" },
+        { v: "50+", label: "Verified doctors", icon: "🩺" },
+        { v: "5,000+", label: "Active patients", icon: "👥" },
+        { v: "4.9★", label: "Doctor rating", icon: "⭐" },
+        { v: "24/7", label: "Helpline", icon: "🚑" },
       ],
     };
     const stats = brandStats[brand.slug] ?? [
-      { v: "10,000+", label: "सक्रिय उपयोगकर्ता", icon: "👥" },
-      { v: "5,000+", label: "सफल इंटरैक्शन", icon: "✅" },
-      { v: "4.9★", label: "औसत रेटिंग", icon: "⭐" },
-      { v: "24/7", label: "समर्थन उपलब्ध", icon: "🛟" },
+      { v: "10,000+", label: "Active users", icon: "👥" },
+      { v: "5,000+", label: "Successful interactions", icon: "✅" },
+      { v: "4.9★", label: "Average rating", icon: "⭐" },
+      { v: "24/7", label: "Support available", icon: "🛟" },
     ];
+
+  const isCustomerSite = !!brand.features?.listings;
 
   // Brand-specific steps
     const brandSteps: Record<string, Array<{ n: string; t: string; d: string }>> = {
       sarkarhealth: [
-        { n: "1", t: "डॉक्टर चुनें", d: "विशेषज्ञता और अनुभव के अनुसार सही डॉक्टर खोजें — प्रोफ़ाइल पढ़ें, रेटिंग देखें।" },
-        { n: "2", t: "अपॉइंटमेंट बुक करें", d: "वीडियो या इन-पर्सन — अपनी सुविधा के अनुसार चुनें। तुरंत कन्फर्मेशन।" },
-        { n: "3", t: "कंसल्ट करें", d: "डॉक्टर से मिलें, प्रिस्क्रिप्शन पाएं, दवाई ऑर्डर करें — सब एक जगह।" },
+        { n: "1", t: "Choose a doctor", d: "Find the right doctor by expertise and experience — read profiles, see ratings." },
+        { n: "2", t: "Book an appointment", d: "Video or in-person — choose what suits you. Instant confirmation." },
+        { n: "3", t: "Consult", d: "Meet the doctor, get a prescription, order medicine — all in one place." },
       ],
     };
-    const steps = brandSteps[brand.slug] ?? [
-      { n: "1", t: "Sign Up Karein", d: "Minutes mein account banayein — bina kisi complexity ke, bas mobile number se." },
-      { n: "2", t: "Services Dhoen ya Bechhein", d: "Apni zaroorat ke anusaar services dhoen ya apne business ko promote karein." },
-      { n: "3", t: "Judein aur Badhein", d: "Connections banayein, deals karein aur apne community mein progress karein." },
-    ];
+    const steps = brandSteps[brand.slug] ?? (isCustomerSite ? [
+      { n: "1", t: "Sign Up", d: "Create a free account in minutes — just your mobile number." },
+      { n: "2", t: "Search & Discover", d: "Browse thousands of verified businesses by category, area or service." },
+      { n: "3", t: "Connect & Book", d: "Call, WhatsApp or visit — reach the right business instantly." },
+    ] : [
+      { n: "1", t: "Sign Up", d: "Create an account in minutes — no complexity, just your mobile number." },
+      { n: "2", t: "Find or Sell Services", d: "Search for what you need or promote your own business." },
+      { n: "3", t: "Connect and Grow", d: "Build connections, close deals and progress in your community." },
+    ]);
 
   // Brand-specific community
     const brandCommunity: Record<string, Array<{ icon: string; t: string; d: string }>> = {
       sarkarhealth: [
-        { icon: "🏥", t: "हॉस्पिटल और क्लीनिक", d: "50+ पार्टनर हॉस्पिटल — इंदौर में सबसे बड़ा नेटवर्क" },
-        { icon: "👨‍⚕️", t: "डॉक्टर्स", d: "MBBS, MD, BAMS — सभी विशेषज्ञता के वेरिफ़ाइड प्रैक्टिशनर" },
-        { icon: "👨‍👩‍👧‍👦", t: "परिवार", d: "हर उम्र के मरीज़ — बच्चों से बुज़ुर्गों तक पूरा ख्याल" },
-        { icon: "🔬", t: "लैब पार्टनर्स", d: "NABL सर्टिफ़ाइड लैब — सटीक रिपोर्ट, तेज़ डिलीवरी" },
+        { icon: "🏥", t: "Hospitals & clinics", d: "50+ partner hospitals — the largest network in Indore" },
+        { icon: "👨‍⚕️", t: "Doctors", d: "MBBS, MD, BAMS — verified practitioners of every specialty" },
+        { icon: "👨‍👩‍👧‍👦", t: "Families", d: "Patients of every age — complete care from children to elders" },
+        { icon: "🔬", t: "Lab partners", d: "NABL-certified labs — accurate reports, fast delivery" },
       ],
     };
-    const community = brandCommunity[brand.slug] ?? [
-      { icon: "👤", t: "उपयोगकर्ता", d: "अपनी ज़रूरतों के अनुसार सेवाएं खोजें और भरोसेमंद पार्टनर पाएं" },
-      { icon: "🏪", t: "व्यापारी", d: "अपने व्यापार को ऑनलाइन ले जाएं और नए ग्राहकों तक पहुंचें" },
-      { icon: "👨‍💼", t: "पेशेवर", d: "अपनी कौशल को प्रमोट करें और सही अवसर पाएं" },
-      { icon: "🏠", t: "परिवार", d: "परिवार की ज़रूरतों के लिए सही सेवा — एक ही जगह" },
-    ];
+    const community = brandCommunity[brand.slug] ?? (isCustomerSite ? [
+      { icon: "🔍", t: "Explore", d: "Discover businesses, services and professionals near you" },
+      { icon: "⭐", t: "Verified", d: "Every listing is verified, with real customer ratings" },
+      { icon: "📍", t: "Local", d: "Find the best options across Indore, by area and category" },
+      { icon: "🏠", t: "Families", d: "The right service for your family's needs — all in one place" },
+    ] : [
+      { icon: "👤", t: "Users", d: "Find services for your needs and meet trusted partners" },
+      { icon: "🏪", t: "Businesses", d: "Take your business online and reach new customers" },
+      { icon: "👨‍💼", t: "Professionals", d: "Promote your skills and find the right opportunities" },
+      { icon: "🏠", t: "Families", d: "The right service for your family's needs — all in one place" },
+    ]);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
@@ -236,71 +249,88 @@ export async function BrandLanding({ brand }: { brand: any }) {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at 30% 20%, ${primary} 0%, transparent 50%), radial-gradient(circle at 70% 80%, ${secondary} 0%, transparent 50%)` }} />
-        <div className="absolute top-10 left-10 w-72 h-72 rounded-full blur-3xl opacity-20 animate-float" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }} />
-        <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full blur-3xl opacity-15 animate-float" style={{ background: `linear-gradient(135deg, ${accent}, ${secondary})`, animationDelay: "3s" }} />
+        <div className="absolute inset-0 -z-10"
+             style={{ background: `radial-gradient(110% 90% at 15% 0%, ${primary}14 0%, transparent 55%), radial-gradient(90% 80% at 95% 100%, ${secondary}12 0%, transparent 55%)` }} />
+        <div className="absolute inset-0 -z-10 opacity-[0.5]"
+             style={{ backgroundImage: "radial-gradient(rgba(16,16,24,0.05) 1px, transparent 1px)", backgroundSize: "22px 22px" }} />
+        <div className="absolute -top-16 -right-10 -z-10 h-72 w-72 rounded-full blur-3xl opacity-25"
+             style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }} />
 
-        <div className="relative mx-auto max-w-6xl px-6 py-20 text-center">
-          <div className="mb-4 text-6xl">{brand.emoji ?? "🤝"}</div>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl" style={{ color: primary }}>
+        <div className="relative mx-auto max-w-6xl px-6 pt-20 pb-16 text-center">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border bg-white/70 px-4 py-1.5 text-xs font-semibold backdrop-blur"
+               style={{ borderColor: `${accent}40`, color: primary }}>
+            <span className="text-base leading-none">{brand.emoji ?? "🤝"}</span>
             {brand.name}
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-xl font-semibold" style={{ color: secondary }}>
+          </div>
+
+          <h1 className="text-[2.6rem] font-extrabold tracking-tight sm:text-5xl" style={{ color: primary }}>
             {hero.headline}
-          </p>
-          <p className="mx-auto mt-3 max-w-2xl text-base opacity-70 leading-relaxed">
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-lg font-medium opacity-70 leading-relaxed">
             {hero.subheadline}
           </p>
 
-          {/* Highlights */}
+          {/* Highlights as chips */}
           {hero.highlights.length > 0 && (
-            <div className="mt-8 mx-auto max-w-2xl space-y-3 text-left">
+            <div className="mt-7 mx-auto flex max-w-3xl flex-wrap justify-center gap-2.5">
               {hero.highlights.map((h: string, i: number) => (
-                <div key={i} className="flex items-start gap-3 rounded-xl bg-white/80 backdrop-blur-sm border px-5 py-3" style={{ borderColor: `${accent}30` }}>
-                  <span className="text-lg mt-0.5">{h.split(" ")[0]}</span>
-                  <span className="text-sm font-medium opacity-80">{h.substring(h.indexOf(" ") + 1)}</span>
-                </div>
+                <span key={i}
+                      className="inline-flex items-center gap-2 rounded-full border bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur"
+                      style={{ borderColor: `${accent}30`, color: primary }}>
+                  <span className="text-base leading-none">{h.split(" ")[0]}</span>
+                  <span className="opacity-75">{h.substring(h.indexOf(" ") + 1)}</span>
+                </span>
               ))}
             </div>
           )}
 
-          <div className="mt-8 flex flex-wrap justify-center gap-2">
+          <div className="mt-7 flex flex-wrap justify-center gap-2">
             {brand.features?.leads && (
               <span className="rounded-full border px-4 py-1.5 text-xs font-medium" style={{ borderColor: accent, color: primary }}>
-                📥 लीड कैप्चर
+                📥 Lead capture
               </span>
             )}
             {brand.features?.payments && (
               <span className="rounded-full border px-4 py-1.5 text-xs font-medium" style={{ borderColor: accent, color: primary }}>
-                💳 UPI पेमेंट
+                💳 UPI payments
               </span>
             )}
             {showListings && (
               <span className="rounded-full border px-4 py-1.5 text-xs font-medium" style={{ borderColor: accent, color: primary }}>
-                🗂️ {total.toLocaleString()} लिस्टिंग
+                🗂️ {total.toLocaleString()} listings
               </span>
             )}
-            {!brand.features?.leads && !brand.features?.payments && (
+            {!brand.features?.leads && !brand.features?.payments && !showListings && (
               <span className="rounded-full border px-4 py-1.5 text-xs font-medium" style={{ borderColor: accent, color: primary }}>
-                🏘️ इंदौर के {total > 0 ? `${total.toLocaleString()}+` : "हज़ारों"} स्थानीय व्यवसाय
+                🏘️ {total > 0 ? `${total.toLocaleString()}+` : "thousands of"} local businesses in Indore
               </span>
             )}
           </div>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <a
-              href={`/login`}
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all"
-              style={{ backgroundColor: primary }}
-            >
-              शुरू करें →
-            </a>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            {isCustomerSite ? (
+              <a
+                href={`/marketplace`}
+                className="press inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all"
+                style={{ backgroundColor: primary }}
+              >
+                Browse Businesses →
+              </a>
+            ) : (
+              <a
+                href={`/login`}
+                className="press inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold text-white shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all"
+                style={{ backgroundColor: primary }}
+              >
+                Get started →
+              </a>
+            )}
             <a
               href={`/about`}
-              className="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold border-2 hover:bg-gray-50 transition-all"
+              className="press inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-bold border-2 hover:bg-white/60 transition-all"
               style={{ borderColor: accent, color: primary }}
             >
-              और जानें
+              Learn more
             </a>
           </div>
         </div>
@@ -309,10 +339,10 @@ export async function BrandLanding({ brand }: { brand: any }) {
       {/* Trust Stats */}
       <section className="border-t" style={{ borderColor: `${accent}20` }}>
         <div className="mx-auto max-w-5xl px-6 py-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {stats.map((s, i) => (
-              <div key={i} className="rounded-2xl p-6 border bg-white" style={{ borderColor: `${accent}20` }}>
-                <div className="text-2xl mb-2">{s.icon}</div>
+              <div key={i} className="rounded-2xl p-6 border bg-white text-center shadow-[0_1px_2px_rgba(16,16,24,0.04)]" style={{ borderColor: `${accent}20` }}>
+                <div className="text-2xl mb-1.5">{s.icon}</div>
                 <div className="text-2xl md:text-3xl font-extrabold" style={{ color: primary }}>{s.v}</div>
                 <div className="text-sm opacity-60 mt-1">{s.label}</div>
               </div>
@@ -325,8 +355,8 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section className="border-t" style={{ borderColor: `${accent}20`, backgroundColor: `${primary}04` }}>
         <div className="mx-auto max-w-5xl px-6 py-20">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>यह कैसे काम करता है</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>तीन आसान चरणों मं शुरू करें</h2>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>How it works</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>Start in three easy steps</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step) => (
@@ -346,12 +376,12 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section className="border-t" style={{ borderColor: `${accent}20` }}>
         <div className="mx-auto max-w-5xl px-6 py-20">
           <div className="text-center mb-12">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>समुदाय का हिस्सा बनें</p>
-            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>{brand.name} का उपयोग कौन करता है?</h2>
+            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: primary }}>Join the community</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold" style={{ color: primary }}>Who uses {brand.name}?</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {community.map((u, i) => (
-              <div key={i} className="rounded-2xl border bg-white p-6 text-center" style={{ borderColor: `${accent}30` }}>
+              <div key={i} className="rounded-2xl border bg-white p-6 text-center shadow-[0_1px_2px_rgba(16,16,24,0.04)]" style={{ borderColor: `${accent}30` }}>
                 <div className="text-4xl mb-3">{u.icon}</div>
                 <h3 className="font-bold text-lg mb-2" style={{ color: primary }}>{u.t}</h3>
                 <p className="text-sm opacity-60">{u.d}</p>
@@ -361,24 +391,21 @@ export async function BrandLanding({ brand }: { brand: any }) {
         </div>
       </section>
 
-      {/* Listings */}
+      {/* Featured listings */}
       {showListings && rows.length > 0 && (
-        <section className="mx-auto max-w-6xl px-6 py-12 w-full">
-          <h2 className="mb-6 text-2xl font-bold" style={{ color: primary }}>
-            Featured <span className="text-sm font-normal opacity-50">({total.toLocaleString()})</span>
-          </h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {rows.map((b: any) => (
-              <div key={b.id} className="rounded-2xl border bg-white p-5 shadow-sm" style={{ borderColor: `${accent}40` }}>
-                <div className="flex items-start justify-between gap-2">
-                  <span className="font-semibold">{b.name}</span>
-                  {b.rating && <span className="text-xs text-amber-500">★ {b.rating}</span>}
-                </div>
-                {b.category && <p className="mt-1 text-xs opacity-50">{b.category}</p>}
-                <p className="mt-2 text-xs opacity-40">{[b.area, b.city].filter(Boolean).join(", ")}</p>
-                {b.phone && <a href={`tel:${b.phone}`} className="mt-1 inline-block text-xs font-medium" style={{ color: primary }}>📞 {b.phone}</a>}
-              </div>
-            ))}
+        <section className="border-t" style={{ borderColor: `${accent}20` }}>
+          <div className="mx-auto max-w-6xl px-6 py-16">
+            <SectionHeading
+              title="Featured businesses"
+              subtitle={`${total.toLocaleString("en-IN")} verified listings in Indore`}
+              viewAllHref="/marketplace"
+              viewAllLabel="Browse all"
+            />
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {rows.map((b: any) => (
+                <BusinessCard key={b.id} b={b} primary={primary} secondary={secondary} />
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -387,17 +414,23 @@ export async function BrandLanding({ brand }: { brand: any }) {
       <section style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
           <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">
-            Aaj hi shuru karein — {brand.name} ke saath juden
+            {isCustomerSite ? `Find what you need on ${brand.name}` : `Get started today — join ${brand.name}`}
           </h2>
           <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            Free mein register karein aur {brand.name} ke saath apna safar shuru karein — ghar baithe.
+            {isCustomerSite ? `Browse thousands of verified local businesses and services — all in one place.` : `Sign up free and start your journey with ${brand.name} — from home.`}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <a href={`/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
-              मुफ्त में शुरू करें →
-            </a>
+            {isCustomerSite ? (
+              <a href={`/marketplace`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
+                Browse Businesses →
+              </a>
+            ) : (
+              <a href={`/register`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>
+                Start free →
+              </a>
+            )}
             <a href={`/contact`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-white/10 transition-colors">
-              संपर्क करें
+              Contact us
             </a>
           </div>
         </div>

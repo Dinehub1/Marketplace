@@ -36,15 +36,35 @@ export function categoryPath(category: string): string {
   return `/${slugifyCategory(category)}-in-${CITY_SLUG}`;
 }
 
-/** True for any path this feature owns. Used by the middleware and the router. */
+/**
+ * Any "/<category>-in-<area>" path (the canonical -in-indore included) is a
+ * dynamic directory page that must reach the brand router. The router then
+ * decides whether the area is the city itself (a category page) or a
+ * neighbourhood (a category+area page). Broadened from -in-indore only so
+ * neighbourhood pages route to the router instead of 404-ing on the static site.
+ */
 export function isCategoryPath(pathname: string): boolean {
-  return /^\/[a-z0-9-]+-in-indore\/?$/.test(pathname.toLowerCase());
+  return /^\/[a-z0-9-]+-in-[a-z0-9-]+\/?$/.test(pathname.toLowerCase());
 }
 
 /** Pull the category slug back out of "/furniture-store-in-indore". */
 export function categorySlugFromPath(pathname: string): string | null {
   const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-indore$/);
   return m ? m[1] : null;
+}
+
+/** "/plumber-in-vijay-nagar" → { categorySlug: "plumber", areaSlug: "vijay-nagar" }.
+ *  Null when the area is the city itself (that is a plain category page). */
+export function categoryAreaSlugFromPath(pathname: string): { categorySlug: string; areaSlug: string } | null {
+  const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-([a-z0-9-]+)$/);
+  if (!m) return null;
+  if (m[2] === CITY_SLUG) return null;
+  return { categorySlug: m[1], areaSlug: m[2] };
+}
+
+/** Permalink for a category within a neighbourhood, e.g. "/plumber-in-vijay-nagar". */
+export function categoryAreaPath(category: string, area: string): string {
+  return `/${slugifyCategory(category)}-in-${slugifyCategory(area)}`;
 }
 
 function env() {
@@ -209,6 +229,17 @@ export function cleanBusinessName(name: string | null | undefined): string {
   return s || String(name).trim();
 }
 
+/** Title-case a label for display, e.g. "furniture store" → "Furniture Store". */
+export function titleize(s: string): string {
+  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+}
+
+/** Build a tel: href that normalises Indian phone numbers (adds +91 when missing). */
+export function telHref(phone: string): string {
+  const d = phone.replace(/[^\d+]/g, "");
+  return `tel:${d.startsWith("+") ? d : `+91${d.replace(/^0+/, "")}`}`;
+}
+
 export type Listing = {
   id: number;
   name: string;
@@ -235,6 +266,102 @@ export async function getCategoryListings(
       `${url}/rest/v1/businesses` +
         `?select=id,name,category,area,address,phone,rating,reviews_count,city,website` +
         `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
+        `&order=rating.desc.nullslast,name.asc`,
+      {
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          Range: `${from}-${from + pageSize - 1}`,
+          Prefer: "count=exact",
+        },
+        next: { revalidate: 1800 },
+      },
+    );
+    if (!res.ok) return { rows: [], total: 0 };
+    const rows = (await res.json()) as Listing[];
+    const total = Number((res.headers.get("content-range") ?? "").split("/")[1] ?? 0) || 0;
+    return { rows, total };
+  } catch {
+    return { rows: [], total: 0 };
+  }
+}
+
+export type AreaStat = { area: string; slug: string; count: number };
+
+/**
+ * Every locality with at least one active listing, biggest first.
+ * Powers the marketplace area filter. Junk values are stripped by cleanArea so
+ * "testcity" and "Plumber in indore" never become selectable neighbourhoods.
+ */
+export async function getAreaIndex(): Promise<AreaStat[]> {
+  const { url, key } = env();
+  const counts = new Map<string, AreaStat>();
+  try {
+    for (let from = 0; ; from += 1000) {
+      const res = await fetch(
+        `${url}/rest/v1/businesses?select=area&status=eq.active&order=id.asc`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` }, next: { revalidate: 3600 } },
+      );
+      if (!res.ok) return [];
+      const page: { area: string | null }[] = await res.json();
+      for (const r of page) {
+        const a = cleanArea(r.area);
+        if (!a) continue;
+        const slug = slugifyCategory(a);
+        const hit = counts.get(slug);
+        if (hit) hit.count += 1;
+        else counts.set(slug, { area: a, count: 1, slug });
+      }
+      if (page.length < 1000) break;
+    }
+  } catch {
+    return [];
+  }
+  return [...counts.values()].sort((x, y) => y.count - x.count);
+}
+
+/** Localities within a single category — powers the "browse by area" links. */
+export async function getCategoryAreaIndex(category: string): Promise<AreaStat[]> {
+  const { url, key } = env();
+  const counts = new Map<string, AreaStat>();
+  try {
+    for (let from = 0; ; from += 1000) {
+      const res = await fetch(
+        `${url}/rest/v1/businesses?select=area&status=eq.active&category=eq.${encodeURIComponent(category)}&order=id.asc`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` }, next: { revalidate: 3600 } },
+      );
+      if (!res.ok) return [];
+      const page: { area: string | null }[] = await res.json();
+      for (const r of page) {
+        const a = cleanArea(r.area);
+        if (!a) continue;
+        const slug = slugifyCategory(a);
+        const hit = counts.get(slug);
+        if (hit) hit.count += 1;
+        else counts.set(slug, { area: a, count: 1, slug });
+      }
+      if (page.length < 1000) break;
+    }
+  } catch {
+    return [];
+  }
+  return [...counts.values()].sort((x, y) => y.count - x.count);
+}
+
+/** One page of active listings for a category within a locality. */
+export async function getCategoryAreaListings(
+  category: string,
+  area: string,
+  page: number,
+  pageSize: number,
+): Promise<{ rows: Listing[]; total: number }> {
+  const { url, key } = env();
+  const from = (page - 1) * pageSize;
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/businesses` +
+        `?select=id,name,category,area,address,phone,rating,reviews_count,city,website` +
+        `&status=eq.active&category=eq.${encodeURIComponent(category)}&area=eq.${encodeURIComponent(area)}` +
         `&order=rating.desc.nullslast,name.asc`,
       {
         headers: {

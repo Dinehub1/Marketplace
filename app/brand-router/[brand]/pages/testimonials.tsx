@@ -2,29 +2,29 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 
 const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rating: number; role?: string }>> = {
   sarkarhealth: [
-    { name: "Sunita Sharma", text: "Bahut aasan! Ghar baithke doctor se mil payin, dawai bhi darwaze par aa gayi. Mujhe Indore mein kabhi aisi suvidha nahi mili.", rating: 5, role: "Housewife, Rajwada" },
-    { name: "Ramesh Patel", text: "Papa ka ECG ghar par hua — report bhi online aa gayi. Bahut pareshani se bach liya — dhanyavaad SarkarHealth!", rating: 5, role: "Son of patient, Palasia" },
-    { name: "Dr. Anant Mishra", text: "Ek mahine se 50+ marizon ka ilaj kar raha hoon. Mariz khush hain, main khush hoon.", rating: 5, role: "MBBS Doctor, SarkarHealth Partner" },
-    { name: "Priyanka Jain", text: "Video call par consultation — koi parking, koi line. 30 minute mein doctor mil payi — badhiya!", rating: 4, role: "Working Professional, Vijay Nagar" },
-    { name: "Mohanlal Yadav", text: "Budhurg hoon, akele jaane mein dikkat hoti thi. SarkarHealth se home visit aayi — doctor bahut acche hain.", rating: 5, role: "Retired Teacher, Sudama Nagar" },
-    { name: "Neha Agarwal", text: "Dawaiyaan 40% sasti gayin! Generic option bhi mila — bahut bachat ho rahi hai maasik.", rating: 4, role: "Mother, Saket Nagar" },
-    { name: "अनीता खान", text: "डॉक्टर ने मेरी मधुमेह की जाँच की और ऑनलाइन दवा लिखी। घर बैठे इलाज मिला।", rating: 5, role: "Patient, Geeta Bhawan" },
-    { name: "Dr. Sunil Joshi", text: "SarkarHealth ne mere clinic ko online layaya. Ab mein roz 20+ online mareez dekhta hoon.", rating: 5, role: "MD Physician, Partner Doctor" },
-    { name: "विजय कुमार", text: "Mere bete ka tonsillitis treatment video call par hua. Dawai bhi ghar tak aayi. Bahut aasan!", rating: 4, role: "Father, Navlakha" },
-    { name: "SarkarHealth Trust Badge", text: "5000+ मरीज़ों की सेवा | 50+ वेरिफ़ाइड डॉक्टर", rating: 5, role: "Trusted Healthcare Partner" },
+    { name: "Sunita Sharma", text: "So simple! I consulted a doctor right from home, and the medicine was delivered to my doorstep. I've never had such a facility in Indore.", rating: 5, role: "Housewife, Rajwada" },
+    { name: "Ramesh Patel", text: "My father's ECG was done at home, and the report came online too. It saved us a lot of hassle — thank you SarkarHealth!", rating: 5, role: "Son of patient, Palasia" },
+    { name: "Dr. Anant Mishra", text: "I've been treating 50+ patients for over a month. The patients are happy, and so am I.", rating: 5, role: "MBBS Doctor, SarkarHealth Partner" },
+    { name: "Priyanka Jain", text: "Consultation over a video call — no parking, no queue. Met a doctor within 30 minutes — excellent!", rating: 4, role: "Working Professional, Vijay Nagar" },
+    { name: "Mohanlal Yadav", text: "I'm a senior citizen and used to struggle going alone. SarkarHealth sent a home visit — the doctors are wonderful.", rating: 5, role: "Retired Teacher, Sudama Nagar" },
+    { name: "Neha Agarwal", text: "Medicines were 40% cheaper! A generic option was also available — I'm saving a lot every month.", rating: 4, role: "Mother, Saket Nagar" },
+    { name: "Anita Khan", text: "The doctor checked my diabetes and prescribed medicine online. I received treatment from the comfort of my home.", rating: 5, role: "Patient, Geeta Bhawan" },
+    { name: "Dr. Sunil Joshi", text: "SarkarHealth brought my clinic online. Now I see 20+ online patients every day.", rating: 5, role: "MD Physician, Partner Doctor" },
+    { name: "Vijay Kumar", text: "My son's tonsillitis treatment happened over a video call. The medicine was delivered home too. So easy!", rating: 4, role: "Father, Navlakha" },
+    { name: "SarkarHealth Trust Badge", text: "Served 5000+ patients | 50+ verified doctors", rating: 5, role: "Trusted Healthcare Partner" },
   ],
   sarkardost: [
-    { name: "Raju Tea Stall", text: "SarkarDost par listing karne ke baad mere customers badh gaye — log directly call karte hain ab.", rating: 5, role: "Chaiwala, Rajwada" },
-    { name: "Meena Tailor", text: "Pehle sirf mile jo aate the — ab naye customers bhi mil rahe hain. Bahut achha platform hai!", rating: 5, role: "Tailor, Palasia" },
-    { name: "Pandit Electrician", text: "Maine apni service online lagayi — ab 5-6 calls daily aati hain. Pehle 1-2 hoti the.", rating: 5, role: "Electrician, Sudama Nagar" },
-    { name: "Sita Devi", text: "SarkarDost ne mere beauty parlour ki online booking system banayi — ab clients appointment easily book karte hain.", rating: 5, role: "Beauty Parlour Owner, Vijay Nagar" },
-    { name: "Ashok Kumar", text: "Mere kirane ki dukaan ki online listing karwayi — ab doorstep delivery bhi shuru ki. Sales 40% badhi!", rating: 4, role: "Grocery Store Owner, Rajwada" },
-    { name: "Deepika Joshi", text: "Yoga classes ki promotion SarkarDost se ki — ab har batch full hoti hai. Zumba aur meditation ke liye best platform!", rating: 5, role: "Yoga Instructor, Palasia" },
-    { name: "Rajesh Malviya", text: "Free website banwaya SarkarDost ne — ab mere coaching institute ki details online hai. Parents easily contact karte hain.", rating: 5, role: "Tutor, Sudama Nagar" },
+    { name: "Raju Tea Stall", text: "After listing on SarkarDost, my customers grew — people call me directly now.", rating: 5, role: "Tea Stall Owner, Rajwada" },
+    { name: "Meena Tailor", text: "Earlier I only got walk-in customers — now new customers are coming too. It's a great platform!", rating: 5, role: "Tailor, Palasia" },
+    { name: "Pandit Electrician", text: "I put my service online — now I get 5-6 calls daily. Earlier it used to be 1-2.", rating: 5, role: "Electrician, Sudama Nagar" },
+    { name: "Sita Devi", text: "SarkarDost built an online booking system for my beauty parlour — now clients easily book appointments.", rating: 5, role: "Beauty Parlour Owner, Vijay Nagar" },
+    { name: "Ashok Kumar", text: "I got my grocery store listed online — and started doorstep delivery too. Sales grew 40%!", rating: 4, role: "Grocery Store Owner, Rajwada" },
+    { name: "Deepika Joshi", text: "I promoted my yoga classes through SarkarDost — now every batch is full. Best platform for Zumba and meditation too!", rating: 5, role: "Yoga Instructor, Palasia" },
+    { name: "Rajesh Malviya", text: "SarkarDost built me a free website — now my coaching institute's details are online. Parents contact easily.", rating: 5, role: "Tutor, Sudama Nagar" },
   ],
   followup: [
-    { name: "Amit Sales", text: "FollowUp se mere clients ko kabhi miss nahi karna padta — automated messages sab yaad dilate hain.", rating: 5, role: "Sales Executive" },
-    { name: "Dr. Priya", text: "Patients ko appointment yaad dilwana mushkil tha — FollowUp ne sab aasan kar diya.", rating: 5, role: "Dentist" },
+    { name: "Amit Sales", text: "With FollowUp I never miss my clients — automated messages remind everyone.", rating: 5, role: "Sales Executive" },
+    { name: "Dr. Priya", text: "Reminding patients about appointments used to be hard — FollowUp made it all easy.", rating: 5, role: "Dentist" },
   ],
   cloudplayer: [
     { name: "Vikram M.", text: "4K streaming with zero buffering — best cloud player I've used. Period.", rating: 5, role: "Tech Enthusiast" },
@@ -34,113 +34,113 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
     { name: "Marcus Chen", text: "Parental controls gave me peace of mind. My kids can explore safely while I enjoy my own content in 4K HDR.", rating: 4, role: "Father of Three" },
   ],
   paisaflow: [
-    { name: "Rohit Jain", text: "PaisaFlow ki wajah se mutual fund investment start kiya — returns acche aa rahe hain.", rating: 4, role: "First-time Investor" },
-    { name: "Pooja Sharma", text: "Goal-based planning ne retirement ka tension hataya — ab confident hoon.", rating: 5, role: "Working Professional" },
-    { name: "Amit Patel", text: "PaisaFlow ke SIP ne mere mutual fund investment ko systematic banaya — 12% returns p.a. on large-cap funds.", rating: 5, role: "Software Engineer, Indore" },
-    { name: "Anita Joshi", text: "PaisaFlow ke FD scheme se 7.5% annual interest mil raha hai — bank se zyada return!", rating: 4, role: "Retired Teacher, Bhopal" },
-    { name: "Vikram Singh", text: "PaisaFlow ke stock recommendations ne 6 months mein 18% return diya — research reports bahut helpful!", rating: 5, role: "Stock Trader, Jaipur" },
+    { name: "Rohit Jain", text: "Thanks to PaisaFlow I started mutual fund investing — the returns are good.", rating: 4, role: "First-time Investor" },
+    { name: "Pooja Sharma", text: "Goal-based planning removed my retirement worry — I'm confident now.", rating: 5, role: "Working Professional" },
+    { name: "Amit Patel", text: "PaisaFlow's SIP made my mutual fund investment systematic — 12% p.a. returns on large-cap funds.", rating: 5, role: "Software Engineer, Indore" },
+    { name: "Anita Joshi", text: "PaisaFlow's FD scheme gives me 7.5% annual interest — more return than the bank!", rating: 4, role: "Retired Teacher, Bhopal" },
+    { name: "Vikram Singh", text: "PaisaFlow's stock recommendations gave 18% return in 6 months — the research reports are very helpful!", rating: 5, role: "Stock Trader, Jaipur" },
   ],
   yaadrakh: [
-    { name: "Karan T.", text: "YaadRakh ke baad kuch bhi miss nahi hota — AI notes bhi ban jaate hain automatically.", rating: 5, role: "Student" },
-    { name: "Anita D.", text: "Smart reminders context samajhte hain — bahut useful hai daily life mein.", rating: 4, role: "Homemaker" },
-    { name: "Rohan S.", text: "YaadRakh ki AI notes se lecture notes automatically organize ho jate hain — ab revision me 50% kam time lagta hai.", rating: 5, role: "Computer Science Student" },
-    { name: "Priya M.", text: "Meeting notes automatically summarize ho jate hain — ab follow-up emails bhejne me 10 minute kam lagte hain.", rating: 5, role: "Project Manager" },
-    { name: "Dadi Sunder", text: "Dawa ki yaad-delivery reminders nahi chhootati — dawaiyon ka schedule perfect hai, dadi-maa ki sehat mein sudhar.", rating: 5, role: "Retired Teacher" },
+    { name: "Karan T.", text: "Since using YaadRakh nothing is missed — AI notes are created automatically too.", rating: 5, role: "Student" },
+    { name: "Anita D.", text: "Smart reminders understand context — very useful in daily life.", rating: 4, role: "Homemaker" },
+    { name: "Rohan S.", text: "YaadRakh's AI notes automatically organize my lecture notes — now revision takes 50% less time.", rating: 5, role: "Computer Science Student" },
+    { name: "Priya M.", text: "Meeting notes are automatically summarized — now sending follow-up emails takes 10 minutes less.", rating: 5, role: "Project Manager" },
+    { name: "Dadi Sunder", text: "Medicine delivery reminders never get missed — the medication schedule is perfect, and grandma's health has improved.", rating: 5, role: "Retired Teacher" },
   ],
   "sarkar-ai": [
-    { name: "Deepak C.", text: "Sarkar AI ne mere business ka data analysis kar diya — manually 10 ghanta lagta tha!", rating: 5, role: "Business Owner" },
-    { name: "Neha P.", text: "Hindi mein AI chatbot — finally koi hamari bhai mein baat karta hai!", rating: 5, role: "Content Creator" },
+    { name: "Deepak C.", text: "Sarkar AI analyzed my business data — it used to take 10 hours manually!", rating: 5, role: "Business Owner" },
+    { name: "Neha P.", text: "An AI chatbot in Hindi — finally someone who talks in our language!", rating: 5, role: "Content Creator" },
   ],
   sarkarfood: [
-    { name: "Ravi I.", text: "Indore ki best poha-jalebi mil gayi app se — 30 minute mein garam garam!", rating: 5, role: "Foodie" },
-    { name: "Sunita J.", text: "Budget menu se ₹99 mein full meal — students ke liye best hai.", rating: 4, role: "College Student" },
+    { name: "Ravi I.", text: "Found Indore's best poha-jalebi on the app — hot and fresh in 30 minutes!", rating: 5, role: "Foodie" },
+    { name: "Sunita J.", text: "A full meal for ₹99 from the budget menu — best for students.", rating: 4, role: "College Student" },
   ],
   sarkarfinance: [
-    { name: "Manoj K.", text: "₹2 lakh loan 10 minute mein account mein — no branch visit, no paperwork!", rating: 5, role: "Small Business Owner" },
-    { name: "Geeta S.", text: "Credit score check free mein — improve karne ke tips bhi mile. Bahut helpful!", rating: 4, role: "Homemaker" },
+    { name: "Manoj K.", text: "₹2 lakh loan in my account in 10 minutes — no branch visit, no paperwork!", rating: 5, role: "Small Business Owner" },
+    { name: "Geeta S.", text: "Credit score check is free — and I got tips to improve it too. Very helpful!", rating: 4, role: "Homemaker" },
   ],
   sarkarpay: [
-    { name: "Rajesh M.", text: "Sab ek jagah — UPI, card, net banking. Settlement bhi same day milta hai.", rating: 5, role: "Shop Owner" },
-    { name: "Pooja T.", text: "Analytics dashboard se pata chalta hai kaunsa product zada bik raha hai.", rating: 4, role: "Online Seller" },
+    { name: "Rajesh M.", text: "Everything in one place — UPI, card, net banking. Settlement is same-day too.", rating: 5, role: "Shop Owner" },
+    { name: "Pooja T.", text: "The analytics dashboard shows which product is selling the most.", rating: 4, role: "Online Seller" },
   ],
   sarkarmart: [
-    { name: "Anil S.", text: "Indore ke local brands mil gaye ek jagah — shopping bahut aasan ho gayi.", rating: 5, role: "Customer" },
-    { name: "Kavita D.", text: "Cashback mila har purchase pe — achhi savings ho rahi hai.", rating: 4, role: "Regular Buyer" },
+    { name: "Anil S.", text: "Found Indore's local brands all in one place — shopping became very easy.", rating: 5, role: "Customer" },
+    { name: "Kavita D.", text: "Got cashback on every purchase — good savings.", rating: 4, role: "Regular Buyer" },
   ],
   sarkarlegal: [
-    { name: "Ramesh L.", text: "Free consultation se samajh aaya case kaise hoga — paisa bhi bachaya, tension bhi nahi.", rating: 5, role: "Small Business Dispute" },
-    { name: "Sita R.", text: "Online video call par lawyer se mili — ghar baithke sab solve ho gaya.", rating: 5, role: "Property Issue" },
+    { name: "Ramesh L.", text: "The free consultation helped me understand how my case would proceed — saved money and stress.", rating: 5, role: "Small Business Dispute" },
+    { name: "Sita R.", text: "Met a lawyer over an online video call — everything was solved from home.", rating: 5, role: "Property Issue" },
   ],
   "justdial-agent": [
-    { name: "Suresh A.", text: "Listing ke baad calls aane lage — business 30% badh gayi 2 mahine mein.", rating: 5, role: "AC Repair Business" },
-    { name: "Ashok Kumar", text: "JustDial agent ne mere shop ki listing top kar di — ab phone nahi bajate, message aate hain.", rating: 5, role: "Shop Owner, Sarafa Bazaar" },
-    { name: "Deepika Singh", text: "Review management feature bahut helpful hai — negative feedback ko jaldi se resolve kar paa rahe hain.", rating: 4, role: "Restaurant Manager, Vijay Nagar" },
-    { name: "Sanjay Patel", text: "Analytics dashboard se pata chalta hai kaunse keywords se zyada traffic aa raha hai — ROI improve hua.", rating: 5, role: "Business Consultant, Indore" },
-    { name: "Deepak R.", text: "Lead generation feature ne mujhe 15 naye clients diye sirf 1 mahine mein. ROI bahut fast hai!", rating: 5, role: "Salon Owner, Vijay Nagar" },
-    { name: "Kavita S.", text: "Data analytics se pata chala kaunse product mein zyada margin hai — ab smart decisions le raha hoon.", rating: 5, role: "Electronics Store Owner" },
+    { name: "Suresh A.", text: "After listing, calls started coming — business grew 30% in 2 months.", rating: 5, role: "AC Repair Business" },
+    { name: "Ashok Kumar", text: "The JustDial agent got my shop's listing to the top — now phones don't ring, messages come instead.", rating: 5, role: "Shop Owner, Sarafa Bazaar" },
+    { name: "Deepika Singh", text: "The review management feature is very helpful — we can resolve negative feedback quickly.", rating: 4, role: "Restaurant Manager, Vijay Nagar" },
+    { name: "Sanjay Patel", text: "The analytics dashboard shows which keywords bring more traffic — ROI improved.", rating: 5, role: "Business Consultant, Indore" },
+    { name: "Deepak R.", text: "The lead generation feature gave me 15 new clients in just 1 month. ROI is very fast!", rating: 5, role: "Salon Owner, Vijay Nagar" },
+    { name: "Kavita S.", text: "Data analytics showed which product has higher margins — now I'm making smart decisions.", rating: 5, role: "Electronics Store Owner" },
   ],
   sarkarmarketplace: [
-    { name: "Meera J.", text: "Indore ka sabse bada directory — har category mein verified businesses mil gayi.", rating: 5, role: "Customer" },
-    { name: "Rajesh K.", text: "Apni chini ki dukaan online laga di — ab poore district mein orders aate hain jaldi.", rating: 5, role: "Kirana Merchant, Palasia" },
-    { name: "Anita M.", text: "Mujhe ek achhi jagah chahiye thi catering ke liye — directory se turant mil gayi, event super hit raha!", rating: 4, role: "Event Planner" },
+    { name: "Meera J.", text: "Indore's biggest directory — found verified businesses in every category.", rating: 5, role: "Customer" },
+    { name: "Rajesh K.", text: "I put my sugar shop online — now orders come quickly from across the district.", rating: 5, role: "Kirana Merchant, Palasia" },
+    { name: "Anita M.", text: "I needed a good place for catering — found it instantly in the directory, and the event was a super hit!", rating: 4, role: "Event Planner" },
   ],
   ayurvedicwebsite: [
-    { name: "Ashok P.", text: "Ashwagandha ne energy badhayi — AYUSH certified hai toh bharosa bhi hai.", rating: 5, role: "Fitness Enthusiast" },
-    { name: "Radha K.", text: "Triphal ne digestion theek kiya — ₹99 se start ho raha hai, best value.", rating: 4, role: "Senior Citizen" },
+    { name: "Ashok P.", text: "Ashwagandha boosted my energy — it's AYUSH certified so I trust it.", rating: 5, role: "Fitness Enthusiast" },
+    { name: "Radha K.", text: "Triphala fixed my digestion — starts at ₹99, best value.", rating: 4, role: "Senior Citizen" },
   ],
   sarkarghar: [
-    { name: "Vikram S.", text: "Virtual tour dekhke decide kiya — ghar jaane ka time bachaya aur perfect mill gaya.", rating: 5, role: "Home Buyer" },
-    { name: "Sunita P.", text: "Loan assistance bhi mili platform se — bank tak pahunchne mein madad mili, process smooth raha.", rating: 5, role: "First-time Buyer, Rajwada" },
-    { name: "Amit J.", text: "Price analytics se pata chala sahi rate kya hai — ₹2 lakh bachaye fraud se bach gaye.", rating: 4, role: "Investor, Scheme No. 78" },
+    { name: "Vikram S.", text: "Decided after seeing the virtual tour — saved the time of visiting homes and found the perfect one.", rating: 5, role: "Home Buyer" },
+    { name: "Sunita P.", text: "Got loan assistance from the platform too — help reaching the bank, and the process was smooth.", rating: 5, role: "First-time Buyer, Rajwada" },
+    { name: "Amit J.", text: "Price analytics showed the right rate — saved ₹2 lakh and avoided fraud.", rating: 4, role: "Investor, Scheme No. 78" },
   ],
   sarkarskills: [
-    { name: "Rahul Y.", text: "Digital marketing course pura kiya — ab freelance se ₹25,000/month kamata hoon.", rating: 5, role: "Graduate" },
-    { name: "Neha G.", text: "Certificate mila course complete karne par — interview mein impression ban gaya.", rating: 4, role: "Job Seeker" },
+    { name: "Rahul Y.", text: "Completed the digital marketing course — now I earn ₹25,000/month freelancing.", rating: 5, role: "Graduate" },
+    { name: "Neha G.", text: "Got a certificate on completing the course — made a great impression in interviews.", rating: 4, role: "Job Seeker" },
   ],
   "hyperframes-realestate": [
-    { name: "Sanjay M.", text: "Video tour se property dekh liya — Indore aane ki zarurat nahi padi. Time and money dono bachaya!", rating: 5, role: "NRI Buyer" },
-    { name: "Priyanka S.", text: "360° virtual tour ne itni achhi dikhi property ki — actually jaake dekhne ke baad bhi same laga. Fully accurate!", rating: 5, role: "Home Buyer, Mumbai" },
-    { name: "Rajiv T.", text: "Video listing daalne ke baad hi 3 buyer interested hue — personally visit karne ke baad ek ne turant booking kar li.", rating: 5, role: "Property Seller" },
+    { name: "Sanjay M.", text: "Saw the property via video tour — no need to travel to Indore. Saved both time and money!", rating: 5, role: "NRI Buyer" },
+    { name: "Priyanka S.", text: "The 360° virtual tour showed the property so well — even after visiting in person it looked the same. Fully accurate!", rating: 5, role: "Home Buyer, Mumbai" },
+    { name: "Rajiv T.", text: "Just after posting the video listing, 3 buyers showed interest — after a personal visit, one booked immediately.", rating: 5, role: "Property Seller" },
   ],
   sikshahub: [
-    { name: "Priyanka T.", text: "Beti ke liye SikshaHub liya — CBSE syllabus, video classes, sab ₹199 mein. Best investment!", rating: 5, role: "Parent" },
-    { name: "Rohit K.", text: "Live tuition sessions ne samjh aaya jo school mein nahi samjha — maths mein 40% improvement!", rating: 5, role: "Class 10 Student" },
-    { name: "Meena D.", text: "MP Board ke liye yahan sab kuch milta hai — notes, video, practice test. Beta self-study kar raha hai ab.", rating: 4, role: "Mother, Sudama Nagar" },
+    { name: "Priyanka T.", text: "Bought SikshaHub for my daughter — CBSE syllabus, video classes, all for ₹199. Best investment!", rating: 5, role: "Parent" },
+    { name: "Rohit K.", text: "Live tuition sessions helped me understand what school didn't — 40% improvement in maths!", rating: 5, role: "Class 10 Student" },
+    { name: "Meena D.", text: "For MP Board, everything is available here — notes, videos, practice tests. My son now studies on his own.", rating: 4, role: "Mother, Sudama Nagar" },
   ],
   sarkartravel: [
-    { name: "Amit J.", text: "Flight + hotel package compare kiya — ₹3,000 bachaye!", rating: 5, role: "Frequent Traveler" },
-    { name: "Kavita N.", text: "Shimla honeymoon package book kiya — bahut sundar hotels aur itinerary perfectly planned tha.", rating: 5, role: "Newlywed, Indore" },
-    { name: "Sunil P.", text: "Train tickets nahi mil thi — Travel ne waitlist suggestion di, WL2 se confirm ho gayi. Bahut helpful!", rating: 4, role: "Regular Commuter" },
+    { name: "Amit J.", text: "Compared flight + hotel packages — saved ₹3,000!", rating: 5, role: "Frequent Traveler" },
+    { name: "Kavita N.", text: "Booked a Shimla honeymoon package — beautiful hotels and a perfectly planned itinerary.", rating: 5, role: "Newlywed, Indore" },
+    { name: "Sunil P.", text: "Couldn't get train tickets — Travel gave a waitlist suggestion, and it got confirmed from WL2. Very helpful!", rating: 4, role: "Regular Commuter" },
   ],
   sarkardukaan: [
-    { name: "Ganesh P.", text: "Dukaan online ho gayi 10 minute mein — ab poore sheher mein orders aate hain.", rating: 5, role: "Kirana Shop Owner" },
-    { name: "Lalita B.", text: "Main kapde online bechhti hoon — Dukaan ne meri puri dukaan smartphone pe layi. Koi shop rent nahi deni padegi!", rating: 5, role: "Boutique Owner, Palasia" },
-    { name: "Mohammed S.", text: "Inventory manage karna itna aasan ho gaya — automatically pata chalta hai kab restock karna hai.", rating: 4, role: "Mobile Accessories Shop" },
+    { name: "Ganesh P.", text: "My shop went online in 10 minutes — now orders come from across the city.", rating: 5, role: "Kirana Shop Owner" },
+    { name: "Lalita B.", text: "I sell clothes online — Dukaan brought my entire shop to my smartphone. No shop rent to pay!", rating: 5, role: "Boutique Owner, Palasia" },
+    { name: "Mohammed S.", text: "Managing inventory became so easy — it automatically shows when to restock.", rating: 4, role: "Mobile Accessories Shop" },
   ],
   sarkarbazaar: [
-    { name: "Lata S.", text: "Local crafts online bech pa rahi hain — Bazaar ne reach di worldwide.", rating: 5, role: "Handicraft Seller" },
-    { name: "Prakash J.", text: "B2B orders aane lage suppliers se directly — beech ke hatane se margin badh gaya.", rating: 5, role: "Wholesaler, Cloth Market" },
-    { name: "Nisha A.", text: "Shipping partner network ne delivery ko easy baya — DTDC se ghar tak pahunchta hai order safely.", rating: 4, role: "Home Baker" },
+    { name: "Lata S.", text: "I can sell local crafts online — Bazaar gave me worldwide reach.", rating: 5, role: "Handicraft Seller" },
+    { name: "Prakash J.", text: "B2B orders started coming directly from suppliers — removing the middleman increased margins.", rating: 5, role: "Wholesaler, Cloth Market" },
+    { name: "Nisha A.", text: "The shipping partner network made delivery easy — orders reach home safely via DTDC.", rating: 4, role: "Home Baker" },
   ],
   sarkarjobs: [
-    { name: "Ravi K.", text: "Verified companies mil gayi — pehle fraud ka darr tha, ab nahi.", rating: 5, role: "Fresh Graduate" },
-    { name: "Sneha M.", text: "AI job match ne sahi company bheji — 3 interviews clear kiye, final selection!", rating: 5, role: "BBA Graduate, Palasia" },
-    { name: "Arvind P.", text: "Salary comparison tool ne pata kiya ki mujhse kam mil raha tha — company negotiate kar payi is data se.", rating: 5, role: "Sales Executive" },
+    { name: "Ravi K.", text: "Found verified companies — earlier I feared fraud, not anymore.", rating: 5, role: "Fresh Graduate" },
+    { name: "Sneha M.", text: "AI job matching sent the right company — cleared 3 interviews, final selection!", rating: 5, role: "BBA Graduate, Palasia" },
+    { name: "Arvind P.", text: "The salary comparison tool showed I was being paid less — I negotiated with the company using this data.", rating: 5, role: "Sales Executive" },
   ],
   sarkared: [
-    { name: "Pooja M.", text: "Web development seekha — ab apna khud ka website bana leti hoon. ₹499/mein best course!", rating: 5, role: "Aspiring Developer" },
-    { name: "Amit S.", text: "AI course se chatbot bana liya apne business ke liye — customer support automated ho gaya.", rating: 5, role: "Startup Founder" },
-    { name: "Kiran B.", text: "Certificate mila course ke baad — HR ne bola yeh practical knowledge hai, offer letter mil gayi!", rating: 5, role: "BCA Student" },
+    { name: "Pooja M.", text: "Learned web development — now I build my own website. ₹499/month, best course!", rating: 5, role: "Aspiring Developer" },
+    { name: "Amit S.", text: "Built a chatbot for my business from the AI course — customer support is now automated.", rating: 5, role: "Startup Founder" },
+    { name: "Kiran B.", text: "Got a certificate after the course — HR said it's practical knowledge, and I got the offer letter!", rating: 5, role: "BCA Student" },
   ],
   sarkarsarkar: [
-    { name: "Bhagirath J.", text: "Aadhar card correction ke liye SarkarSarkar use kiya — ghar baithke ho gaya kaam!", rating: 5, role: "Senior Citizen" },
-    { name: "Rekha D.", text: "Ration card banana tha — pehle taiyar the kagzaat galat ho gaye the, platform ne sab set kar diya.", rating: 5, role: "Homemaker, Rajwada" },
-    { name: "Ghanshyam K.", text: "Online RTI file kari — 15 din mein jawaab mil gaya. Pehle mahino lag jaate the.", rating: 4, role: "RTI Activist" },
+    { name: "Bhagirath J.", text: "Used SarkarSarkar for Aadhar card correction — done from home!", rating: 5, role: "Senior Citizen" },
+    { name: "Rekha D.", text: "I needed to make a ration card — earlier my documents kept getting prepared wrong, the platform set everything right.", rating: 5, role: "Homemaker, Rajwada" },
+    { name: "Ghanshyam K.", text: "Filed an RTI online — got a reply in 15 days. Earlier it used to take months.", rating: 4, role: "RTI Activist" },
   ],
   sarkarwellness: [
-    { name: "Meera D.", text: "Panchkarma treatment ne back pain door kiya — natural aur effective.", rating: 5, role: "Yoga Practitioner" },
-    { name: "Dr. Ashok T.", text: "Ayurvedic consultation ne meri skin problem 3 mahine mein solve ki — chemical creams se zyada effective.", rating: 5, role: "Retired Teacher" },
-    { name: "Priyanka R.", text: "Daily yoga classes join ki — stress kam hua, neend achhi aa rahi hai. Best wellness decision!", rating: 4, role: "Working Mom, Vijay Nagar" },
+    { name: "Meera D.", text: "Panchakarma treatment relieved my back pain — natural and effective.", rating: 5, role: "Yoga Practitioner" },
+    { name: "Dr. Ashok T.", text: "Ayurvedic consultation solved my skin problem in 3 months — more effective than chemical creams.", rating: 5, role: "Retired Teacher" },
+    { name: "Priyanka R.", text: "Joined daily yoga classes — stress reduced, sleep improved. Best wellness decision!", rating: 4, role: "Working Mom, Vijay Nagar" },
   ],
 };
 
@@ -168,8 +168,8 @@ export function TestimonialsPage({ brand }: { brand: any }) {
         <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full blur-3xl opacity-10" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }} />
         <div className="relative mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: `${accent}50`, color: primary }}>Testimonials</div>
-          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>Hamare Mariz Kya Kehte Hain</span></h1>
-          <p className="text-lg opacity-60 max-w-2xl mx-auto">Asli vichar — SarkarHealth par bharosha karne wale mariz ke</p>
+          <h1 className="heading-xl mb-6"><span style={{ color: primary }}>What our patients say</span></h1>
+          <p className="text-lg opacity-60 max-w-2xl mx-auto">Real opinions from patients who trust SarkarHealth</p>
         </div>
       </section>
 
@@ -196,7 +196,7 @@ export function TestimonialsPage({ brand }: { brand: any }) {
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Join our happy patients</h2>
-              <p className="text-white/80 mb-8">Experience the {brand.name} difference today — 5000+ mariz already trust us.</p>
+              <p className="text-white/80 mb-8">Experience the {brand.name} difference today — 5000+ patients already trust us.</p>
               <a href={`/contact`} className="bg-white px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: primary }}>Get Started →</a>
             </div>
           </div>

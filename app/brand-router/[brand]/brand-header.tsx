@@ -25,10 +25,12 @@ export function BrandHeader({ brand }: { brand: any }) {
   const secondary = theme.secondary ?? "#8b5cf6";
   const accent = theme.accent ?? "#c4b5fd";
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
+  const isCustomerSite = !!brand.features?.listings;
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const visible = NAV.filter((n) => {
     if (flags[n.key] === false) return false;
+    if (n.key === "pricing" && isCustomerSite) return false;
     if (n.key === "marketplace" && !brand.features?.listings) return false;
     return true;
   });
@@ -53,7 +55,7 @@ export function BrandHeader({ brand }: { brand: any }) {
           <nav className="hidden lg:flex items-center gap-1">
             {visible.map((item) => (
               <a key={item.key} href={`${item.path}`} className="press on-material px-3 py-2 text-sm rounded-lg opacity-75">
-                {item.label}
+                {item.key === "marketplace" && isCustomerSite ? "Browse" : item.label}
               </a>
             ))}
           </nav>
@@ -63,9 +65,15 @@ export function BrandHeader({ brand }: { brand: any }) {
             <a href={`/login`} className="press hidden sm:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold text-white shadow-sm" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
               Login
             </a>
-            <a href={`/contact`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
-              Get Started
-            </a>
+            {isCustomerSite ? (
+              <a href={`/marketplace`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
+                Browse Businesses
+              </a>
+            ) : (
+              <a href={`/contact`} className="press hidden md:inline-flex items-center gap-1.5 rounded-xl px-5 py-2 text-xs font-bold border-2" style={{ borderColor: accent, color: primary }}>
+                Get Started
+              </a>
+            )}
             {/* Hit target is 44px, and the label states what it does rather
                 than relying on the icon alone. */}
             <button
@@ -104,7 +112,11 @@ export function BrandHeader({ brand }: { brand: any }) {
             ))}
             <div className="pt-3 flex gap-2">
               <a href={`/login`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold text-white" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>Login</a>
-              <a href={`/contact`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
+              {isCustomerSite ? (
+                <a href={`/marketplace`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Browse</a>
+              ) : (
+                <a href={`/contact`} className="press flex-1 text-center rounded-xl py-3 text-sm font-bold border-2" style={{ borderColor: accent, color: primary }}>Get Started</a>
+              )}
             </div>
           </div>
         </div>
@@ -121,21 +133,34 @@ export function BrandFooter({ brand }: { brand: any }) {
   const bg = theme.bg ?? "#f9fafb";
   const social = (brand.social ?? {}) as Record<string, string>;
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
+  const isCustomerSite = !!brand.features?.listings;
 
   // Brand-driven call to action. Labels are direct and specific rather than
   // generic ("Get started with X", not "Learn more") — a specific label lets
   // someone predict what happens before they tap it.
   const ctaOverride = ((brand.page_content ?? {}) as Record<string, any>).cta ?? {};
-  const cta = {
-    title: ctaOverride.title ?? `Get started with ${brand.name}`,
-    subtitle:
-      ctaOverride.subtitle ??
-      brand.tagline ??
-      brand.description ??
-      `Join ${brand.name} today — it takes less than a minute.`,
-    primary_label: ctaOverride.primary_label ?? "Create free account",
-    secondary_label: ctaOverride.secondary_label ?? "Talk to us",
-  };
+  const cta = isCustomerSite
+    ? {
+        title: ctaOverride.title ?? `Find trusted businesses on ${brand.name}`,
+        subtitle:
+          ctaOverride.subtitle ?? `Browse verified local businesses, services and professionals — all in one place.`,
+        primary_label: ctaOverride.primary_label ?? "Browse Businesses",
+        secondary_label: ctaOverride.secondary_label ?? "Contact us",
+        primary_href: ctaOverride.primary_href ?? "/marketplace",
+        secondary_href: ctaOverride.secondary_href ?? "/contact",
+      }
+    : {
+        title: ctaOverride.title ?? `Get started with ${brand.name}`,
+        subtitle:
+          ctaOverride.subtitle ??
+          brand.tagline ??
+          brand.description ??
+          `Join ${brand.name} today — it takes less than a minute.`,
+        primary_label: ctaOverride.primary_label ?? "Create free account",
+        secondary_label: ctaOverride.secondary_label ?? "Talk to us",
+        primary_href: ctaOverride.primary_href ?? "/register",
+        secondary_href: ctaOverride.secondary_href ?? "/contact",
+      };
 
   return (
     <footer className="mt-auto" style={{ backgroundColor: `${primary}08` }}>
@@ -144,21 +169,21 @@ export function BrandFooter({ brand }: { brand: any }) {
         <div className="rounded-3xl p-8 md:p-12 text-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
           <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
           <div className="relative">
-            {/* This block used to hard-code SarkarFood's Hindi food-delivery
-                copy ("भूख लगी? अभी ऑर्डर करो!" / "फ्री डिलीवरी पाएं"), which the
-                shared footer then rendered on all 27 brands — so a legal, health
-                or fintech site invited you to order dinner. Copy now comes from
-                the brand row, with a neutral fallback. Set page_content.cta =
-                { title, subtitle, primary_label, secondary_label } to override. */}
+            {/* This block used to hard-code SarkarFood's food-delivery copy
+                 ("Hungry? Order now!" / "Get free delivery"), which the shared
+                 footer then rendered on all 27 brands — so a legal, health or
+                 fintech site invited you to order dinner. Copy now comes from the
+                 brand row, with a neutral fallback. Set page_content.cta =
+                 { title, subtitle, primary_label, secondary_label } to override. */}
             <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3" style={{ letterSpacing: "-0.022em", lineHeight: 1.12, textWrap: "balance" }}>
               {cta.title}
             </h2>
             <p className="text-white/85 mb-6 max-w-lg mx-auto" style={{ lineHeight: 1.6 }}>{cta.subtitle}</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <a href={`/register`} className="press bg-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg" style={{ color: primary }}>
+              <a href={`${cta.primary_href}`} className="press bg-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg" style={{ color: primary }}>
                 {cta.primary_label} →
               </a>
-              <a href={`/contact`} className="press border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm">
+              <a href={`${cta.secondary_href}`} className="press border-2 border-white/30 text-white px-8 py-3 rounded-xl font-bold text-sm">
                 {cta.secondary_label}
               </a>
             </div>
@@ -188,9 +213,9 @@ export function BrandFooter({ brand }: { brand: any }) {
           <div className="flex flex-col gap-2 text-sm opacity-60">
             {flags.about !== false && <a href={`/about`} className="hover:opacity-100 transition-opacity">About</a>}
             {flags.services !== false && <a href={`/services`} className="hover:opacity-100 transition-opacity">Services</a>}
-            {flags.pricing !== false && <a href={`/pricing`} className="hover:opacity-100 transition-opacity">Pricing</a>}
+            {!isCustomerSite && flags.pricing !== false && <a href={`/pricing`} className="hover:opacity-100 transition-opacity">Pricing</a>}
             {flags.blog !== false && <a href={`/blog`} className="hover:opacity-100 transition-opacity">Blog</a>}
-            {brand.features?.listings && <a href={`/marketplace`} className="hover:opacity-100 transition-opacity">Listings</a>}
+            {brand.features?.listings && <a href={`/marketplace`} className="hover:opacity-100 transition-opacity">{isCustomerSite ? "Browse" : "Listings"}</a>}
           </div>
         </div>
 

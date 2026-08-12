@@ -1,10 +1,6 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
-import { CITY_LABEL, categoryPath, getCategoryIndex } from "@/lib/categories";
+import { CITY_LABEL, categoryPath, getCategoryIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
-
-function titleize(s: string) {
-  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
-}
 
 /**
  * The full category index.

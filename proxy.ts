@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { SITE_FOLDERS } from "./lib/site-folders";
 import { isCategoryPath } from "./lib/categories";
 
@@ -26,7 +26,7 @@ const APP_PATHS = [
   "/privacy", "/privacy-policy", "/terms", "/terms-conditions",
 ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
   const hostname = host.split(":")[0].toLowerCase();
   const pathname = request.nextUrl.pathname;
@@ -105,7 +105,11 @@ export async function middleware(request: NextRequest) {
   const isAppPath =
     isCategoryPath(pathname) ||
     APP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
-  if (isAppPath || !SITE_FOLDERS.has(brandSlug)) {
+  // The directory brand's root is the dynamic directory homepage, not the
+  // prebuilt static marketing file. Route it through the brand router so
+  // brand-landing.tsx (with live listings) renders at /.
+  const isDirectoryRoot = brandSlug === "sarkarmarketplace" && pathname === "/";
+  if (isAppPath || isDirectoryRoot || !SITE_FOLDERS.has(brandSlug)) {
     const url = request.nextUrl.clone();
     url.searchParams.set("__brand_path", pathname);
     url.pathname = `/brand-router/${brandSlug}`;

@@ -1,43 +1,45 @@
 ﻿import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
-import { CITY_LABEL, categoryPath, cleanArea, cleanBusinessName, localityOf } from "@/lib/categories";
+import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref } from "@/lib/categories";
+import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
 
 async function getBusiness(id: number) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-  const res = await fetch(`${url}/rest/v1/businesses?id=eq.${id}&select=*`, {
-    headers: { apikey: key, Authorization: `Bearer ${key}` },
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) return null;
-  const rows = await res.json();
-  return rows[0] ?? null;
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (!url || !key) return null;
+    const res = await fetch(`${url}/rest/v1/businesses?id=eq.${id}&select=*`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return rows[0] ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /** Others in the same category — gives the page somewhere to go instead of
  *  being a dead end for both the visitor and the crawler. */
 async function getRelated(category: string | null, excludeId: number) {
   if (!category) return [];
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
-  const res = await fetch(
-    `${url}/rest/v1/businesses?select=id,name,area,rating,reviews_count,phone` +
-      `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
-      `&id=neq.${excludeId}&order=rating.desc.nullslast&limit=6`,
-    { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: 1800 } },
-  );
-  return res.ok ? await res.json() : [];
-}
-
-function titleize(s: string): string {
-  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
-}
-
-function telHref(phone: string): string {
-  const d = phone.replace(/[^\d+]/g, "");
-  return `tel:${d.startsWith("+") ? d : `+91${d.replace(/^0+/, "")}`}`;
+  try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (!url || !key) return [];
+    const res = await fetch(
+      `${url}/rest/v1/businesses?select=id,name,area,rating,reviews_count,phone` +
+        `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
+        `&id=neq.${excludeId}&order=rating.desc.nullslast&limit=6`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: 1800 } },
+    );
+    return res.ok ? await res.json() : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function BusinessDetailPage({ brand, businessId }: { brand: any; businessId: number }) {
@@ -247,14 +249,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {related.map((r: any) => (
-                <a key={r.id} href={`${origin}/business/${r.id}`} className="card-lift rounded-2xl border bg-white p-4 shadow-sm block" style={{ borderColor: `${accent}30` }}>
-                  <h3 className="font-semibold text-sm leading-snug" style={{ color: primary }}>{r.name}</h3>
-                  <div className="mt-1.5 flex items-center gap-2 text-xs">
-                    {r.rating != null && <span className="text-amber-500 font-semibold">★ {r.rating}{r.reviews_count != null && <span className="font-normal text-neutral-400"> ({r.reviews_count.toLocaleString("en-IN")})</span>}</span>}
-                    {cleanArea(r.area) && <span className="opacity-50 capitalize">{cleanArea(r.area)}</span>}
-                    {r.phone && <span className="text-neutral-300"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z"/></svg></span>}
-                  </div>
-                </a>
+                <BusinessCard key={r.id} b={r} primary={primary} secondary={secondary} />
               ))}
             </div>
             {biz.category && (

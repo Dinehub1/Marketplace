@@ -1,8 +1,11 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { categoriesForBrand } from "@/lib/brand-categories";
-import { categoryPath, cleanBusinessName } from "@/lib/categories";
+import { categoryPath, CITY_LABEL, getAreaIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
+import { BusinessCard } from "@/components/directory/BusinessCard";
+import { CategoryCard } from "@/components/directory/CategoryCard";
+import { SectionHeading } from "@/components/directory/SectionHeading";
 
 const PAGE_SIZE = 24;
 // Yelp carries 1,500+ categories and surfaces 22 on its homepage. This page was
@@ -10,7 +13,15 @@ const PAGE_SIZE = 24;
 // met was a wall of links and the actual businesses were below the fold.
 const FEATURED_CATEGORIES = 12;
 
-async function fetchDirectory(q: string, cat: string, page: number, allowed: string[] | null) {
+async function fetchDirectory(
+  q: string,
+  cat: string,
+  area: string,
+  rating: number,
+  sort: string,
+  page: number,
+  allowed: string[] | null,
+) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   if (allowed && allowed.length === 0) return { rows: [], total: 0 };
@@ -23,7 +34,13 @@ async function fetchDirectory(q: string, cat: string, page: number, allowed: str
   else if (allowed) {
     filters.push(`category=in.(${allowed.map((c) => encodeURIComponent(`"${c}"`)).join(",")})`);
   }
-  filters.push("order=rating.desc.nullslast,name.asc");
+  if (area) filters.push(`area=eq.${encodeURIComponent(area)}`);
+  if (rating > 0) filters.push(`rating=gte.${rating}`);
+  const order =
+    sort === "reviews" ? "reviews_count.desc.nullslast,name.asc"
+    : sort === "name" ? "name.asc"
+    : "rating.desc.nullslast,name.asc";
+  filters.push(`order=${order}`);
   const from = (page - 1) * PAGE_SIZE;
   const res = await fetch(`${url}/rest/v1/businesses?${filters.join("&")}`, {
     headers: {
@@ -62,64 +79,65 @@ async function fetchCategories(): Promise<{ category: string; count: number }[]>
   } catch { return []; }
 }
 
-function titleize(s: string) {
-  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
-}
-
-function telHref(phone: string) {
-  const d = phone.replace(/[^\d+]/g, "");
-  return `tel:${d.startsWith("+") ? d : `+91${d.replace(/^0+/, "")}`}`;
-}
-
 export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Record<string, any> }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
+  const accent = theme.accent ?? "#c4b5fd";
 
   const q = String(sp.q ?? "").trim();
   const cat = String(sp.cat ?? "").trim();
+  const area = String(sp.area ?? "").trim();
+  const rating = Math.min(5, Math.max(0, Number(sp.rating) || 0));
+  const sort = String(sp.sort ?? "rating") === "reviews" ? "reviews" : String(sp.sort ?? "rating") === "name" ? "name" : "rating";
   const page = Math.max(1, Number(sp.page) || 1);
 
-  const allCategories = await fetchCategories();
+  const [allCategories, areas] = await Promise.all([fetchCategories(), getAreaIndex()]);
   const allowed = categoriesForBrand(brand.slug, allCategories.map((c) => c.category));
   const categories = allowed ? allCategories.filter((c) => allowed.includes(c.category)) : allCategories;
-  const { rows, total } = await fetchDirectory(q, cat, page, allowed);
+  const { rows, total } = await fetchDirectory(q, cat, area, rating, sort, page, allowed);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const origin = ``;
-  const base = `${origin}/marketplace`;
-  const filtered = Boolean(q || cat);
+  const base = "/marketplace";
+  const filtered = Boolean(q || cat || area || rating);
+  const quickCats = categories.slice(0, 8);
+
   const qs = (over: Record<string, string | number>) => {
     const p = new URLSearchParams();
     if (q) p.set("q", q);
     if (cat) p.set("cat", cat);
+    if (area) p.set("area", area);
+    if (rating) p.set("rating", String(rating));
+    if (sort !== "rating") p.set("sort", sort);
     for (const [k, v] of Object.entries(over)) { if (v) p.set(k, String(v)); else p.delete(k); }
     const s = p.toString();
     return s ? `${base}?${s}` : base;
   };
 
   return (
-    /* Neutral ground. The page used to be washed in the brand's mint `bg`,
-       which flattened everything to one tone — cards, chrome and background all
-       reading at the same weight. White surfaces on a near-white ground let the
-       brand colour work as an accent instead of a tint. */
     <div className="min-h-screen flex flex-col bg-[#fbfbfc]">
       <BrandHeader brand={brand} />
 
       <main className="flex-1">
         {/* ── HERO ─────────────────────────────────────────────────────────
-            Search is the primary action, so it lives in the hero rather than
-            in a separate band beneath it. */}
-        <section className="relative overflow-hidden border-b border-black/[0.06]">
+            Search is the primary action, so it lives in the hero. The mesh
+            gradient is brand-tinted but stays quiet so the form reads first. */}
+        <section className="relative overflow-hidden">
           <div
             className="absolute inset-0 -z-10"
-            style={{ background: `radial-gradient(120% 100% at 50% 0%, ${primary}14 0%, transparent 62%)` }}
+            style={{
+              background:
+                `radial-gradient(120% 90% at 15% 0%, ${primary}12 0%, transparent 55%),` +
+                `radial-gradient(120% 90% at 85% 10%, ${secondary}10 0%, transparent 55%)`,
+            }}
           />
+          <div className="absolute inset-0 -z-10 opacity-[0.5] dot-pattern" />
           <div className="mx-auto max-w-3xl px-6 pt-16 pb-12 text-center">
+            <div className="mb-4 text-4xl">📍</div>
             <h1
-              className="text-[2.1rem] md:text-[3rem] font-extrabold text-neutral-900"
-              style={{ letterSpacing: "-0.035em", lineHeight: 1.05, textWrap: "balance" }}
+              className="text-[2.3rem] md:text-[3.25rem] font-extrabold text-neutral-900"
+              style={{ letterSpacing: "-0.035em", lineHeight: 1.04, textWrap: "balance" }}
             >
-              Find a business in Indore
+              Find a business in {CITY_LABEL}
             </h1>
             <p className="mt-3 text-base md:text-lg text-neutral-500" style={{ lineHeight: 1.55 }}>
               Plumbers, doctors, tutors and thousands more — with phone numbers you can call straight away.
@@ -135,7 +153,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
                 </span>
                 <input
                   name="q" defaultValue={q} aria-label="Search businesses"
-                  placeholder="Try “plumber” or “dentist”"
+                  placeholder={`Try “${quickCats[0]?.category ?? "plumber"}” or “dentist”`}
                   className="flex-1 bg-transparent px-2 py-3 text-[15px] text-neutral-900 placeholder:text-neutral-400 outline-none"
                 />
                 {cat && <input type="hidden" name="cat" value={cat} />}
@@ -146,10 +164,28 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
               </div>
             </form>
 
+            {/* Quick category picks — one tap to a filtered listing. */}
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              {quickCats.map((c) => (
+                <a
+                  key={c.category}
+                  href={`/marketplace?cat=${encodeURIComponent(c.category)}`}
+                  className="press inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-neutral-700 ring-1 ring-black/[0.05] hover:bg-white"
+                >
+                  <CategoryIcon category={c.category} size={14} />
+                  {titleize(c.category)}
+                </a>
+              ))}
+            </div>
+
             {filtered && (
-              <div className="mt-4 flex items-center justify-center gap-2.5 text-sm">
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 text-sm">
                 <span className="text-neutral-500">
-                  Showing results{q ? ` for “${q}”` : ""}{cat ? ` in ${titleize(cat)}` : ""}
+                  Showing results
+                  {q ? ` for “${q}”` : ""}
+                  {cat ? ` in ${titleize(cat)}` : ""}
+                  {area ? ` near ${titleize(area)}` : ""}
+                  {rating ? ` rated ${rating}★+` : ""}
                 </span>
                 <a href={base} className="press rounded-full bg-neutral-900/[0.05] px-3 py-1 text-xs font-semibold text-neutral-700">
                   Clear
@@ -162,31 +198,22 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
         {/* ── POPULAR CATEGORIES ────────────────────────────────────────── */}
         {!filtered && categories.length > 0 && (
           <section className="mx-auto max-w-6xl px-6 pt-12">
-            <div className="flex items-end justify-between gap-4 mb-5">
-              <h2 className="text-lg font-bold text-neutral-900" style={{ letterSpacing: "-0.015em" }}>
-                Popular categories
-              </h2>
-              <a href={`${origin}/categories`} className="press text-sm font-semibold" style={{ color: primary }}>
-                Browse all →
-              </a>
-            </div>
+            <SectionHeading
+              title="Popular categories"
+              subtitle="Browse Indore's most searched businesses"
+              viewAllHref="/categories"
+              viewAllLabel="Browse all"
+              primary={primary}
+            />
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {categories.slice(0, FEATURED_CATEGORIES).map((c) => (
-                <a
+                <CategoryCard
                   key={c.category}
-                  href={`${origin}${categoryPath(c.category)}`}
-                  className="card-lift group flex items-center gap-3 rounded-2xl bg-white p-4 ring-1 ring-black/[0.05] shadow-[0_1px_2px_rgba(16,16,24,0.04)]"
-                >
-                  <span
-                    className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: `${primary}12`, color: primary }}
-                  >
-                    <CategoryIcon category={c.category} size={19} />
-                  </span>
-                  <span className="min-w-0 flex-1 text-sm font-semibold leading-snug text-neutral-800">
-                    {titleize(c.category)}
-                  </span>
-                </a>
+                  category={c.category}
+                  count={c.count}
+                  primary={primary}
+                  secondary={secondary}
+                />
               ))}
             </div>
           </section>
@@ -194,10 +221,60 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
 
         {/* ── LISTINGS ──────────────────────────────────────────────────── */}
         <section className="mx-auto max-w-6xl px-6 py-12">
-          <h2 className="text-lg font-bold text-neutral-900 mb-5" style={{ letterSpacing: "-0.015em" }}>
-            {filtered ? "Results" : "Top rated businesses"}
-          </h2>
+          {/* Filter bar: a plain GET form so it works without JavaScript and
+              keeps every choice in the URL (shareable, crawlable). */}
+          <form action={base} method="GET" className="mb-7 flex flex-wrap items-center gap-2">
+            {q && <input type="hidden" name="q" value={q} />}
+            {cat && <input type="hidden" name="cat" value={cat} />}
+            <label className="sr-only" htmlFor="f-area">Area</label>
+            <select
+              id="f-area" name="area" defaultValue={area}
+              className="press rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-700 ring-1 ring-black/[0.06] outline-none focus:ring-2"
+              style={{ ["--tw-ring-color" as any]: `${primary}55` }}
+            >
+              <option value="">All areas</option>
+              {areas.slice(0, 30).map((a) => (
+                <option key={a.slug} value={a.area}>{titleize(a.area)} ({a.count})</option>
+              ))}
+            </select>
 
+            <label className="sr-only" htmlFor="f-rating">Minimum rating</label>
+            <select
+              id="f-rating" name="rating" defaultValue={rating ? String(rating) : ""}
+              className="press rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-700 ring-1 ring-black/[0.06] outline-none focus:ring-2"
+              style={{ ["--tw-ring-color" as any]: `${primary}55` }}
+            >
+              <option value="">Any rating</option>
+              <option value="4">4★ &amp; up</option>
+              <option value="4.5">4.5★ &amp; up</option>
+            </select>
+
+            <label className="sr-only" htmlFor="f-sort">Sort by</label>
+            <select
+              id="f-sort" name="sort" defaultValue={sort}
+              className="press rounded-xl bg-white px-3.5 py-2.5 text-sm font-semibold text-neutral-700 ring-1 ring-black/[0.06] outline-none focus:ring-2"
+              style={{ ["--tw-ring-color" as any]: `${primary}55` }}
+            >
+              <option value="rating">Best rated</option>
+              <option value="reviews">Most reviewed</option>
+              <option value="name">Name A–Z</option>
+            </select>
+
+            <button type="submit" className="press rounded-xl px-4 py-2.5 text-sm font-semibold text-white shadow-sm"
+                    style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
+              Apply
+            </button>
+            {filtered && (
+              <a href={base} className="press rounded-xl bg-neutral-900/[0.04] px-4 py-2.5 text-sm font-semibold text-neutral-700">
+                Reset
+              </a>
+            )}
+          </form>
+
+          <SectionHeading
+            title={filtered ? "Results" : "Top rated businesses"}
+            subtitle={filtered ? `${total.toLocaleString("en-IN")} ${total === 1 ? "result" : "results"}` : `${total.toLocaleString("en-IN")} verified businesses in ${CITY_LABEL}`}
+          />
           {rows.length === 0 ? (
             <div className="rounded-2xl bg-white ring-1 ring-black/[0.05] px-6 py-16 text-center">
               <p className="text-lg font-semibold text-neutral-900">
@@ -206,7 +283,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
               <p className="mt-1.5 text-sm text-neutral-500">Check the spelling, or try one of these:</p>
               <div className="mt-6 flex flex-wrap justify-center gap-2">
                 {categories.slice(0, 6).map((c) => (
-                  <a key={c.category} href={`${origin}${categoryPath(c.category)}`}
+                  <a key={c.category} href={categoryPath(c.category)}
                      className="press inline-flex items-center gap-2 rounded-full bg-neutral-900/[0.04] px-3.5 py-2 text-xs font-semibold text-neutral-700">
                     <span style={{ color: primary }}><CategoryIcon category={c.category} size={15} /></span>
                     {titleize(c.category)}
@@ -218,56 +295,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {rows.map((b: any) => (
-                  <article key={b.id}
-                    className="card-lift group relative flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.05] shadow-[0_1px_2px_rgba(16,16,24,0.04)]">
-                    <CategoryCover category={b.category} primary={primary} secondary={secondary} className="-mx-5 -mt-5 mb-4 h-28 w-full" />
-                    <div className="flex items-start gap-3 px-5">
-                      <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl"
-                            style={{ backgroundColor: `${primary}10`, color: primary }}>
-                        <CategoryIcon category={b.category ?? ""} size={19} />
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-[15px] font-semibold leading-snug text-neutral-900">
-                          {/* Stretched link: the whole card is the target, but
-                              only one link is in the accessibility tree. */}
-                          <a href={`${origin}/business/${b.id}`} className="after:absolute after:inset-0">
-                            {cleanBusinessName(b.name)}
-                          </a>
-                        </h3>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-neutral-500">
-                          {b.rating != null && (
-                            <span className="inline-flex items-center gap-1 font-semibold text-amber-600">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z" />
-                              </svg>
-                              {b.rating}
-                              {b.reviews_count != null && (
-                                <span className="font-medium text-neutral-400">({b.reviews_count.toLocaleString("en-IN")})</span>
-                              )}
-                            </span>
-                          )}
-                          {b.category && <span className="truncate">{titleize(b.category)}</span>}
-                        </div>
-                      </div>
-                    </div>
-
-                    {b.address && (
-                      <p className="mt-3 px-5 line-clamp-2 text-xs leading-relaxed text-neutral-500">{b.address}</p>
-                    )}
-
-                    {/* Above the stretched link so it stays independently
-                        tappable — calling is the conversion. */}
-                    {b.phone && (
-                      <a href={telHref(b.phone)}
-                         className="press relative z-10 mt-auto px-5 pb-5 pt-4 inline-flex items-center justify-center gap-2 rounded-xl text-xs font-bold text-white"
-                         style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                          <path d="M5 3h4l2 5-2.5 1.5a12 12 0 0 0 5 5L15 12l5 2v4a2 2 0 0 1-2.2 2A17 17 0 0 1 3 5.2 2 2 0 0 1 5 3z" />
-                        </svg>
-                        {b.phone}
-                      </a>
-                    )}
-                  </article>
+                  <BusinessCard key={b.id} b={b} primary={primary} secondary={secondary} />
                 ))}
               </div>
 
