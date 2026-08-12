@@ -28,7 +28,9 @@ export async function POST(req: NextRequest) {
   const sent = await sendTemplate(phone, "auth", [code]);
   // Visibility: log the raw Nextel response so delivery failures are observable
   // in the dev terminal and .next/dev/logs/next-development.log.
-  console.log(`[otp/send] phone=${phone} delivered=${sent.ok} nextel=${sent.detail}`);
+  // Log the code in dev only — never leak OTPs in production logs.
+  const logCode = process.env.NODE_ENV !== "production" ? code : "<redacted>";
+  console.log(`[otp/send] phone=${phone} code=${logCode} delivered=${sent.ok} nextel=${sent.detail}`);
   // Best-effort: persist delivery status once the migration columns exist; never
   // let a missing column break the OTP flow.
   if (insRow.id != null) {
