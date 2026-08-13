@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, phoneToken, toIndiaPhone } from "@/lib/nextel";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -8,6 +9,15 @@ export async function POST(req: NextRequest) {
   const phone = toIndiaPhone(rawPhone ?? "");
   if (!phone || !/^\d{6}$/.test(String(code ?? ""))) {
     return NextResponse.json({ error: "Phone and 6-digit code required" }, { status: 400, headers: noStore });
+  }
+
+  // Brute-force guard on top of the per-row `attempts` cap.
+  const rl = rateLimit(`verify:${clientIp(req)}:${phone}`, 10, 60 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many attempts. Try again later." }, {
+      status: 429,
+      headers: { ...noStore, "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)) },
+    });
   }
 
   const now = new Date().toISOString();

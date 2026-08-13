@@ -6,12 +6,33 @@ serve(async (req) => {
     // Edge functions get their secrets from the environment. This previously
     // read C:/Users/Administrator/hermes-web/.env, a path that cannot exist in
     // the Deno runtime, so every invocation threw before doing any work.
+    //
+    // This function drives dev_tasks / agents with the service role, so it must
+    // NEVER be reachable without proving admin identity first. Auth is mandatory
+    // and fail-closed — an unset ADMIN_TOKEN disables the function rather than
+    // opening it up. Set ADMIN_TOKEN as a Supabase Function secret and send it
+    // as `Authorization: Bearer <token>` or `x-admin-token: <token>`.
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     if (!serviceKey) {
       return new Response(
         JSON.stringify({ error: "SUPABASE_SERVICE_ROLE_KEY is not set for this function" }),
         { status: 500 },
       );
+    }
+
+    const adminToken = Deno.env.get("ADMIN_TOKEN") ?? "";
+    if (!adminToken) {
+      return new Response(
+        JSON.stringify({
+          error: "ADMIN_TOKEN is not set for this function — refusing to run unauthenticated",
+        }),
+        { status: 500 },
+      );
+    }
+    const auth = req.headers.get("authorization") ?? "";
+    const headerToken = auth.startsWith("Bearer ") ? auth.slice(7) : (req.headers.get("x-admin-token") ?? "");
+    if (!headerToken || headerToken !== adminToken) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     }
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",

@@ -3,6 +3,7 @@ import { LeadForm } from "./lead-form";
 import { ClaimBox } from "./claim-box";
 import { ReviewsBox } from "./reviews-box";
 import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
+import { safeJsonLd } from "@/lib/json-ld";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
@@ -148,8 +149,8 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fbfbfc]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }} />
       <BrandHeader brand={brand} />
 
       <section className="border-b border-black/[0.06] px-6 pt-8 pb-7" style={{ background: `linear-gradient(135deg, ${primary}10, ${secondary}06)` }}>

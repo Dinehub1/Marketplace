@@ -55,7 +55,9 @@ export function BusinessDashboard({ brand }: { brand: any }) {
       const vres = await fetch("/api/otp/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone, code }) });
       const vj = await vres.json();
       if (!vres.ok) { setError(vj.error ?? "Galat code"); return; }
-      const lres = await fetch(`/api/leads?phone=${encodeURIComponent(vj.phone)}&token=${encodeURIComponent(vj.token)}`);
+      const lres = await fetch(`/api/leads?phone=${encodeURIComponent(vj.phone)}`, {
+        headers: { "x-phone": vj.phone, "x-phone-token": vj.token },
+      });
       const lj = await lres.json();
       if (!lres.ok) { setError(lj.error ?? "Leads load nahi hue"); return; }
       setBusinesses(lj.businesses ?? []);

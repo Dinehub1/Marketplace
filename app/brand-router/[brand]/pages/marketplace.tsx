@@ -25,6 +25,9 @@ async function fetchDirectory(
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   if (allowed && allowed.length === 0) return { rows: [], total: 0 };
+  // Defense in depth (C9): never let a category outside the brand's slice reach
+  // the query, regardless of where the caller got its `cat`.
+  if (allowed && cat && !allowed.includes(cat)) cat = "";
   const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active"];
   if (q) {
     const term = encodeURIComponent(`*${q}*`);
@@ -89,7 +92,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
   const accent = theme.accent ?? "#c4b5fd";
 
   const q = String(sp.q ?? "").trim();
-  const cat = String(sp.cat ?? "").trim();
+  let cat = String(sp.cat ?? "").trim();
   const area = String(sp.area ?? "").trim();
   const rating = Math.min(5, Math.max(0, Number(sp.rating) || 0));
   const sort = String(sp.sort ?? "rating") === "reviews" ? "reviews" : String(sp.sort ?? "rating") === "name" ? "name" : "rating";
@@ -98,6 +101,11 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
   const [allCategories, areas] = await Promise.all([fetchCategories(), getAreaIndex()]);
   const allowed = categoriesForBrand(brand.slug, allCategories.map((c) => c.category));
   const categories = allowed ? allCategories.filter((c) => allowed.includes(c.category)) : allCategories;
+  // Tenant-isolation guard (C9): on a brand-scoped directory a direct ?cat= for
+  // a category outside the brand's slice would otherwise bypass the filter and
+  // surface the full multi-tenant directory. Drop it so it falls back to the
+  // brand's own listings instead of leaking the parent directory's rows.
+  if (allowed && cat && !allowed.includes(cat)) cat = "";
   const { rows, total } = await fetchDirectory(q, cat, area, rating, sort, page, allowed);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const base = "/marketplace";

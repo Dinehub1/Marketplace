@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, sendTemplate, toIndiaPhone } from "@/lib/nextel";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -18,9 +19,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "business_id and name required" }, { status: 400, headers: noStore });
   }
 
+  const rl = rateLimit(`lead:${clientIp(req)}:${phone}`, 10, 15 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests. Please slow down and try again." }, {
+      status: 429,
+      headers: { ...noStore, "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)) },
+    });
+  }
+
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,category,brand_id`);
   const biz = ((await bizRes.json()) as any[])[0];
   if (!biz) return NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore });
+
+  // Idempotency: the same phone already flagged an intent for this business
+  // within the last 15 minutes. Return the existing result instead of paging a
+  // duplicate row AND firing a second WhatsApp alert at the business.
+  const since = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+  const dupRes = await db(`leads?business_id=eq.${businessId}&phone=eq.${encodeURIComponent(phone)}&created_at=gte.${since}&select=id&limit=1`);
+  if (dupRes.ok && (await dupRes.json()).length > 0) {
+    const bizWa = toIndiaPhone(biz.phone ?? "");
+    const waText = encodeURIComponent(`Namaste! Maine aapko ${"SarkarMarketplace"} par dekha. ${message || "Mujhe aapki services mein interest hai."} — ${name}`);
+    const wa_link = bizWa ? `https://wa.me/${bizWa}?text=${waText}` : null;
+    return NextResponse.json({ ok: true, already: true, notified: false, wa_link }, { headers: noStore });
+  }
 
   const ins = await db("leads", {
     method: "POST",
@@ -56,8 +77,10 @@ export async function POST(req: NextRequest) {
 /** List leads for a business owner (verified by their own phone token). */
 export async function GET(req: NextRequest) {
   const url = new URL(req.url);
-  const phone = toIndiaPhone(url.searchParams.get("phone") ?? "");
-  const token = url.searchParams.get("token") ?? "";
+  // Token travels in a header, never the query string (referrer/log leakage).
+  // The query-param forms below are accepted as a short migration bridge only.
+  const phone = toIndiaPhone(req.headers.get("x-phone") ?? url.searchParams.get("phone") ?? "");
+  const token = req.headers.get("x-phone-token") ?? url.searchParams.get("token") ?? "";
   if (!phone || !checkPhoneToken(phone, token)) {
     return NextResponse.json({ error: "Phone not verified" }, { status: 401, headers: noStore });
   }

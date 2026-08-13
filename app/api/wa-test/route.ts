@@ -4,8 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 // "auth" template send and reports the raw response so we can confirm the API
 // key works and discover the correct recipient field name. Remove after wiring
 // the real Supabase Send SMS Hook.
+//
+// SECURITY: this endpoint sends REAL WhatsApp messages and echoes the code.
+// It is disabled by default. It only responds when BOTH the env flag
+// ALLOW_WA_TEST="true" is set AND the app is not running in production, so a
+// stale deployment can never be turned into a spam/SMS-bombing vector.
 
-const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09";
+const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "";
 const NEXTEL_ENDPOINT =
   process.env.NEXTEL_API_URL ??
   process.env.NEXTEL_ENDPOINT ??
@@ -28,6 +33,9 @@ function toIndia(phone: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  if (process.env.NODE_ENV === "production" || process.env.ALLOW_WA_TEST !== "true") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
   const { apiKey, phone, code, recipientField, auto } = await req.json();
   if (!apiKey || !phone) {
     return NextResponse.json({ error: "apiKey and phone are required" }, { status: 400 });

@@ -28,8 +28,12 @@ export async function POST(req: NextRequest) {
   const sent = await sendTemplate(phone, "auth", [code]);
   // Visibility: log the raw Nextel response so delivery failures are observable
   // in the dev terminal and .next/dev/logs/next-development.log.
-  // Log the code in dev only — never leak OTPs in production logs.
-  const logCode = process.env.NODE_ENV !== "production" ? code : "<redacted>";
+  // Log the code in dev only — never leak OTPs in production logs. Dev-code
+  // privileged access (logging + echoing in the response) additionally requires
+  // the ALLOW_DEV_CODE="true" env flag so a prod build run in NODE_ENV=development
+  // still cannot echo codes.
+  const allowDevCode = process.env.ALLOW_DEV_CODE === "true" && process.env.NODE_ENV !== "production";
+  const logCode = allowDevCode ? code : "<redacted>";
   console.log(`[otp/send] phone=${phone} code=${logCode} delivered=${sent.ok} nextel=${sent.detail}`);
   // Best-effort: persist delivery status once the migration columns exist; never
   // let a missing column break the OTP flow.
@@ -41,9 +45,9 @@ export async function POST(req: NextRequest) {
     }).catch(() => {});
   }
 
-  const devCode = process.env.NODE_ENV !== "production" ? { devCode: code } : {};
+  const devCode = allowDevCode ? { devCode: code } : {};
   const extra =
-    process.env.NODE_ENV !== "production" && !sent.ok ? { nextelDetail: sent.detail } : {};
+    allowDevCode && !sent.ok ? { nextelDetail: sent.detail } : {};
   return NextResponse.json(
     {
       ok: true,

@@ -1,4 +1,18 @@
-import { createClient } from "./supabase/server";
+import { createClient as createSupabase } from "@supabase/supabase-js";
+import { loadKey } from "./keyLoader";
+
+// The admin console reads ops tables (leads, payments, dev_tasks, agents) that
+// are NOT part of the public read surface after the Phase 0 RLS lockdown. Those
+// tables carry customer data, so the browser key must never see them — reads go
+// through the service role here, same privilege as every other server write.
+// The key is resolved lazily so the admin pages still build without a .env.
+function admin() {
+  return createSupabase(
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+    loadKey(),
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+}
 
 export type Agent = {
   id: string;
@@ -35,7 +49,7 @@ export type PlatformStats = {
 };
 
 async function count(table: string, filter?: (q: any) => any): Promise<number> {
-  const supabase = await createClient();
+  const supabase = admin();
   let q = supabase.from(table).select("*", { count: "exact", head: true });
   if (filter) q = filter(q);
   const { count } = await q;
@@ -43,13 +57,13 @@ async function count(table: string, filter?: (q: any) => any): Promise<number> {
 }
 
 export async function getAgents(): Promise<Agent[]> {
-  const supabase = await createClient();
+  const supabase = admin();
   const { data } = await supabase.from("agents").select("*").order("sort_order");
   return (data as Agent[]) ?? [];
 }
 
 export async function getRecentTasks(limit = 6): Promise<DevTask[]> {
-  const supabase = await createClient();
+  const supabase = admin();
   const { data } = await supabase
     .from("dev_tasks")
     .select("id,title,status,priority,assignee,brand_id,created_at")

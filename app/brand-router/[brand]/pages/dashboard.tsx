@@ -73,8 +73,8 @@ export function UserDashboard({ brand }: { brand: any }) {
         return;
       }
       const q = new URLSearchParams({ phone: userPhone });
-      if (token) q.set("token", token);
       const headers: Record<string, string> = {};
+      if (token) headers["x-phone-token"] = token;
       if (bearer) headers.Authorization = `Bearer ${bearer}`;
       try {
         const res = await fetch(`/api/customer?${q.toString()}`, { headers });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -18,6 +19,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const phone = toIndiaPhone(body.phone ?? "");
   if (!phone || !checkPhoneToken(phone, String(body.token ?? ""))) {
     return NextResponse.json({ error: "Phone not verified" }, { status: 401, headers: noStore });
+  }
+
+  const rl = rateLimit(`claim:${clientIp(req)}:${phone}`, 5, 60 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests. Please slow down and try again." }, {
+      status: 429,
+      headers: { ...noStore, "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)) },
+    });
   }
 
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,verified`);

@@ -11,6 +11,7 @@ import {
   type Listing,
 } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
+import { safeJsonLd } from "@/lib/json-ld";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryCard } from "@/components/directory/CategoryCard";
 import { SectionHeading } from "@/components/directory/SectionHeading";
@@ -79,8 +80,8 @@ export async function CategoryLandingPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-[#fbfbfc]">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(itemList) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(breadcrumbs) }} />
       <BrandHeader brand={brand} />
 
       <main className="flex-1">

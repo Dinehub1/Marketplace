@@ -15,8 +15,10 @@ const noStore = { "Cache-Control": "no-store" };
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const auth = req.headers.get("authorization") ?? "";
-  let phone = toIndiaPhone(url.searchParams.get("phone") ?? "");
-  const token = url.searchParams.get("token") ?? "";
+  // Token travels in a header, never the query string (referrer/log leakage).
+  // The query-param forms below are accepted as a short migration bridge only.
+  let phone = toIndiaPhone(req.headers.get("x-phone") ?? url.searchParams.get("phone") ?? "");
+  const token = req.headers.get("x-phone-token") ?? url.searchParams.get("token") ?? "";
 
   let verified = false;
 
