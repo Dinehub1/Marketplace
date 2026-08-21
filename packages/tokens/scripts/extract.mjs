@@ -19,10 +19,18 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const CSS = join(here, "../../../app/globals.css");
+const CSS = join(here, "../../../apps/web/app/globals.css");
 const OUT = join(here, "../src/palette.generated.ts");
 
-const css = readFileSync(CSS, "utf8");
+let css;
+try {
+  css = readFileSync(CSS, "utf8");
+} catch {
+  throw new Error(
+    `Cannot read ${CSS}. The web app's globals.css is the source of truth for ` +
+      `every colour token; update this path if the app moves.`,
+  );
+}
 
 /** Pull the declaration body of a selector's first block. */
 function block(startMarker) {

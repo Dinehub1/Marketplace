@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# A new push to the same PR makes the in-flight run irrelevant; cancel it rather
+# than paying for a result nobody will read.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # `npm ci` across workspaces. It fails if package-lock.json is out of sync
+      # with any package.json, which is the check that actually catches a
+      # half-committed dependency change.
+      - name: Install
+        run: npm ci
+
+      # Runs in every workspace: @hermes/web, @hermes/mobile, @hermes/core.
+      # The mobile app is the one most likely to break silently, because nothing
+      # else in CI compiles React Native source.
+      - name: Typecheck (all workspaces)
+        run: npm run typecheck
+
+      # Pins the exact strings both platforms must produce from @hermes/core.
+      # A "harmless" refactor of a slug or a phone normaliser fails here instead
+      # of shipping two products that disagree about their own URLs.
+      - name: Shared-contract tests
+        run: npm test
+
+      # Non-blocking on purpose. The repo carries ~136 pre-existing lint errors
+      # (mostly no-explicit-any and unescaped entities) that predate the
+      # monorepo work. Gating on them would make every PR red for reasons
+      # unrelated to its own change, which trains people to ignore the check.
+      # Surfaced here so the number is visible and can be driven down; flip
+      # continue-on-error off once it reaches zero.
+      - name: Lint (advisory)
+        run: npm run lint
+        continue-on-error: true
+
+      # Real credentials are not needed to compile: the pages that read Supabase
+      # are all dynamic (`ƒ` in the route table), so the build never calls out.
+      # Placeholders keep `env()` from throwing at import time.
+      - name: Build web
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      # The design tokens are generated from globals.css. If someone edits a
+      # colour on the web side and forgets to re-run the generator, the native
+      # app silently keeps the old palette — this makes that a failed check
+      # instead of a bug discovered on a phone.
+      - name: Design tokens are in sync with globals.css
+        run: |
+          set -euo pipefail
+          # The generator throws if it cannot read globals.css. Without that,
+          # a broken generator would produce no diff and this check would pass
+          # by doing nothing — which is exactly how it failed the first time.
+          npm run tokens
+          if ! git diff --quiet -- packages/tokens/src/palette.generated.ts; then
+            echo "::error::packages/tokens is stale. Run 'npm run tokens' and commit the result."
+            git diff -- packages/tokens/src/palette.generated.ts
+            exit 1
+          fi
+
+  mobile:
+    name: Mobile bundles (iOS + Android)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Metro resolution in a workspace is the fragile part of this setup —
+      # duplicate React, unmapped @hermes/* packages, a missing expo-router
+      # transform. All three typecheck fine and only fail here, so an actual
+      # export is the only check worth running.
+      - name: Export iOS + Android bundles
+        working-directory: apps/mobile
+        run: npx expo export --platform all --output-dir /tmp/export
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key
