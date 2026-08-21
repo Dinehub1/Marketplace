@@ -1,12 +1,19 @@
 const path = require('path');
-const projectRoot = path.resolve(__dirname);
+
+// The Next app moved to apps/web when this became a workspace. pm2 must run
+// `next start` from that directory — running it from the repo root finds no
+// .next build and exits, which pm2 then restarts in a loop.
+const repoRoot = path.resolve(__dirname);
+const webRoot = path.join(repoRoot, 'apps', 'web');
 
 module.exports = {
   apps: [{
     name: 'hermes-web',
-    script: path.join(projectRoot, 'node_modules', 'next', 'dist', 'bin', 'next'),
+    // npm hoists `next` to the workspace root; resolve it from there, not from
+    // apps/web/node_modules, which may legitimately not exist.
+    script: path.join(repoRoot, 'node_modules', 'next', 'dist', 'bin', 'next'),
     args: 'start -p 8080',
-    cwd: projectRoot,
+    cwd: webRoot,
     instances: 1,
     exec_mode: 'fork',
     autorestart: true,

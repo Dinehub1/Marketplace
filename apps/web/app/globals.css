@@ -1,0 +1,1031 @@
+/* ============================================================================
+   HERMES DESIGN SYSTEM v2 — "Aurum"
+   ----------------------------------------------------------------------------
+   One stylesheet, 36 pages, 27 brands. Every page consumes .heading-*, .btn-*,
+   .card-*, .glass and .section, so this file is the leverage point: a change
+   here lands everywhere at once.
+
+   Built on Apple's design language (Designing Fluid Interfaces, The Details of
+   UI Typography, Principles of Great Design), translated to the web:
+
+     · Response   — feedback on pointer-DOWN, never on release.
+     · Behaviour  — spring-shaped curves; critically damped by default,
+                    overshoot only where the gesture carried momentum.
+     · Materials  — translucent chrome that content scrolls beneath, with
+                    material weight encoding hierarchy.
+     · Typography — tracking and leading are size-specific, never one value.
+     · Craft      — nothing is random. Every value below is deliberate.
+     · A11y       — reduced-motion / reduced-transparency / contrast are
+                    first-class, not an afterthought.
+   ========================================================================= */
+
+@import "tailwindcss";
+
+/* v4 auto-detects sources, but the app lives under `app/brand-router/[brand]/`
+   and square brackets are glob character classes, so the dynamic-route folders
+   are declared explicitly rather than relying on detection. */
+@source "../app/**/*.{ts,tsx,js,jsx}";
+@source "../lib/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+
+/* ── 1. Foundation tokens ─────────────────────────────────────────────────
+   The palette is a single cool-graphite ramp plus one brand hue. Premium
+   reads as *restraint*: few colours, wide tonal range, generous light.      */
+
+:root {
+  color-scheme: light dark;
+
+  /* — Brand. Overridden per tenant at runtime by <BrandTheme/>, so the whole
+       system re-skins from three values instead of 400 inline gradients. — */
+  --brand-primary: #4c1d95;
+  --brand-secondary: #7c3aed;
+  --brand-accent: #c4b5fd;
+  --brand-bg: #fbfaff;
+
+  /* Derived brand surfaces. Tints are alpha over the page, never baked
+     hex, so they stay correct in both themes. */
+  --brand-tint: color-mix(in oklab, var(--brand-primary) 7%, transparent);
+  --brand-tint-strong: color-mix(in oklab, var(--brand-primary) 13%, transparent);
+  --brand-hairline: color-mix(in oklab, var(--brand-primary) 18%, transparent);
+  --brand-ink: color-mix(in oklab, var(--brand-primary) 92%, black);
+  --brand-gradient: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
+  --brand-gradient-soft: linear-gradient(135deg,
+      color-mix(in oklab, var(--brand-primary) 10%, transparent) 0%,
+      color-mix(in oklab, var(--brand-secondary) 8%, transparent) 100%);
+
+  /* — Neutral ramp. Surfaces are separated from ink so dark mode re-points
+       them without touching a single component. — */
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-sunken: #f5f5f7;
+  --surface-inset: #efeff2;
+  --canvas: #fbfbfd;
+
+  --ink: #0b0b0f;                       /* near-black, not pure — pure black
+                                           vibrates against white on OLED */
+  --ink-2: rgba(11, 11, 15, 0.64);      /* secondary copy */
+  --ink-3: rgba(11, 11, 15, 0.42);      /* tertiary / metadata */
+  --ink-4: rgba(11, 11, 15, 0.26);      /* placeholders, disabled */
+
+  --hairline: rgba(11, 11, 15, 0.08);
+  --hairline-strong: rgba(11, 11, 15, 0.14);
+
+  /* — Semantic. Four kinds of feedback: status, completion, warning, error. — */
+  --positive: #0f7a4a;
+  --positive-tint: rgba(15, 122, 74, 0.10);
+  --warning: #9a6206;
+  --warning-tint: rgba(154, 98, 6, 0.10);
+  --critical: #b42318;
+  --critical-tint: rgba(180, 35, 24, 0.09);
+  --info: #1d4ed8;
+  --info-tint: rgba(29, 78, 216, 0.09);
+  --gold: #a1750d;                      /* ratings — refined, not neon amber */
+  --gold-tint: rgba(161, 117, 13, 0.11);
+
+  /* Third-party brand mark. It must stay recognisably WhatsApp green in both
+     themes, but #25D366 fails contrast on white, so light mode uses a deeper
+     cut of the same hue and dark mode uses the brand value. */
+  --whatsapp: #128c4a;
+  --whatsapp-tint: rgba(37, 211, 102, 0.12);
+
+  /* — Materials. One light, one heavy, one ultra. Never stack two light
+       materials: translucency on translucency destroys legibility. — */
+  --material-light: rgba(255, 255, 255, 0.66);
+  --material-heavy: rgba(250, 250, 252, 0.86);
+  --material-ultra: rgba(255, 255, 255, 0.94);
+  --material-blur: 24px;
+  --material-edge: rgba(255, 255, 255, 0.62);
+  --scrim: rgba(11, 11, 15, 0.40);
+
+  /* — Elevation. Layered shadows: a tight contact shadow plus a wide ambient
+       one. Bigger surfaces read as thicker — more blur, deeper shadow. — */
+  --shadow-1:
+    0 1px 1px rgba(11, 11, 15, 0.04),
+    0 1px 2px rgba(11, 11, 15, 0.05);
+  --shadow-2:
+    0 1px 1px rgba(11, 11, 15, 0.03),
+    0 4px 10px -3px rgba(11, 11, 15, 0.08),
+    0 10px 24px -8px rgba(11, 11, 15, 0.07);
+  --shadow-3:
+    0 1px 1px rgba(11, 11, 15, 0.03),
+    0 8px 20px -6px rgba(11, 11, 15, 0.10),
+    0 24px 56px -16px rgba(11, 11, 15, 0.16);
+  --shadow-4:
+    0 2px 4px rgba(11, 11, 15, 0.04),
+    0 16px 36px -10px rgba(11, 11, 15, 0.14),
+    0 48px 96px -28px rgba(11, 11, 15, 0.24);
+  /* Brand-tinted lift for primary actions — a coloured object should cast a
+     coloured shadow, the way it would in the physical world. */
+  --shadow-brand:
+    0 2px 6px -1px color-mix(in oklab, var(--brand-primary) 26%, transparent),
+    0 12px 28px -8px color-mix(in oklab, var(--brand-primary) 34%, transparent);
+  --shadow-brand-lg:
+    0 4px 10px -2px color-mix(in oklab, var(--brand-primary) 28%, transparent),
+    0 22px 48px -12px color-mix(in oklab, var(--brand-primary) 40%, transparent);
+
+  /* — Radii. A continuous scale; nested corners step down by the padding so
+       concentric shapes stay optically parallel.
+       Named --r-* rather than --radius-*: Tailwind v4 resolves `rounded-lg` to
+       `var(--radius-lg)` off :root, so reusing that namespace silently rewrites
+       every rounded-* utility in the app. — */
+  --r-xs: 0.5rem;
+  --r-sm: 0.75rem;
+  --r: 1rem;
+  --r-lg: 1.25rem;
+  --r-xl: 1.5rem;
+  --r-2xl: 2rem;
+  --r-pill: 999px;
+
+  /* — Motion. CSS has no true spring, so these are spring-shaped curves.
+       --ease-settle is critically damped (no overshoot) and is the DEFAULT.
+       --ease-bounce overshoots and is reserved for momentum-carrying moments,
+       never for something that merely appeared. — */
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.42, 0.64, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --dur-press: 90ms;    /* the response budget — must be imperceptible */
+  --dur-fast: 180ms;
+  --dur-base: 300ms;
+  --dur-slow: 440ms;
+
+  /* — Type. Two families: a UI sans and a mono for numerals. — */
+  --font-ui: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+             "SF Pro Text", "Segoe UI", sans-serif;
+  --font-numeric: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+}
+
+/* Dark theme. Not an inversion — a re-point. Surfaces get *lighter* as they
+   rise (light comes from above), ink softens, shadows deepen, materials thin.
+
+   Three-state resolution, in ascending specificity:
+     1. `:root`                      — light, the default.
+     2. `@media (prefers-color-scheme: dark)` guarded by `:not([data-theme="light"])`
+                                     — follow the OS.
+     3. `:root[data-theme="dark"]`   — an explicit choice wins over the OS.
+   Defining the dark values twice is deliberate: a single media query cannot be
+   overridden back to light by an attribute, so a user who picks light on a dark
+   OS would be stuck. The guard on (2) and the standalone (3) make the toggle
+   authoritative in both directions. */
+/* (1) Follow the OS, unless the user explicitly chose light. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface: #141418;
+      --surface-raised: #1b1b21;
+      --surface-sunken: #0e0e12;
+      --surface-inset: #0a0a0d;
+      --canvas: #0a0a0d;
+
+      --ink: #f5f5f7;
+      --ink-2: rgba(245, 245, 247, 0.74);
+      --ink-3: rgba(245, 245, 247, 0.58);
+      --ink-4: rgba(245, 245, 247, 0.38);
+
+      --hairline: rgba(255, 255, 255, 0.09);
+      --hairline-strong: rgba(255, 255, 255, 0.16);
+
+      --positive: #4ade80;
+      --positive-tint: rgba(74, 222, 128, 0.13);
+      --warning: #fbbf24;
+      --warning-tint: rgba(251, 191, 36, 0.13);
+      --critical: #f87171;
+      --critical-tint: rgba(248, 113, 113, 0.13);
+      --info: #7aa2ff;
+      --info-tint: rgba(122, 162, 255, 0.13);
+      --gold: #e8b647;
+      --gold-tint: rgba(232, 182, 71, 0.14);
+      --whatsapp: #4ce07f;
+      --whatsapp-tint: rgba(37, 211, 102, 0.16);
+
+      --material-light: rgba(26, 26, 32, 0.64);
+      --material-heavy: rgba(18, 18, 23, 0.86);
+      --material-ultra: rgba(20, 20, 24, 0.95);
+      --material-edge: rgba(255, 255, 255, 0.09);
+      --scrim: rgba(0, 0, 0, 0.58);
+
+      --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+      --shadow-2: 0 4px 14px -4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-3: 0 12px 32px -8px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.45);
+      --shadow-4: 0 28px 64px -16px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.5);
+
+      /* Brand tints need more presence on a dark ground to survive. */
+      --brand-tint: color-mix(in oklab, var(--brand-secondary) 15%, transparent);
+      --brand-tint-strong: color-mix(in oklab, var(--brand-secondary) 24%, transparent);
+      --brand-hairline: color-mix(in oklab, var(--brand-secondary) 32%, transparent);
+      --brand-ink: color-mix(in oklab, var(--brand-secondary) 72%, white);
+
+  }
+}
+
+/* (2) An explicit choice. Identical declarations by construction — CSS has
+   no mixin, and a media query alone cannot be overridden back to light by
+   an attribute, so the pair is what makes the toggle work both ways. */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface: #141418;
+    --surface-raised: #1b1b21;
+    --surface-sunken: #0e0e12;
+    --surface-inset: #0a0a0d;
+    --canvas: #0a0a0d;
+
+    --ink: #f5f5f7;
+    --ink-2: rgba(245, 245, 247, 0.74);
+    --ink-3: rgba(245, 245, 247, 0.58);
+    --ink-4: rgba(245, 245, 247, 0.38);
+
+    --hairline: rgba(255, 255, 255, 0.09);
+    --hairline-strong: rgba(255, 255, 255, 0.16);
+
+    --positive: #4ade80;
+    --positive-tint: rgba(74, 222, 128, 0.13);
+    --warning: #fbbf24;
+    --warning-tint: rgba(251, 191, 36, 0.13);
+    --critical: #f87171;
+    --critical-tint: rgba(248, 113, 113, 0.13);
+    --info: #7aa2ff;
+    --info-tint: rgba(122, 162, 255, 0.13);
+    --gold: #e8b647;
+    --gold-tint: rgba(232, 182, 71, 0.14);
+    --whatsapp: #4ce07f;
+    --whatsapp-tint: rgba(37, 211, 102, 0.16);
+
+    --material-light: rgba(26, 26, 32, 0.64);
+    --material-heavy: rgba(18, 18, 23, 0.86);
+    --material-ultra: rgba(20, 20, 24, 0.95);
+    --material-edge: rgba(255, 255, 255, 0.09);
+    --scrim: rgba(0, 0, 0, 0.58);
+
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-2: 0 4px 14px -4px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-3: 0 12px 32px -8px rgba(0, 0, 0, 0.7), 0 2px 6px rgba(0, 0, 0, 0.45);
+    --shadow-4: 0 28px 64px -16px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.5);
+
+    /* Brand tints need more presence on a dark ground to survive. */
+    --brand-tint: color-mix(in oklab, var(--brand-secondary) 15%, transparent);
+    --brand-tint-strong: color-mix(in oklab, var(--brand-secondary) 24%, transparent);
+    --brand-hairline: color-mix(in oklab, var(--brand-secondary) 32%, transparent);
+    --brand-ink: color-mix(in oklab, var(--brand-secondary) 72%, white);
+
+}
+
+/* Expose the tokens to Tailwind so `bg-surface`, `text-ink-2`, `rounded-lg`,
+   `shadow-2` etc. resolve to the same values as the hand-written classes.
+   One source of truth — a utility and a component class can never drift. */
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-canvas: var(--canvas);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-hairline: var(--hairline);
+  --color-brand: var(--brand-primary);
+  --color-brand-2: var(--brand-secondary);
+  --color-brand-tint: var(--brand-tint);
+  --color-positive: var(--positive);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --color-gold: var(--gold);
+
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-numeric);
+
+  /* Radius and shadow tokens are deliberately NOT re-declared here: Tailwind
+     emits @theme names verbatim into :root, so `--color-ink: var(--color-ink)`
+     would be self-referential and resolve to nothing. Utilities use Tailwind's
+     own scale; component classes use the raw tokens above. */
+}
+
+
+/* ── 2. Base ──────────────────────────────────────────────────────────────
+   scroll-behavior belongs on the scroll container, not on `*` — and it is
+   gated on reduced-motion below, because smooth scroll IS vestibular motion. */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  scrollbar-gutter: stable;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  /* Body sits at a comfortable 1.6 leading; headings tighten it below. */
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-optical-sizing: auto;
+  /* Contextual alternates + proportional figures for prose; tables opt into
+     tabular figures explicitly via .tabular. */
+  font-feature-settings: "cv11", "ss01";
+  font-variant-ligatures: contextual;
+}
+
+/* Touch feedback must never be swallowed by the browser's 300ms tap delay,
+   and iOS's grey flash is not our feedback — ours is the :active rule. */
+a, button, [role="button"], input, select, textarea, summary, label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, [role="button"] { cursor: pointer; }
+
+/* One focus ring for the whole system, brand-tinted, always visible against
+   any surface because it carries its own contrasting halo. */
+:focus-visible {
+  outline: 2px solid var(--brand-secondary);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--brand-secondary) 26%, transparent);
+  color: var(--ink);
+}
+
+img, svg, video { max-width: 100%; }
+
+/* Numerals that must align in columns — prices, stats, tables. Proportional
+   figures shift column edges by up to a full character; tabular never do. */
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+.mono { font-family: var(--font-numeric); font-variant-numeric: tabular-nums; }
+
+/* ── 3. Typography ────────────────────────────────────────────────────────
+   Tracking is size-specific. Large type reads too loose at its natural
+   spacing and needs negative tracking; small type needs slightly positive.
+   A single letter-spacing value is always wrong at one end of the scale.
+   Leading moves inversely to size: tight on display, open on body.
+   Sizes are fluid rather than stepped, so there is no jump at 768px and the
+   layout scales with the user's text-size setting.                          */
+
+.heading-hero {
+  font-size: clamp(2.375rem, 1.5rem + 3.6vw, 4rem);
+  font-weight: 780;
+  letter-spacing: -0.038em;   /* tightest — the display size */
+  line-height: 0.98;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.heading-xl {
+  font-size: clamp(2.125rem, 1.35rem + 3.4vw, 3.5rem);
+  font-weight: 760;
+  letter-spacing: -0.032em;
+  line-height: 1.04;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.heading-lg {
+  font-size: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+  font-weight: 740;
+  letter-spacing: -0.026em;
+  line-height: 1.12;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.heading-md {
+  font-size: clamp(1.375rem, 1.2rem + 0.85vw, 1.875rem);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.22;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.heading-sm {
+  font-size: 1.125rem;
+  font-weight: 660;
+  letter-spacing: -0.012em;
+  line-height: 1.34;
+  color: var(--ink);
+}
+
+.text-lede {
+  font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.3125rem);
+  font-weight: 400;
+  letter-spacing: -0.008em;   /* still large enough to want slight tightening */
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.text-body {
+  font-size: 1rem;
+  line-height: 1.65;
+  letter-spacing: 0;          /* body sits at the font's natural tracking */
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.text-meta {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  letter-spacing: 0.004em;    /* small text opens up very slightly */
+  color: var(--ink-3);
+}
+
+.text-caption {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;     /* small + uppercase needs the most tracking */
+  font-weight: 640;
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+/* An eyebrow above a heading — the same optical job as .text-caption but
+   carrying brand colour, so it reads as a label rather than metadata. */
+.eyebrow {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 680;
+  line-height: 1;
+  color: var(--brand-secondary);
+}
+
+/* Vibrancy: text over a translucent material needs more contrast and a touch
+   more weight than text on a solid surface, or it dissolves into whatever is
+   scrolling underneath. */
+.on-material {
+  color: var(--ink);
+  font-weight: 540;
+  letter-spacing: 0.004em;
+}
+
+/* Long-form prose blocks (about, blog, terms, privacy). Measure is capped at
+   ~68 characters — beyond that the eye loses the line return. */
+.prose-block { max-width: 42rem; }
+.prose-block p { margin-block: 0 1.1em; color: var(--ink-2); line-height: 1.7; text-wrap: pretty; }
+.prose-block h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.25; margin-block: 2em 0.6em; color: var(--ink); }
+.prose-block h3 { font-size: 1.125rem; font-weight: 660; letter-spacing: -0.012em; margin-block: 1.6em 0.5em; color: var(--ink); }
+.prose-block ul, .prose-block ol { margin-block: 0 1.1em; padding-inline-start: 1.25em; color: var(--ink-2); }
+.prose-block li { margin-block: 0.35em; line-height: 1.65; }
+.prose-block a { color: var(--brand-secondary); text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+
+/* ── 4. Response — buttons ────────────────────────────────────────────────
+   Press states come first; hover is the progressive enhancement. An
+   interface that only responds on :hover gives a phone user nothing at all,
+   and phones are most of this audience.                                     */
+
+.btn,
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-subtle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--r);
+  padding: 0.75rem 1.375rem;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 620;
+  letter-spacing: -0.011em;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  /* Only compositor-friendly properties. `all` lets layout properties
+     animate, which is both janky and impossible to interrupt cleanly. */
+  transition: transform var(--dur-press) var(--ease-settle),
+              box-shadow var(--dur-fast) var(--ease-settle),
+              background-color var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard),
+              opacity var(--dur-fast) var(--ease-standard);
+}
+
+.btn-primary {
+  color: #fff;
+  background: var(--brand-gradient);
+  box-shadow: var(--shadow-brand);
+  /* A hairline of light along the top edge — the same specular highlight a
+     real convex surface catches. It is what separates a "coloured rectangle"
+     from an object. */
+  border: 1px solid color-mix(in oklab, white 22%, transparent);
+}
+
+/* A moving sheen would be decoration; a static one is craft. This one only
+   animates on hover, and only on devices that have hover. */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+.btn-secondary {
+  color: var(--ink);
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline-strong);
+  box-shadow: var(--shadow-1);
+}
+
+.btn-subtle {
+  color: var(--brand-secondary);
+  background: var(--brand-tint);
+  border: 1px solid transparent;
+}
+
+.btn-ghost {
+  color: var(--ink-2);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.btn-sm { padding: 0.5rem 0.9375rem; font-size: 0.8125rem; border-radius: var(--r-sm); }
+.btn-lg { padding: 0.9375rem 1.875rem; font-size: 1.0625rem; border-radius: var(--r-lg); }
+.btn-block { display: flex; width: 100%; }
+
+@media (hover: hover) {
+  .btn-primary:hover { transform: translateY(-1.5px); box-shadow: var(--shadow-brand-lg); }
+  .btn-secondary:hover { border-color: var(--brand-hairline); box-shadow: var(--shadow-2); transform: translateY(-1.5px); }
+  .btn-subtle:hover { background: var(--brand-tint-strong); }
+  .btn-ghost:hover { background: var(--surface-sunken); color: var(--ink); }
+}
+
+/* Instant, and it reads as physically pushed rather than merely recoloured. */
+.btn:active,
+.btn-primary:active,
+.btn-secondary:active,
+.btn-subtle:active,
+.btn-ghost:active {
+  transform: scale(0.972);
+  box-shadow: var(--shadow-1);
+  transition-duration: var(--dur-press);
+}
+
+.btn[disabled], .btn-primary[disabled], .btn-secondary[disabled],
+.btn-primary[aria-disabled="true"], .btn-secondary[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+/* Press primitive — drop it on any tappable element that is not a .btn-*. */
+.press {
+  transition: transform var(--dur-press) var(--ease-settle),
+              opacity var(--dur-fast) var(--ease-standard),
+              background-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard);
+}
+.press:active { transform: scale(0.962); }
+@media (hover: hover) { .press:hover { opacity: 0.86; } }
+
+/* Larger targets compress less — a big card scaling 0.96 looks rubbery,
+   while a small chip needs the full amount to register. */
+.press-lg { transition: transform var(--dur-press) var(--ease-settle); }
+.press-lg:active { transform: scale(0.986); }
+
+/* ── 5. Surfaces & cards ──────────────────────────────────────────────── */
+
+.surface {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+}
+
+.card {
+  position: relative;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1);
+  transition: transform var(--dur-base) var(--ease-settle),
+              box-shadow var(--dur-base) var(--ease-settle),
+              border-color var(--dur-base) var(--ease-settle);
+}
+
+.card-elevated { box-shadow: var(--shadow-3); border-color: transparent; }
+
+/* Interactive card. Lift is small — 4px, not 12px. Restraint is the whole
+   difference between "premium" and "template". */
+.card-lift {
+  transition: transform var(--dur-base) var(--ease-settle),
+              box-shadow var(--dur-base) var(--ease-settle),
+              border-color var(--dur-base) var(--ease-settle);
+}
+@media (hover: hover) {
+  .card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-3);
+    border-color: var(--brand-hairline);
+  }
+  .card:hover { border-color: var(--hairline-strong); }
+}
+.card-lift:active {
+  transform: scale(0.988);
+  transition-duration: var(--dur-press);
+}
+
+/* A hairline that reads as an edge, not a border — inset so it sits inside
+   the radius and never doubles up against a neighbouring card's edge. */
+.hairline { box-shadow: inset 0 0 0 1px var(--hairline); }
+.divider { height: 1px; background: var(--hairline); border: 0; }
+
+/* ── 6. Chips, badges, inputs ─────────────────────────────────────────── */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4375rem;
+  border-radius: var(--r-pill);
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 560;
+  letter-spacing: -0.004em;
+  line-height: 1.2;
+  color: var(--ink-2);
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  transition: transform var(--dur-press) var(--ease-settle),
+              background-color var(--dur-fast) var(--ease-standard),
+              border-color var(--dur-fast) var(--ease-standard),
+              color var(--dur-fast) var(--ease-standard);
+}
+.chip-brand { color: var(--brand-secondary); background: var(--brand-tint); border-color: transparent; }
+.chip-active { color: #fff; background: var(--brand-gradient); border-color: transparent; box-shadow: var(--shadow-brand); }
+a.chip:active, button.chip:active { transform: scale(0.96); }
+@media (hover: hover) {
+  a.chip:hover, button.chip:hover { border-color: var(--brand-hairline); color: var(--ink); }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  border-radius: var(--r-pill);
+  padding: 0.1875rem 0.5625rem;
+  font-size: 0.6875rem;
+  font-weight: 640;
+  letter-spacing: 0.012em;
+  line-height: 1.35;
+}
+.badge-positive { color: var(--positive); background: var(--positive-tint); }
+.badge-warning  { color: var(--warning);  background: var(--warning-tint); }
+.badge-critical { color: var(--critical); background: var(--critical-tint); }
+.badge-info     { color: var(--info);     background: var(--info-tint); }
+.badge-gold     { color: var(--gold);     background: var(--gold-tint); }
+.badge-brand    { color: var(--brand-secondary); background: var(--brand-tint); }
+.badge-neutral  { color: var(--ink-3);    background: var(--surface-sunken); }
+
+/* Tone helpers — the four kinds of feedback as text/surface pairs, for the
+   places that need the semantic colour without the pill shape of a .badge.
+   These exist so no component has to reach for `text-emerald-600` again: a
+   Tailwind palette literal has exactly one value and cannot follow the theme,
+   which is what kept dark mode from shipping. */
+.tone-positive { color: var(--positive); }
+.tone-warning  { color: var(--warning); }
+.tone-critical { color: var(--critical); }
+.tone-info     { color: var(--info); }
+.tone-gold     { color: var(--gold); }
+.tone-muted    { color: var(--ink-3); }
+
+.notice {
+  border-radius: var(--r-sm);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+.notice-positive { color: var(--positive); background: var(--positive-tint); }
+.notice-warning  { color: var(--warning);  background: var(--warning-tint); }
+.notice-critical { color: var(--critical); background: var(--critical-tint); }
+.notice-info     { color: var(--info);     background: var(--info-tint); }
+
+/* Status dot. Colour alone never carries meaning — every use pairs this with a
+   text label, so the dot is decoration that reinforces rather than informs. */
+.dot { display: inline-block; width: 0.5rem; height: 0.5rem; border-radius: 999px; }
+.dot-positive { background: var(--positive); }
+.dot-warning  { background: var(--warning); }
+.dot-critical { background: var(--critical); }
+
+/* Inputs. Validation is inline, not on submit, so the field itself carries
+   the state — hence the aria-invalid hook rather than a wrapper class. */
+.input, .field input, .field textarea, .field select {
+  width: 100%;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hairline-strong);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 0.9375rem;
+  font-family: inherit;
+  font-size: 1rem;           /* never below 16px — iOS zooms the viewport */
+  line-height: 1.4;
+  transition: border-color var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              background-color var(--dur-fast) var(--ease-standard);
+}
+.input::placeholder, .field input::placeholder, .field textarea::placeholder { color: var(--ink-4); }
+.input:focus, .field input:focus, .field textarea:focus, .field select:focus {
+  outline: none;
+  border-color: var(--brand-secondary);
+  box-shadow: 0 0 0 3.5px color-mix(in oklab, var(--brand-secondary) 18%, transparent);
+}
+.input[aria-invalid="true"] {
+  border-color: var(--critical);
+  box-shadow: 0 0 0 3.5px var(--critical-tint);
+}
+.field label, .label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 580;
+  letter-spacing: -0.002em;
+  color: var(--ink-2);
+  margin-bottom: 0.4375rem;
+}
+
+/* Segmented control — the platform's own tab metaphor. The thumb is a real
+   surface that slides, not a border that jumps. */
+.segmented {
+  display: inline-flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-sunken);
+  border: 1px solid var(--hairline);
+}
+.segmented > * {
+  border-radius: var(--r-pill);
+  padding: 0.4375rem 0.9375rem;
+  font-size: 0.8125rem;
+  font-weight: 580;
+  color: var(--ink-2);
+  transition: background-color var(--dur-fast) var(--ease-settle),
+              color var(--dur-fast) var(--ease-settle),
+              box-shadow var(--dur-fast) var(--ease-settle),
+              transform var(--dur-press) var(--ease-settle);
+}
+.segmented > *:active { transform: scale(0.96); }
+.segmented > [aria-selected="true"], .segmented > .is-active {
+  background: var(--surface-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+}
+
+/* ── 7. Materials & depth ─────────────────────────────────────────────────
+   A floating layer that content scrolls beneath, rather than an opaque bar
+   that eats a fixed strip of the viewport.                                  */
+
+.glass {
+  background: var(--material-light);
+  backdrop-filter: blur(var(--material-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--material-blur)) saturate(180%);
+  /* A bright top edge reads as light catching a real material. */
+  box-shadow: inset 0 1px 0 var(--material-edge), 0 1px 0 var(--hairline);
+}
+
+/* Heavier material for structural regions (sidebars, sheets). Bigger surfaces
+   read as thicker: more blur, deeper shadow. */
+.glass-heavy {
+  background: var(--material-heavy);
+  backdrop-filter: blur(36px) saturate(180%);
+  -webkit-backdrop-filter: blur(36px) saturate(180%);
+  box-shadow: var(--shadow-3), inset 0 1px 0 var(--material-edge);
+}
+
+.glass-ultra {
+  background: var(--material-ultra);
+  backdrop-filter: blur(48px) saturate(200%);
+  -webkit-backdrop-filter: blur(48px) saturate(200%);
+  box-shadow: var(--shadow-4), inset 0 1px 0 var(--material-edge);
+}
+
+/* Scroll edge: a soft fade where content meets floating chrome, instead of a
+   hard 1px rule. Only appears where the chrome actually overlaps content. */
+.scroll-edge::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 100%;
+  height: 24px;
+  pointer-events: none;
+  background: linear-gradient(to bottom, var(--material-light), transparent);
+}
+
+/* Dim to focus. A modal task pairs the surface with a scrim and pushes the
+   background back; a parallel panel uses translucency *without* one, so the
+   flow is not broken. */
+.scrim {
+  background: var(--scrim);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* ── 8. Reveal & decorative ───────────────────────────────────────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity var(--dur-slow) var(--ease-settle),
+              transform var(--dur-slow) var(--ease-settle);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.06s; }
+.reveal-delay-2 { transition-delay: 0.12s; }
+.reveal-delay-3 { transition-delay: 0.18s; }
+.reveal-delay-4 { transition-delay: 0.24s; }
+
+.gradient-text {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Gradient text loses apparent weight because the mid-tones lighten it;
+     a hair more weight puts it back on par with its neighbours. */
+  font-weight: 800;
+}
+
+/* Ambient brand light behind a hero. Two soft radial pools rather than one
+   blob — a single blob reads as a graphic, two read as light in a room. */
+.aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(110% 82% at 12% -8%, var(--brand-tint-strong) 0%, transparent 58%),
+    radial-gradient(88% 70% at 96% 4%, color-mix(in oklab, var(--brand-secondary) 10%, transparent) 0%, transparent 56%);
+}
+
+.grid-pattern {
+  background-image: linear-gradient(var(--hairline) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+  background-size: 44px 44px;
+  /* Fade the pattern out rather than letting it hit a hard edge. */
+  mask-image: radial-gradient(120% 80% at 50% 0%, #000 30%, transparent 78%);
+}
+.dot-pattern {
+  background-image: radial-gradient(var(--hairline-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.glow { box-shadow: var(--shadow-brand-lg); }
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.animate-gradient { background-size: 200% 200%; animation: gradient-shift 12s ease infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float { animation: float 7s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px -6px var(--brand-primary); }
+  50% { box-shadow: 0 0 44px -6px var(--brand-secondary); }
+}
+.animate-pulse-glow { animation: pulse-glow 3.5s ease-in-out infinite; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scale-in var(--dur-slow) var(--ease-settle) forwards; }
+
+/* Materialize, don't just fade: a glass surface arriving should gain blur and
+   scale together, so it reads as a real material rather than an opacity ramp. */
+@keyframes materialize {
+  from { opacity: 0; transform: scale(0.97) translateY(8px); backdrop-filter: blur(0px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); backdrop-filter: blur(var(--material-blur)); }
+}
+.animate-materialize { animation: materialize var(--dur-base) var(--ease-settle) forwards; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Loading placeholders. Status feedback is one of the four kinds — an empty
+   box while data arrives is a missing answer to "is this working?". */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-sunken) 0%, var(--surface-inset) 50%, var(--surface-sunken) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--r-sm);
+}
+
+/* ── 9. Layout ────────────────────────────────────────────────────────────
+   Spacing in rem so a user who raises their text size gets a layout that
+   grows with it instead of cramped text in fixed boxes.                     */
+
+.section { padding: 4.5rem 1.5rem; }
+@media (min-width: 768px) { .section { padding: 7rem 1.5rem; } }
+.section-tight { padding: 2.75rem 1.5rem; }
+@media (min-width: 768px) { .section-tight { padding: 4.5rem 1.5rem; } }
+.container-narrow { margin-inline: auto; max-width: 56rem; }
+.container-wide { margin-inline: auto; max-width: 80rem; }
+
+/* Horizontal scroller for chip rows / carousels. Momentum snapping, with the
+   scrollbar hidden — the overflow is communicated by content bleeding off the
+   edge, which is the honest signal. */
+.rail {
+  display: flex;
+  gap: 0.625rem;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 0.25rem;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail > * { scroll-snap-align: start; flex: none; }
+
+/* ── 10. Accessibility ────────────────────────────────────────────────────
+   Three independent signals. Reduced motion is not "no feedback" — press
+   states and cross-fades survive; it is the vestibular motion that goes.    */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  /* The infinite loops are the real hazard: `float` runs at ~0.14 Hz,
+     squarely in the range that triggers motion sensitivity. */
+  .animate-float,
+  .animate-pulse-glow,
+  .animate-gradient,
+  .animate-materialize,
+  .shimmer,
+  .skeleton,
+  .animate-scale-in {
+    animation: none !important;
+  }
+  .skeleton { background: var(--surface-sunken); }
+
+  .reveal { transition: opacity var(--dur-fast) linear; transform: none !important; }
+  .reveal.visible { transform: none !important; }
+
+  /* Keep the press acknowledgement — it is feedback, not decoration — but
+     drop travel and overshoot. */
+  .card-lift:hover, .card:hover, .btn-primary:hover, .btn-secondary:hover { transform: none !important; }
+  .btn-primary:active, .btn-secondary:active, .btn-ghost:active,
+  .btn-subtle:active, .card-lift:active, .press:active, .press-lg:active {
+    transform: none !important;
+    opacity: 0.7;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-heavy, .glass-ultra {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 1px 0 var(--hairline-strong);
+  }
+  .scroll-edge::after { display: none; }
+  .scrim { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(0, 0, 0, 0.6); }
+  .aurora { display: none; }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --ink-2: rgba(11, 11, 15, 0.88);
+    --ink-3: rgba(11, 11, 15, 0.72);
+    --ink-4: rgba(11, 11, 15, 0.55);
+    --hairline: rgba(11, 11, 15, 0.32);
+    --hairline-strong: rgba(11, 11, 15, 0.5);
+  }
+  .glass, .glass-heavy, .glass-ultra {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: 0 2px 0 var(--ink);
+  }
+  .btn-secondary { border-width: 2px; border-color: var(--ink); }
+  .card, .surface, .chip { border-color: var(--hairline-strong); }
+  .aurora { display: none; }
+}
+
+/* Print — the directory pages get printed and handed out. Chrome, materials
+   and decoration are noise on paper. */
+@media print {
+  .glass, .glass-heavy, .aurora, .dot-pattern, .grid-pattern { display: none !important; }
+  body { background: #fff; color: #000; }
+  .card, .surface { box-shadow: none; border: 1px solid #ccc; }
+}

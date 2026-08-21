@@ -1,30 +1,27 @@
 {
-  "name": "web",
+  "name": "hermes",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "prebuild": "node scripts/gen-site-folders.mjs",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "@supabase/ssr": "^0.12.0",
-    "@supabase/supabase-js": "^2.108.2",
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "dev": "npm run dev -w @hermes/web",
+    "build": "npm run build -w @hermes/web",
+    "start": "npm run start -w @hermes/web",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "tokens": "node packages/tokens/scripts/extract.mjs",
+    "mobile": "npm run start -w @hermes/mobile",
+    "mobile:ios": "npm run ios -w @hermes/mobile",
+    "mobile:android": "npm run android -w @hermes/mobile",
+    "test": "npm run test --workspaces --if-present"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "expo-router": "~6.0.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
