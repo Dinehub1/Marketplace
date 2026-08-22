@@ -70,7 +70,11 @@ export function OwnerProvider({ children }: { children: ReactNode }) {
         const data = await post("/api/otp/verify", { phone, code });
         const token = typeof data.token === "string" ? data.token : "";
         if (!token) throw new Error("The server did not return a session. Please try again.");
-        const next = { phone, token };
+        // Keep the server's normalized 91XXXXXXXXXX form, not what was typed.
+        // The token's signature is bound to that form, and the phone now
+        // travels back on every request as x-phone — storing "98765 43210"
+        // works only for as long as the server keeps normalizing it for us.
+        const next = { phone: typeof data.phone === "string" && data.phone ? data.phone : phone, token };
         setSession(next);
         await AsyncStorage.setItem(KEY, JSON.stringify(next)).catch(() => {});
       },

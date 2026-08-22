@@ -10,8 +10,11 @@ import { formatCount } from "@hermes/core";
 import { Button, Card, EmptyState, Press, Skeleton, Text } from "@/components/ui";
 import { Icon } from "@/components/icons";
 
-type Lead = { id: number; name: string | null; phone: string | null; message: string | null; created_at: string };
-type Owned = { id: number; name: string; category: string | null; rating: number | null };
+// Mirrors the /api/customer response. leads.id is a uuid, not a bigint — it is
+// the React key for every row on this screen, so getting it wrong here is the
+// kind of thing that types quietly stop protecting you from.
+type Lead = { id: string; name: string | null; phone: string | null; message: string | null; created_at: string };
+type Owned = { id: number; name: string; category: string | null; status: string | null; city: string | null };
 
 export default function OwnerDashboard() {
   const { c, brand } = useTheme();
@@ -32,16 +35,27 @@ export default function OwnerDashboard() {
     const ctrl = new AbortController();
     // One endpoint, one round trip: a phone on a weak connection should not pay
     // for three sequential requests to paint one screen.
+    //
+    // The phone token goes in x-phone-token, NOT in Authorization. The route
+    // reads a Bearer header as a Supabase JWT and hands it to auth.getUser();
+    // a phone token sent that way fails that check and never reaches the branch
+    // that would have accepted it, so the screen 401s with a valid session.
     fetch(`${WEB_BASE_URL}/api/customer`, {
-      headers: { Authorization: `Bearer ${owner.session.token}` },
+      headers: {
+        "x-phone": owner.session.phone,
+        "x-phone-token": owner.session.token,
+      },
       signal: ctrl.signal,
     })
       .then(async (r) => {
         if (!r.ok) throw new Error(await r.text().catch(() => "Request failed"));
-        return r.json() as Promise<{ leads?: Lead[]; businesses?: Owned[] }>;
+        return r.json() as Promise<{ ownerLeads?: Lead[]; businesses?: Owned[] }>;
       })
       .then((d) => {
-        setLeads(d.leads ?? []);
+        // ownerLeads, not leads: this screen is the business's inbox. `leads`
+        // is the enquiries this phone *sent* as a customer, which belongs to
+        // the customer dashboard on the web.
+        setLeads(d.ownerLeads ?? []);
         setOwned(d.businesses ?? []);
       })
       .catch((e) => {
