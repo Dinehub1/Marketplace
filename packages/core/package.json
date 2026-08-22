@@ -6,7 +6,7 @@
   "types": "src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types src/index.test.mjs"
+    "test": "node --test src/index.test.mjs"
   },
   "type": "module"
 }

@@ -2,7 +2,7 @@
   "cli": { "version": ">= 12.0.0", "appVersionSource": "remote" },
   "build": {
     "base": {
-      "node": "20.18.0",
+      "node": "22.20.0",
       "env": {},
       "cache": { "disabled": false }
     },
