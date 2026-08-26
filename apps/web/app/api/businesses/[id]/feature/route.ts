@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { createOrder } from "@/lib/razorpay";
 
 const noStore = { "Cache-Control": "no-store" };
 
 /**
  * Feature/boost a listing for placement monetization. Same ownership proof as
  * claim/route.ts: the OTP-verified phone must match the business's stored phone
- * (last-10-digit comparison). On success the listing is flagged featured and its
- * priority bumped so it floats to the top of the marketplace sort.
- *
- * PAYMENT IS A STUB. Pricing is a single env-driven constant (FEATURE_PRICE_INR,
- * default "499") returned to the client so it can render "Boost for ₹499". No real
- * payment gateway is integrated here.
+ * (last-10-digit comparison). On success we create a REAL Razorpay order and a
+ * pending `payments` row; the listing is only featured once Razorpay's webhook
+ * confirms the capture (see app/api/payments/webhook/route.ts).
  */
 // Single source of truth for the boost price shown across the app.
 const FEATURE_PRICE_INR = Number(process.env.FEATURE_PRICE_INR ?? "499");
@@ -36,7 +34,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
   }
 
-  const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,featured,priority`);
+  const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,brand_id,featured,priority`);
   const biz = ((await bizRes.json()) as any[])[0];
   if (!biz) return NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore });
 
@@ -48,14 +46,55 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     );
   }
 
-  // PAYMENT STUB: no gateway — just flag the listing and bump its priority.
-  const priority = (Number(biz.priority) || 0) + 10;
-  const patch = await db(`businesses?id=eq.${businessId}`, {
-    method: "PATCH",
-    headers: { Prefer: "return=minimal" },
-    body: JSON.stringify({ featured: true, priority }),
-  });
-  if (!patch.ok) return NextResponse.json({ error: "Boost save nahi ho saka" }, { status: 500, headers: noStore });
+  // Already boosted (idempotent): don't create a second order. Return the
+  // current state so the client can short-circuit to "already featured".
+  if (biz.featured) {
+    return NextResponse.json({ ok: true, already: true, featured: true, priority: Number(biz.priority) || 0, price_inr: FEATURE_PRICE_INR }, { headers: noStore });
+  }
 
-  return NextResponse.json({ ok: true, featured: true, priority, price_inr: FEATURE_PRICE_INR }, { headers: noStore });
+  // 1. Create a real Razorpay order (amount in paise inside createOrder).
+  let order;
+  try {
+    order = await createOrder({
+      amountInr: FEATURE_PRICE_INR,
+      currency: "INR",
+      receipt: `boost_${businessId}_${Date.now()}`,
+      notes: { business_id: String(businessId), brand_id: String(biz.brand_id ?? "") },
+    });
+  } catch {
+    return NextResponse.json({ error: "Payment gateway unavailable. Try again." }, { status: 502, headers: noStore });
+  }
+
+  // 2. Persist a pending payment row attributed to this listing.
+  const ins = await db("payments", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify({
+      business_id: businessId,
+      brand_id: biz.brand_id ?? null,
+      amount: FEATURE_PRICE_INR,
+      currency: "INR",
+      method: "razorpay",
+      status: "pending",
+      payer_contact: phone,
+      gateway_order_id: order.id,
+      meta: { razorpay_order_id: order.id, business_name: biz.name },
+    }),
+  });
+  if (!ins.ok) {
+    return NextResponse.json({ error: "Boost save nahi ho saka" }, { status: 500, headers: noStore });
+  }
+
+  // 3. Hand the client what it needs to open Razorpay Checkout.
+  return NextResponse.json(
+    {
+      ok: true,
+      orderId: order.id,
+      amount: order.amount, // paise
+      currency: order.currency,
+      keyId: process.env.RAZORPAY_KEY_ID ?? "",
+      price_inr: FEATURE_PRICE_INR,
+    },
+    { headers: noStore },
+  );
 }

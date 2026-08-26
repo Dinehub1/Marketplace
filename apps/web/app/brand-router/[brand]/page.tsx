@@ -276,7 +276,19 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/testimonials") { if (!isEnabled(brand, "testimonials")) return <ComingSoon brand={brand} pageName="Testimonials" />; const { TestimonialsPage } = await import("./pages/testimonials"); return <TestimonialsPage brand={brand} />; }
   if (subPath === "/reviews") { if (!isEnabled(brand, "reviews")) return <ComingSoon brand={brand} pageName="Reviews" />; const { ReviewsPage } = await import("./pages/reviews"); return <ReviewsPage brand={brand} />; }
   if (subPath === "/gallery" || subPath === "/portfolio") { if (!isEnabled(brand, "gallery")) return <ComingSoon brand={brand} pageName="Gallery" />; const { GalleryPage } = await import("./pages/gallery"); return <GalleryPage brand={brand} />; }
-  if (subPath === "/book" || subPath === "/booking" || subPath === "/schedule") { if (!brand.booking_enabled) return <ComingSoon brand={brand} pageName="Book Appointment" />; const { BookingPage } = await import("./pages/booking"); return <BookingPage brand={brand} />; }
+  if (subPath === "/book" || subPath === "/booking" || subPath === "/schedule") {
+    if (!brand.booking_enabled) return <ComingSoon brand={brand} pageName="Book Appointment" />;
+    const { BookingPage } = await import("./pages/booking");
+    // /book?vendor=<id> deep-links straight into one vendor's flow (linked from
+    // business detail pages); without it the page shows the vendor picker.
+    const vendorParam = Number(sp.vendor);
+    return <BookingPage brand={brand} initialVendorId={Number.isFinite(vendorParam) && vendorParam > 0 ? vendorParam : null} />;
+  }
+  if (subPath === "/vendor-bookings") {
+    if (!brand.booking_enabled) return <ComingSoon brand={brand} pageName="Dukaan Dashboard" />;
+    const { VendorBookingsPage } = await import("./pages/vendor-bookings");
+    return <VendorBookingsPage brand={brand} />;
+  }
   if (subPath === "/quote" || subPath === "/request-quote") { if (!brand.quote_enabled) return <ComingSoon brand={brand} pageName="Request Quote" />; const { QuotePage } = await import("./pages/quote"); return <QuotePage brand={brand} />; }
   if (subPath === "/checkout" || subPath === "/pay") { if (!brand.checkout_enabled) return <ComingSoon brand={brand} pageName="Checkout" />; const { CheckoutPage } = await import("./pages/checkout"); return <CheckoutPage brand={brand} />; }
   if (subPath === "/support" || subPath === "/help") { if (!isEnabled(brand, "support")) return <ComingSoon brand={brand} pageName="Support" />; const { SupportPage } = await import("./pages/support"); return <SupportPage brand={brand} />; }

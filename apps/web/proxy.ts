@@ -13,7 +13,7 @@ const APP_PATHS = [
   "/login", "/register", "/signup", "/forgot-password", "/reset-password",
   "/dashboard", "/profile", "/settings",
   "/notifications", "/orders", "/bookings",
-  "/business-dashboard",
+  "/business-dashboard", "/vendor-bookings",
   "/about", "/services", "/products", "/pricing", "/features",
   "/marketplace", "/listings", "/business", "/categories",
   "/blog", "/news", "/careers", "/jobs",

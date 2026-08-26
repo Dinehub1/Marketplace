@@ -1,5 +1,25 @@
-[config]
-project_ref = "xpfmqpmhmcouwzebfwhb"
+# Local Supabase stack for Hermes (supabase start / db reset).
+#
+# Ports are shifted to the 5434x range because another local project
+# ("Gatted-2026") occupies the default 54321-54324/54327.
+#
+# NOTE: the previous hand-written file had:
+#   [config] project_ref = "xpfmqpmhmcouwzebfwhb"
+#   [db]     port = 6543
+# which this CLI version rejects; original kept at config.toml.original.bak.
+project_id = "hermes-local"
+
+[api]
+port = 54341
 
 [db]
-port = 6543
+port = 54342
+
+[studio]
+port = 54343
+
+[inbucket]
+port = 54344
+
+[analytics]
+port = 54345

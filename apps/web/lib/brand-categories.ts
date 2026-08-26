@@ -87,6 +87,19 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   sarkartravel: [
     "hotel", "guest house", "hostel", "travel", "tour ", "resort", "lodge",
   ],
+
+  // The booking vertical: car wash, detailing and service. This is the one
+  // brand whose listings carry a live slot-booking flow (/book), so it owns
+  // every category a customer would book a vehicle into. Deliberately tight —
+  // bare "dealer", "showroom", "garage" (parking garages!) and spare-parts
+  // retail stay unowned rather than leaking non-bookable businesses into the
+  // booking funnel.
+  sarkarcars: [
+    "car wash", "car cleaning", "car detail", "vehicle detail", "detailing",
+    "car service", "vehicle service", "car repair", "auto repair",
+    "automobile repair", "mechanic", "denting", "painting", "car care",
+    "bike wash", "bike service",
+  ],
   sarkarfinance: [
     "bank", "insurance", "stock brok", "mutual fund", "chartered account",
     "accounting", "tax ", "financial", "money transfer", "loan", "paytm",

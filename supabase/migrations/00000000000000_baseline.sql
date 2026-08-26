@@ -11,9 +11,15 @@
 -- Generated 2026-08-14 from pg introspection (tables, constraints, indexes, policies, grants).
 -- NOTE: anon currently holds broad GRANTs;
 
-RLS policies are the real access control.
+-- RLS policies are the real access control.
 -- Phase 0 hardening (supabase/migrations/20260814000000_phase0_rls.sql) applies on top.
 -- ============================================================
+
+-- Extensions used below. On the live project pg_trgm was enabled out-of-band;
+-- a fresh replay needs it before the trigram indexes at the bottom of this
+-- file (the later listing_media migration also creates it — IF NOT EXISTS
+-- makes both orders safe).
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 
 -- === TABLES ===
@@ -28,7 +34,7 @@ CREATE TABLE IF NOT EXISTS public.agent_memory (
   expires_at timestamp with time zone,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
-)
+);
 
 CREATE TABLE IF NOT EXISTS public.agent_outputs ( id uuid not null default gen_random_uuid(), agent_slug text not null, run_id uuid, status text default 'running'::text, summary text, output jsonb default '{}'::jsonb, duration_seconds numeric default 0, created_at timestamp with time zone default now(), brand_id uuid );
 
@@ -99,9 +105,35 @@ CREATE TABLE IF NOT EXISTS public.trades ( id uuid not null default gen_random_u
 CREATE TABLE IF NOT EXISTS public.whatsapp_templates ( id uuid not null default gen_random_uuid(), template_id text not null, name text not null, language text not null default 'en'::text, category text, status text, body text, variables integer default 0, raw jsonb not null default '{}'::jsonb, last_synced_at timestamp with time zone not null default now(), created_at timestamp with time zone not null default now(), updated_at timestamp with time zone not null default now() );
 
 -- === CONSTRAINTS ===
-ALTER TABLE public.apps ADD CONSTRAINT apps_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id)
 
-ALTER TABLE public.apps ADD CONSTRAINT apps_pkey PRIMARY KEY (id);
+-- Pre-pass: install every table's `id` PRIMARY KEY before any FK block runs.
+-- The blocks below are ordered alphabetically BY TABLE, so an FK like
+-- content.brand_id -> brands.id can appear before brands_pkey. That never
+-- mattered on the original live database (its constraints predate this file)
+-- but breaks a fresh replay, which is exactly what this file promises to
+-- support. Idempotent: tables that already have a PK are skipped.
+DO $$
+DECLARE r record;
+BEGIN
+  FOR r IN
+    SELECT c.table_name
+    FROM information_schema.columns c
+    WHERE c.table_schema = 'public'
+      AND c.column_name = 'id'
+      AND c.udt_name IN ('uuid', 'int8')
+      AND NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints tc
+        WHERE tc.table_schema = 'public'
+          AND tc.table_name = c.table_name
+          AND tc.constraint_type = 'PRIMARY KEY')
+  LOOP
+    EXECUTE format('ALTER TABLE public.%I ADD CONSTRAINT %I PRIMARY KEY (id)',
+                   r.table_name, r.table_name || '_pkey');
+  END LOOP;
+END $$;
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='apps_owner_id_fkey' AND conrelid='public.apps'::regclass) THEN ALTER TABLE public.apps ADD CONSTRAINT apps_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES auth.users(id); END IF; END $$;
+
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='apps_pkey' AND conrelid='public.apps'::regclass) THEN ALTER TABLE public.apps ADD CONSTRAINT apps_pkey PRIMARY KEY (id); END IF; END $$;
 
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='apps_slug_key' AND conrelid='public.apps'::regclass) THEN ALTER TABLE public.apps ADD CONSTRAINT apps_slug_key UNIQUE (slug); END IF; END $$;
 
@@ -314,7 +346,7 @@ DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='reviews_ra
 DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname='reviews_user_id_fkey' AND conrelid='public.reviews'::regclass) THEN ALTER TABLE public.reviews ADD CONSTRAINT reviews_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL; END IF; END $$;
 
 -- === INDEXES ===
-CREATE UNIQUE INDEX IF NOT EXISTS apps_pkey ON public.apps USING btree (id)
+CREATE UNIQUE INDEX IF NOT EXISTS apps_pkey ON public.apps USING btree (id);
 
 CREATE INDEX IF NOT EXISTS idx_biz_category ON public.businesses USING btree (category);
 
@@ -482,51 +514,51 @@ ALTER TABLE public.whatsapp_templates ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.agent_outputs ENABLE ROW LEVEL SECURITY;
 
 -- === POLICIES ===
-CREATE POLICY IF NOT EXISTS apps_public_read ON public.apps FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='apps' AND policyname='apps_public_read') THEN CREATE POLICY apps_public_read ON public.apps FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS apps_service_write ON public.apps FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='apps' AND policyname='apps_service_write') THEN CREATE POLICY apps_service_write ON public.apps FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS categories_public_read ON public.categories FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='categories' AND policyname='categories_public_read') THEN CREATE POLICY categories_public_read ON public.categories FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS content_public_read ON public.content FOR SELECT TO public USING ((published = true));
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='content' AND policyname='content_public_read') THEN CREATE POLICY content_public_read ON public.content FOR SELECT TO public USING ((published = true)); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS courses_public_read ON public.courses FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='courses' AND policyname='courses_public_read') THEN CREATE POLICY courses_public_read ON public.courses FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS agents_public_read ON public.agents FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='agents' AND policyname='agents_public_read') THEN CREATE POLICY agents_public_read ON public.agents FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS bookings_public_insert ON public.bookings FOR INSERT TO public WITH CHECK (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='bookings' AND policyname='bookings_public_insert') THEN CREATE POLICY bookings_public_insert ON public.bookings FOR INSERT TO public WITH CHECK (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS bookings_public_read ON public.bookings FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='bookings' AND policyname='bookings_public_read') THEN CREATE POLICY bookings_public_read ON public.bookings FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS trades_public_read ON public.trades FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='trades' AND policyname='trades_public_read') THEN CREATE POLICY trades_public_read ON public.trades FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS subscriptions_public_insert ON public.subscriptions FOR INSERT TO public WITH CHECK (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='subscriptions' AND policyname='subscriptions_public_insert') THEN CREATE POLICY subscriptions_public_insert ON public.subscriptions FOR INSERT TO public WITH CHECK (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS notifications_public_read ON public.notifications FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='notifications' AND policyname='notifications_public_read') THEN CREATE POLICY notifications_public_read ON public.notifications FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS settings_public_read ON public.settings FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='settings' AND policyname='settings_public_read') THEN CREATE POLICY settings_public_read ON public.settings FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS profiles_self_read ON public.profiles FOR SELECT TO public USING ((auth.uid() = id));
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='profiles' AND policyname='profiles_self_read') THEN CREATE POLICY profiles_self_read ON public.profiles FOR SELECT TO public USING ((auth.uid() = id)); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS profiles_self_update ON public.profiles FOR UPDATE TO public USING ((auth.uid() = id));
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='profiles' AND policyname='profiles_self_update') THEN CREATE POLICY profiles_self_update ON public.profiles FOR UPDATE TO public USING ((auth.uid() = id)); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS jobs_public_read ON public.jobs FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='jobs' AND policyname='jobs_public_read') THEN CREATE POLICY jobs_public_read ON public.jobs FOR SELECT TO public USING (true); END IF; END $$;
 
 CREATE POLICY "Business owners can manage" ON public.businesses FOR ALL TO public USING ((auth.uid() = owner_id));
 
 CREATE POLICY "Public can read businesses" ON public.businesses FOR SELECT TO public USING ((status = 'active'::text));
 
-CREATE POLICY IF NOT EXISTS biz_public_read ON public.businesses FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='businesses' AND policyname='biz_public_read') THEN CREATE POLICY biz_public_read ON public.businesses FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS public_read ON public.businesses FOR SELECT TO anon,authenticated USING ((status = 'active'::text));
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='businesses' AND policyname='public_read') THEN CREATE POLICY public_read ON public.businesses FOR SELECT TO anon,authenticated USING ((status = 'active'::text)); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_role_all_agent_outputs ON public.agent_outputs FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='agent_outputs' AND policyname='service_role_all_agent_outputs') THEN CREATE POLICY service_role_all_agent_outputs ON public.agent_outputs FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_role_all_research_logs ON public.research_logs FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='research_logs' AND policyname='service_role_all_research_logs') THEN CREATE POLICY service_role_all_research_logs ON public.research_logs FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_role_all_backlog ON public.backlog FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='backlog' AND policyname='service_role_all_backlog') THEN CREATE POLICY service_role_all_backlog ON public.backlog FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_role_all_learning_log ON public.learning_log FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='learning_log' AND policyname='service_role_all_learning_log') THEN CREATE POLICY service_role_all_learning_log ON public.learning_log FOR ALL TO public USING (true); END IF; END $$;
 
 CREATE POLICY "Allow insert for admins" ON public.brands FOR INSERT TO authenticated WITH CHECK (((auth.jwt() ->> 'role'::text) = 'admin'::text));
 
@@ -534,23 +566,23 @@ CREATE POLICY "Allow read access for anon and authenticated" ON public.brands FO
 
 CREATE POLICY "Allow update for admins" ON public.brands FOR UPDATE TO authenticated USING (((auth.jwt() ->> 'role'::text) = 'admin'::text)) WITH CHECK (((auth.jwt() ->> 'role'::text) = 'admin'::text));
 
-CREATE POLICY IF NOT EXISTS brands_public_read ON public.brands FOR SELECT TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='brands' AND policyname='brands_public_read') THEN CREATE POLICY brands_public_read ON public.brands FOR SELECT TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS public_read ON public.brands FOR SELECT TO anon,authenticated USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='brands' AND policyname='public_read') THEN CREATE POLICY public_read ON public.brands FOR SELECT TO anon,authenticated USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_events ON public.events FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='events' AND policyname='service_all_events') THEN CREATE POLICY service_all_events ON public.events FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_task_queue ON public.task_queue FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='task_queue' AND policyname='service_all_task_queue') THEN CREATE POLICY service_all_task_queue ON public.task_queue FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_agent_memory ON public.agent_memory FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='agent_memory' AND policyname='service_all_agent_memory') THEN CREATE POLICY service_all_agent_memory ON public.agent_memory FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_agent_triggers ON public.agent_triggers FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='agent_triggers' AND policyname='service_all_agent_triggers') THEN CREATE POLICY service_all_agent_triggers ON public.agent_triggers FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_execution_metrics ON public.execution_metrics FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='execution_metrics' AND policyname='service_all_execution_metrics') THEN CREATE POLICY service_all_execution_metrics ON public.execution_metrics FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS service_all_event_config ON public.event_config FOR ALL TO public USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='event_config' AND policyname='service_all_event_config') THEN CREATE POLICY service_all_event_config ON public.event_config FOR ALL TO public USING (true); END IF; END $$;
 
-CREATE POLICY IF NOT EXISTS public_read ON public.whatsapp_templates FOR SELECT TO anon,authenticated USING (true);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='whatsapp_templates' AND policyname='public_read') THEN CREATE POLICY public_read ON public.whatsapp_templates FOR SELECT TO anon,authenticated USING (true); END IF; END $$;
 
 CREATE POLICY "Admins can manage all reviews" ON public.reviews FOR ALL TO public USING ((auth.uid() IN ( SELECT profiles.id FROM profiles WHERE (profiles.role = 'admin'::text))));
 
@@ -562,10 +594,10 @@ CREATE POLICY "Users can delete own reviews" ON public.reviews FOR DELETE TO pub
 
 CREATE POLICY "Users can update own reviews" ON public.reviews FOR UPDATE TO public USING ((user_id = auth.uid()));
 
-CREATE POLICY IF NOT EXISTS public_read ON public.reviews FOR SELECT TO anon,authenticated USING (is_approved);
+DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='reviews' AND policyname='public_read') THEN CREATE POLICY public_read ON public.reviews FOR SELECT TO anon,authenticated USING (is_approved); END IF; END $$;
 
 -- === GRANTS ===
-GRANT DELETE ON TABLE public.agent_memory TO anon
+GRANT DELETE ON TABLE public.agent_memory TO anon;
 
 GRANT INSERT ON TABLE public.agent_memory TO anon;
 
