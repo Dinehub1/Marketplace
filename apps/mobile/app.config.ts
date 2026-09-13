@@ -83,6 +83,12 @@ const config: ExpoConfig = {
 
   plugins: [
     "expo-router",
+    // SDK 57 requires these listed explicitly (the CLI flagged them as
+    // "cannot automatically write to dynamic config" when it tried to add them):
+    // expo-status-bar for the status bar control, expo-web-browser for the
+    // in-app browser used by tel:/maps/wa.me hand-offs.
+    "expo-status-bar",
+    "expo-web-browser",
     [
       "expo-splash-screen",
       {

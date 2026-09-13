@@ -20,7 +20,8 @@ application code and no runtime dependencies.
 ## Commands (all from the repo root)
 
 ```bash
-npm install                 # installs every workspace
+npm install                 # web + packages (the workspaces)
+cd apps/mobile && npm install   # the RN app installs STANDALONE — see below
 npm run dev                 # web dev server
 npm run build               # web production build
 npm run typecheck           # every workspace
@@ -28,6 +29,15 @@ npm run tokens              # regenerate native colours from globals.css
 npm run mobile              # Expo dev server
 npm run mobile:ios          # Expo on an iOS simulator
 ```
+
+**`apps/mobile` is deliberately NOT a workspace.** It was, until the Expo SDK 57
+upgrade: hoisting put the web app's copies of `typescript`, `@expo/config-plugins`
+and `react-native` at the repo root, where the RN app resolved them *before* its
+own — so `expo-doctor` reported SDK 54 packages alongside SDK 57 ones and two
+copies of `react-native` (0.81.5 hoisted vs 0.86.3 local), and `expo install
+--fix` could never converge because the root always won. React Native's tooling
+resolves native modules from `node_modules` next to the app, so the app has to
+own that tree. Keep it out of `workspaces` and install it in its own directory.
 
 ## Environment
 
