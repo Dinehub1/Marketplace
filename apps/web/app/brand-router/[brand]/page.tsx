@@ -197,6 +197,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   const sp = await searchParams;
   const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
+  if (subPath === "/galaxy") { const { GalaxyPage } = await import("./pages/galaxy"); return <GalaxyPage brand={brand} />; }
   if (subPath === "/login") { const { WhatsAppLogin } = await import("./whatsapp-login"); return <WhatsAppLogin brand={brand} />; }
   if (subPath === "/register" || subPath === "/signup") { const { BrandRegister } = await import("./pages/register"); return <BrandRegister brand={brand} />; }
   if (subPath === "/forgot-password" || subPath === "/reset-password") { const { ForgotPassword } = await import("./pages/forgot-password"); return <ForgotPassword brand={brand} />; }

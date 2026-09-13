@@ -19,6 +19,7 @@ const APP_PATHS = [
   "/blog", "/news", "/careers", "/jobs",
   "/contact", "/faq", "/faqs", "/testimonials", "/reviews",
   "/gallery", "/portfolio",
+  "/galaxy",
   "/book", "/booking", "/schedule",
   "/quote", "/request-quote",
   "/checkout", "/pay",
