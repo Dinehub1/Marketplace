@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "apps/web",
+    "apps/*",
     "packages/*"
   ],
+  "overrides": {
+    "react-native": "0.86.3"
+  },
   "scripts": {
     "dev": "npm run dev -w @hermes/web",
     "build": "npm run build -w @hermes/web",
