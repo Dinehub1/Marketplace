@@ -85,12 +85,25 @@ export function cleanArea(area: string | null | undefined): string | null {
   return a;
 }
 
+/**
+ * Title-case a stored locality.
+ *
+ * `area` is stored lowercase (the importer lowercases the address component),
+ * which is right for matching but wrong in a <title> and in a SERP snippet:
+ * "Plumber in vijay nagar, Indore" is what a searcher reads. Cards carry a CSS
+ * `capitalize`, so only the metadata path was visibly wrong.
+ */
+export function titleizeArea(s: string): string {
+  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+}
+
 /** Human locality string for a listing, junk values removed. */
 export function localityOf(
   biz: { area?: string | null; city?: string | null },
   fallback: string = CITY_LABEL,
 ): string {
-  return [cleanArea(biz.area), biz.city].filter(Boolean).join(", ") || fallback;
+  const area = cleanArea(biz.area);
+  return [area ? titleizeArea(area) : null, biz.city].filter(Boolean).join(", ") || fallback;
 }
 
 /**

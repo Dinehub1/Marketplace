@@ -77,6 +77,38 @@ function parseCsv(text) {
 }
 
 function num(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null; }
+
+// ---- address-derived fields -------------------------------------------------
+// The scraper CSV has no pincode and no locality column — both are buried in
+// `address` ("Rajendra Nagar, Annapurna Rd, Indore, Madhya Pradesh 452009").
+// This used to read `location`, a column that does not exist, so every row got
+// area='indore' and pincode=NULL; 21,077 rows needed a one-off backfill on
+// 2026-09-13 to recover them. Parsing here keeps new rows correct.
+const DESCRIPTOR_JUNK = /^(?:(?:ground|first|second|third|fourth|fifth|upper|lower|top)\s*floor|floor.{0,3}\d*|basement|shop\s*(?:no\.?|number)?\s*\d*|unit\s*\d*|flat\s*\d*|plot\s*(?:no\.?)?\s*\d*|block\s*[a-z0-9]*|door\s*no\.?\s*\d*|no\.?\s*\d+|near|opp|opposite|beside|behind|in\s*front|at|testcity|test|n\/?a|-)$/i;
+
+/** 6-digit pincode from the address, preferring Indore's 45xxxx range. */
+function pincodeOf(addr) {
+  if (!addr) return null;
+  const m = String(addr).match(/\b\d{6}\b/g) ?? [];
+  if (!m.length) return null;
+  const preferred = m.filter((x) => x.startsWith('45'));
+  return (preferred.length ? preferred : m).pop();
+}
+
+/** First plausible locality in the address; 'indore' means "no locality found". */
+function localityOf(addr) {
+  if (!addr) return 'indore';
+  for (const part of String(addr).split(',')) {
+    const f = part.trim().replace(/^-+|-+$/g, '').trim();
+    if (!f || f.length < 3 || f.length > 28) continue;
+    if (/\d/.test(f)) continue;
+    if (/\s+in\s+/i.test(f)) continue;
+    if (DESCRIPTOR_JUNK.test(f)) continue;
+    if (['indore', 'india', 'madhya pradesh', 'mp'].includes(f.toLowerCase())) continue;
+    return f.toLowerCase();
+  }
+  return 'indore';
+}
 function int(v) { const n = parseInt(String(v ?? "").replace(/[^\d-]/g, ""), 10); return Number.isFinite(n) ? n : null; }
 function str(v) { const s = (v ?? "").trim(); return s || null; }
 
@@ -130,13 +162,15 @@ for (const file of files) {
     const dedupeKey = `${name.toLowerCase()}|${phone ?? ''}`;
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
+    const address = str(r[col['address']]);
     records.push({
       name,
       category: str(r[col['category']]),
       phone,
-      address: str(r[col['address']]),
+      address,
       website: str(r[col['website']]),
-      area: (r[col['location']] ?? '').trim().toLowerCase() || 'indore',
+      area: localityOf(address),
+      pincode: pincodeOf(address),
       city: 'Indore',
       rating: num(r[col['reviews_average']]),
       // Carried since 2026-08-12: a rating with no review count behind it is
@@ -214,22 +248,38 @@ for (const r of records) {
 
   // Only fill gaps — never overwrite a value already in the table, which may
   // have been corrected by hand or by an owner claiming the listing.
-  const patch = { id: row.id };
-  if (!row.image_url && r.image_url) patch.image_url = r.image_url;
-  if (row.reviews_count == null && r.reviews_count != null) patch.reviews_count = r.reviews_count;
-  if (!row.google_maps && r.google_maps) patch.google_maps = r.google_maps;
-  if (Object.keys(patch).length > 1) enrich.push(patch);
+  //
+  // Every patch carries the SAME keys, and carries the CURRENT value for the
+  // fields it is not changing. Two hard requirements of the PostgREST upsert:
+  //   * `name` is NOT NULL, and ON CONFLICT DO UPDATE still validates the
+  //     proposed insert tuple, so a patch without it dies with 23502
+  //     "null value in column name" — which is what this did before.
+  //   * a batch whose objects have differing key sets is rejected outright with
+  //     PGRST102 "All object keys must match", so the shapes cannot vary
+  //     per row.
+  // Sending the current value (never null) is also what keeps this from wiping
+  // a field: a null in the payload IS written.
+  const next = {
+    image_url: !row.image_url && r.image_url ? r.image_url : row.image_url,
+    reviews_count: row.reviews_count == null && r.reviews_count != null ? r.reviews_count : row.reviews_count,
+    google_maps: !row.google_maps && r.google_maps ? r.google_maps : row.google_maps,
+  };
+  const changed =
+    next.image_url !== row.image_url ||
+    next.reviews_count !== row.reviews_count ||
+    next.google_maps !== row.google_maps;
+  if (changed) enrich.push({ id: row.id, name: row.name, ...next });
 }
 console.log('NEW TO INSERT:', fresh.length);
 console.log('EXISTING TO ENRICH:', enrich.length);
 
 const BATCH = 100;
 
-async function send(rows, prefer, label) {
+async function send(rows, prefer, label, query = '') {
   let done = 0;
   for (let i = 0; i < rows.length; i += BATCH) {
     const batch = rows.slice(i, i + BATCH);
-    const res = await fetch(`${URL_BASE}/rest/v1/businesses`, {
+    const res = await fetch(`${URL_BASE}/rest/v1/businesses${query}`, {
       method: 'POST',
       headers: {
         apikey: KEY,
@@ -257,7 +307,9 @@ if (fresh.length) {
 }
 if (enrich.length) {
   // Upsert on the primary key: touches only the columns present in each row.
-  updated = await send(enrich, 'return=representation,resolution=merge-duplicates', 'Enriched');
+  // `on_conflict=id` is what makes PostgREST emit ON CONFLICT (id) DO UPDATE
+  // instead of a plain INSERT.
+  updated = await send(enrich, 'return=representation,resolution=merge-duplicates', 'Enriched', '?on_conflict=id');
 }
 if (!fresh.length && !enrich.length) console.log('Nothing to do — every row is present and already has media.');
 console.log(`Done. Inserted=${inserted} Enriched=${updated}`);
