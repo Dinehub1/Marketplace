@@ -132,9 +132,25 @@ export function cleanBusinessName(name: string | null | undefined): string {
   return s || String(name).trim();
 }
 
+/**
+ * Acronyms that must never be title-cased into words: the catalogue contains
+ * hundreds of "ac repair" / "cctv installer" / "it services company" listings,
+ * and title-casing each word renders them as "Ac Repair", "Cctv Installer" and
+ * "It Services Company" - visibly amateur next to the listing copy. (2026-09-14)
+ */
+const ACRONYMS = new Set([
+  "ac", "cctv", "cng", "it", "seo", "atm", "pvc", "upvc", "led", "ro", "ca",
+  "gst", "hvac", "ups", "erp", "crm", "nbfc", "gps", "lcd", "tv", "iso", "hiv",
+  "id", "bi", "ip", "3d", "olx", "em", "pc", "stpi", "mpcb", "tds",
+]);
+
 /** Title-case a label for display, e.g. "furniture store" → "Furniture Store". */
 export function titleize(s: string): string {
-  return s.replace(/\b[a-z]/g, (c) => c.toUpperCase());
+  return s.replace(/[\w]+/g, (w) =>
+    ACRONYMS.has(w.toLowerCase())
+      ? w.toUpperCase()
+      : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
+  );
 }
 
 /** Build a tel: href that normalises Indian phone numbers (adds +91 when missing). */
