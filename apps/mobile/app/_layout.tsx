@@ -1,5 +1,7 @@
-import { Stack } from "expo-router";
-import { ThemeProvider as NavThemeProvider, DefaultTheme, DarkTheme } from "@react-navigation/native";
+// SDK 57's expo-router bundles React Navigation and refuses a direct
+// @react-navigation/native import (see docs.expo.dev/router/migrate/sdk-55-to-56).
+// The theming primitives are re-exported by expo-router itself.
+import { Stack, ThemeProvider as NavThemeProvider, DefaultTheme, DarkTheme } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";

@@ -30,7 +30,7 @@ export const SUPABASE_KEY = required("EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY", ext
  * standing up a second auth path, so this must point at the deployed site — or
  * a LAN IP during development, since on a phone `localhost` is the phone.
  */
-export const WEB_BASE_URL = extra.webBaseUrl ?? "https://cashcard.live";
+export const WEB_BASE_URL = extra.webBaseUrl ?? "https://sarkarmarketplace.dropby.co.in";
 
 /**
  * Palette used until the live brand row loads, and if it never does. Sourced

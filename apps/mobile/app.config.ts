@@ -75,7 +75,7 @@ const config: ExpoConfig = {
       {
         action: "VIEW",
         autoVerify: true,
-        data: [{ scheme: "https", host: "cashcard.live", pathPrefix: "/business" }],
+        data: [{ scheme: "https", host: "dropby.co.in", pathPrefix: "/business" }],
         category: ["BROWSABLE", "DEFAULT"],
       },
     ],
@@ -118,7 +118,9 @@ const config: ExpoConfig = {
     // binary, where anyone can extract it from the bundle.
     supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
     supabaseKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
-    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://cashcard.live",
+    // The platform moved off cashcard.live; the marketplace lives on a
+    // subdomain because dropby.co.in's apex belongs to another app.
+    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sarkarmarketplace.dropby.co.in",
     eas: { projectId: process.env.EAS_PROJECT_ID ?? "" },
   },
 };

@@ -75,7 +75,7 @@ export default function AccountScreen() {
       </View>
 
       <Card style={{ overflow: "hidden" }}>
-        <LinkRow icon="globe" label="Open the website" onPress={() => Linking.openURL("https://cashcard.live")} />
+        <LinkRow icon="globe" label="Open the website" onPress={() => Linking.openURL(WEB_BASE_URL)} />
         <Divider />
         <LinkRow icon="inbox" label="Contact support" onPress={() => Linking.openURL("mailto:support@cashcard.live")} />
       </Card>
