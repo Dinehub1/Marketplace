@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies, headers } from "next/headers";
-import { BRAND_BASE_DOMAINS } from "@/lib/brands";
+import { cookieDomainForHost } from "@/lib/base-domains";
 
 /** Server-side Supabase client (uses anon/publishable key; RLS applies). */
 export async function createClient() {
@@ -9,8 +9,7 @@ export async function createClient() {
   // Share the session across all brand subdomains (one "Sarkar ID"), scoped to
   // whichever base domain served the request so sign-in works on the new domain
   // as well as the old one during the migration.
-  const base = BRAND_BASE_DOMAINS.find((b) => host.includes(b));
-  const domain = base ? `.${base}` : undefined;
+  const domain = cookieDomainForHost(host);
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

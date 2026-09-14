@@ -74,38 +74,9 @@ export async function getBrand(slug: string): Promise<Brand | null> {
   return (data as Brand) ?? null;
 }
 
-/**
- * Base domains this platform answers on.
- *
- * dropby.co.in is where the platform is moving; cashcard.live stays live during
- * the migration so existing links and already-indexed URLs keep resolving.
- * Anything that needs a canonical origin must derive it from the brand's own
- * domain or the request host, never from a hardcoded one - a hardcoded origin
- * made every canonical tag and sitemap keep advertising cashcard.live even when
- * the page was served from the new domain.
- */
-export const BRAND_BASE_DOMAINS: readonly string[] = ["dropby.co.in", "cashcard.live"];
-export const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
+import { brandSlugFromHost } from "./base-domains";
 
-/** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/admin/www hosts. */
-export function brandSlugFromHost(hostname: string): string | null {
-  const h = (hostname ?? "").split(":")[0].toLowerCase();
-  for (const base of BRAND_BASE_DOMAINS) {
-    if (h === base) return null;
-    if (h.endsWith(`.${base}`)) {
-      const sub = h.slice(0, h.length - base.length - 1);
-      if (!sub || sub === "www" || sub === "dashboard" || sub === "admin") return null;
-      return sub;
-    }
-  }
-  return null;
-}
-
-/** Canonical origin for a brand on whichever base domain this platform serves. */
-export function originForBrand(slug: string, domain?: string | null): string {
-  if (domain && /^https?:\/\//.test(domain)) return domain.replace(/\/+$/, "");
-  return `https://${slug}.${CANONICAL_BASE}`;
-}
+export { BRAND_BASE_DOMAINS, CANONICAL_BASE, brandSlugFromHost, originForBrand } from "./base-domains";
 
 /** Resolve brand from incoming request hostname (any base domain). */
 export async function getBrandFromHost(): Promise<Brand | null> {

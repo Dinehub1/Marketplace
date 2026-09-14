@@ -1,7 +1,7 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
-import { BRAND_BASE_DOMAINS } from "@/lib/brands";
+import { cookieDomainForHost } from "@/lib/base-domains";
 
 // Scope the auth cookie to the apex so one login ("Sarkar ID") is shared across
 // every brand subdomain, on whichever base domain the visitor is on
@@ -9,8 +9,7 @@ import { BRAND_BASE_DOMAINS } from "@/lib/brands";
 // On localhost we leave it host-only.
 function cookieDomain(): string | undefined {
   if (typeof window === "undefined") return undefined;
-  const base = BRAND_BASE_DOMAINS.find((b) => window.location.hostname.endsWith(b));
-  return base ? `.${base}` : undefined;
+  return cookieDomainForHost(window.location.hostname);
 }
 
 export function createClient() {
