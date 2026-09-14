@@ -9,6 +9,48 @@ import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
 import { BusinessEventTracker } from "./business-event-tracker";
 
+/**
+ * Social profiles a business publishes on its own website, collected by
+ * scripts/enrich-socials.py (they are absent from the Google Maps scrape).
+ * Only high-confidence links render: the crawl found spam handles injected into
+ * hacked sites, and printing those beside a business's name would be worse than
+ * showing nothing at all.
+ */
+const SOCIAL_LABELS: Record<string, string> = {
+  instagram: "Instagram",
+  facebook: "Facebook",
+  youtube: "YouTube",
+  x: "X",
+  linkedin: "LinkedIn",
+  whatsapp: "WhatsApp",
+};
+
+function socialUrl(platform: string, handle: string): string {
+  const h = handle.replace(/^@/, "");
+  switch (platform) {
+    case "instagram": return `https://instagram.com/${h}`;
+    case "facebook": return `https://facebook.com/${h}`;
+    case "youtube": return /^https?:/.test(handle) ? handle : `https://youtube.com/${h}`;
+    case "x": return `https://x.com/${h}`;
+    case "linkedin": return `https://linkedin.com/company/${h}`;
+    case "whatsapp": return `https://wa.me/${h.replace(/\D/g, "")}`;
+    default: return handle;
+  }
+}
+
+function socialLinksOf(socials: unknown): { platform: string; label: string; url: string }[] {
+  if (!socials || typeof socials !== "object") return [];
+  const out: { platform: string; label: string; url: string }[] = [];
+  for (const [platform, v] of Object.entries(socials as Record<string, any>)) {
+    const handle = typeof v === "string" ? v : v?.handle;
+    const confidence = typeof v === "string" ? "high" : v?.confidence;
+    const label = SOCIAL_LABELS[platform];
+    if (!handle || !label || confidence === "low") continue;
+    out.push({ platform, label, url: socialUrl(platform, String(handle)) });
+  }
+  return out;
+}
+
 async function getBusiness(id: number) {
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -104,6 +146,15 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
 
   const related = await getRelated(biz.category, biz.id);
   const { reviews, avg, count: reviewCount } = await getBusinessReviews(biz.id);
+  const socialLinks = socialLinksOf((biz as any).socials);
+  // A review count of 444,080 on an Indore listing is a parser artefact, not a
+  // fact (the source writes "44408.0" and the importer used to strip the dot).
+  // Beyond this ceiling the number is withheld instead of displayed.
+  const PLAUSIBLE_REVIEWS = 20000;
+  const reviewsShown =
+    biz.reviews_count != null && biz.reviews_count > 0 && biz.reviews_count <= PLAUSIBLE_REVIEWS
+      ? biz.reviews_count
+      : null;
   const mapsUrl =
     biz.lat && biz.lng
       ? `https://www.google.com/maps?q=${biz.lat},${biz.lng}`
@@ -278,6 +329,32 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                     </a>
                   </div>
                 )}
+                {/* Social profiles the business publishes on its own site, from
+                    scripts/enrich-socials.py. Low-confidence links are hidden. */}
+                {socialLinks.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2" aria-label="Social profiles">
+                    {socialLinks.map((s) => (
+                      <a
+                        key={s.platform}
+                        href={s.url}
+                        target="_blank"
+                        rel="noopener nofollow noreferrer"
+                        data-track={`social_${s.platform}_click`}
+                        className="press rounded-lg border border-line px-3 py-1.5 text-xs font-[560]"
+                        style={{ color: "var(--brand-secondary)" }}
+                        aria-label={`${biz.name} on ${s.label}`}
+                      >
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
+                )}
+                {biz.email && (
+                  <div className="flex items-center gap-3">
+                    <span className="flex-shrink-0 text-ink-3"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+                    <a href={`mailto:${biz.email}`} className="press break-all font-[560]" style={{ color: "var(--brand-secondary)" }}>{biz.email}</a>
+                  </div>
+                )}
                 {biz.rating != null && (
                   <div className="flex items-center gap-3">
                     <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl" style={{ background: "var(--gold-tint)", color: "var(--gold)" }}>
@@ -286,7 +363,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
                     <div>
                       <p className="font-semibold text-ink">
                         {biz.rating} <span className="font-normal text-ink-3">/ 5</span>
-                        {biz.reviews_count != null && <span className="ml-1 font-normal text-ink-3">· {biz.reviews_count.toLocaleString("en-IN")} reviews</span>}
+                        {reviewsShown != null && <span className="ml-1 font-normal text-ink-3">· {reviewsShown.toLocaleString("en-IN")} reviews</span>}
                       </p>
                       {mapsUrl && (
                         <a href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track="directions_click" className="press text-xs underline" style={{ color: "var(--brand-secondary)" }}>

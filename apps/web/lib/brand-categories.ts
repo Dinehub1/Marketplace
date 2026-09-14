@@ -66,7 +66,9 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // and "sports academy" matched coaching academies owned by sarkared. Every
   // one of those was two brands publishing the same category page.
   sarkarwellness: [
-    "salon", "gym", "spa", "yoga", "beauty", "massage", "wellness", "fitness",
+    // "=spa" is whole-word: as a bare substring it matched "spare parts",
+    // putting vehicle parts on the wellness brand.
+    "salon", "gym", "=spa", "yoga", "beauty", "massage", "wellness", "fitness",
     "nail", "tattoo", "hair", "pilates", "martial arts",
     "chiropractor", "beauty parlour", "beauty salon", "skincare", "skin care",
     "makeup artist", "hair studio", "unisex salon",
@@ -88,6 +90,8 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     // orphan sweep 2026-09-14: electronics retail nobody claimed
     "battery shop", "electrical goods", "electrical store", "mobile accessories",
     "gaming store", "electronic",
+    // orphan sweep: telecom retail sat unclaimed while mobile retail was ours
+    "telecom",
   ],
 
   // Property transactions — agencies, agents, developers, realty firms.
@@ -160,6 +164,42 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   sarkarjobs: [
     "recruit", "human resources", "staffing", "placement", "hr ",
   ],
+
+  /**
+   * Professional and B2B services. This was 144 unclaimed categories / ~5,863
+   * listings that appeared ONLY on the full-directory brand: a marketing agency,
+   * an IT firm or a printing press had no vertical home and no landing page.
+   * Deliberately excluded from every other brand's keywords so no category ends
+   * up with two owners (the whole point of this file).
+   */
+  sarkarconnect: [
+    "digital marketing", "marketing agency", "advertising", "seo service",
+    "it services", "software", "web design", "web development", "app develop",
+    "graphic design", "3d printing", "printing press", "printing service",
+    "screen printing", "flex printing", "offset printing", "sign board",
+    "photo studio", "photograph", "videograph", "event management",
+    "event planner", "event lighting", "event venue", "banquet", "wedding",
+    "logistics", "cargo", "courier", "transport service", "security service",
+    "manpower", "call center", "bpo", "translation", "data entry",
+    "business consultant", "consultancy", "interior decorator",
+    // orphan sweep: coworking was the largest remaining unclaimed category
+    "coworking",
+  ],
+
+  /**
+   * Manufacturers, wholesalers and industrial supply - the B2B supply side of
+   * the same orphan sweep. A "garment manufacturer" is a factory, not a
+   * sarkardukaan shop, which is why it belongs here and not in retail.
+   */
+  sarkarbazaar: [
+    "manufacturer", "manufacturing", "wholesale", "wholesaler", "distributor",
+    "supplier", "trading company", "traders", "mill", "factory", "industry",
+    "industrial", "packaging", "plastic", "steel", "iron", "metal",
+    "pipe", "chemical", "textile", "fabric", "garment", "building material",
+    "cement", "marble", "granite", "timber", "plywood", "glass wholesale",
+    "electrical wholesale", "hardware wholesale", "auto parts", "spare parts",
+    "scrap", "recycling", "agro", "seeds", "fertilizer", "farm equipment",
+  ],
 };
 
 /**
@@ -187,6 +227,49 @@ export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
   // A clinic named "legal aid clinic" is sarkarlegal's, not a medical one.
   sarkarhealth: ["legal aid clinic", "ayurvedic spa"],
 };
+
+/**
+ * Ownership precedence: when several brands' keywords match one category, the
+ * FIRST brand here wins and the others drop it.
+ *
+ * This is what actually guarantees single ownership. Exclusions alone were a
+ * losing game: as soon as generic words arrived ("supplier", "wholesale",
+ * "spare parts", "interior decorator"), a category like "medical equipment
+ * supplier" or "pvc pipe supplier" matched two or three brands at once, and a
+ * category owned twice is two of our own pages competing for one query. The
+ * specialist verticals are listed first, the catch-all B2B brands last, so
+ * sarkarconnect and sarkarbazaar only ever receive what nobody else claims.
+ */
+export const BRAND_PRECEDENCE = [
+  "sarkarhealth", "sarkarghar", "sarkarfood", "sarkarwellness", "sarkarmart",
+  "sarkardukaan", "sarkartravel", "sarkarcars", "sarkarfinance", "sarkarlegal",
+  "sarkared", "sarkarjobs", "hyperframes-realestate", "sarkarconnect",
+  "sarkarbazaar",
+];
+
+/**
+ * Keyword match. A keyword may be written "=word" to mean whole-word only -
+ * without it, substring matching maps "spare parts" onto wellness (via "spa")
+ * and "marketing" onto nothing useful. Prefixes stay the default so "plumb"
+ * still finds plumber and "jewell" still finds jewellery.
+ */
+function keywordMatches(lc: string, keyword: string): boolean {
+  if (keyword.startsWith("=")) {
+    return new RegExp(`(^|[^a-z])${keyword.slice(1).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`).test(lc);
+  }
+  return lc.includes(keyword);
+}
+
+/** Every brand whose keywords claim this category, exclusions applied. */
+function ownersOf(lc: string): string[] {
+  const out: string[] = [];
+  for (const [brand, keywords] of Object.entries(BRAND_CATEGORY_KEYWORDS)) {
+    const excludes = BRAND_CATEGORY_EXCLUDES[brand] ?? [];
+    if (excludes.some((x) => lc.includes(x))) continue;
+    if (keywords.some((k) => keywordMatches(lc, k))) out.push(brand);
+  }
+  return out;
+}
 
 /**
  * Does this brand publish the business directory at all?
@@ -247,6 +330,19 @@ export function categoriesForBrand(
   return allCategories.filter((c) => {
     const lc = (c ?? "").toLowerCase();
     if (excludes.some((x) => lc.includes(x))) return false;
-    return keywords.some((k) => lc.includes(k));
+    const owners = ownersOf(lc);
+    if (owners.length === 0) return false;
+    // Single owner by construction: the most specific vertical in
+    // BRAND_PRECEDENCE wins, so a category is never published by two brands.
+    const winner = owners.slice().sort(
+      (a, b) => rank(a) - rank(b),
+    )[0];
+    return winner === slug;
   });
+}
+
+/** Position in BRAND_PRECEDENCE; unbranded entries rank last. */
+function rank(brand: string): number {
+  const i = BRAND_PRECEDENCE.indexOf(brand);
+  return i === -1 ? BRAND_PRECEDENCE.length : i;
 }
