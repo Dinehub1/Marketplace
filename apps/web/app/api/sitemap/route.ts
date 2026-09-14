@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { categoryPath, getCategoryIndex } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
-import { getBrand } from "@/lib/brands";
+import { getBrand, brandSlugFromHost, originForBrand } from "@/lib/brands";
 
 // Static pages worth submitting alongside the category set.
 const CORE_PATHS = ["/", "/marketplace", "/categories", "/about", "/contact", "/faq"];
@@ -26,11 +26,9 @@ function xmlEscape(s: string): string {
  */
 function resolveBrand(req: NextRequest): string | null {
   const hostname = (req.headers.get("host") ?? "").split(":")[0].toLowerCase();
-  const parts = hostname.split(".");
-  if (parts.length >= 3 && parts[parts.length - 2] === "cashcard" && parts[parts.length - 1] === "live") {
-    const sub = parts[0];
-    if (sub && sub !== "www" && sub !== "dashboard") return sub;
-  }
+  // Any base domain this platform answers on (dropby.co.in and cashcard.live).
+  const fromHost = brandSlugFromHost(hostname);
+  if (fromHost) return fromHost;
   const q = (new URL(req.url).searchParams.get("brand") ?? "").toLowerCase();
   if (/^[a-z0-9-]+$/.test(q)) return q;
   if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -87,13 +85,17 @@ export async function GET(req: NextRequest) {
   if (!brand || !/^[a-z0-9-]+$/.test(brand)) {
     return new Response("bad brand", { status: 400 });
   }
-  const origin = `https://${brand}.cashcard.live`;
   const today = new Date().toISOString().slice(0, 10);
 
   // Only submit what this brand actually serves. Every brand used to publish
   // all ~320 category URLs regardless of whether it had a directory at all,
   // which asked Google to index the same pages 27 times over.
   const record = await getBrand(brand);
+  // Every URL in this sitemap uses the brand's own domain, so crawlers are
+  // pointed at the domain we want indexed rather than the one being retired.
+  // (The old hardcoded origin kept submitting cashcard.live URLs from the new
+  // domain, which is exactly the signal that stalls a domain migration.)
+  const origin = originForBrand(brand, record?.domain);
   const publishes = brandPublishesDirectory(record);
   const all = publishes ? await getCategoryIndex() : [];
   const allowed = publishes ? categoriesForBrand(brand, all.map((c) => c.category)) : [];

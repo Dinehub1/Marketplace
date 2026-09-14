@@ -2,10 +2,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { SITE_FOLDERS } from "./lib/site-folders";
 import { isCategoryPath } from "./lib/categories";
 
-const ADMIN_HOSTS = ["dashboard.cashcard.live", "admin.cashcard.live"];
+/**
+ * Base domains the brand router answers on.
+ *
+ * dropby.co.in is the domain this platform is moving to; cashcard.live is kept
+ * resolving during the migration so existing links, sitemaps already submitted
+ * to Google and the SEO built on it do not go dark overnight. The app derives
+ * the brand from whichever of these the request arrived on, so no other code
+ * change is needed when the old domain is finally retired.
+ */
+const BRAND_BASE_DOMAINS = ["dropby.co.in", "cashcard.live"];
+const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
+
+const ADMIN_HOSTS = [
+  `dashboard.${CANONICAL_BASE}`, `admin.${CANONICAL_BASE}`,
+  "dashboard.cashcard.live", "admin.cashcard.live",
+];
 
 // Hosts that should be proxied to the Hermes Dashboard (port 9300)
-const HERMES_DASHBOARD_HOSTS = ["hermes.cashcard.live"];
+const HERMES_DASHBOARD_HOSTS = [`hermes.${CANONICAL_BASE}`, "hermes.cashcard.live"];
 
 // All dynamic app routes that should be handled by the brand router.
 // Everything else on a brand subdomain falls through to the static site.
@@ -59,7 +74,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const parts = hostname.split(".");
   let brandSlug: string | null = null;
 
   // Local development: localhost has no brand subdomain, so default to
@@ -68,22 +82,26 @@ export async function proxy(request: NextRequest) {
     brandSlug = (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase();
   }
 
-  if (parts.length >= 3) {
-    const root = parts[parts.length - 2];
-    const tld = parts[parts.length - 1];
-    const subdomain = parts[0];
-    if (root === "cashcard" && tld === "live") {
-      if (subdomain !== "www" && subdomain !== "dashboard" && subdomain.length > 0 && !ADMIN_HOSTS.includes(hostname)) {
-        brandSlug = subdomain.toLowerCase();
+  // Derive the brand from the subdomain, on any of the base domains this
+  // platform answers on. Earlier this hardcoded `root === "cashcard" && tld ===
+  // "live"`, which silently matched nothing on any other domain - so every
+  // request to the new domain fell through to the dashboard instead of the
+  // directory.
+  for (const base of BRAND_BASE_DOMAINS) {
+    if (hostname === base || hostname.endsWith(`.${base}`)) {
+      const sub = hostname.slice(0, hostname.length - base.length).replace(/\.$/, "");
+      if (sub && sub !== "www" && sub !== "dashboard" && !ADMIN_HOSTS.includes(hostname)) {
+        brandSlug = sub.toLowerCase();
       }
+      break;
     }
   }
 
   if (!brandSlug) return NextResponse.next();
 
-  // Legacy alias: sarkar.cashcard.live (old standalone marketplace) -> sarkarmarketplace
+  // Legacy alias: sarkar.<base> (old standalone marketplace) -> sarkarmarketplace
   if (brandSlug === "sarkar") {
-    return NextResponse.redirect(`https://sarkarmarketplace.cashcard.live${pathname}${request.nextUrl.search}`, 308);
+    return NextResponse.redirect(`https://sarkarmarketplace.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`, 308);
   }
 
   // Crawler entry points. Every brand has a static folder, so without these two
@@ -97,7 +115,7 @@ export async function proxy(request: NextRequest) {
   }
   if (pathname === "/robots.txt") {
     return new NextResponse(
-      `User-agent: *\nAllow: /\n\nSitemap: https://${brandSlug}.cashcard.live/sitemap.xml\n`,
+      `User-agent: *\nAllow: /\n\nSitemap: https://${brandSlug}.${CANONICAL_BASE}/sitemap.xml\n`,
       { headers: { "Content-Type": "text/plain" } },
     );
   }

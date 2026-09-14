@@ -113,7 +113,7 @@ export default async function Dashboard() {
         <Card href={`${SUPABASE_PROJECT}/editor`} title="Table editor" desc="brands · leads · payments · businesses" external />
         <Card href={`${SUPABASE_PROJECT}/auth/users`} title="Auth / users" desc="Manage admin logins · change password" external />
         <Card href={`${SUPABASE_PROJECT}/sql/new`} title="SQL editor" desc="Run queries" external />
-        <Card href="https://sarkar.cashcard.live" title="Marketplace" desc="Indore directory (3,233 listings)" external />
+        <Card href="https://sarkarmarketplace.dropby.co.in" title="Marketplace" desc="Indore directory (3,233 listings)" external />
         <Card href={`${SUPABASE_PROJECT}/database/backups`} title="Database backups" desc="Restore points" external />
       </div>
 

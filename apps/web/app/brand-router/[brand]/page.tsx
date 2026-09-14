@@ -40,7 +40,10 @@ export async function generateMetadata(
 
   const sp = await searchParams;
   const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
-  const origin = `https://${brand.slug}.cashcard.live`;
+  // Canonical origin for meta/OG/JSON-LD: the brand's own domain (the new
+  // domain), so canonical tags consolidate on the domain we want indexed rather
+  // than the one being retired.
+  const origin = (((brand as { domain?: string | null }).domain) ?? `https://${brand.slug}.dropby.co.in`).replace(/\/+$/, "");
 
   // Category within a neighbourhood: "/plumber-in-vijay-nagar". Checked before
   // the city-level category page so the area is picked out of the same slug.

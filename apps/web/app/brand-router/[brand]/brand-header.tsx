@@ -365,7 +365,7 @@ export function BrandFooter({ brand }: { brand: any }) {
       >
         <p>
           © {new Date().getFullYear()} {brand.name}. All rights reserved. Powered by{" "}
-          <a href="https://cashcard.live" className="font-[580]" style={{ color: "var(--brand-secondary)" }}>
+          <a href="https://sarkarmarketplace.dropby.co.in" className="font-[580]" style={{ color: "var(--brand-secondary)" }}>
             Sarkar Platform
           </a>
         </p>
