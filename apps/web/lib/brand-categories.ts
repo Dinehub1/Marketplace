@@ -11,7 +11,7 @@
  * schema change, and a business can appear on as many brands as fit it.
  *
  * Matching is substring, case-insensitive, against `businesses.category`
- * (Google Maps' own classification - 321 distinct values and growing, which is
+ * (Google Maps' own classification - 425 distinct values and growing, which is
  * why this is keyword-based rather than an exhaustive list).
  *
  * A brand not listed here (sarkarmarketplace, sarkarbazaar, and the non-directory
@@ -28,6 +28,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "optometr", "orthoped", "psychiat", "psycholog", "surgery", "ultrasound",
     "veterinar", "immunis", "rehabilit", "speech therap", "fertility", "eye ",
     "gynec", "ayurved", "homeopath", "pathology", "blood bank",
+    // Medical aesthetics belongs to the medical brand: sarkarwellness owns
+    // salons and spas, not clinics. "skin" and "cosmetic" on their own used to
+    // pull "skin clinic" / "cosmetic clinic" onto wellness - see the note there.
+    "cosmetic clinic", "skin clinic", "derma",
   ],
   // Home services and interiors. The property-transaction keywords
   // ("real estate", "property", "realty", "builder") moved to
@@ -35,7 +39,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // /real-estate-agency-in-indore without competing with each other.
   sarkarghar: [
     "plumb", "electric", "furniture", "interior", "architect",
-    "carpenter", "mason", "tile", "paint", "roof", "civil contractor",
+    "carpenter", "mason", "tile", "paint",
+    // "roof" alone matched "rooftop restaurant", which belongs to sarkarfood.
+    "roofing", "roof repair", "roof waterproofing",
+    "civil contractor",
     "construction", "glass", "sanitary",
     "home decor", "drywall", "plaster", "concrete", "plywood",
     // home services - these were falling through to no brand at all
@@ -43,16 +50,26 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "security alarm", "safety equipment", "lamination", "cctv", "door lock",
     "kitchen cabinet", "home automation", "cleaning service", "maid service",
     "disinfection", "shower fitting", "router installer",
+    // orphan sweep 2026-09-14: services that happen at a home
+    "packers", "movers", "carpet cleaning", "sofa cleaning", "deep cleaning",
+    "housekeeping",
   ],
   sarkarfood: [
     "restaurant", "cafe", "coffee", "bakery", "dhaba", "biryani", "pizza",
     "ice cream", "juice", "food", "kebab", "sweet", "caterer", "catering",
     "bar &", "lounge", "tandoor", "dessert", "microbrewery",
+    // orphan sweep 2026-09-14: street food and tea, unclaimed at 72+ listings
+    "tea stall", "chaat", "food court", "cloud kitchen",
   ],
+  // Salons, spas, fitness. NOT clinics and NOT shops: bare "skin"/"cosmetic"
+  // matched "skin clinic" (sarkarhealth) and "cosmetics store" (sarkardukaan),
+  // and "sports academy" matched coaching academies owned by sarkared. Every
+  // one of those was two brands publishing the same category page.
   sarkarwellness: [
     "salon", "gym", "spa", "yoga", "beauty", "massage", "wellness", "fitness",
-    "nail", "tattoo", "skin", "cosmetic", "hair", "pilates", "martial arts",
-    "chiropractor", "sports academy",
+    "nail", "tattoo", "hair", "pilates", "martial arts",
+    "chiropractor", "beauty parlour", "beauty salon", "skincare", "skin care",
+    "makeup artist", "hair studio", "unisex salon",
   ],
   // Electronics and appliance retail/repair.
   // Bare "store" and "shop" were removed on 2026-08-10: they matched ANY
@@ -60,11 +77,17 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // furniture store, glass shop, ice cream shop, coffee shop, dessert shop,
   // sanitaryware shop, electrical goods store and home decor store from
   // sarkarghar and sarkarfood — eight categories with two owners each.
+  // Bare "computer"/"laptop" came out the same way on 2026-09-14: they matched
+  // "computer training institute", which sarkared owns.
   sarkarmart: [
     "ac repair", "air conditioner", "appliance", "mobile phone", "electronics",
-    "computer", "laptop", "printer", "repair shop", "hardware store",
-    "mobile repair", "smartphone repair", "tablet repair", "refrigerator",
-    "white goods", "electronic components",
+    "computer repair", "computer store", "computer shop", "laptop repair",
+    "laptop store", "printer repair", "printer store", "repair shop",
+    "hardware store", "mobile repair", "smartphone repair", "tablet repair",
+    "refrigerator", "white goods", "electronic components",
+    // orphan sweep 2026-09-14: electronics retail nobody claimed
+    "battery shop", "electrical goods", "electrical store", "mobile accessories",
+    "gaming store", "electronic",
   ],
 
   // Property transactions — agencies, agents, developers, realty firms.
@@ -81,11 +104,21 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   sarkardukaan: [
     "grocery", "supermarket", "clothing", "boutique", "jewell", "footwear",
     "shoe store", "stationery", "gift shop", "toy store", "book store",
-    "cosmetics", "perfume", "watch store", "department store", "general store",
+    "perfume", "watch store", "department store", "general store",
     "sports goods", "pet store", "music store", "handicraft",
+    // "cosmetics" alone also matched "cosmetics store" AND "cosmetic clinic";
+    // the shop form is named explicitly so the clinic stays with sarkarhealth.
+    "cosmetics store", "cosmetic store", "cosmetics shop", "cosmetic shop",
+    // orphan sweep 2026-09-14: retail the dukaan should own.
+    // "sweet shop" is deliberately NOT here - sarkarfood owns sweets, and both
+    // brands listing it meant two of our pages competing for one query.
+    "candle", "utensil", "household", "dry fruit", "kirana", "fancy store",
+    "gift center", "cake shop", "ice cream parlour",
   ],
   sarkartravel: [
     "hotel", "guest house", "hostel", "travel", "tour ", "resort", "lodge",
+    // orphan sweep 2026-09-14: local mobility a visitor books
+    "cab service", "taxi", "cabs", "travel agency", "tour operator",
   ],
 
   // The booking vertical: car wash, detailing and service. This is the one
@@ -94,15 +127,22 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // bare "dealer", "showroom", "garage" (parking garages!) and spare-parts
   // retail stay unowned rather than leaking non-bookable businesses into the
   // booking funnel.
+  // Bare "painting" was removed on 2026-09-14: it matched "painting
+  // contractor", "interior painting service" and "painting restoration
+  // service", all of which are sarkarghar's.
   sarkarcars: [
     "car wash", "car cleaning", "car detail", "vehicle detail", "detailing",
     "car service", "vehicle service", "car repair", "auto repair",
-    "automobile repair", "mechanic", "denting", "painting", "car care",
+    "automobile repair", "mechanic", "denting", "car painting", "car care",
     "bike wash", "bike service",
+    // orphan sweep 2026-09-14: vehicle businesses a customer books or rents
+    "car rental", "bike rental", "car dealer", "car accessories", "tyre",
+    "wheel alignment", "car stereo", "car audio",
   ],
   sarkarfinance: [
     "bank", "insurance", "stock brok", "mutual fund", "chartered account",
     "accounting", "tax ", "financial", "money transfer", "loan", "paytm",
+    "credit", "nbfc", "fintech",
   ],
   sarkarlegal: [
     "law firm", "legal", "advocate", "notary", "lawyer",
@@ -111,10 +151,41 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "school", "college", "university", "institute", "academy", "coaching",
     "tutor", "education", "training", "preschool", "language school",
     "driving school",
+    // orphan sweep 2026-09-14: learning nobody claimed.
+    // "e‑learning" carries a non-breaking hyphen (U+2011) in the source data,
+    // so both spellings are listed or half those listings stay unreachable.
+    "e-learning", "e‑learning", "e-learning centre", "e‑learning centre",
+    "tuition", "library", "study centre", "computer training",
   ],
   sarkarjobs: [
     "recruit", "human resources", "staffing", "placement", "hr ",
   ],
+};
+
+/**
+ * Categories a brand must NOT claim, even though one of its keywords matches.
+ *
+ * Substring matching cannot express "bank but not blood bank". Without this,
+ * `blood bank` sat on sarkarfinance (via "bank"), `auto repair shop` on
+ * sarkarmart (via "repair shop") and `martial arts academy` on sarkared (via
+ * "academy") *as well as* on the brand that should own them — two of our own
+ * pages competing for one query, which is the self-cannibalisation this file
+ * exists to prevent. Exclusions are evaluated before the keyword match counts.
+ */
+export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
+  sarkarmart: ["auto repair", "computer training", "laptop training"],
+  sarkared: ["martial arts"],
+  sarkarfinance: ["blood bank"],
+  // An electrician is a trade (sarkarghar); the shop selling the goods is
+  // sarkarmart's. "electric" matched "electrical goods store" for both.
+  // "paint" likewise matched "car denting painting" - the paintshop that works
+  // on a vehicle is sarkarcars'.
+  sarkarghar: [
+    "electrical goods", "electrical store",
+    "car denting", "car painting", "vehicle painting",
+  ],
+  // A clinic named "legal aid clinic" is sarkarlegal's, not a medical one.
+  sarkarhealth: ["legal aid clinic", "ayurvedic spa"],
 };
 
 /**
@@ -172,8 +243,10 @@ export function categoriesForBrand(
   // means "no directory", and `brandPublishesDirectory` turns that into a 404
   // rather than an empty page. Add a keyword list above to give a brand a slice.
   if (!keywords) return [];
+  const excludes = BRAND_CATEGORY_EXCLUDES[slug] ?? [];
   return allCategories.filter((c) => {
     const lc = (c ?? "").toLowerCase();
+    if (excludes.some((x) => lc.includes(x))) return false;
     return keywords.some((k) => lc.includes(k));
   });
 }

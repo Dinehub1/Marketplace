@@ -109,7 +109,16 @@ function localityOf(addr) {
   }
   return 'indore';
 }
-function int(v) { const n = parseInt(String(v ?? "").replace(/[^\d-]/g, ""), 10); return Number.isFinite(n) ? n : null; }
+// The source writes review counts as decimals: "2396.0" means 2,396 reviews.
+// Stripping every non-digit parsed that as 23960 - ten times too large - which
+// is where the impossible values on the listing pages came from (a cell of
+// "44408.0" became 444080). Parse a float and round. (2026-09-14)
+function int(v) {
+  const s = String(v ?? "").trim();
+  if (!s) return null;
+  const n = parseFloat(s.replace(/[^0-9.\-]/g, ""));
+  return Number.isFinite(n) ? Math.round(n) : null;
+}
 function str(v) { const s = (v ?? "").trim(); return s || null; }
 
 // ---------- FILE DISCOVERY ----------
