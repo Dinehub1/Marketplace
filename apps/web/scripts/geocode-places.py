@@ -3,10 +3,14 @@
 
 WHY NOT PER-BUSINESS
 --------------------
-The first version asked Nominatim for "shop name, locality, Indore" one row at a
+The first version asked a geocoder for "shop name, locality, Indore" one row at a
 time: 20 requests produced 1 hit. OSM does not hold every small Indian business
 as a named point, so name lookups are the wrong question and 18k of them would
 have burned five hours for almost nothing.
+
+Geocoding runs through Photon (komoot). Nominatim was tried first and blocked
+this machine with HTTP 429 after ~250 lookups - the symptom was a job that
+appeared to stall, with requests that worked when repeated by hand.
 
 WHAT WORKS
 ----------
@@ -29,8 +33,11 @@ ENV = r"C:\Users\Administrator\Marketplace\apps\web\.env"
 CACHE = r"C:\Users\Administrator\geocode-places-cache.json"
 REF = "xpfmqpmhmcouwzebfwhb"
 UA = "SarkarMarketplaceDirectory/1.0 (business directory; contact: admin@cashcard.live)"
-DELAY = 1.1
+DELAY = 0.7
 STATUS_ONLY = "--status" in sys.argv
+# Chunked runs: the background supervisor proved unreliable for long jobs,
+# so this can be driven in bounded foreground batches instead.
+MAXLOOK = int(sys.argv[sys.argv.index("--max") + 1]) if "--max" in sys.argv else None
 
 cfg = {}
 for line in open(ENV, encoding="utf-8", errors="replace"):
@@ -47,29 +54,38 @@ def sql(q):
         return json.loads(resp.read().decode() or "[]")
 
 
-def nominatim(params: dict):
-    url = "https://nominatim.openstreetmap.org/search?" + urllib.parse.urlencode(params)
+def photon(q: str):
+    """Photon (komoot, OpenStreetMap data): keyless and not rate-blocked.
+
+    Nominatim was the first choice and blocked this machine with HTTP 429 after
+    the first ~250 lookups, which is what looked like a stalled job. Photon
+    answers the same questions from the same data without the hard limit.
+    """
+    url = "https://photon.komoot.io/api/?" + urllib.parse.urlencode({"q": q, "limit": 1, "lang": "en"})
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=25) as resp:
-            hits = json.loads(resp.read().decode() or "[]")
+            data = json.loads(resp.read().decode() or "{}")
     except Exception:
         return None
-    if not hits:
+    feats = data.get("features") or []
+    if not feats:
         return None
     try:
-        return round(float(hits[0]["lat"]), 6), round(float(hits[0]["lon"]), 6)
+        lon, lat = feats[0]["geometry"]["coordinates"]
     except Exception:
         return None
+    # Indore only: a same-named locality elsewhere in India must not be accepted.
+    if not (22.35 <= lat <= 23.05 and 75.55 <= lon <= 76.25):
+        return None
+    return round(lat, 6), round(lon, 6)
 
 
 def lookup(kind: str, key: str):
     """kind: 'locality' | 'pincode'."""
     if kind == "locality":
-        q = f"{key}, Indore, Madhya Pradesh, India" if key.lower() != "indore" else "Indore, Madhya Pradesh, India"
-        return nominatim({"q": q[:180], "format": "json", "limit": 1, "countrycodes": "in"})
-    return nominatim({"postalcode": key, "city": "Indore", "state": "Madhya Pradesh",
-                      "country": "India", "format": "json", "limit": 1})
+        return photon("Indore, Madhya Pradesh" if key.lower() == "indore" else f"{key}, Indore")
+    return photon(f"{key}, Indore")
 
 
 def main():
@@ -89,11 +105,17 @@ def main():
             print(f"  {k}: {len(cache[k])} cached, {hit} with coordinates")
         return
 
-    for kind, keys in (("locality", localities), ("pincode", pincodes)):
+    looked_up = 0
+    for kind, keys in (("pincode", pincodes), ("locality", localities)):
         for i, key in enumerate(keys, 1):
             if key in cache[kind]:
                 continue
+            if MAXLOOK is not None and looked_up >= MAXLOOK:
+                json.dump(cache, open(CACHE, "w", encoding="utf-8"))
+                print(f"stopping after {looked_up} lookups - rerun to continue", flush=True)
+                return
             cache[kind][key] = lookup(kind, key)
+            looked_up += 1
             if i % 25 == 0 or i == len(keys):
                 hit = sum(1 for v in cache[kind].values() if v)
                 print(f"  {kind} {i}/{len(keys)} | resolved {hit}", flush=True)
