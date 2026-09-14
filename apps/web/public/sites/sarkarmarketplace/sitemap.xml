@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url><loc>https://sarkarmarketplace.cashcard.live/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-    <url><loc>https://sarkarmarketplace.cashcard.live/marketplace</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-    <url><loc>https://sarkarmarketplace.cashcard.live/login</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-    <url><loc>https://sarkarmarketplace.cashcard.live/register</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
-    <url><loc>https://sarkarmarketplace.cashcard.live/business-dashboard</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-    <url><loc>https://sarkarmarketplace.cashcard.live/contact</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/marketplace</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/login</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/register</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/business-dashboard</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+    <url><loc>https://sarkarmarketplace.dropby.co.in/contact</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
 </urlset>
