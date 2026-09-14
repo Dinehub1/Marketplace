@@ -51,3 +51,10 @@ yarn-error.log*
 *.csv
 GMaps Data/
 sarkarmart-summary.txt
+
+# Build output and scrape duplicates - never source
+.next/
+.next.bak/
+combined_indore_master*.csv
+apps/web/scripts/dev-tools/images_manifest.json
+*.log
