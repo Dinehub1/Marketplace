@@ -1,4 +1,5 @@
 "use client";
+import { brandPublishesDirectory } from "@/lib/brand-categories";
 import { routesFor } from "@/lib/brand-sitemap";
 import { useState } from "react";
 import { BrandTheme } from "@/components/brand-theme";
@@ -52,7 +53,9 @@ function Lockup({ brand, size = "md" }: { brand: any; size?: "sm" | "md" }) {
 
 export function BrandHeader({ brand }: { brand: any }) {
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
-  const isCustomerSite = !!brand.features?.listings;
+  // Must match the router's rule exactly: it 404s /marketplace unless the brand
+  // really publishes a directory, so a weaker flag here advertises a dead link.
+  const isCustomerSite = brandPublishesDirectory(brand);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // A brand with its own sitemap gets its own navigation - Doctors/Hospitals/
@@ -237,7 +240,9 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 export function BrandFooter({ brand }: { brand: any }) {
   const social = (brand.social ?? {}) as Record<string, string>;
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
-  const isCustomerSite = !!brand.features?.listings;
+  // Must match the router's rule exactly: it 404s /marketplace unless the brand
+  // really publishes a directory, so a weaker flag here advertises a dead link.
+  const isCustomerSite = brandPublishesDirectory(brand);
 
   // Brand-driven call to action. Labels are direct and specific rather than
   // generic ("Get started with X", not "Learn more") — a specific label lets
