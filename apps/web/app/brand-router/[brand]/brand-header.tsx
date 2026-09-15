@@ -1,4 +1,5 @@
 "use client";
+import { routesFor } from "@/lib/brand-sitemap";
 import { useState } from "react";
 import { BrandTheme } from "@/components/brand-theme";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -54,12 +55,21 @@ export function BrandHeader({ brand }: { brand: any }) {
   const isCustomerSite = !!brand.features?.listings;
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const visible = NAV.filter((n) => {
-    if (flags[n.key] === false) return false;
-    if (n.key === "pricing" && isCustomerSite) return false;
-    if (n.key === "marketplace" && !brand.features?.listings) return false;
-    return true;
-  });
+  // A brand with its own sitemap gets its own navigation - Doctors/Hospitals/
+  // Diagnostics for sarkarhealth, Plumbers/Electricians for sarkarghar - instead of
+  // the same four generic links on all 28 sites. Brands without one keep the
+  // generic list.
+  const brandRoutes = routesFor(brand.slug);
+  const visible = brandRoutes.length
+    ? brandRoutes
+        .filter((r) => r.path !== "/")
+        .map((r) => ({ key: r.path, label: r.label, path: r.path, d: "" }))
+    : NAV.filter((n) => {
+        if (flags[n.key] === false) return false;
+        if (n.key === "pricing" && isCustomerSite) return false;
+        if (n.key === "marketplace" && !brand.features?.listings) return false;
+        return true;
+      });
 
   return (
     <header className="sticky top-0 z-50 glass">

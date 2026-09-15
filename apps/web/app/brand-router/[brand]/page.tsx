@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import { getBrand } from "@/lib/brands";
 import { titleize } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
+import { matchBrandRoute } from "@/lib/brand-sitemap";
+import { resolveCategoryRoute } from "@/lib/brand-sitemap-resolve";
 import {
   CITY_LABEL,
   categoryPath,
@@ -39,7 +41,33 @@ export async function generateMetadata(
   if (!brand) return {};
 
   const sp = await searchParams;
-  const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+  let subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+
+  // Per-brand sitemap (lib/brand-sitemap.ts): the semantic routes a visitor
+  // expects from this brand - /doctors, /plumbers, /used-cars - resolved onto
+  // real category listings and real business pages. An alias is rewritten
+  // internally rather than redirected: the URL stays what the user clicked and
+  // no round trip is spent proving it.
+  {
+    const sitemapRoute = matchBrandRoute(brand.slug, subPath);
+    if (sitemapRoute) {
+      if (sitemapRoute.kind === "alias") {
+        subPath = sitemapRoute.to;
+      } else if (sitemapRoute.kind === "detail") {
+        const detailId = Number(subPath.slice(sitemapRoute.prefix.length + 1).split("/")[0]);
+        if (!Number.isFinite(detailId) || detailId <= 0) notFound();
+        if (!(await businessExists(detailId))) notFound();
+        const { BusinessDetailPage } = await import("./pages/business-detail");
+        return <BusinessDetailPage brand={brand} businessId={detailId} />;
+      } else if (sitemapRoute.kind === "category") {
+        const sitemapCategory = await resolveCategoryRoute(sitemapRoute.match);
+        if (!sitemapCategory) notFound();
+        const sitemapPageNo = Math.max(1, Number(sp.page) || 1);
+        const { CategoryLandingPage } = await import("./pages/category-landing");
+        return <CategoryLandingPage brand={brand} category={sitemapCategory} page={sitemapPageNo} />;
+      }
+    }
+  }
   // Canonical origin for meta/OG/JSON-LD: the brand's own domain (the new
   // domain), so canonical tags consolidate on the domain we want indexed rather
   // than the one being retired.
@@ -321,14 +349,9 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   // Root: directory-publishing brands render the dynamic directory homepage
   // (live listings); other brands with a static folder keep their prebuilt
   // marketing site. Brands with neither fall back to the generic landing.
-  const folder = brand.folder;
-  if (folder && !brandPublishesDirectory(brand)) {
-    const sitePath = path.join(process.cwd(), "public", "sites", folder, "index.html");
-    if (existsSync(sitePath)) {
-      const { BrandStaticSite } = await import("./brand-static");
-      return <BrandStaticSite brand={brand} />;
-    }
-  }
+  // A brand homepage is the app, not the prebuilt mockup in public/sites: the
+  // mockup has dead # links and shows no live data, which is what made every
+  // brand read as a demo. The static folders are kept on disk, unreferenced.
   const { BrandLanding } = await import("./brand-landing");
   return <BrandLanding brand={brand} />;
 }

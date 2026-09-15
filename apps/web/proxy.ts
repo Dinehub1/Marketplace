@@ -136,7 +136,9 @@ export async function proxy(request: NextRequest) {
   }
 
   const url = request.nextUrl.clone();
-  url.pathname = pathname === "/" ? `/sites/${brandSlug}/index.html` : `/sites/${brandSlug}${pathname}`;
+  // "/" is served by the app (app/brand-router). Only deeper paths still fall back to a
+  // prebuilt page when one exists on disk; the mockup homepages are no longer reachable.
+  url.pathname = pathname === "/" ? "/" : `/sites/${brandSlug}${pathname}`;
   url.searchParams.delete("__brand_path");
   return NextResponse.rewrite(url);
 }
