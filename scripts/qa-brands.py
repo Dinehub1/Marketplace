@@ -52,14 +52,19 @@ def supabase(query: str) -> list[dict]:
 
 
 def fetch(url: str, timeout: int = TIMEOUT):
-    try:
-        req = urllib.request.Request(url, headers=UA)
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status, resp.read().decode("utf-8", "replace"), resp.geturl()
-    except urllib.error.HTTPError as exc:
-        return exc.code, "", url
-    except Exception as exc:  # DNS, TLS, timeout
-        return 0, str(exc)[:80], url
+    # Retry once on a transport failure: under 8 concurrent workers a slow render
+    # can time out, and a timeout is not a broken route.
+    for attempt in (1, 2):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return resp.status, resp.read().decode("utf-8", "replace"), resp.geturl()
+        except urllib.error.HTTPError as exc:
+            return exc.code, "", url
+        except Exception as exc:  # DNS, TLS, timeout
+            last = str(exc)[:80]
+            if attempt == 2:
+                return 0, last, url
 
 
 def looks_like_home(html: str, path: str) -> bool:

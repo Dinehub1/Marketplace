@@ -1,3 +1,4 @@
+import { brandPublishesDirectory } from "@/lib/brand-categories";
 import { BrandHeader, BrandFooter } from "./brand-header";
 import { getBrandBusinesses } from "@/lib/brands";
 import { BusinessCard } from "@/components/directory/BusinessCard";
@@ -200,7 +201,8 @@ export async function BrandLanding({ brand }: { brand: any }) {
       { v: "24/7", label: "Support available", icon: "🛟" },
     ];
 
-  const isCustomerSite = !!brand.features?.listings;
+  // Same predicate the router uses to decide whether /marketplace exists.
+  const isCustomerSite = brandPublishesDirectory(brand);
 
   // Brand-specific steps
     const brandSteps: Record<string, Array<{ n: string; t: string; d: string }>> = {
@@ -410,7 +412,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
               eyebrow="Directory"
               title="Featured businesses"
               subtitle={`${total.toLocaleString("en-IN")} verified listings in Indore`}
-              viewAllHref="/marketplace"
+              viewAllHref={isCustomerSite ? "/marketplace" : "/contact"}
               viewAllLabel="Browse all"
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

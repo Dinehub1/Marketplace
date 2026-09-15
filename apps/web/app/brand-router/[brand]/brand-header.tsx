@@ -70,7 +70,7 @@ export function BrandHeader({ brand }: { brand: any }) {
     : NAV.filter((n) => {
         if (flags[n.key] === false) return false;
         if (n.key === "pricing" && isCustomerSite) return false;
-        if (n.key === "marketplace" && !brand.features?.listings) return false;
+        if (n.key === "marketplace" && !brandPublishesDirectory(brand)) return false;
         return true;
       });
 
@@ -353,7 +353,7 @@ export function BrandFooter({ brand }: { brand: any }) {
           {flags.services !== false && <FooterLink href="/services">Services</FooterLink>}
           {!isCustomerSite && flags.pricing !== false && <FooterLink href="/pricing">Pricing</FooterLink>}
           {flags.blog !== false && <FooterLink href="/blog">Blog</FooterLink>}
-          {brand.features?.listings && (
+          {isCustomerSite && (
             <FooterLink href="/marketplace">{isCustomerSite ? "Browse" : "Listings"}</FooterLink>
           )}
         </FooterColumn>
