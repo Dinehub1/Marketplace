@@ -173,14 +173,32 @@ export async function generateMetadata(
 function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const bg = theme.bg ?? "#faf5ff";
+  const emoji = brand.emoji ?? "🗂️";
+  // A page that is switched off should read as "not yet", not as "broken" — and it
+  // must not be indexed, or Google fills its view of the brand with thin pages.
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: bg }}>
-      <div className="flex-1 flex items-center justify-center px-6">
-        <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">🚧</div>
-          <h1 className="text-3xl font-bold mb-2" style={{ color: "var(--brand-secondary)" }}>{pageName}</h1>
-          <p className="opacity-60 mb-6">This page is coming soon for {brand.name}.</p>
-          <a href={`/`} className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow" style={{ background: "var(--brand-primary)" }}>← Back to Home</a>
+      <meta name="robots" content="noindex, follow" />
+      <div className="flex-1 flex items-center justify-center px-6 py-16">
+        <div className="text-center max-w-lg">
+          <div className="text-5xl mb-4" aria-hidden>{emoji}</div>
+          <h1 className="text-3xl font-bold mb-3" style={{ color: "var(--brand-secondary)" }}>{pageName}</h1>
+          <p className="opacity-70 mb-2">
+            {brand.name} is live in Indore — this page is still being prepared.
+          </p>
+          <p className="opacity-60 mb-8 text-sm">
+            Everything else on {brand.name} is open: browse businesses by category and locality, or
+            list your own business free.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <a href="/" className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow"
+               style={{ background: "var(--brand-primary)" }}>← Browse {brand.name}</a>
+            <a href="https://wa.me/916263461179" target="_blank" rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold border"
+               style={{ borderColor: "var(--brand-primary)", color: "var(--brand-secondary)" }}>
+              WhatsApp us
+            </a>
+          </div>
         </div>
       </div>
     </div>
