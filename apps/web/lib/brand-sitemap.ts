@@ -166,8 +166,8 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   sarkarbazaar: [
     home,
-    { path: "/manufacturers", label: "Manufacturers", kind: "category", match: ["manufactur"], blurb: "Manufacturers in Indore" },
-    { path: "/wholesalers", label: "Wholesalers", kind: "category", match: ["wholesal", "distributor"], blurb: "Wholesale and distribution" },
+    { path: "/manufacturers", label: "Manufacturers", kind: "alias", to: "/categories" },
+    { path: "/wholesalers", label: "Wholesalers", kind: "category", match: ["pharma wholesale", "wholesaler", "distributor", "wholesal"], blurb: "Wholesale and distribution" },
     { path: "/packaging", label: "Packaging", kind: "category", match: ["packaging", "plastic"], blurb: "Packaging and plastics" },
     { path: "/company", label: "Company", kind: "detail", prefix: "/company" },
     { path: "/about", label: "About", kind: "alias", to: "/about" },
