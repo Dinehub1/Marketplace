@@ -14,17 +14,26 @@ import type { BrandRoute } from "./brand-sitemap";
  */
 export async function resolveCategoryRoute(match: string[]): Promise<CategoryStat | null> {
   const index = await getCategoryIndex();
-  let best: CategoryStat | null = null;
-  for (const c of index) {
-    const name = c.category.toLowerCase();
-    if (match.some((m) => name.includes(m))) {
-      if (!best || (c.count ?? 0) > (best.count ?? 0)) best = c;
+  // Match terms are ordered most-specific first. Without that ordering the search
+  // picked the highest-count category, so /doctors rendered "Orthopedic Clinic in
+  // Indore" (153 listings, matched on the loose term "clinic") instead of doctors.
+  // First term that matches anything wins; within it, the closest name wins.
+  for (const term of match) {
+    let best: CategoryStat | null = null;
+    for (const c of index) {
+      const name = c.category.toLowerCase();
+      if (!name.includes(term)) continue;
+      // Prefer the shortest matching name ("doctor" over "orthopedic clinic"),
+      // then the largest listing count.
+      if (
+        !best ||
+        name.length < best.category.length ||
+        (name.length === best.category.length && (c.count ?? 0) > (best.count ?? 0))
+      ) {
+        best = c;
+      }
     }
+    if (best) return best;
   }
-  return best;
-}
-
-/** True when the brand's sitemap defines this path at all. */
-export function hasRoute(routes: BrandRoute[], path: string): boolean {
-  return routes.some((r) => (r.kind === "detail" ? path.startsWith(r.prefix + "/") : r.path === path));
+  return null;
 }

@@ -33,7 +33,7 @@ const home = { path: "/", label: "Home", kind: "alias" as const, to: "/" };
 export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   sarkarhealth: [
     home,
-    { path: "/doctors", label: "Doctors", kind: "category", match: ["doctor", "clinic", "dental", "eye clinic"], blurb: "Consult a doctor in Indore" },
+    { path: "/doctors", label: "Doctors", kind: "category", match: ["doctor", "dental", "eye clinic", "clinic"], blurb: "Consult a doctor in Indore" },
     { path: "/hospitals", label: "Hospitals", kind: "category", match: ["hospital", "nursing home"], blurb: "Hospitals and nursing homes" },
     { path: "/diagnostics", label: "Diagnostics", kind: "category", match: ["diagnostic", "patholog", "scan"], blurb: "Labs, scans and diagnostics" },
     { path: "/pharmacies", label: "Pharmacies", kind: "category", match: ["pharmacy", "medical store", "pharma wholesale"], blurb: "Pharmacies and medical stores" },
@@ -54,7 +54,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   sarkarcars: [
     home,
-    { path: "/used-cars", label: "Cars & dealers", kind: "category", match: ["car dealer", "car accessories", "tyre"], blurb: "Car dealers in Indore" },
+    { path: "/used-cars", label: "Cars & dealers", kind: "category", match: ["car dealer", "tyre", "car accessories"], blurb: "Car dealers in Indore" },
     { path: "/services", label: "Service & repair", kind: "category", match: ["auto repair", "garage", "car wash"], blurb: "Repair, denting and detailing" },
     { path: "/car-details", label: "Car", kind: "detail", prefix: "/car-details" },
     { path: "/sell-your-car", label: "Sell your car", kind: "alias", to: "/contact" },
@@ -72,7 +72,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   sarkardukaan: [
     home,
-    { path: "/shops", label: "Shops", kind: "category", match: ["store", "shop", "market"], blurb: "Shops and stores in Indore" },
+    { path: "/shops", label: "Shops", kind: "category", match: ["shop", "store", "market"], blurb: "Shops and stores in Indore" },
     { path: "/grocery", label: "Grocery", kind: "category", match: ["grocery", "kirana"], blurb: "Grocery and daily needs" },
     { path: "/jewellery", label: "Jewellery", kind: "category", match: ["jewellery", "watch"], blurb: "Jewellers and watch stores" },
     { path: "/shop", label: "Shop", kind: "detail", prefix: "/shop" },
@@ -81,7 +81,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   sarkarmart: [
     home,
-    { path: "/products", label: "Products", kind: "category", match: ["store", "shop", "wholesale"], blurb: "Products and suppliers" },
+    { path: "/products", label: "Products", kind: "category", match: ["shop", "store", "wholesale"], blurb: "Products and suppliers" },
     { path: "/furniture", label: "Furniture", kind: "category", match: ["furniture"], blurb: "Furniture stores" },
     { path: "/store", label: "Store", kind: "detail", prefix: "/store" },
     { path: "/about", label: "About", kind: "alias", to: "/about" },
@@ -92,7 +92,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/gyms", label: "Gyms", kind: "category", match: ["gym", "fitness"], blurb: "Gyms and fitness centres" },
     { path: "/salons", label: "Salons", kind: "category", match: ["salon", "nail"], blurb: "Salons and beauty parlours" },
     { path: "/spas", label: "Spas", kind: "category", match: ["spa", "wellness"], blurb: "Spas and wellness centres" },
-    { path: "/clinics", label: "Clinics", kind: "category", match: ["clinic", "cosmetic"], blurb: "Clinics and treatments" },
+    { path: "/clinics", label: "Clinics", kind: "category", match: ["cosmetic clinic", "clinic"], blurb: "Clinics and treatments" },
     { path: "/centre", label: "Centre", kind: "detail", prefix: "/centre" },
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
@@ -109,7 +109,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   sarkarskills: [
     home,
-    { path: "/courses", label: "Courses", kind: "category", match: ["training", "institute", "coaching"], blurb: "Skill courses in Indore" },
+    { path: "/courses", label: "Courses", kind: "category", match: ["computer training", "training", "institute", "coaching"], blurb: "Skill courses in Indore" },
     { path: "/trainers", label: "Trainers", kind: "category", match: ["training", "coaching"], blurb: "Trainers and institutes" },
     { path: "/course", label: "Course", kind: "detail", prefix: "/course" },
     { path: "/enrol", label: "Enrol", kind: "alias", to: "/contact" },
