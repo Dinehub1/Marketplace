@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SITE_FOLDERS } from "./lib/site-folders";
-import { isCategoryPath } from "./lib/categories";
 
 /**
  * Base domains the brand router answers on.
@@ -120,26 +118,16 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  // /<category>-in-indore is dynamic, so it cannot live in the APP_PATHS list.
-  const isAppPath =
-    isCategoryPath(pathname) ||
-    APP_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
-  // The directory brand's root is the dynamic directory homepage, not the
-  // prebuilt static marketing file. Route it through the brand router so
-  // brand-landing.tsx (with live listings) renders at /.
-  const isDirectoryRoot = brandSlug === "sarkarmarketplace" && pathname === "/";
-  if (isAppPath || isDirectoryRoot || !SITE_FOLDERS.has(brandSlug)) {
-    const url = request.nextUrl.clone();
-    url.searchParams.set("__brand_path", pathname);
-    url.pathname = `/brand-router/${brandSlug}`;
-    return NextResponse.rewrite(url);
-  }
-
+  // Every path on a brand host is served by the app.
+  //
+  // The prebuilt pages in public/sites are retired. They were landing pages with
+  // dead # links and no live data, and worse, they hijacked brand-semantic routes:
+  // /doctors on sarkarhealth was rewritten to /sites/sarkarhealth/doctors, a file
+  // that does not exist, so the route answered 404 no matter what the app defined.
+  // Requests under /sites/ itself still pass straight through (guarded above).
   const url = request.nextUrl.clone();
-  // "/" is served by the app (app/brand-router). Only deeper paths still fall back to a
-  // prebuilt page when one exists on disk; the mockup homepages are no longer reachable.
-  url.pathname = pathname === "/" ? "/" : `/sites/${brandSlug}${pathname}`;
-  url.searchParams.delete("__brand_path");
+  url.searchParams.set("__brand_path", pathname);
+  url.pathname = `/brand-router/${brandSlug}`;
   return NextResponse.rewrite(url);
 }
 
