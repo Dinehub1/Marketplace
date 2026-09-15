@@ -22,9 +22,7 @@
     "mobile:android": "npm run android -w @hermes/mobile",
     "test": "npm run test --workspaces --if-present"
   },
-  "devDependencies": {
-    "expo-router": "~6.0.0"
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=22.18"
   }
