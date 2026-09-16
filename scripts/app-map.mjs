@@ -39,6 +39,11 @@ const SCREEN_FOR_FIRST = {
   breathe: 'breathe',
   dashboard: null, // the shop dashboard is not built yet
   directory: 'home',
+  stretch: 'stretch',
+  walk: 'walk',
+  water: 'water',
+  japa: 'japa',
+  sleep: 'sleep',
   camera: null, // the camera capture screen is the product screen itself
 };
 
@@ -51,6 +56,10 @@ const SCREEN_FOR_FIRST = {
  */
 const EXTRA_SCREENS = {
   toolbox: ['exif-strip', 'photos-to-pdf', 'collage'],
+  // The wellness hub is a shared screen: both counters open from it, and it is the way
+  // back from every wellness app, so both of them claim it.
+  water: ['habits'],
+  japa: ['habits'],
 };
 
 const { TARGETS } = await import(pathToFileURL(path.join(REPO, 'apps', 'mobile', 'targets.mjs')).href);
@@ -65,14 +74,9 @@ function screensFor(t) {
   }
   const first = SCREEN_FOR_FIRST[t.firstScreen];
   if (first) out.add(first);
-  // One identity owns the whole wellness family: they share a tab bar, so they are one app.
-  if (t.id === 'breathe') for (const sc of WELLNESS_SCREENS) out.add(sc);
   for (const s of EXTRA_SCREENS[t.id] ?? []) out.add(s);
   return [...out];
 }
-
-/** The wellness app's screens: one native tab bar, five products plus the hub. */
-const WELLNESS_SCREENS = ['stretch', 'walk', 'habits', 'water', 'japa', 'sleep'];
 
 const apps = TARGETS.map((t) => ({
   id: t.id,

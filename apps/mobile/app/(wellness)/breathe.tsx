@@ -30,6 +30,7 @@ import Animated, {
 import { alpha, radius, space } from "@hermes/tokens";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 import { Card, Press, Text } from "@/components/ui";
+import { InsightPanel } from "@/components/charts";
 
 /** One pattern = one cycle of phases, in seconds. Hold phases may be zero. */
 type Pattern = {
@@ -98,6 +99,9 @@ function ratePerMinute(p: Pattern): number {
 
 type Stored = { sessions: { at: number; minutes: number; cycles: number; pattern: string }[] };
 
+/** The shared shape the analytics panel expects, mapped lazily from Breathe's own store. */
+type PanelSession = { at: number; screen: string; minutes: number; units: number; label: string };
+
 export default function Breathe() {
   const ui = useProductUI("breathe");
   const s = useMemo(() => makeStyles(ui), [ui]);
@@ -114,6 +118,7 @@ export default function Breathe() {
   const [phraseOut, setPhraseOut] = useState("Breathe out");
   const [editing, setEditing] = useState(false);
   const [last, setLast] = useState<Stored["sessions"][number] | null>(null);
+  const [history, setHistory] = useState<PanelSession[]>([]);
   const [done, setDone] = useState(false);
 
   const pattern = PATTERNS.find((p) => p.id === patternId) ?? PATTERNS[0];
@@ -130,6 +135,17 @@ export default function Breathe() {
         if (!raw) return;
         const parsed = JSON.parse(raw) as Stored;
         setLast(parsed.sessions?.[0] ?? null);
+        // The analytics panel reads the same history the "last session" line does, mapped
+        // into the shared session shape rather than written a second time.
+        setHistory(
+          (parsed.sessions ?? []).map((x) => ({
+            at: x.at,
+            screen: "breathe",
+            minutes: x.minutes,
+            units: x.cycles,
+            label: x.pattern,
+          })),
+        );
       })
       .catch(() => {});
   }, []);
@@ -140,6 +156,9 @@ export default function Breathe() {
       const parsed: Stored = raw ? (JSON.parse(raw) as Stored) : { sessions: [] };
       const sessions = [entry, ...(parsed.sessions ?? [])].slice(0, 30);
       await AsyncStorage.setItem(STORE_KEY, JSON.stringify({ sessions }));
+      setHistory(
+        sessions.map((x) => ({ at: x.at, screen: "breathe", minutes: x.minutes, units: x.cycles, label: x.pattern })),
+      );
       setLast(entry);
     } catch {
       /* a device that refuses to store a stat must not break the session */
@@ -369,6 +388,15 @@ export default function Breathe() {
           ) : null}
         </>
       ) : null}
+
+      <InsightPanel
+        screen="breathe"
+        unitsLabel="cycles"
+        weeklyGoal={5}
+        countToday={last?.cycles}
+        sessions={history}
+        accentKey="breathe"
+      />
 
       <Card style={s.infoCard}>
         <Text variant="title3">What slow breathing does</Text>

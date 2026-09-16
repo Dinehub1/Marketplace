@@ -17,6 +17,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
+import { InsightPanel } from "@/components/charts";
 import { WellnessShell } from "@/components/wellness-shell";
 import { useWellnessStore } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
@@ -100,6 +101,7 @@ export default function Japa() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
+          <InsightPanel screen="japa" unitsLabel="beads" counts={store.countHistory} dailyGoal={108} />
     </WellnessShell>
   );
 }

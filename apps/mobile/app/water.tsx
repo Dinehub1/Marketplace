@@ -13,6 +13,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
+import { InsightPanel } from "@/components/charts";
 import { WellnessShell } from "@/components/wellness-shell";
 import { useWellnessStore } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
@@ -71,6 +72,7 @@ export default function Water() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
+          <InsightPanel screen="water" unitsLabel="glasses" counts={store.countHistory} dailyGoal={8} />
     </WellnessShell>
   );
 }

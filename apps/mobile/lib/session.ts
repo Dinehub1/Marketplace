@@ -19,6 +19,9 @@ import * as Haptics from "expo-haptics";
 
 export type Phase = { key: string; label: string; seconds: number };
 
+/** day → count, for screens that count taps rather than run a timer. */
+export type CountMap = Record<string, number>;
+
 export type SessionRecord = {
   at: number;
   screen: string;
@@ -28,6 +31,11 @@ export type SessionRecord = {
 };
 
 const STORE_KEY = "dropby-wellness";
+
+/** The day key both the counter and its history are filed under. */
+function todayKeyOf(): string {
+  return new Date().toISOString().slice(0, 10);
+}
 const TICK_MS = 100;
 
 function buzz() {
@@ -117,6 +125,9 @@ export function usePhases(phases: Phase[], opts?: { onComplete?: () => void }) {
 export function useWellnessStore(screen: string) {
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
   const [today, setToday] = useState<{ day: string; count: number } | null>(null);
+  // day → count. The old shape stored only today's count, which meant a counter app could
+  // never show a month; the migration below reads either shape.
+  const [history, setHistory] = useState<CountMap>({});
 
   const todayKey = new Date().toISOString().slice(0, 10);
 
@@ -126,7 +137,20 @@ export function useWellnessStore(screen: string) {
         if (!raw) return;
         const parsed = JSON.parse(raw) as { sessions?: SessionRecord[]; counts?: Record<string, { day: string; count: number }> };
         setSessions((parsed.sessions ?? []).filter((s) => s.screen === screen));
-        setToday(parsed.counts?.[screen] ?? null);
+        const storedCount = parsed.counts?.[screen] as unknown;
+        if (storedCount && typeof storedCount === "object") {
+          const legacy = storedCount as { day?: string; count?: number };
+          const asMap =
+            typeof legacy.day === "string" && typeof legacy.count === "number"
+              ? { [legacy.day]: legacy.count }
+              : (storedCount as CountMap);
+          setHistory(asMap);
+          // Today's number lives inside the history; taking it from there is what keeps the
+          // screen's own counter and its chart from disagreeing.
+          setToday({ day: todayKeyOf(), count: asMap[todayKeyOf()] ?? 0 });
+        } else {
+          setToday(storedCount ?? null);
+        }
       })
       .catch(() => {});
   }, [screen]);
@@ -152,18 +176,20 @@ export function useWellnessStore(screen: string) {
       const next = today && today.day === todayKey ? Math.max(0, today.count + delta) : Math.max(0, delta);
       const value = { day: todayKey, count: next };
       setToday(value);
+      const nextHistory: CountMap = { ...history, [todayKey]: next };
+      setHistory(nextHistory);
       try {
         const raw = await AsyncStorage.getItem(STORE_KEY);
         const parsed = raw ? JSON.parse(raw) : {};
         await AsyncStorage.setItem(
           STORE_KEY,
-          JSON.stringify({ ...parsed, counts: { ...(parsed.counts ?? {}), [screen]: value } }),
+          JSON.stringify({ ...parsed, counts: { ...(parsed.counts ?? {}), [screen]: nextHistory } }),
         );
       } catch {}
     },
-    [screen, today, todayKey],
+    [screen, today, todayKey, history],
   );
 
   const countToday = today && today.day === todayKey ? today.count : 0;
-  return { sessions, last: sessions[0] ?? null, countToday, save, bump, todayKey };
+  return { sessions, last: sessions[0] ?? null, countToday, countHistory: history, save, bump, todayKey };
 }

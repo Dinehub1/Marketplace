@@ -12,6 +12,7 @@ import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card } from "@/components/ui";
+import { InsightPanel } from "@/components/charts";
 import { WellnessShell, styles as shell } from "@/components/wellness-shell";
 import { usePhases, useWellnessStore, type Phase } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
@@ -99,6 +100,7 @@ export default function Stretch() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
+          <InsightPanel screen="stretch" unitsLabel="moves" weeklyGoal={5} />
     </WellnessShell>
   );
 }

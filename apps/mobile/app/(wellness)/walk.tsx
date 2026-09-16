@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
+import { InsightPanel } from "@/components/charts";
 import { WellnessShell } from "@/components/wellness-shell";
 import { usePhases, useWellnessStore, type Phase } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
@@ -105,6 +106,7 @@ export default function Walk() {
           Last session: {store.last.minutes} min · {store.last.label}
         </Text>
       ) : null}
+          <InsightPanel screen="walk" unitsLabel="intervals" weeklyGoal={4} />
     </WellnessShell>
   );
 }
