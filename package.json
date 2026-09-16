@@ -22,7 +22,8 @@
     "mobile:android": "npm run android -w @hermes/mobile",
     "test": "npm run test --workspaces --if-present",
     "shots": "node scripts/app-shots.mjs",
-    "shots:fast": "node scripts/app-shots.mjs --no-export"
+    "shots:fast": "node scripts/app-shots.mjs --no-export",
+    "check:targets": "node scripts/check-targets.mjs"
   },
   "devDependencies": {
     "@expo/ngrok": "^4.1.3"
