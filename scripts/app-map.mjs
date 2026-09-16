@@ -56,10 +56,14 @@ const SCREEN_FOR_FIRST = {
  */
 const EXTRA_SCREENS = {
   toolbox: ['exif-strip', 'photos-to-pdf', 'collage'],
-  // The wellness hub is a shared screen: both counters open from it, and it is the way
-  // back from every wellness app, so both of them claim it.
-  water: ['habits'],
-  japa: ['habits'],
+  // Every wellness app carries the same two extra pages — the charts, and the settings that
+  // move the numbers on them — so all six claim them. The hub is claimed by the two screens
+  // that open from it.
+  ...Object.fromEntries(
+    ['breathe', 'stretch', 'walk', 'water', 'japa', 'sleep'].map((id) => [id, ['progress', 'profile']]),
+  ),
+  water: ['habits', 'progress', 'profile'],
+  japa: ['habits', 'progress', 'profile'],
 };
 
 const { TARGETS } = await import(pathToFileURL(path.join(REPO, 'apps', 'mobile', 'targets.mjs')).href);

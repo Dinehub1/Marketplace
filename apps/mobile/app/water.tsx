@@ -14,29 +14,34 @@ import { useRouter } from "expo-router";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
+import { useSettings } from "@/lib/settings";
 import { WellnessShell } from "@/components/wellness-shell";
 import { useWellnessStore } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
 
-const TARGET = 8;
+// The default, used until the Profile page's setting loads. One number, one owner:
+// the setting, so the screen, the glasses and the chart always agree.
+const DEFAULT_TARGET = 8;
 
 export default function Water() {
   const ui = useProductUI("water");
   const s = useMemo(() => makeStyles(ui), [ui]);
   const router = useRouter();
   const store = useWellnessStore("water");
+  const { settings } = useSettings();
   const done = store.countToday;
-  const pct = Math.min(1, done / TARGET);
+  const target = settings.waterGoal || DEFAULT_TARGET;
+  const pct = Math.min(1, done / target);
 
   return (
     <WellnessShell product="water" title="Water" lead="Tap once per glass. The count resets when the date does." tabBar={false}>
       <Card style={s.big}>
         <Text variant="caption" tone="ink3">TODAY</Text>
         <Text variant="hero" style={{ color: ui.accent }}>{done}</Text>
-        <Text variant="meta" tone="ink2">of {TARGET} glasses — a setting you can keep to yourself</Text>
+        <Text variant="meta" tone="ink2">of {target} glasses — a setting you can keep to yourself</Text>
         <View style={s.bar}><View style={[s.fill, { width: `${Math.round(pct * 100)}%` }]} /></View>
         <View style={s.glasses}>
-          {Array.from({ length: TARGET }).map((_, i) => (
+          {Array.from({ length: target }).map((_, i) => (
             <View key={i} style={[s.glass, i < done ? { backgroundColor: ui.accent, borderColor: ui.accent } : null]} />
           ))}
         </View>
@@ -72,7 +77,7 @@ export default function Water() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
-          <InsightPanel screen="water" unitsLabel="glasses" counts={store.countHistory} dailyGoal={8} />
+          <InsightPanel screen="water" unitsLabel="glasses" counts={store.countHistory} dailyGoal={target} />
     </WellnessShell>
   );
 }

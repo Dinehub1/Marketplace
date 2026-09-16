@@ -328,6 +328,16 @@ SCREEN_INFO = {
                 "no account — a timer and a word on screen.",
         "asserts": ["Fast for a minute", "Start walking"],
     },
+    "progress": {
+        "title": "Progress — the charts page",
+        "what": "Six practices in one table with a streak each, then the selected one drawn in full: a ring against your goal, seven days of bars, thirty days of dots.",
+        "try_me": "Tap another practice in the ALL SIX list — the chart below switches to that app's own history.",
+    },
+    "profile": {
+        "title": "Profile — goals and data",
+        "what": "The goals that change the numbers elsewhere (glasses a day, sessions a week), your data with a count and a delete, and the honest list of what is not built.",
+        "try_me": "Change glasses a day to 4, then open Progress and Water — the ring and the target both follow it.",
+    },
     "habits": {
         "title": "Today — the wellness hub",
         "what": "The one screen that shows today's count for both counters without opening either, "
@@ -1145,6 +1155,8 @@ SCREEN_LINKS = [
     ("Stretch", "/stretch"),
     ("Walk", "/walk"),
     ("Today (wellness hub)", "/habits"),
+    ("Progress (charts)", "/progress"),
+    ("Profile (goals, data)", "/profile"),
     ("Water", "/water"),
     ("Japa", "/japa"),
     ("Sleep", "/sleep"),

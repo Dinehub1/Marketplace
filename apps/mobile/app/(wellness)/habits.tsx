@@ -23,6 +23,7 @@ export default function Habits() {
   const japa = useWellnessStore("japa");
   const stretch = useWellnessStore("stretch");
   const walk = useWellnessStore("walk");
+  const sleep = useWellnessStore("sleep");
 
   return (
     <WellnessShell product="habits" title="Today" lead="Two counts, two routines, all kept on this phone. No account, no signal needed.">
@@ -54,6 +55,13 @@ export default function Habits() {
         <Text variant="title3">Walk</Text>
         <Text variant="meta" tone="ink2">
           Fast a minute, easy two{walk.last ? ` · last ${walk.last.minutes} min` : " · no session yet"}
+        </Text>
+      </Press>
+
+      <Press style={s.card} onPress={() => router.push("/sleep")} accessibilityRole="button">
+        <Text variant="title3">Sleep</Text>
+        <Text variant="meta" tone="ink2">
+          Four rounds, then lights out
         </Text>
       </Press>
 

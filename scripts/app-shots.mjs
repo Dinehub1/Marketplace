@@ -59,6 +59,10 @@ const SCREENS = [
   { name: 'stretch', route: '/stretch', expect: ['Desk mobility', 'Start the routine'] },
   { name: 'walk', route: '/walk', expect: ['Fast for a minute', 'Start walking'] },
   { name: 'habits', route: '/habits', expect: ['GLASSES', 'BEADS'] },
+  // The two pages that make this more than a one-pager: the charts, and the settings that
+  // move the numbers on them.
+  { name: 'progress', route: '/progress', expect: ['ALL SIX', 'LAST 30 DAYS'] },
+  { name: 'profile', route: '/profile', expect: ['YOUR GOALS', 'YOUR DATA'] },
   { name: 'water', route: '/water', expect: ['Add a glass', 'What this is not'] },
   { name: 'japa', route: '/japa', expect: ['Tap anywhere to count', 'bead'] },
   { name: 'sleep', route: '/sleep', expect: ['4 IN · 7 HOLD · 8 OUT', 'Start the rounds'] },

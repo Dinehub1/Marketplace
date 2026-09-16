@@ -59,7 +59,7 @@ export default function Walk() {
   const isFast = session.phase?.label === "Fast";
 
   return (
-    <WellnessShell product="walk" title="Walk" lead="Fast for a minute, easy for two. The timer keeps the shape, you keep walking.">
+    <WellnessShell product="walk" title="Walk" lead="Fast for a minute, easy for two. The timer keeps the shape, you keep walking." tabBar={false}>
       <Card style={[s.big, isFast && session.running ? { borderColor: ui.accent } : null]}>
         <Text variant="caption" tone="ink3">
           {session.running ? (isFast ? "NOW — FAST" : session.phase?.label.toUpperCase()) : "THE SESSION"}

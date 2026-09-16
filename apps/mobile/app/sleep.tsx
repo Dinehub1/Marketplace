@@ -66,7 +66,7 @@ export default function Sleep() {
   const ss = String(Math.floor((leftMs % 60_000) / 1000)).padStart(2, "0");
 
   return (
-    <WellnessShell product="sleep" title="Sleep" lead={`${ROUNDS} rounds of 4·7·8, then a ${LIGHTS_OUT_MIN}-minute countdown to lights out.`}>
+    <WellnessShell product="sleep" title="Sleep" lead={`${ROUNDS} rounds of 4·7·8, then a ${LIGHTS_OUT_MIN}-minute countdown to lights out.`} tabBar={false}>
       {!lightsOut ? (
         <Card style={s.big}>
           <Text variant="caption" tone="ink3">4 IN · 7 HOLD · 8 OUT</Text>
