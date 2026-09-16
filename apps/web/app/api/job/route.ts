@@ -91,6 +91,22 @@ const ENGINE: Record<string, {
     fields: ["keywords"],
     accepts: DOC_ACCEPTS,
   },
+
+  // Text to image: the one product whose picture is drawn by a hosted model
+  // (@cf/black-forest-labs/flux-1-schnell on Workers AI, with the token already on
+  // this box). The engine has run it for hours; with no entry here the app answered
+  // 404 "Unknown product", so a working capability had no door. `dataOnly` because
+  // the prompt *is* the input — there is no file to upload, the same shape as the
+  // invoice maker. Only `prompt` is forwarded: the verified model list is the
+  // engine's business, and a caller must not be able to pick a model nobody measured.
+  //
+  // Free today, and there is a real cost behind that word: Cloudflare bills 172.8
+  // neurons for one 1024x1024 4-step image (~Rs 0.17 at the published $0.011 per
+  // 1,000 neurons), against 10,000 free neurons a day — about 57 images. The
+  // catalogue row is priced 0/free so the app can use it while the paywall still has
+  // no working gateway (Razorpay keys are missing); what it *should* cost is a
+  // business decision, not a route one (docs/hourly-queue.md, parking lot).
+  "ai-image": { engine: "ai-image", dataOnly: true, fields: ["prompt"], free: true },
 };
 
 const PRODUCTS = new Set(Object.keys(ENGINE));
@@ -130,7 +146,7 @@ const LONG_FIELDS = new Set(["payload"]);
  * separators, which does not fit the 120-character cap a query parameter deserves;
  * the engine caps the same list at 30 terms of 40 characters.
  */
-const FIELD_LIMITS: Record<string, number> = { keywords: 700 };
+const FIELD_LIMITS: Record<string, number> = { keywords: 700, prompt: 300 };
 const MAX_FIELD_CHARS = 120;
 const MAX_LONG_FIELD_CHARS = 200_000;
 
