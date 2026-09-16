@@ -114,9 +114,33 @@ Not before the tools above are solid.
 order can be paid and the passport paywall cannot be completed end to end. Blocked on
 the user; do not fake a payment to "verify" it.
 
-### 7. Games → store-ready (open)
-`tap-sprint.tsx` (576 lines) and `word-duel.tsx` (1,083 lines) exist and run. Open work:
-score persistence, a real end-of-round summary, and icon/screenshot sets for the store.
+### 7. Games → store-ready (partial — score persistence done 2026-09-16)
+**Done: score persistence.** Both games only ever showed "Best score this session",
+which resets every time the app is opened — so the number on the start screen was
+almost always the round you had just played. `apps/mobile/lib/game-scores.ts` keeps a
+per-game record on the device (`hermes-game-scores` in AsyncStorage): best, rounds
+played, and the last 5 rounds with the line each round produced and when it was
+played. Both `tap-sprint.tsx` and `word-duel.tsx` read it on mount, write the round
+when it ends, and every label says **"on this device"** — there is no server table for
+scores, and a number called global when it is one phone's would be a lie. The "New
+best" badge is now decided from the stored record (a real cross-session best) instead
+of the session, and the summary lists the recent rounds (`sinceLabel`: just now /
+N min ago / N h ago / yesterday / N days ago).
+Evidence: a real round played through the exported build at 390x844 — tap-sprint wrote
+`{best:0,rounds:1,recent:[{score:0,line:"no dots hit"}]}` and, **after a reload** (a new
+session), the start screen read "Best score on this device: 0 · 1 round played";
+word-duel seeded at best 480 / 7 rounds rendered exactly that line, and a real 60 s
+round left `best 480` (a worse round does not lower it), `rounds 8`, history rolled to
+5 with the new round first and the oldest dropped, and tap-sprint's record survived
+recording the other game. 24/24 checks, 0 page errors; `tsc --noEmit` 0 new errors
+(6 pre-existing elsewhere); `expo export` 3.2 MB; the two gallery shots re-captured.
+**Still open in this item:** icon/screenshot sets for the store — that belongs with the
+store-submission decision in the parking lot (he chose 12 identities; Apple 4.3 is
+re-checked before submitting the directory twins), so it is not an engineering hour.
+The end-of-round summary was already real (score, hits, misses, lives lost, average and
+fastest reaction for tap-sprint; score, words, longest, plus the words still on the
+rack for word-duel), so nothing was invented there.
+**Found while verifying, and it is why tap-sprint's round scored 0 — see item 21.**
 
 ### 8. PDF screen: offer the two new actions — DONE 2026-09-16
 Result: `apps/mobile/app/tools/pdf.tsx` now lists five cards. **Rotate** carries a three-chip
@@ -440,3 +464,42 @@ Through the app it is still nothing: `POST https://expo.dropby.co.in/api/job` wi
 `apps/web/app/api/job/route.ts`. By item 4's three-edit rule it also needs a `products` row and a
 screen. Candidate work: "Text to image" = one route entry + one catalogue row + one screen, with
 the price measured against the real per-image cost (item 16's job) rather than guessed.
+
+### 21. tap-sprint's playing field is inert on the web build (open, found 2026-09-16)
+Found while verifying item 7 with a browser instead of a screenshot: a round of
+tap-sprint can be _started_ and the clock runs, but **no input reaches the field** — the
+round always ends with `Dots hit 0 / Misses 0 / Lives lost 0`, which is how a 30-second
+round can end without a single thing happening in it.
+Measured at 390×844 against the exported web build (`127.0.0.1:8091`, the same bundle
+`expo.dropby.co.in` serves and the gallery screenshots come from):
+- the dot is really on the page (a `116×116` div, accent `rgb(219,39,119)`,
+  `border-top-left-radius: 58px`) and it sits inside the field `<button>` that
+  `accessibilityRole="button"` produces (`358×388` at 16,119);
+- a **touch tap and a mouse click at the dot's own centre** both land on that button
+  (verified by instrumenting capture-phase `pointerdown`/`touchstart`/`mousedown`/`click`:
+  `pointerdown -> BUTTON @187,408`) and the score stays 0, the lives stay 3, the dot does
+  not move and no notice appears;
+- a **deliberate miss** (a tap 8 px inside the field's own corner, far from the dot) does
+  nothing either — no "that was the field, not the dot" line, no life lost;
+- **sitting still for 3 s changes nothing**: the dot's own 1.5 s deadline
+  (`BASE_ALLOW_MS`) never fires, so the dot is not respawned and no life is lost — which
+  points at `missTimer` being cleared as the round starts (`startRound()` calls `spawn()`
+  before React commits, and the `[phase]` effect's cleanup clears the timer that was just
+  created) *and* at the field's handler being dead;
+- word-duel's letter tiles **do** respond in the same browser (pressing `N` puts `N` in
+  the picked row), so the input path and the harness are fine — it is this field.
+This is **pre-existing, not a regression**: the same probes were run against the
+committed build (`git stash push -- apps/mobile/app/tap-sprint.tsx`, re-export, probe,
+`stash pop`) and the field was just as inert there.
+Why it matters beyond the game: the store screenshots and the gallery captions are taken
+from this web build, so a game whose only interaction does nothing is not store-ready, and
+a round that cannot score makes the new device record look broken (it correctly wrote
+"no dots hit").
+Next hour, do it in this order: (1) read `onFieldPress`'s `e.nativeEvent.locationX/Y` —
+if RN Web does not supply them the distance is `NaN` and every press is silently a miss;
+use the field's own measured rect instead of trusting `locationX`; (2) move `spawn()`'s
+timer out of the reach of the `[phase]` cleanup (or clear the timer only on unmount) so the
+dot's deadline survives the phase change; (3) prove it with a played round that scores
+above 0 — the verification script is at `%LOCALAPPDATA%\Temp\verify-games.mjs` (it drives
+the export at phone size, reads `hermes-game-scores` back and reloads to check
+persistence).
