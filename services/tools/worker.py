@@ -1340,8 +1340,197 @@ def ai_image(params: dict) -> tuple[bytes, dict]:
                  "bytes": len(raw)}
 
 
+# ---------------------------------------------------------------------------
+# Documents -> Markdown, and a keyword check on top (queue item 11)
+#
+# markitdown (MIT, microsoft/markitdown) turns a file into Markdown; it is a local
+# library, so a document job costs ₹0 per run and no key is involved. The scoring
+# layer is ours, and it only ever states what is measurable in the text: lengths,
+# whether an email/phone is present, which heading words appear, and for each
+# keyword the caller sent, whether the document mentions it. It makes no claim
+# about what "an ATS wants" — that is not knowable from this box, and a made-up
+# rule would be a claim we cannot back.
+# ---------------------------------------------------------------------------
+
+# The engine is handed bytes, not a filename, so the format is read from the
+# file's own first bytes: a DOCX that arrived as `.bin` must still parse as a DOCX.
+_DOC_MAGIC = ((b"%PDF", ".pdf"),
+              (b"PK\x03\x04", ".docx"),        # docx/xlsx/pptx are all ZIP containers
+              (b"\xd0\xcf\x11\xe0", ".doc"))   # legacy OLE (.doc/.xls/.ppt)
+
+# A caller's keywords are echoed in the job's meta, which rides in an HTTP header,
+# so the count and the length are capped here as well as in the Next route.
+MAX_KEYWORDS = 30
+MAX_KEYWORD_CHARS = 40
+
+# Heading words only. A word being in the document is a fact; whether a particular
+# employer demands it is not, so nothing here is called "required".
+HEADING_WORDS = ("summary", "objective", "experience", "education", "skills",
+                 "projects", "certifications", "achievements", "internship",
+                 "languages")
+
+
+def _doc_suffix(data: bytes) -> str:
+    for magic, suffix in _DOC_MAGIC:
+        if data.startswith(magic):
+            return suffix
+    head = data[:600].lstrip().lower()
+    if head.startswith(b"<!doctype html") or head.startswith(b"<html") or b"<body" in head[:400]:
+        return ".html"
+    return ".txt"
+
+
+# A photo is not a document, and markitdown says so badly: handed unknown bytes it
+# returns the string "None" as the text. Naming the format is the honest answer —
+# "characters: 4" for a JPEG is not one — and this engine has no vision model, so
+# an image has to be OCR'd before it can be read.
+_IMAGE_MAGIC = ((b"\xff\xd8\xff", "JPEG"),
+                (b"\x89PNG\x0d\x0a\x1a\x0a", "PNG"),
+                (b"GIF87a", "GIF"), (b"GIF89a", "GIF"))
+
+
+def _image_kind(data: bytes) -> str | None:
+    for magic, kind in _IMAGE_MAGIC:
+        if data.startswith(magic):
+            return kind
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "WebP"
+    if data[4:12] in (b"ftypheic", b"ftypheif", b"ftypmif1", b"ftypavif"):
+        return "HEIC"
+    return None
+
+
+def _keywords(raw: str) -> list[str]:
+    """The caller's comma/semicolon/newline separated terms, cleaned, de-duped, capped."""
+    out: list[str] = []
+    for part in re.split(r"[,;\n]", raw or ""):
+        term = " ".join(part.split()).strip(' ."\'')
+        if not term:
+            continue
+        if len(term) > MAX_KEYWORD_CHARS:
+            raise UserError(f"'{term[:20]}…' is too long for a keyword (max {MAX_KEYWORD_CHARS} characters)")
+        if term.lower() in (t.lower() for t in out):
+            continue
+        out.append(term)
+    if len(out) > MAX_KEYWORDS:
+        raise UserError(f"at most {MAX_KEYWORDS} keywords in one check ({len(out)} were sent)")
+    return out
+
+
+def _mentions(text_lower: str, term: str) -> bool:
+    """Whole-word match when the term is a word, substring otherwise.
+
+    'sql' must not be found inside 'mysql' — that would score a keyword the
+    document does not carry — while 'C++' and 'machine learning' work as written.
+    """
+    t = term.lower()
+    if re.fullmatch(r"[\w+#.&-]+(?: [\w+#.&-]+)*", t, re.UNICODE):
+        return re.search(r"(?<!\w)" + re.escape(t) + r"(?!\w)", text_lower) is not None
+    return t in text_lower
+
+
+def _markitdown_version() -> str:
+    try:
+        from importlib.metadata import version
+        return version("markitdown")
+    except Exception:
+        return "unknown"
+
+
+def resume_check(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
+    """One document in; a Markdown reading of it plus the keyword check out.
+
+    The output IS the Markdown (its `content_type` says so), because that is both
+    the evidence and the artifact: the Next route stores it under
+    `marketplace/products/resume-checker/` and hands the URL back for free.
+    """
+    if not inputs:
+        raise UserError("a document is required")
+    data = inputs[0]
+    if not data:
+        raise UserError("the file is empty")
+    keywords = _keywords(params.get("keywords", ""))
+    kind = _image_kind(data)
+    if kind:
+        raise UserError(
+            f"that file is a {kind} image, not a document — a photo has no text layer, "
+            "so send a PDF, DOCX or text file (OCR the photo first)")
+    suffix = _doc_suffix(data)
+
+    fd, path = tempfile.mkstemp(suffix=suffix)
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        try:
+            from markitdown import MarkItDown
+        except ImportError as exc:
+            # A missing library is this VM's fault, not the caller's: keep it a 500.
+            raise RuntimeError(f"markitdown is not installed on this VM: {exc}")
+        try:
+            text = (MarkItDown().convert(path).text_content or "").strip()
+        except Exception as exc:
+            # Encrypted, corrupt, or not a document: that is the caller's input, so
+            # a 400 with the reason beats a 502 nobody can act on.
+            raise UserError(f"could not read that document: {exc}")
+        pages = pdf_page_count(path) if suffix == ".pdf" else None
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+    if len(re.findall(r"\w", text, re.UNICODE)) < 10:
+        raise UserError("no readable text was found in that document — a scan or a photo has no text layer until it is OCR'd")
+
+    low = text.lower()
+    words = len(re.findall(r"[\w'’-]+", text, re.UNICODE))
+    emails = sorted(set(re.findall(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}", text)))[:3]
+    phones = sorted(set(re.findall(r"(?:\+91[-\s]?)?[6-9]\d{9}\b", text)))[:3]
+    found = [k for k in keywords if _mentions(low, k)]
+    missing = [k for k in keywords if k not in found]
+    headings = [w for w in HEADING_WORDS if _mentions(low, w)]
+
+    lines = ["# Document check", "",
+             f"Read from a `{suffix.lstrip('.')}` file with markitdown {_markitdown_version()}.", "",
+             "| what | value |", "|---|---|",
+             f"| characters | {len(text)} |",
+             f"| words | {words} |"]
+    if pages:
+        lines.append(f"| pages | {pages} |")
+    lines += [
+        f"| email | {emails[0] if emails else 'not found'} |",
+        f"| phone | {phones[0] if phones else 'not found'} |",
+        f"| heading words that appear | {', '.join(headings) if headings else 'none of the common ones'} |",
+        "", "## Keywords", "",
+    ]
+    if keywords:
+        lines.append(f"Matched as whole words: {len(found)} of {len(keywords)} appear in the document.")
+        lines += ["", "**In the document:** " + (", ".join(found) if found else "none of them"),
+                  "", "**Not in the document:** " + (", ".join(missing) if missing else "none — every keyword appears")]
+    else:
+        lines.append("No keywords were sent with this job, so nothing was scored. Send "
+                     "`keywords=python,sql,django` to have each term checked against the document.")
+    lines += ["", "## The document, as text", "", text]
+
+    out = ("\n".join(lines) + "\n").encode("utf-8")
+    return out, {
+        "extractor": f"markitdown {_markitdown_version()}",
+        "input_suffix": suffix,
+        "text_len": len(text),
+        "words": words,
+        "pages": pages,
+        "emails": emails,
+        "phones": phones,
+        "headings": headings,
+        "keywords_found": found,
+        "keywords_missing": missing,
+        "content_type": "text/markdown",
+    }
+
+
 PRODUCTS = ["passport-photo", "bg-remove", "watermark", "pdf-tools", "image-toolkit",
-            "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage"]
+            "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage",
+            "resume-checker"]
 
 
 def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
@@ -1372,6 +1561,8 @@ def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dic
         return pdf_stamp(inputs, params)
     if product == "ai-image":
         return ai_image(params)
+    if product == "resume-checker":
+        return resume_check(inputs, params)
     raise KeyError(product)
 
 
