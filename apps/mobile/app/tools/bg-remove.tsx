@@ -9,15 +9,19 @@
  * part is transparent". Without it a cut-out of a dark object on dark hair looks
  * like a broken image instead of a PNG with an alpha channel.
  *
- * The work happens on the server (services/tools/worker.py → rembg) behind
- * /api/job with product=bg-remove.
+ * The work normally happens on the server (services/tools/worker.py → rembg)
+ * behind /api/job with product=bg-remove. On the web there is also an opt-in
+ * prototype path that runs the matting in the browser itself (lib/bg-local.ts,
+ * “on this device” below) — a photo then never leaves the phone and the VM that
+ * serves the live site does not have to do the work.
  */
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
-import { canDownloadFile, formatBytes, openPaywall, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
+import { canDownloadFile, formatBytes, openPaywall, openResult, pickFile, runJob, saveDataUrl, type JobResult, type PickedFile } from "@/lib/tools";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
+import { ON_DEVICE_MODEL, cutOutOnDevice, onDeviceSupported, type OnDeviceCut } from "@/lib/bg-local";
 
 /** The transparency checkerboard, drawn from Views so it needs no asset.
  *  Colours come from the palette: a checkerboard outside the palette reads as a
@@ -47,6 +51,11 @@ export default function BackgroundRemover() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  /** The prototype flag. Off by default: the server path is the product. */
+  const [onDevice, setOnDevice] = useState(false);
+  const [local, setLocal] = useState<OnDeviceCut | null>(null);
+
+  const canRunOnDevice = onDeviceSupported();
 
   async function choose() {
     setError(null);
@@ -56,12 +65,15 @@ export default function BackgroundRemover() {
       if (!picked) return;
       setFile(picked);
       setJob(null);
-      await runCut(picked);
+      setLocal(null);
+      if (onDevice && canRunOnDevice) await runCutHere(picked);
+      else await runCut(picked);
     } catch (e: any) {
       setError(e?.message || "Could not open a photo picker on this device.");
     }
   }
 
+  /** The server path — unchanged, and what the app uses unless the flag is on. */
   async function runCut(picked: PickedFile) {
     setBusy(true);
     setError(null);
@@ -78,8 +90,26 @@ export default function BackgroundRemover() {
     }
   }
 
-  const shown = job?.previewUrl ?? job?.outputUrl ?? file?.uri ?? null;
-  const done = !!job?.previewUrl || !!job?.outputUrl;
+  /** The prototype path: the matting runs in this browser (web only). */
+  async function runCutHere(picked: PickedFile) {
+    setBusy(true);
+    setError(null);
+    try {
+      const cut = await cutOutOnDevice(picked.uri);
+      setLocal(cut);
+    } catch (e: any) {
+      setError(
+        e?.message ||
+          "The on-device cut-out did not run. The model is downloaded once, so this needs a connection the first time — or switch it off and use the server.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const shown = local?.dataUrl ?? job?.previewUrl ?? job?.outputUrl ?? file?.uri ?? null;
+  const done = !!local || !!job?.previewUrl || !!job?.outputUrl;
+  const busyLine = onDevice && canRunOnDevice ? "Cutting the background on this device…" : "Cutting the background…";
 
   return (
     <ScrollView style={s.root} contentContainerStyle={s.wrap}>
@@ -94,6 +124,25 @@ export default function BackgroundRemover() {
         a poster or a shop listing.
       </Text>
 
+      {canRunOnDevice ? (
+        <Pressable
+          style={[s.flagRow, onDevice && s.flagRowOn]}
+          onPress={() => setOnDevice((v) => !v)}
+          accessibilityRole="button"
+          accessibilityState={{ selected: onDevice }}
+        >
+          <Text style={[s.flagMark, onDevice && s.flagMarkOn]}>{onDevice ? "\u25c9" : "\u25cb"}</Text>
+          <View style={s.flagText}>
+            <Text style={s.flagTitle}>Cut it on this device — prototype</Text>
+            <Text style={s.flagSub}>
+              {onDevice
+                ? `The first cut downloads a ${formatBytes(ON_DEVICE_MODEL.bytes)} model (${ON_DEVICE_MODEL.id}, ${ON_DEVICE_MODEL.licence}) and then runs in this browser. The photo is not uploaded.`
+                : "Runs the matting in your browser instead of on the server. Nothing is uploaded, nothing is charged."}
+            </Text>
+          </View>
+        </Pressable>
+      ) : null}
+
       <View style={s.frame}>
         {shown ? (
           <>
@@ -104,7 +153,7 @@ export default function BackgroundRemover() {
             {busy ? (
               <View style={s.scrim}>
                 <ActivityIndicator color={ui.accent} />
-                <Text style={s.scrimText}>Cutting the background…</Text>
+                <Text style={s.scrimText}>{busyLine}</Text>
               </View>
             ) : null}
           </>
@@ -113,7 +162,7 @@ export default function BackgroundRemover() {
             {busy ? (
               <>
                 <ActivityIndicator color={ui.accent} />
-                <Text style={s.emptyText}>Cutting the background…</Text>
+                <Text style={s.emptyText}>{busyLine}</Text>
               </>
             ) : (
               <>
@@ -151,7 +200,19 @@ export default function BackgroundRemover() {
       </Pressable>
 
       {done && !busy ? (
-        job?.locked && job.jobId ? (
+        local ? (
+          <Pressable
+            style={s.secondary}
+            onPress={() => {
+              if (saveDataUrl(local.dataUrl, `${(file?.name ?? "photo").replace(/\.[^.]+$/, "")}-nobg.png`)) {
+                setSaved(true);
+              }
+            }}
+            accessibilityRole="button"
+          >
+            <Text style={s.secondaryText}>Save the PNG</Text>
+          </Pressable>
+        ) : job?.locked && job.jobId ? (
           <Pressable style={s.primary} onPress={() => void openPaywall(job.jobId!)} accessibilityRole="button">
             <Text style={s.primaryText}>
               Unlock the clean PNG · ₹{Math.round((job.pricePaise || 9900) / 100)}
@@ -175,6 +236,15 @@ export default function BackgroundRemover() {
         )
       ) : null}
 
+      {local ? (
+        <Text style={s.hint}>
+          On this device: {local.modelFetched
+            ? `the model came down in ${(local.loadMs / 1000).toFixed(1)} s and the cut took ${(local.inferMs / 1000).toFixed(1)} s`
+            : `the cut took ${(local.inferMs / 1000).toFixed(1)} s (the model was already downloaded)`}
+          , the PNG is {formatBytes(local.pngBytes)} at {local.width}×{local.height}. Your photo was not uploaded.
+        </Text>
+      ) : null}
+
       {done && job?.locked ? (
         <Text style={s.hint}>
           The preview above is watermarked on purpose. The file you unlock keeps full
@@ -182,7 +252,7 @@ export default function BackgroundRemover() {
         </Text>
       ) : null}
 
-      {done && !busy && !canDownloadFile() ? (
+      {done && !busy && !local && !canDownloadFile() ? (
         <Text style={s.hint}>
           On a phone the PNG opens full size; saving it into your gallery needs the photo
           library module, which is not in this build yet.
@@ -192,14 +262,15 @@ export default function BackgroundRemover() {
       {saved ? <Text style={s.hint}>Saved. The file keeps its transparency.</Text> : null}
 
       {file && !done && !busy && !error ? (
-        <Pressable style={s.secondary} onPress={() => runCut(file)} accessibilityRole="button">
+        <Pressable style={s.secondary} onPress={() => (onDevice && canRunOnDevice ? runCutHere(file) : runCut(file))} accessibilityRole="button">
           <Text style={s.secondaryText}>Try the cut-out again</Text>
         </Pressable>
       ) : null}
 
       <Text style={s.foot}>
-        The cut-out preview is free and watermarked. ₹99 unlocks the clean PNG, which keeps
-        its transparency and has no mark.
+        {local
+          ? "This cut ran in your browser as a prototype. The server path — a free watermarked preview, and ₹99 for the clean PNG — is unchanged and is what the app uses with this switch off."
+          : "The cut-out preview is free and watermarked. ₹99 unlocks the clean PNG, which keeps its transparency and has no mark."}
       </Text>
     </ScrollView>
   );
@@ -219,6 +290,19 @@ function makeStyles(ui: ProductUI) {
     price: { ...type.title2, color: ui.ink },
     h1: { ...type.hero, color: ui.ink, marginBottom: space.sm },
     sub: { ...type.callout, color: ui.muted, marginBottom: space.base },
+    // The prototype switch. A plain Pressable with onPress (not onPressIn): on
+    // react-native-web a press shorter than 50 ms is dropped without it.
+    flagRow: {
+      flexDirection: "row", alignItems: "flex-start", gap: space.sm,
+      borderWidth: 1, borderColor: ui.hairline, borderRadius: radius.md,
+      padding: space.md, backgroundColor: ui.surface, marginBottom: space.base,
+    },
+    flagRowOn: { borderColor: ui.accent },
+    flagMark: { ...type.title3, color: ui.faint, lineHeight: 22 },
+    flagMarkOn: { color: ui.accent },
+    flagText: { flex: 1, gap: 2 },
+    flagTitle: { ...productText.label, color: ui.ink },
+    flagSub: { ...productText.fine, color: ui.muted },
     frame: {
       height: 280,
       borderRadius: radius.md,
