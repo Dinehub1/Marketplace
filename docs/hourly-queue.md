@@ -984,7 +984,17 @@ denied state at phone size with the Settings affordance visible, plus the same s
 `canAskAgain` is false — the two states must not read identically, which is exactly how the
 current one fails.
 
-### 24. Toolbox tile + screen for the document check (new, 2026-09-16, from item 11)
+**2026-09-17 — blocked on a device, and measured so it is not re-attempted blind.** The fix is
+~20 lines (`lib/tools.ts`'s throw + `passport.tsx`'s notice, with `Linking.openSettings()` behind a
+`Platform.OS !== "web"` guard), but the evidence this item asks for cannot be produced on this box:
+the permission read is **native-only** (`grep` shows `Platform.OS !== "web"` around the only
+`requestMediaLibraryPermissionsAsync` call in the app, and on the web the picker is a plain
+`<input type="file">` with no permission API), so a denied state is unreachable in the web build —
+and there is **no native build** (`eas build` needs his Expo/Apple login, parking lot). Landing it
+would mean shipping a UI nobody can look at, which is what the queue's rule 2 exists to stop. If he
+wants it landed without a screenshot, that is one hour; otherwise it waits for the first dev build.
+
+### 24. Toolbox tile + screen for the document check — SCREEN DONE 2026-09-17, TILE BLOCKED on his price call
 `resume-checker` runs end to end (job 93/94) but nothing in the app can reach it: the
 toolbox grid's `READY_TOOLS` has eight tiles and none of them is this product, and
 `/tools/<slug>` has no screen. The engine's output is Markdown, so the screen's job is to
@@ -997,6 +1007,46 @@ a scan or a photo answers 400 with its reason and the screen must show that sent
 catalogue row prices this at ₹99/month while the route serves it free, so the tile must
 either say Free (and the row becomes `price_paise 0`) or the product goes back behind the
 paywall — that is his call, not the robot's.
+
+**Result (2026-09-17): the screen exists, is reachable, and runs the job.** `apps/mobile/app/tools/resume-checker.tsx`
+is the twelfth toolbox screen: a document card, a keyword field, and a result card that prints
+**words · characters · pages · email · phone · heading words** plus the keywords as filled
+(in the document) or outlined (not) chips, then the text the reader read, fetched back from the
+report itself (`Access-Control-Allow-Origin: *` on the bucket, measured before relying on it).
+`lib/tools.ts` gained the kind it needed — **`pickFiles("doc")`** offers `application/pdf,.docx,.txt`
+on the web and the same three mimes to the native document picker — and `product-ui.ts` gave the
+product the amber accent. Two honesty decisions, both from measurement:
+- The screen never prices the job. After a run it prints what the *server* answered (`free` /
+  `locked`, and the unlock row appears by itself if the row is ever put behind the paywall), which
+  is why the ₹99-vs-free question is still only the tile's.
+- The phone row says what the check can actually do: **"a 10-digit Indian mobile number, optionally
+  written +91"**. The engine's pattern is India-specific and the test CV (an English CV with
+  `(+82) 10-9030-1843`) came back "not found" — a bare "not found" would have read as "this
+  document has no phone number".
+Evidence, all through the exported build served at `https://expo.dropby.co.in`:
+**job 130** = HTTP 200 in 2,883 ms from the screen's own picker (`input_suffix .pdf`, the same
+`words 1362 / text_len 9705 / pages 3` the engine reports), and 17/17 browser checks at 390×844
+with **0 page errors**: the card reads `Words 1,362`, `Characters 9,705`, `Pages 3`, the email
+`posquit0.bj@gmail.com`, `2 of 4 appear` with Kubernetes + Terraform filled and Python +
+Salesforce outlined, "Save the report · free" with "This run was free"; **"Show the text"** puts
+`Byungjin Park` (the report's own first line) on the screen. Honest refusals shown on the screen:
+a PNG picked through it answers the route's **415 "This tool expects PDF or DOCX or TXT"**
+(measured by curl first — the engine's own image sentence sits *behind* that check, item 11), and
+31 keywords are refused before any upload ("at most 30 keywords in one run").
+Reachable today: the phone page (`https://shots.dropby.co.in/`) now deep-links it with its own QR
+(`SCREEN_LINKS`, 41 codes on the page), the gallery carries it under the toolbox tile with its
+`SCREEN_INFO` line (`GET /shots` → 200, "Document check (CV / contract / form)"), and
+`app-map.mjs` claims it for the toolbox app (tile count 6 → 7). The light/dark captures differ
+(`d2bc9da1…` vs `01ef93d6…`), so the screen follows the theme — item 19's test, passed for free.
+`npx tsc --noEmit` in `apps/mobile`: **0** errors in the three files touched (the same 20
+pre-existing elsewhere); `npx expo export --platform web` exit 0, **3.19 MB / 3241 KB JS**; no
+engine restart and no `npm run build` (nothing in `apps/web` changed, so the live site was never
+touched).
+**Still open, and it is his call:** the toolbox **tile**. `READY_TOOLS` in
+`apps/mobile/app/tools/index.tsx` carries a hardcoded price string per tile, so a tile means
+choosing between "Free" (and the catalogue row becomes `price_paise 0`) and a real paid tier —
+the same parking-lot question from item 11, unchanged. Until he answers, the product is reachable
+by deep link (`/tools/resume-checker`, on the phone page) and from the gallery, not from the grid.
 
 ### 25. PDF screen: its own range guard is narrower than the engine — DONE 2026-09-16
 `apps/mobile/app/tools/pdf.tsx` validates the optional page range with
@@ -1218,5 +1268,29 @@ Also worth pinning: a screen whose style body is built at module scope cannot se
 the review rule is "`StyleSheet.create` inside a `makeStyles(ui)`", and `%TEMP%\theme-check.mjs`
 (which measures the ground, a label and any paper surface, rather than trusting the PNG hash)
 is the tool to re-run.
+
+### 39. The "phone found" check is India-only, and the label now says so (new, 2026-09-17, from item 24)
+Measured while building the document check: the engine's pattern is
+`(?:\+91[-\s]?)?[6-9]\d{9}` — a 10-digit Indian mobile, optionally written +91 — so a document
+that plainly carries a number in another country's format comes back `phones: []`. The evidence:
+the test CV's first line is `📱 (+82) 10-9030-1843 | … posquit0.bj@gmail.com` and job **130**'s meta
+reported the email but `phones: []`. The screen now states the limit in words ("The phone check
+looks for a 10-digit Indian mobile number, optionally written +91. A number in another country's
+format will not be found."), because a bare "Phone: not found" reads as "this document has no
+phone number" — which is false. Left open as a *deliberate* decision rather than a fix: widening
+the engine's regex to international formats changes a shared product's output, and for this market
+"I have an Indian mobile on my bill" is the useful answer. Decide, then either widen it or leave
+the label as it is.
+
+### 40. `product_jobs` has no `meta` column — item 37's premise is wrong (new, 2026-09-17, from item 24)
+Measured: `GET /rest/v1/product_jobs?select=*&limit=1` returns exactly `id, product, phone,
+input_key, output_key, status, error, duration_ms, created_at, finished_at, preview_key` — there is
+**no `meta`**. So item 37's "the route already stores `meta` on every row" is not true of this
+table, and the job route's response `meta` (which the screens read) is not persisted anywhere:
+"which provider served this, and what it cost" (item 37) and "price products from measured cost"
+(item 16) both need a DDL first. It is doable from here now — `POST
+https://api.supabase.com/v1/projects/xpfmqpmhmcouwzebfwhb/database/query` with the
+`SUPABASE_ACCESS_TOKEN` already in `apps/web/.env` — so item 37 is a two-part job: add the column,
+then merge `metaFor(record)` into it.
 
 
