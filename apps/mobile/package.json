@@ -11,6 +11,11 @@
     "typecheck": "tsc --noEmit",
     "prebuild": "expo prebuild --clean",
     "check:targets": "node ../../scripts/check-targets.mjs",
+    "check:fleet": "node ../../scripts/check-fleet.mjs",
+    "icons": "node ../../scripts/make-app-icons.mjs",
+    "eas:profiles": "node ../../scripts/make-eas-profiles.mjs",
+    "_comment_target": "One codebase, nineteen store apps. APP_TARGET picks which: `APP_TARGET=breathe npx expo start`, or for a store build `eas build --profile breathe`. Default is the marketplace. lib/target.ts reads it back at runtime.",
+    "start:target": "expo start",
     "_comment_gate": "npm runs pre<name> before <name>. The duplicate-app check is bound to every store build, so a build that would be rejected for being too close to a sibling fails here instead of in review.",
     "prebuild:ios": "node ../../scripts/check-targets.mjs",
     "prebuild:android": "node ../../scripts/check-targets.mjs",
@@ -43,12 +48,12 @@
     "react-dom": "19.2.3",
     "react-native": "^0.86.3",
     "react-native-gesture-handler": "~2.32.0",
-    "react-native-reanimated": "^4.5.1",
+    "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",
     "react-native-svg": "15.15.4",
     "react-native-web": "^0.21.2",
-    "react-native-worklets": "^0.10.1"
+    "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
     "@types/react": "~19.2.4",

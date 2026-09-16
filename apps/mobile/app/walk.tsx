@@ -14,8 +14,10 @@ import { StyleSheet, View } from "react-native";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
+import { SyncBadge } from "@/components/sync-badge";
 import { WellnessShell } from "@/components/wellness-shell";
 import { usePhases, useWellnessStore, type Phase } from "@/lib/session";
+import { useSettings } from "@/lib/settings";
 import { useProductUI } from "@/lib/product-ui";
 
 const ROUND_OPTIONS = [3, 5, 8];
@@ -41,6 +43,7 @@ export default function Walk() {
   const [finished, setFinished] = useState(false);
   const phases = useMemo(() => buildPhases(rounds), [rounds]);
   const store = useWellnessStore("walk");
+  const { settings } = useSettings();
 
   const session = usePhases(phases, {
     onComplete: () => {
@@ -59,7 +62,13 @@ export default function Walk() {
   const isFast = session.phase?.label === "Fast";
 
   return (
-    <WellnessShell product="walk" title="Walk" lead="Fast for a minute, easy for two. The timer keeps the shape, you keep walking." tabBar={false}>
+    <WellnessShell
+      product="walk"
+      title="Walk"
+      lead="Fast for a minute, easy for two. The timer keeps the shape, you keep walking."
+      tabBar={false}
+      status={<SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />}
+    >
       <Card style={[s.big, isFast && session.running ? { borderColor: ui.accent } : null]}>
         <Text variant="caption" tone="ink3">
           {session.running ? (isFast ? "NOW — FAST" : session.phase?.label.toUpperCase()) : "THE SESSION"}
@@ -106,7 +115,7 @@ export default function Walk() {
           Last session: {store.last.minutes} min · {store.last.label}
         </Text>
       ) : null}
-          <InsightPanel screen="walk" unitsLabel="intervals" weeklyGoal={4} />
+          <InsightPanel screen="walk" unitsLabel="intervals" weeklyGoal={settings.weeklyGoal} />
     </WellnessShell>
   );
 }

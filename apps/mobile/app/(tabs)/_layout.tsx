@@ -3,6 +3,13 @@ import { StyleSheet } from "react-native";
 import { useTheme } from "@/lib/theme";
 import { TabIcon } from "@/components/icons";
 
+/**
+ * The tab that opens first. Without this the navigator picks alphabetically, and the
+ * listing feed would lose its place to "Account" — the browse screen stopped being the
+ * group's `index` when the root route became the target entry point.
+ */
+export const unstable_settings = { initialRouteName: "browse" };
+
 export default function TabsLayout() {
   const { c, brand } = useTheme();
 
@@ -22,7 +29,7 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="browse"
         options={{ title: "Browse", tabBarIcon: (p) => <TabIcon name="browse" {...p} /> }}
       />
       <Tabs.Screen

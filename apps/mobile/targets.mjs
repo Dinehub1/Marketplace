@@ -1,5 +1,5 @@
 /**
- * Standalone app targets — one codebase, twelve genuinely different apps.
+ * Standalone app targets — one codebase, nineteen genuinely different apps.
  *
  * Play Store rejects "Spam and Minimum Functionality" and Apple rejects guideline
  * 4.3 duplicate apps. The defence is not a different icon: it is a different
@@ -169,7 +169,16 @@ export const TARGETS = [
     aso: ["background remover", "photo editor", "id photo", "tools"],
     color: "#475569",
     permissions: ["CAMERA", "PHOTOS"],
-    products: ["bg-remove", "signature-maker", "card-maker", "photo-repair", "product-photo", "worksheet-maker", "translate-doc", "study-helper", "cover-maker", "marksheet-maker", "notes-from-audio"],
+    // exif-strip, photos-to-pdf and collage are listed here because they are part of
+    // this app's own grid — scripts/app-map.mjs already claims them for `toolbox`, and
+    // its comment says so ("the toolbox grew three jobs … whose screens are part of that
+    // app's grid"). They were missing from this array, which is why the grid and the
+    // manifest disagreed about what the toolbox contains.
+    //
+    // passport-photo, pdf-tools and invoice-maker are deliberately NOT here: each has
+    // its own target, and an app that offers a product it does not lead with is the
+    // "two listings are one app" signal the gate exists to catch.
+    products: ["bg-remove", "signature-maker", "exif-strip", "photos-to-pdf", "collage", "card-maker", "photo-repair", "product-photo", "worksheet-maker", "translate-doc", "study-helper", "cover-maker", "marksheet-maker", "notes-from-audio"],
     firstScreen: "grid",
   },
   {
@@ -183,6 +192,20 @@ export const TARGETS = [
     permissions: ["LOCATION"],
     products: [],
     directory: "sarkarhealth",
+    /**
+     * What this directory is allowed to show.
+     *
+     * Without a scope all three directory apps opened the same 24,048-row feed — three
+     * listings that are one app, which is what `check-targets.mjs` exists to catch and
+     * what both stores reject. The terms are substrings of real `category` values (453
+     * distinct names, read from the live table), matched case-insensitively.
+     *
+     * `legal aid clinic` is excluded on purpose: it contains "clinic" and is not health.
+     */
+    scope: {
+      include: ["doctor", "clinic", "hospital", "pharmacy", "pharma", "medical", "physio", "dental", "dentist", "ortho", "patholog", "diagnos", "nursing", "ayurved", "pediatric", "gynec", "homeopath", "veterinar", "psycholog", "fertility", "surgery", "surg", "diabetes"],
+      exclude: ["legal aid clinic"],
+    },
     firstScreen: "directory",
   },
   {
@@ -209,6 +232,15 @@ export const TARGETS = [
     permissions: ["LOCATION"],
     products: [],
     directory: "sarkarcars",
+    /**
+     * Car and bike service only. The terms are phrases rather than stems because "car"
+     * on its own also matches cardiologist, carpenter, carpet store, daycare centre and
+     * cargo service — verified against the real category list, not assumed.
+     */
+    scope: {
+      include: ["car ", "auto repair", "auto body", "auto parts", "automobile", "garage", "denting", "tyre", "bike ", "two wheeler", "vehicle", "lubricant"],
+      exclude: [],
+    },
     firstScreen: "directory",
   },
   {
@@ -239,9 +271,88 @@ export const TARGETS = [
     firstScreen: "game",
     ads: { rewarded: "hint pack", interstitial: "between rounds" },
   },
+  {
+    id: "block-clear",
+    name: "Block Clear: Puzzle",
+    bundleId: "co.dropby.blockclear",
+    tagline: "Fit the blocks, clear the lines",
+    storeCategory: "Games",
+    aso: ["block puzzle", "block game", "offline puzzle", "brain puzzle"],
+    color: "#0d9488",
+    permissions: [],
+    products: [],
+    // The third game, and the first one with no clock in it. Tap Sprint measures a
+    // reaction and Word Duel measures vocabulary, both against thirty or sixty
+    // seconds; this one is untimed, so it is the fleet's only game you can put down
+    // mid-round. That difference is the listing, not a colour.
+    game: "block-clear",
+    firstScreen: "game",
+    ads: { rewarded: "fresh tray", interstitial: "between rounds" },
+  },
 ];
 
 export const byId = (id) => TARGETS.find((t) => t.id === id);
 export const productTargets = () => TARGETS.filter((t) => t.products.length);
 export const directoryTargets = () => TARGETS.filter((t) => t.directory);
 export const gameTargets = () => TARGETS.filter((t) => t.game);
+
+/**
+ * Where each target opens — the route the app boots into.
+ *
+ * `firstScreen` above is the *kind* of screen a store listing promises, and is what the
+ * screenshot harness groups by. This is the actual route. They are separate because
+ * several targets share one kind (`camera`, `directory`) while opening different
+ * screens, and because four targets have no screen built yet.
+ *
+ * `null` is the honest answer for those four. The entry route renders a "not built yet"
+ * screen naming the target rather than opening the marketplace and calling it Room
+ * Redesign — an app whose first screen is a different product is the fastest way to an
+ * Apple 4.3 rejection, and it is also just a lie to the person who installed it.
+ */
+export const FIRST_ROUTE = {
+  // Wellness: the app *is* the screen. One screen each, plus the shared charts/settings.
+  breathe: "/breathe",
+  stretch: "/stretch",
+  walk: "/walk",
+  water: "/water",
+  japa: "/japa",
+  sleep: "/sleep",
+
+  // Product apps, by the one screen each leads with.
+  "passport-photo": "/passport",
+  "pdf-tools": "/tools/pdf",
+  toolbox: "/tools",
+  "room-redesign": null, // screen not built
+  "subtitles-voice": null, // screen not built
+  "resume-builder": null, // screen not built
+  "shop-toolkit": null, // dashboard not built
+
+  // Directory apps share the listing feed; the brand row scopes what it lists.
+  sarkarhealth: "/browse",
+  sarkarmarketplace: "/browse",
+  sarkarcars: "/browse",
+
+  // Games: the whole app is the game.
+  "tap-sprint": "/tap-sprint",
+  "word-duel": "/word-duel",
+  "block-clear": "/block-clear",
+};
+
+/** The route a target opens on, or null when that screen is not built yet. */
+export const firstRouteFor = (target) =>
+  target && Object.prototype.hasOwnProperty.call(FIRST_ROUTE, target.id)
+    ? FIRST_ROUTE[target.id]
+    : null;
+
+/**
+ * The shell a target runs in — which part of the app it is allowed to be.
+ * A directory app is the marketplace; every other target is a single-purpose app that
+ * happens to share this codebase.
+ */
+export const familyOf = (target) => {
+  if (!target) return "product";
+  if (target.directory) return "directory";
+  if (target.game) return "game";
+  if (target.products.length) return "product";
+  return "wellness";
+};

@@ -15,11 +15,15 @@
  * a repeated phrase (japa, dhikr, the rosary, pranayama counting). That mechanical
  * shape — slow breath plus repetition — is what this screen gives you; you type your
  * own two lines, so the app never picks a faith for anybody.
+ *
+ * A finished session now goes into the shared wellness store (lib/session.ts) rather than a
+ * `dropby-breathe` key of its own. That key was the reason this screen had to hand its history
+ * to the analytics panel as a prop: it was the one practice the Progress page could not see.
+ * The phrase stays on the device, in settings, where preferences belong.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
 import Animated, {
   Easing,
@@ -28,9 +32,12 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { alpha, radius, space } from "@hermes/tokens";
-import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
+import { useProductUI, type ProductUI } from "@/lib/product-ui";
 import { Card, Press, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
+import { SyncBadge } from "@/components/sync-badge";
+import { saveSession, useWellnessStore } from "@/lib/session";
+import { useSettings } from "@/lib/settings";
 
 /** One pattern = one cycle of phases, in seconds. Hold phases may be zero. */
 type Pattern = {
@@ -71,8 +78,10 @@ const PATTERNS: Pattern[] = [
 ];
 
 const LENGTHS = [3, 5, 10];            // minutes
-const STORE_KEY = "dropby-breathe";
 const TICK_MS = 100;
+/** The phrase lines, until the person replaces the in-breath one in settings. */
+const PHRASE_IN = "Breathe in";
+const PHRASE_OUT = "Breathe out";
 
 type Phase = { key: "in" | "holdIn" | "out" | "holdOut"; label: string; seconds: number };
 
@@ -99,8 +108,22 @@ function ratePerMinute(p: Pattern): number {
 
 type Stored = { sessions: { at: number; minutes: number; cycles: number; pattern: string }[] };
 
-/** The shared shape the analytics panel expects, mapped lazily from Breathe's own store. */
-type PanelSession = { at: number; screen: string; minutes: number; units: number; label: string };
+/**
+ * A finished breath, filed in the shared store.
+ *
+ * Module-level on purpose: the ticker below lists its writes in a dependency array, and a
+ * function defined inside the component would be a new value on every render — the exact
+ * shape of the bug this screen's effect carries a warning about.
+ */
+function persist(entry: Stored["sessions"][number]) {
+  void saveSession({
+    at: entry.at,
+    screen: "breathe",
+    minutes: entry.minutes,
+    units: entry.cycles,
+    label: entry.pattern,
+  });
+}
 
 export default function Breathe() {
   const ui = useProductUI("breathe");
@@ -114,56 +137,22 @@ export default function Breathe() {
   const [cycles, setCycles] = useState(0);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [phaseMs, setPhaseMs] = useState(0);
-  const [phraseIn, setPhraseIn] = useState("Breathe in");
-  const [phraseOut, setPhraseOut] = useState("Breathe out");
   const [editing, setEditing] = useState(false);
-  const [last, setLast] = useState<Stored["sessions"][number] | null>(null);
-  const [history, setHistory] = useState<PanelSession[]>([]);
   const [done, setDone] = useState(false);
+
+  /* The record lives in the shared store, so a breath taken here moves the Progress chart
+     immediately — it used to be written to a key of its own that nothing else could read. */
+  const store = useWellnessStore("breathe");
+  const { settings, update } = useSettings();
+  const last = store.last;
+  const phraseIn = settings.phrase || PHRASE_IN;
+  const phraseOut = PHRASE_OUT;
 
   const pattern = PATTERNS.find((p) => p.id === patternId) ?? PATTERNS[0];
   const phases = useMemo(() => phasesOf(pattern), [pattern]);
   const phase = phases[Math.min(phaseIndex, phases.length - 1)];
   const targetMs = minutes * 60_000;
   const scale = useSharedValue(1);
-
-  /* The device remembers the last session, so the app has a memory without an
-     account and without a server. */
-  useEffect(() => {
-    AsyncStorage.getItem(STORE_KEY)
-      .then((raw) => {
-        if (!raw) return;
-        const parsed = JSON.parse(raw) as Stored;
-        setLast(parsed.sessions?.[0] ?? null);
-        // The analytics panel reads the same history the "last session" line does, mapped
-        // into the shared session shape rather than written a second time.
-        setHistory(
-          (parsed.sessions ?? []).map((x) => ({
-            at: x.at,
-            screen: "breathe",
-            minutes: x.minutes,
-            units: x.cycles,
-            label: x.pattern,
-          })),
-        );
-      })
-      .catch(() => {});
-  }, []);
-
-  const persist = useCallback(async (entry: Stored["sessions"][number]) => {
-    try {
-      const raw = await AsyncStorage.getItem(STORE_KEY);
-      const parsed: Stored = raw ? (JSON.parse(raw) as Stored) : { sessions: [] };
-      const sessions = [entry, ...(parsed.sessions ?? [])].slice(0, 30);
-      await AsyncStorage.setItem(STORE_KEY, JSON.stringify({ sessions }));
-      setHistory(
-        sessions.map((x) => ({ at: x.at, screen: "breathe", minutes: x.minutes, units: x.cycles, label: x.pattern })),
-      );
-      setLast(entry);
-    } catch {
-      /* a device that refuses to store a stat must not break the session */
-    }
-  }, []);
 
   /* One interval drives everything: elapsed time, which phase we are in, and how far
      through it we are. A ticker rather than four chained timers because a phase list
@@ -264,12 +253,19 @@ export default function Breathe() {
   }
 
   return (
-    <View style={[s.root, { paddingTop: insets.top + space.base, paddingBottom: insets.bottom + 78 }]}>  {/* 78 = the floating iOS 26 tab bar */}
+    <View
+      style={[
+        s.root,
+        // 78 = the floating iOS 26 tab bar, which draws over the content.
+        { paddingTop: insets.top + space.base, paddingBottom: insets.bottom + 78 },
+      ]}
+    >
       <View style={s.head}>
         <Text variant="title2">Breathe</Text>
         <Text variant="meta" tone="ink2">
           Slow breathing, four patterns, nothing to sign up for. Works offline.
         </Text>
+        <SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />
       </View>
 
       {/* The circle IS the control. On a phone the big circle is the only thing anyone
@@ -359,7 +355,18 @@ export default function Breathe() {
           </Text>
           {editing ? (
             <View style={s.editRow}>
-              <PhraseInput value={phraseIn} onDone={(v) => { setPhraseIn(v || "Breathe in"); setEditing(false); }} ui={ui} />
+              <PhraseInput
+                value={phraseIn}
+                onDone={(v) => {
+                  // The in-breath line is the phrase Profile shows, so it is the one that is
+                  // saved; clearing it back to the default stores nothing rather than storing
+                  // the placeholder as if the person had typed it.
+                  const next = v.trim();
+                  update({ phrase: next === PHRASE_IN ? "" : next });
+                  setEditing(false);
+                }}
+                ui={ui}
+              />
             </View>
           ) : null}
           <Press
@@ -374,16 +381,17 @@ export default function Breathe() {
 
           {done ? (
             <Card style={s.doneCard}>
-              <Text variant="title3">Session saved on this device</Text>
+              <Text variant="title3">Session saved</Text>
               <Text variant="meta" tone="ink2">
                 {minutes} minutes · {cycles} cycles · {pattern.name} · about {Math.round(ratePerMinute(pattern))} breaths a minute
               </Text>
+              <SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />
             </Card>
           ) : null}
 
           {last ? (
             <Text variant="meta" tone="ink3" style={s.note}>
-              Last session: {last.minutes} min, {last.cycles} cycles, {last.pattern}
+              Last session: {last.minutes} min, {last.units} cycles, {last.label}
             </Text>
           ) : null}
         </>
@@ -392,9 +400,7 @@ export default function Breathe() {
       <InsightPanel
         screen="breathe"
         unitsLabel="cycles"
-        weeklyGoal={5}
-        countToday={last?.cycles}
-        sessions={history}
+        weeklyGoal={settings.weeklyGoal}
         accentKey="breathe"
       />
 

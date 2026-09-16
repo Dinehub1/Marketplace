@@ -1,29 +1,33 @@
 {
-  "cli": { "version": ">= 12.0.0", "appVersionSource": "remote" },
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
   "build": {
     "base": {
       "node": "22.20.0",
       "env": {},
-      "cache": { "disabled": false }
+      "cache": {
+        "disabled": false
+      }
     },
-
     "development": {
       "extends": "base",
       "developmentClient": true,
       "distribution": "internal",
       "channel": "development"
     },
-
     "preview": {
       "extends": "base",
       "distribution": "internal",
       "channel": "preview",
-      "ios": { "simulator": false },
+      "ios": {
+        "simulator": false
+      },
       "android": {
         "buildType": "apk"
       }
     },
-
     "production": {
       "extends": "base",
       "channel": "production",
@@ -31,9 +35,134 @@
       "android": {
         "buildType": "app-bundle"
       }
+    },
+    "block-clear": {
+      "extends": "production",
+      "channel": "block-clear",
+      "env": {
+        "APP_TARGET": "block-clear"
+      }
+    },
+    "breathe": {
+      "extends": "production",
+      "channel": "breathe",
+      "env": {
+        "APP_TARGET": "breathe"
+      }
+    },
+    "japa": {
+      "extends": "production",
+      "channel": "japa",
+      "env": {
+        "APP_TARGET": "japa"
+      }
+    },
+    "passport-photo": {
+      "extends": "production",
+      "channel": "passport-photo",
+      "env": {
+        "APP_TARGET": "passport-photo"
+      }
+    },
+    "pdf-tools": {
+      "extends": "production",
+      "channel": "pdf-tools",
+      "env": {
+        "APP_TARGET": "pdf-tools"
+      }
+    },
+    "resume-builder": {
+      "extends": "production",
+      "channel": "resume-builder",
+      "env": {
+        "APP_TARGET": "resume-builder"
+      }
+    },
+    "room-redesign": {
+      "extends": "production",
+      "channel": "room-redesign",
+      "env": {
+        "APP_TARGET": "room-redesign"
+      }
+    },
+    "sarkarcars": {
+      "extends": "production",
+      "channel": "sarkarcars",
+      "env": {
+        "APP_TARGET": "sarkarcars"
+      }
+    },
+    "sarkarhealth": {
+      "extends": "production",
+      "channel": "sarkarhealth",
+      "env": {
+        "APP_TARGET": "sarkarhealth"
+      }
+    },
+    "shop-toolkit": {
+      "extends": "production",
+      "channel": "shop-toolkit",
+      "env": {
+        "APP_TARGET": "shop-toolkit"
+      }
+    },
+    "sleep": {
+      "extends": "production",
+      "channel": "sleep",
+      "env": {
+        "APP_TARGET": "sleep"
+      }
+    },
+    "stretch": {
+      "extends": "production",
+      "channel": "stretch",
+      "env": {
+        "APP_TARGET": "stretch"
+      }
+    },
+    "subtitles-voice": {
+      "extends": "production",
+      "channel": "subtitles-voice",
+      "env": {
+        "APP_TARGET": "subtitles-voice"
+      }
+    },
+    "tap-sprint": {
+      "extends": "production",
+      "channel": "tap-sprint",
+      "env": {
+        "APP_TARGET": "tap-sprint"
+      }
+    },
+    "toolbox": {
+      "extends": "production",
+      "channel": "toolbox",
+      "env": {
+        "APP_TARGET": "toolbox"
+      }
+    },
+    "walk": {
+      "extends": "production",
+      "channel": "walk",
+      "env": {
+        "APP_TARGET": "walk"
+      }
+    },
+    "water": {
+      "extends": "production",
+      "channel": "water",
+      "env": {
+        "APP_TARGET": "water"
+      }
+    },
+    "word-duel": {
+      "extends": "production",
+      "channel": "word-duel",
+      "env": {
+        "APP_TARGET": "word-duel"
+      }
     }
   },
-
   "submit": {
     "production": {}
   }

@@ -15,8 +15,10 @@ import { useRouter } from "expo-router";
 import { space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
+import { SyncBadge } from "@/components/sync-badge";
 import { WellnessShell } from "@/components/wellness-shell";
 import { usePhases, useWellnessStore, type Phase } from "@/lib/session";
+import { useSettings } from "@/lib/settings";
 import { useProductUI } from "@/lib/product-ui";
 
 const ROUNDS = 4;
@@ -37,6 +39,7 @@ export default function Sleep() {
   const s = useMemo(() => makeStyles(ui), [ui]);
   const router = useRouter();
   const store = useWellnessStore("sleep");
+  const { settings } = useSettings();
   const phases = useMemo(buildPhases, []);
   const [lightsOut, setLightsOut] = useState(false);
   const [leftMs, setLeftMs] = useState(LIGHTS_OUT_MIN * 60_000);
@@ -66,7 +69,13 @@ export default function Sleep() {
   const ss = String(Math.floor((leftMs % 60_000) / 1000)).padStart(2, "0");
 
   return (
-    <WellnessShell product="sleep" title="Sleep" lead={`${ROUNDS} rounds of 4·7·8, then a ${LIGHTS_OUT_MIN}-minute countdown to lights out.`} tabBar={false}>
+    <WellnessShell
+      product="sleep"
+      title="Sleep"
+      lead={`${ROUNDS} rounds of 4·7·8, then a ${LIGHTS_OUT_MIN}-minute countdown to lights out.`}
+      tabBar={false}
+      status={<SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />}
+    >
       {!lightsOut ? (
         <Card style={s.big}>
           <Text variant="caption" tone="ink3">4 IN · 7 HOLD · 8 OUT</Text>
@@ -114,7 +123,7 @@ export default function Sleep() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
-          <InsightPanel screen="sleep" unitsLabel="rounds" weeklyGoal={7} />
+          <InsightPanel screen="sleep" unitsLabel="rounds" weeklyGoal={settings.weeklyGoal} />
     </WellnessShell>
   );
 }

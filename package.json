@@ -17,17 +17,25 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "tokens": "node packages/tokens/scripts/extract.mjs",
-    "mobile": "npm run start -w @hermes/mobile",
-    "mobile:ios": "npm run ios -w @hermes/mobile",
-    "mobile:android": "npm run android -w @hermes/mobile",
+    "mobile": "npm run start -w @hermes/mobile --",
+    "app": "node scripts/run-app.mjs",
+    "mobile:ios": "npm run ios -w @hermes/mobile --",
+    "mobile:android": "npm run android -w @hermes/mobile --",
+    "_comment_mobile": "The trailing `--` is load-bearing. Without it, `npm run mobile -- --port 8082` is parsed by npm itself: npm eats `--port`, passes a bare `8082` on to `expo start`, and expo reads it as a project root and dies with 'Invalid project root'. With it, the arguments reach expo. APP_TARGET works the same way: `APP_TARGET=japa npm run mobile -- --port 8082` (set it in the shell, not after `--`, because it is read by app.config.ts and not by expo's CLI).",
     "test": "npm run test --workspaces --if-present",
     "ai:report": "node scripts/ai-router-report.mjs",
     "shots": "node scripts/app-shots.mjs",
     "shots:fast": "node scripts/app-shots.mjs --no-export",
-    "check:targets": "node scripts/check-targets.mjs"
+    "check:targets": "node scripts/check-targets.mjs",
+    "check:fleet": "node scripts/check-fleet.mjs",
+    "_comment_check_game": "The two gates above are about the store listing. This one is about the game: it loads apps/mobile/lib/block-clear.ts in plain Node and asserts the rules, so it runs anywhere — the screenshot probes need Playwright and a preview, and those only exist on the capture VM.",
+    "check:game": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-block-clear.mjs",
+    "icons": "node scripts/make-app-icons.mjs",
+    "eas:profiles": "node scripts/make-eas-profiles.mjs"
   },
   "devDependencies": {
-    "@expo/ngrok": "^4.1.3"
+    "@expo/ngrok": "^4.1.3",
+    "expo-router": "57.0.21"
   },
   "engines": {
     "node": ">=22.18"

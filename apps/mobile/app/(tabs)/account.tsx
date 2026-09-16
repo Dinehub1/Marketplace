@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { useOwner } from "@/lib/owner";
-import { BRAND } from "@/lib/config";
+import { BRAND, WEB_BASE_URL } from "@/lib/config";
 import { Button, Card, Divider, Press, Text } from "@/components/ui";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Icon, type IconName } from "@/components/icons";

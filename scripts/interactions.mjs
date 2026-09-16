@@ -142,6 +142,56 @@ async function wordDuelPick(page) {
   };
 }
 
+/**
+ * block-clear: pick a tray piece and put it on the board.
+ *
+ * Two observable changes, because either half fails on its own and they are
+ * different bugs. Selecting a piece has to *outline* the squares it fits (a tray
+ * that picks up but highlights nothing means the anchor maths is dead), and
+ * pressing one of those outlined squares has to *add* blocks to the board (a
+ * highlight that places nothing means the board is deaf). Neither check reads the
+ * screen's own copy, so a relabelled button cannot satisfy either one.
+ */
+async function blockClearPlace(page) {
+  await page.locator('text=Start the round').first().click();
+  await page.waitForTimeout(400);
+
+  const pieces = page.locator('[aria-label^="Piece "]');
+  const pieceCount = await pieces.count();
+  if (pieceCount !== 3) throw new Error(`the round started with ${pieceCount} pieces in the tray, not 3`);
+
+  const piece = pieces.first();
+  const pieceLabel = (await piece.getAttribute('aria-label')) || 'the first piece';
+  const pieceBox = await piece.boundingBox();
+  if (!pieceBox) throw new Error('the first tray piece has no box on the page');
+  await sabotage('[aria-label^="Piece "]', page);
+  await press(page, Math.round(pieceBox.x + pieceBox.width / 2), Math.round(pieceBox.y + pieceBox.height / 2));
+  await page.waitForTimeout(350);
+
+  const targets = page.locator('[aria-label*="piece fits"]');
+  const targetCount = await targets.count();
+  if (!targetCount)
+    throw new Error(`pressing ${pieceLabel} did not outline a single square it fits — the piece is not picked up`);
+
+  const filledBefore = await page.locator('[aria-label$="filled"]').count();
+  const target = targets.first();
+  const targetLabel = (await target.getAttribute('aria-label')) || 'an outlined square';
+  const targetBox = await target.boundingBox();
+  if (!targetBox) throw new Error('the outlined square has no box on the page');
+  await press(page, Math.round(targetBox.x + targetBox.width / 2), Math.round(targetBox.y + targetBox.height / 2));
+  await page.waitForTimeout(350);
+
+  const filledAfter = await page.locator('[aria-label$="filled"]').count();
+  if (filledAfter <= filledBefore)
+    throw new Error(
+      `pressing ${targetLabel} put nothing on the board (${filledBefore} filled squares before, ${filledAfter} after)`,
+    );
+
+  return {
+    detail: `picked up ${pieceLabel}, pressed ${targetLabel} — filled squares went ${filledBefore} → ${filledAfter}`,
+  };
+}
+
 export const INTERACTIONS = {
   'tap-sprint-hit': {
     screen: 'tap-sprint',
@@ -152,6 +202,11 @@ export const INTERACTIONS = {
     screen: 'word-duel',
     what: 'press a letter tile; it has to land in the word row',
     run: wordDuelPick,
+  },
+  'block-clear-place': {
+    screen: 'block-clear',
+    what: 'pick a tray piece and press an outlined square; the board has to change',
+    run: blockClearPlace,
   },
 };
 

@@ -1,3 +1,4 @@
+import type { ColorValue } from "react-native";
 import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 /**
@@ -35,7 +36,9 @@ export function Icon({
 }: {
   name: IconName;
   size?: number;
-  color?: string;
+  // ColorValue, not string: React Navigation hands a tab bar icon an
+  // OpaqueColorValue on native, which is a valid colour and not a string.
+  color?: ColorValue;
   filled?: boolean;
   strokeWidth?: number;
 }) {
@@ -61,7 +64,7 @@ export function TabIcon({
   focused,
 }: {
   name: IconName;
-  color: string;
+  color: ColorValue;
   focused: boolean;
 }) {
   // Weight, not colour, carries the selected state — colour alone is not a

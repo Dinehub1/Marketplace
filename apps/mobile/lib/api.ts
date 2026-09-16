@@ -1,4 +1,5 @@
 import { SUPABASE_URL, SUPABASE_KEY } from "./config";
+import { TARGET } from "./target";
 
 /**
  * Thin PostgREST client. Deliberately not the supabase-js SDK: the app only
@@ -47,12 +48,41 @@ export function listBusinesses(opts: {
   const { q = "", category = "", page = 1, signal } = opts;
   const filters = [`select=${SELECT}`, "status=eq.active"];
 
-  if (q) {
-    // ilike with wildcards on both sides; the term is URI-encoded so a user
-    // typing a comma or a paren cannot break out of the filter expression.
-    const term = encodeURIComponent(`*${q}*`);
-    filters.push(`or=(name.ilike.${term},category.ilike.${term})`);
+  /**
+   * Two things narrow this feed: what the search box says, and which directory app this
+   * is. Both are "or" groups, and they have to be *and*-ed together — so they are
+   * collected and emitted as one PostgREST expression rather than as two `or=` params,
+   * which PostgREST would not combine the way it reads.
+   */
+  const orGroups: string[] = [];
+
+  // The target's scope. This is the difference between SarkarHealth listing doctors and
+  // SarkarCars listing garages, and all three directory apps listing the same 24,048
+  // businesses — which is one app published three times.
+  const scope = TARGET.scope;
+  if (scope?.include?.length) {
+    orGroups.push(
+      scope.include.map((t) => `category.ilike.${encodeURIComponent(`*${t}*`)}`).join(","),
+    );
   }
+
+  if (q) {
+    // ilike with wildcards on both sides; the term is URI-encoded so a user typing a
+    // comma or a paren cannot break out of the filter expression. `*` survives
+    // encodeURIComponent, which is what PostgREST wants for a wildcard.
+    const term = encodeURIComponent(`*${q}*`);
+    orGroups.push(`name.ilike.${term},category.ilike.${term}`);
+  }
+
+  if (orGroups.length === 1) filters.push(`or=(${orGroups[0]})`);
+  else if (orGroups.length > 1) filters.push(`and=(${orGroups.map((g) => `or(${g})`).join(",")})`);
+
+  // Exclusions are plain AND filters, so a scope can carve a false positive back out
+  // ("legal aid clinic" contains "clinic" and is not a health listing).
+  for (const t of scope?.exclude ?? []) {
+    filters.push(`category=not.ilike.${encodeURIComponent(`*${t}*`)}`);
+  }
+
   if (category) filters.push(`category=eq.${encodeURIComponent(category)}`);
   filters.push("order=featured.desc,priority.desc,rating.desc.nullslast,name.asc");
 

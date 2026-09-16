@@ -11,28 +11,50 @@
  * Everything here is derived, never stored twice: the source of truth is the session list
  * in `lib/session.ts`, so a change to how a session is recorded cannot leave the stats
  * telling a different story.
+ *
+ * A day is the person's local day, everywhere. This file used to compute buckets in UTC
+ * while the counters filed their numbers under the local date, which meant that between
+ * midnight and 05:30 in India the bar chart and the glasses count were looking at two
+ * different days. Calendar arithmetic (`setDate`) rather than 86,400,000-millisecond
+ * arithmetic also keeps the buckets right if this ever runs somewhere with a DST change.
  */
 import type { SessionRecord } from "./session";
 
 export type DayBucket = { day: string; count: number; minutes: number };
 
-const DAY_MS = 86_400_000;
+/** `YYYY-MM-DD` in the device's own timezone — the key every counter and chart shares. */
+function dayKeyOf(ms: number): string {
+  const d = new Date(ms);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
 
-function dayKey(ms: number): string {
-  return new Date(ms).toISOString().slice(0, 10);
+/** `ms` moved by whole calendar days, so a DST change cannot skip or repeat a bucket. */
+function shiftDays(ms: number, days: number): number {
+  const d = new Date(ms);
+  d.setDate(d.getDate() + days);
+  return d.getTime();
+}
+
+/** Midnight local for a `YYYY-MM-DD` key. */
+function parseDay(day: string): number {
+  const [y, m, d] = day.split("-").map(Number);
+  return new Date(y, (m ?? 1) - 1, d ?? 1).getTime();
 }
 
 /** The last `days` days, oldest first, with a zero for the days nothing happened. */
 export function dailyBuckets(sessions: SessionRecord[], days: number, now = Date.now()): DayBucket[] {
   const byDay = new Map<string, { count: number; minutes: number }>();
   for (const s of sessions) {
-    const k = dayKey(s.at);
+    const k = dayKeyOf(s.at);
     const cur = byDay.get(k) ?? { count: 0, minutes: 0 };
     byDay.set(k, { count: cur.count + 1, minutes: cur.minutes + Math.max(0, s.minutes) });
   }
   const out: DayBucket[] = [];
   for (let i = days - 1; i >= 0; i--) {
-    const k = dayKey(now - i * DAY_MS);
+    const k = dayKeyOf(shiftDays(now, -i));
     const v = byDay.get(k) ?? { count: 0, minutes: 0 };
     out.push({ day: k, count: v.count, minutes: v.minutes });
   }
@@ -44,23 +66,24 @@ export function dailyBuckets(sessions: SessionRecord[], days: number, now = Date
  * has been missed, which is how every app in this category does it).
  */
 export function streak(sessions: SessionRecord[], now = Date.now()): { current: number; best: number } {
-  const days = new Set(sessions.map((s) => dayKey(s.at)));
+  const days = new Set(sessions.map((s) => dayKeyOf(s.at)));
+
   let current = 0;
-  const start = days.has(dayKey(now)) ? now : now - DAY_MS;
-  for (let i = 0; ; i++) {
-    if (!days.has(dayKey(start - i * DAY_MS))) break;
+  let cursor = days.has(dayKeyOf(now)) ? now : shiftDays(now, -1);
+  while (days.has(dayKeyOf(cursor))) {
     current++;
+    cursor = shiftDays(cursor, -1);
   }
+
   // Best: walk the distinct days in order and find the longest unbroken run.
   const sorted = [...days].sort();
   let best = 0;
   let run = 0;
-  let prev: number | null = null;
+  let prev: string | null = null;
   for (const d of sorted) {
-    const t = Date.parse(`${d}T00:00:00Z`);
-    run = prev !== null && t - prev === DAY_MS ? run + 1 : 1;
+    run = prev !== null && parseDay(d) === shiftDays(parseDay(prev), 1) ? run + 1 : 1;
     best = Math.max(best, run);
-    prev = t;
+    prev = d;
   }
   return { current, best };
 }
@@ -74,7 +97,7 @@ export function totals(sessions: SessionRecord[]) {
 
 /** This week against last week — the comparison that makes a number mean something. */
 export function weekOverWeek(sessions: SessionRecord[], now = Date.now()) {
-  const week = 7 * DAY_MS;
+  const week = 7 * 86_400_000;
   const inRange = (from: number, to: number) => sessions.filter((s) => s.at > from && s.at <= to);
   const thisWeek = inRange(now - week, now);
   const lastWeek = inRange(now - 2 * week, now - week);
@@ -92,7 +115,7 @@ export function recent(sessions: SessionRecord[], n = 5) {
 }
 
 export function whenLabel(at: number, now = Date.now()): string {
-  const days = Math.floor((now - at) / DAY_MS);
+  const days = Math.round((parseDay(dayKeyOf(now)) - parseDay(dayKeyOf(at))) / 86_400_000);
   if (days <= 0) return "today";
   if (days === 1) return "yesterday";
   if (days < 7) return `${days} days ago`;
@@ -103,17 +126,21 @@ export function whenLabel(at: number, now = Date.now()): string {
 export function dailyBucketsFromCounts(counts: Record<string, number>, days: number, now = Date.now()): DayBucket[] {
   const out: DayBucket[] = [];
   for (let i = days - 1; i >= 0; i--) {
-    const k = dayKey(now - i * DAY_MS);
-    const c = counts[k] ?? 0;
-    out.push({ day: k, count: c, minutes: 0 });
+    const k = dayKeyOf(shiftDays(now, -i));
+    out.push({ day: k, count: counts[k] ?? 0, minutes: 0 });
   }
   return out;
 }
 
-/** A streak for a counter: a day counts when its number is above zero. */
+/**
+ * A streak for a counter: a day counts when its number is above zero.
+ *
+ * The keys are already local day strings, so they are parsed as local midnights rather than
+ * through `Date.parse(day + "T00:00:00Z")`, which filed a 1am IST glass under yesterday.
+ */
 export function streakFromCounts(counts: Record<string, number>, now = Date.now()): { current: number; best: number } {
   const fake = Object.entries(counts)
     .filter(([, v]) => v > 0)
-    .map(([day]) => ({ day, at: Date.parse(`${day}T00:00:00Z`), minutes: 0, units: 0 }));
+    .map(([day]) => ({ day, at: parseDay(day), minutes: 0, units: 0 }));
   return streak(fake as never, now);
 }

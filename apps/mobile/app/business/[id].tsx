@@ -87,7 +87,7 @@ export default function BusinessDetail() {
         <EmptyState
           title="Listing not found"
           body="It may have been removed. Browse the directory for similar businesses."
-          action={<Button title="Open directory" onPress={() => router.replace("/")} />}
+          action={<Button title="Open directory" onPress={() => router.replace("/browse")} />}
         />
       ) : (
         <ScrollView

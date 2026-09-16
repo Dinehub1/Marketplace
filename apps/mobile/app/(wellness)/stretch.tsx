@@ -14,7 +14,9 @@ import { radius, space } from "@hermes/tokens";
 import { Button, Card } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
 import { WellnessShell, styles as shell } from "@/components/wellness-shell";
+import { SyncBadge } from "@/components/sync-badge";
 import { usePhases, useWellnessStore, type Phase } from "@/lib/session";
+import { useSettings } from "@/lib/settings";
 import { useProductUI } from "@/lib/product-ui";
 import { Text } from "@/components/ui";
 
@@ -34,6 +36,7 @@ export default function Stretch() {
   const s = useMemo(() => makeStyles(ui), [ui]);
   const router = useRouter();
   const store = useWellnessStore("stretch");
+  const { settings } = useSettings();
   const phases: Phase[] = useMemo(
     () => MOVES.map((m, i) => ({ key: `move-${i}`, label: m.label, seconds: m.seconds })),
     [],
@@ -58,7 +61,12 @@ export default function Stretch() {
   const current = MOVES[Math.max(0, index)] ?? move;
 
   return (
-    <WellnessShell product="stretch" title="Stretch" lead="One five-minute desk routine. Follow the countdown, swap sides on the cue.">
+    <WellnessShell
+      product="stretch"
+      title="Stretch"
+      lead="One five-minute desk routine. Follow the countdown, swap sides on the cue."
+      status={<SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />}
+    >
       <Card style={s.big}>
         <Text variant="caption" tone="ink3">{session.running || finished ? `MOVE ${index + 1} OF ${MOVES.length}` : "DESK MOBILITY · THE ROUTINE"}</Text>
         <Text variant="title1">{session.running || finished ? current.label : MOVES[0].label}</Text>
@@ -100,7 +108,7 @@ export default function Stretch() {
         </Text>
         <Button title="Back to the wellness hub" variant="ghost" onPress={() => router.push("/habits")} />
       </Card>
-          <InsightPanel screen="stretch" unitsLabel="moves" weeklyGoal={5} />
+          <InsightPanel screen="stretch" unitsLabel="moves" weeklyGoal={settings.weeklyGoal} />
     </WellnessShell>
   );
 }

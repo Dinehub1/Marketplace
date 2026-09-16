@@ -74,6 +74,9 @@ const SCREENS = [
   // of a game that cannot score looks exactly like one that can.
   { name: 'tap-sprint', route: '/tap-sprint', expect: ['How fast are your taps?'], interact: 'tap-sprint-hit' },
   { name: 'word-duel', route: '/word-duel', expect: ['How many words in sixty seconds?'], interact: 'word-duel-pick' },
+  // The untimed one. Its picture is taken with a piece already on the board, which is
+  // the only version of this screen that proves the two-tap placement works.
+  { name: 'block-clear', route: '/block-clear', expect: ['Fit the blocks, clear the lines', 'Eight by eight'], interact: 'block-clear-place' },
   // The paywall is a web page, not an app screen, but it is where the money is
   // taken — so it belongs in the same gallery.
   { name: 'paywall', url: `${WEB_BASE}/unlock/33`, expect: ['Verify your', '₹'] },

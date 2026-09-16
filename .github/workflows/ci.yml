@@ -2,8 +2,12 @@ name: CI
 
 on:
   pull_request:
+  # `main`, not `master`. The hourly build job commits straight to `main`, and
+  # `origin/master` was deleted upstream — so with `master` here, every push skipped CI
+  # entirely. That is how the mobile workspace sat with a failing typecheck and a
+  # stale dependency tree without anything going red.
   push:
-    branches: [master]
+    branches: [main]
 
 # A new push to the same PR makes the in-flight run irrelevant; cancel it rather
 # than paying for a result nobody will read.
@@ -42,6 +46,12 @@ jobs:
       # of shipping two products that disagree about their own URLs.
       - name: Shared-contract tests
         run: npm test
+
+      # The duplicate-listing gate. Play rejects "Spam and Minimum Functionality" and
+      # Apple rejects guideline 4.3; this is the check that two of the eighteen apps have
+      # not drifted into being one app wearing two icons.
+      - name: Store targets are distinct
+        run: npm run check:targets
 
       # Non-blocking on purpose. The repo carries ~136 pre-existing lint errors
       # (mostly no-explicit-any and unescaped entities) that predate the
@@ -96,13 +106,31 @@ jobs:
       - name: Install
         run: npm ci
 
+      # Resolves the real app.config.ts for all eighteen targets and asserts a unique
+      # name, slug and bundle id, art on disk, and a first screen that exists. Runs on
+      # every push because a target whose config stopped resolving is otherwise found on
+      # submission day, one failed build at a time.
+      - name: Every target resolves (fleet gate)
+        run: npm run check:fleet
+
       # Metro resolution in a workspace is the fragile part of this setup —
       # duplicate React, unmapped @hermes/* packages, a missing expo-router
       # transform. All three typecheck fine and only fail here, so an actual
       # export is the only check worth running.
-      - name: Export iOS + Android bundles
+      #
+      # One target per family rather than all eighteen: the JS bundle is identical
+      # across targets (the target lives in the native config, not the JS), so these
+      # four exercise the entry redirect, the wellness tabs, the product hub and the
+      # games for every shape of app this repo builds.
+      - name: Export bundles (one target per family)
         working-directory: apps/mobile
-        run: npx expo export --platform all --output-dir /tmp/export
+        run: |
+          set -euo pipefail
+          for t in sarkarmarketplace breathe toolbox tap-sprint; do
+            echo "::group::export $t"
+            APP_TARGET="$t" npx expo export --platform all --output-dir "/tmp/export-$t"
+            echo "::endgroup::"
+          done
         env:
           EXPO_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-anon-key

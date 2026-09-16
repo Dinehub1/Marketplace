@@ -5,6 +5,10 @@
  * behind "More", so Water and Japa cannot both be tabs. They are real screens with real
  * jobs, so they live one push away from here — and this is also the one screen that can
  * show today's count for both without opening either.
+ *
+ * The numbers here come from the shared store (lib/session.ts), which reads the device cache
+ * first and the main database second, so this page is right with no signal and still right
+ * after a reinstall. The badge under the title is which of the two is currently true.
  */
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
@@ -12,6 +16,7 @@ import { useRouter } from "expo-router";
 import { radius, space } from "@hermes/tokens";
 import { Card, Press, Text } from "@/components/ui";
 import { WellnessShell } from "@/components/wellness-shell";
+import { SyncBadge } from "@/components/sync-badge";
 import { useWellnessStore } from "@/lib/session";
 import { useProductUI } from "@/lib/product-ui";
 
@@ -26,7 +31,12 @@ export default function Habits() {
   const sleep = useWellnessStore("sleep");
 
   return (
-    <WellnessShell product="habits" title="Today" lead="Two counts, two routines, all kept on this phone. No account, no signal needed.">
+    <WellnessShell
+      product="habits"
+      title="Today"
+      lead="Your counts and routines, kept on this phone and backed up privately. No account, no signal needed."
+      status={<SyncBadge sync={water.sync} pending={water.pending} lastSyncedAt={water.lastSyncedAt} />}
+    >
       <View style={s.row}>
         <Counter
           ui={ui}
@@ -61,7 +71,7 @@ export default function Habits() {
       <Press style={s.card} onPress={() => router.push("/sleep")} accessibilityRole="button">
         <Text variant="title3">Sleep</Text>
         <Text variant="meta" tone="ink2">
-          Four rounds, then lights out
+          Four rounds, then lights out{sleep.last ? ` · last ${sleep.last.label}` : " · no wind-down yet"}
         </Text>
       </Press>
 

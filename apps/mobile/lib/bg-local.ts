@@ -66,7 +66,21 @@ export function onDeviceSupported(): boolean {
 
 // `new Function` rather than `import()`: Metro rewrites the latter and would try
 // to resolve a URL as a package. The browser is the only thing that sees this.
-const loadLib = new Function("url", "return import(url)") as (u: string) => Promise<any>;
+//
+// Built LAZILY, and that is load-bearing. `new Function` parses its body as a *script*,
+// and dynamic `import()` is not valid in a script — Chrome allows it, Hermes does not. As
+// a top-level `const` this threw the instant the module was evaluated, on every launch on
+// iOS and Android, flag or no flag, because expo-router requires every route module to
+// build its route tree. Two screens away it surfaced as `Route "./tools/bg-remove.tsx" is
+// missing the required default export` — which is what a module that throws on import
+// looks like from the outside. It never appeared on the web build, where it was measured.
+let loadLibFn: ((u: string) => Promise<unknown>) | null = null;
+function loadLib(url: string): Promise<unknown> {
+  if (!loadLibFn) {
+    loadLibFn = new Function("url", "return import(url)") as (u: string) => Promise<unknown>;
+  }
+  return loadLibFn(url);
+}
 
 let pipelinePromise: Promise<any> | null = null;
 let pipelineCached = false;

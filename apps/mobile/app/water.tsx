@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { radius, space } from "@hermes/tokens";
 import { Button, Card, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
+import { SyncBadge } from "@/components/sync-badge";
 import { useSettings } from "@/lib/settings";
 import { WellnessShell } from "@/components/wellness-shell";
 import { useWellnessStore } from "@/lib/session";
@@ -34,7 +35,13 @@ export default function Water() {
   const pct = Math.min(1, done / target);
 
   return (
-    <WellnessShell product="water" title="Water" lead="Tap once per glass. The count resets when the date does." tabBar={false}>
+    <WellnessShell
+      product="water"
+      title="Water"
+      lead="Tap once per glass. The count resets when the date does."
+      tabBar={false}
+      status={<SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />}
+    >
       <Card style={s.big}>
         <Text variant="caption" tone="ink3">TODAY</Text>
         <Text variant="hero" style={{ color: ui.accent }}>{done}</Text>

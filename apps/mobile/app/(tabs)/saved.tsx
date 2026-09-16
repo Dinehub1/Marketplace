@@ -36,7 +36,7 @@ export default function SavedScreen() {
           <EmptyState
             title="Nothing saved yet"
             body="Tap the bookmark on any listing and it stays here — phone number included, so it works with no signal."
-            action={<Button title="Browse the directory" onPress={() => router.push("/")} />}
+            action={<Button title="Browse the directory" onPress={() => router.push("/browse")} />}
           />
         )
       }

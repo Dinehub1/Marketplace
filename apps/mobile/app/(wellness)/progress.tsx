@@ -10,11 +10,12 @@
  * bars hold at most five items, so the practices are tabs and the analytics live here.
  */
 import { useMemo, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { radius, space } from "@hermes/tokens";
 import { Press, Text, Card } from "@/components/ui";
 import { BarChart, HeatStrip, Ring } from "@/components/charts";
 import { WellnessShell } from "@/components/wellness-shell";
+import { SyncBadge } from "@/components/sync-badge";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
 import { useSettings } from "@/lib/settings";
 import { useWellnessStore } from "@/lib/session";
@@ -72,16 +73,23 @@ export default function Progress() {
   );
   const all = useMemo(() => totals(store.sessions), [store.sessions]);
 
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayKey = store.todayKey;
   const done = entry.counting ? (counts?.[todayKey] ?? 0) : weekOverWeek(store.sessions).thisWeek;
-  // The goal comes from the Profile page, so the ring cannot disagree with the setting.
-  const goal = entry.counting ? settings.waterGoal : settings.weeklyGoal;
+  // The goal comes from the Profile page where it is a setting, and from the roster where it
+  // is a property of the practice. Water is the one counter whose target a person chooses;
+  // Japa's 108 is not a preference, and reading `waterGoal` for it drew an 8-bead ring.
+  const goal = entry.counting
+    ? entry.key === "water"
+      ? settings.waterGoal
+      : entry.goal
+    : settings.weeklyGoal;
 
   return (
     <WellnessShell
       product="breathe"
       title="Progress"
-      lead="Six practices, counted on this phone. Nothing here is uploaded and nothing is shared."
+      lead="Six practices, counted on this phone and backed up privately. Nothing here is shared with anyone."
+      status={<SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />}
     >
       <Card>
         <Text variant="caption" tone="ink3">ALL SIX</Text>

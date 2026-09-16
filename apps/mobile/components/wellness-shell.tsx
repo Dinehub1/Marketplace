@@ -19,6 +19,7 @@ export function WellnessShell({
   product,
   title,
   lead,
+  status,
   children,
   scroller = true,
   tabBar = true,
@@ -26,6 +27,8 @@ export function WellnessShell({
   product: string;
   title: string;
   lead: string;
+  /** One line under the lead — the sync badge, on every screen that writes data. */
+  status?: ReactNode;
   children: ReactNode;
   scroller?: boolean;
   /** False on pushed screens: there is no tab bar to clear, and they need a back control
@@ -41,6 +44,7 @@ export function WellnessShell({
       {!tabBar ? <BackToToday /> : null}
       <Text variant="title2">{title}</Text>
       <Text variant="meta" tone="ink2">{lead}</Text>
+      {status ? <View style={s.status}>{status}</View> : null}
     </View>
   );
 
@@ -90,5 +94,6 @@ export function styles(ui: ProductUI) {
     root: { flex: 1, backgroundColor: ui.bg },
     wrap: { paddingHorizontal: space.base },
     head: { gap: 4, marginBottom: space.base },
+    status: { marginTop: 2 },
   });
 }

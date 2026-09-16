@@ -7,16 +7,19 @@
  * streak as the reason to come back tomorrow. Charts nobody reads are worse than no
  * charts, so this file deliberately stops there.
  *
- * All of it is derived from the sessions the screen already saved, on the device. Nothing
- * here is uploaded, and nothing is stored twice.
+ * All of it is derived from the sessions the screen already saved, so nothing is stored
+ * twice. The sessions themselves now live in the main database as well as on the device
+ * (lib/wellness-db.ts); the footer of the panel reports which of the two is current rather
+ * than claiming a state it cannot see.
  */
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { radius, space } from "@hermes/tokens";
 import { Card, Text } from "@/components/ui";
-import { useProductUI, type ProductUI } from "@/lib/product-ui";
+import { useProductUI } from "@/lib/product-ui";
 import { useWellnessStore, type SessionRecord } from "@/lib/session";
+import { SyncBadge } from "@/components/sync-badge";
 import {
   dailyBuckets,
   dailyBucketsFromCounts,
@@ -158,9 +161,11 @@ export function InsightPanel({
   /** Units a day, for the counter screens. */
   dailyGoal?: number;
   /**
-   * Sessions to draw, for a screen that keeps its own history (Breathe stores under
-   * `dropby-breathe` from before this store existed). Passing them beats duplicating the
-   * write. Consolidating that key is queued.
+   * Sessions to draw, for a screen that keeps a history of its own.
+   *
+   * Breathe used to be the only caller, because it wrote to a `dropby-breathe` key nothing
+   * else could read. That key is gone — every practice now records into the shared store, so
+   * this prop is no longer passed anywhere and exists only until the next caller needs it.
    */
   sessions?: SessionRecord[];
 }) {
@@ -177,7 +182,9 @@ export function InsightPanel({
   const last = useMemo(() => recent(sessions, 3), [sessions]);
 
   const totalUnits = counting ? week.reduce((n, b) => n + b.count, 0) : all.count;
-  const todayUnits = counting ? (counts![new Date().toISOString().slice(0, 10)] ?? 0) : all.count;
+  // The store's own "today", so the tile and the counter it describes cannot disagree across
+  // midnight or in a timezone the UTC date has already left behind.
+  const todayUnits = counting ? (counts![store.todayKey] ?? 0) : all.count;
   const goal = counting ? (dailyGoal ?? 0) : weeklyGoal;
   const done = counting ? todayUnits : wow.thisWeek;
   const untilGoal = Math.max(0, goal - done);
@@ -230,7 +237,7 @@ export function InsightPanel({
         <View style={{ marginTop: space.lg, gap: space.xs }}>
           <Text variant="caption" tone="ink3">RECENT</Text>
           {last.map((s) => (
-            <View key={s.at} style={{ flexDirection: "row", justifyContent: "space-between" }}>
+            <View key={s.clientId ?? `${s.at}-${s.units}`} style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text variant="meta" tone="ink2">{whenLabel(s.at)}</Text>
               <Text variant="meta" tone="ink3">{s.units} {unitsLabel}{s.minutes ? ` · ${s.minutes}m` : ""}</Text>
             </View>
@@ -238,9 +245,14 @@ export function InsightPanel({
         </View>
       ) : null}
 
-      <Text variant="caption" tone="ink3" style={{ marginTop: space.md }}>
-        Counted on this phone. Nothing is uploaded.
-      </Text>
+      {/* The only claim this panel makes about the network, and it is read from the store
+          rather than assumed: backed up, on this phone, or syncing right now. */}
+      <SyncBadge
+        sync={store.sync}
+        pending={store.pending}
+        lastSyncedAt={store.lastSyncedAt}
+        style={{ marginTop: space.md }}
+      />
     </Card>
   );
 }
