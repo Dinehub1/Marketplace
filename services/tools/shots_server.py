@@ -772,6 +772,24 @@ EXPO_GO_FALLBACK = os.environ.get("EXPO_GO_URL", "").rstrip("/")
 _GO_CACHE = {"at": 0.0, "url": ""}
 
 
+def _tunnel_answers(url: str, timeout: float = 2.5) -> bool:
+    """Does this Expo Go address actually serve the app right now?
+
+    A printed QR is a promise. A pinned URL outlives the dev server that created it —
+    exactly what happened here: a stale `exp://…exp.direct` stayed in the page and
+    eleven codes pointed at a tunnel that answered 404. So a candidate address is used
+    only after it has answered; otherwise the card shows no Expo Go code at all, and the
+    footer says why.
+    """
+    probe = url.replace("exp://", "https://", 1).rstrip("/") + "/"
+    try:
+        req = urllib.request.Request(probe, headers={"User-Agent": "dropby-shots/1"})
+        with urllib.request.urlopen(req, timeout=timeout) as fh:
+            return 200 <= fh.status < 400
+    except Exception:
+        return False
+
+
 def expo_go_url(max_age: float = 10.0) -> str:
     """The live Expo Go address, or "" when nothing is tunnelling.
 
@@ -782,7 +800,8 @@ def expo_go_url(max_age: float = 10.0) -> str:
     now = time.time()
     if now - _GO_CACHE["at"] < max_age:
         return _GO_CACHE["url"]
-    found = EXPO_GO_FALLBACK
+
+    found = ""
     try:
         with urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=1.0) as fh:
             data = json.load(fh)
@@ -793,6 +812,11 @@ def expo_go_url(max_age: float = 10.0) -> str:
                 break
     except Exception:
         pass
+
+    if not found:
+        found = EXPO_GO_FALLBACK
+    if found and not _tunnel_answers(found):
+        found = ""
     _GO_CACHE.update(at=now, url=found)
     return found
 
