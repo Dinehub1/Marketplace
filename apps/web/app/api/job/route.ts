@@ -372,6 +372,25 @@ export async function POST(req: NextRequest) {
     const res = await callWorker(spec.engine, blobs, params);
     if (!res.ok) {
       const text = (await res.text().catch(() => "")).slice(0, 300);
+      // The engine answers 400 for a request it cannot honour (a page range, a
+      // count, a shape) with a message written for the caller. Passing that status
+      // and text through is the difference between "a 2x1 sheet holds only 2
+      // photos" and a 502 "Could not finish the job. Please try again.", which
+      // blames the server for the caller's own input. Anything 5xx stays a 502:
+      // that one really is ours.
+      if (res.status >= 400 && res.status < 500) {
+        let reason = "";
+        try {
+          reason = String(JSON.parse(text)?.error ?? "").slice(0, 300);
+        } catch {
+          reason = text;
+        }
+        await recordFailure(product, phone, inputKey, `bad request: ${reason || res.status}`, Date.now() - started);
+        return NextResponse.json(
+          { error: reason || "That request cannot be made" },
+          { status: 400, headers: noStore },
+        );
+      }
       throw new Error(`worker ${res.status}: ${text}`);
     }
     contentType = (res.headers.get("content-type") ?? "image/jpeg").split(";")[0].trim();

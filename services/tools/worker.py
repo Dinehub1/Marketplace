@@ -28,6 +28,20 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from PIL import Image, ImageOps
 
+
+class UserError(RuntimeError):
+    """A job that cannot be done because the *request* is wrong, not the server.
+
+    Kept separate from RuntimeError so the handler can answer **400** with the
+    reason — every message raised as a UserError is written for a caller to read —
+    instead of a 500, which the Next route maps to a 502 "Could not finish the
+    job. Please try again." With one status for both, nobody can tell "you asked
+    for something impossible" from "the server broke": three photos into a 2x1
+    collage looked like an outage. Real faults — pdfcpu missing, no AI token, an
+    upstream failure — stay RuntimeError and keep answering 500.
+    """
+
+
 # --- passport photo specification ------------------------------------------------
 # Photos are printed on 4x6 inch paper at 300 dpi, so the customer prints once and
 # cuts. How many fit is a consequence of the chosen size, not a fixed "4-up".
@@ -367,12 +381,12 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
 
         if action == "merge":
             if len(srcs) < 2:
-                raise RuntimeError("merge needs at least two PDFs")
+                raise UserError("merge needs at least two PDFs")
             _pdfcpu(["merge", out_path, *srcs])
         elif action == "split":
             pages = (params.get("pages") or "").strip()
             if not pages:
-                raise RuntimeError("split needs a page range, e.g. 1-3,7")
+                raise UserError("split needs a page range, e.g. 1-3,7")
             # `trim` keeps the named pages and writes them as a new document. The
             # flag is `-p/--pages`; the long spelling with one dash is rejected by
             # pdfcpu's arg parser ("accepts between 1 and 2 arg(s), received 3").
@@ -394,9 +408,9 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             try:
                 angle = int(float(raw_angle))
             except ValueError:
-                raise RuntimeError(f"angle must be one of: {', '.join(str(a) for a in PDF_ROTATIONS)}")
+                raise UserError(f"angle must be one of: {', '.join(str(a) for a in PDF_ROTATIONS)}")
             if angle not in PDF_ROTATIONS:
-                raise RuntimeError(f"angle must be one of: {', '.join(str(a) for a in PDF_ROTATIONS)}")
+                raise UserError(f"angle must be one of: {', '.join(str(a) for a in PDF_ROTATIONS)}")
             pages = (params.get("pages") or "").strip()
             args = ["rotate"]
             if pages:
@@ -414,9 +428,9 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             try:
                 pos = int((params.get("position") or PDF_NUMBER_DEFAULT_ANCHOR))
             except ValueError:
-                raise RuntimeError("position must be a number from 1 to 9 (1 = top-left, 9 = bottom-right)")
+                raise UserError("position must be a number from 1 to 9 (1 = top-left, 9 = bottom-right)")
             if pos not in PDF_NUMBER_ANCHORS:
-                raise RuntimeError("position must be a number from 1 to 9 (1 = top-left, 9 = bottom-right)")
+                raise UserError("position must be a number from 1 to 9 (1 = top-left, 9 = bottom-right)")
             pages = (params.get("pages") or "").strip()
             args = ["stamp", "add", "-m", "text"]
             if pages:
@@ -426,7 +440,7 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             description = f"pos:{PDF_NUMBER_ANCHORS[pos]}, rot:0, points:10, offset: 0 14, color:#333333"
             _pdfcpu([*args, "--", pdf_number_text(params.get("text") or ""), description, srcs[0], out_path])
         else:
-            raise RuntimeError(f"unknown pdf action: {action}")
+            raise UserError(f"unknown pdf action: {action}")
 
         with open(out_path, "rb") as fh:
             out = fh.read()
@@ -588,7 +602,7 @@ def image_toolkit(data: bytes, params: dict) -> tuple[bytes, dict]:
     elif op in ("compress", "convert"):
         steps.append(op)  # the save step below does the work
     else:
-        raise RuntimeError(f"unknown image op: {op}")
+        raise UserError(f"unknown image op: {op}")
 
     fmt_key = (params.get("format") or ("png" if op == "convert" else _fmt_of(src))).strip().lower().lstrip(".")
     pil_fmt, content_type = IMAGE_FORMATS.get(fmt_key, ("JPEG", "image/jpeg"))
@@ -649,13 +663,13 @@ PHOTOS_TO_PDF_MAX = 20
 def photos_to_pdf(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     """One PDF, one photo per page (pdfcpu `import`), order preserved."""
     if len(inputs) == 0:
-        raise RuntimeError("no photos to convert")
+        raise UserError("no photos to convert")
     if len(inputs) > PHOTOS_TO_PDF_MAX:
-        raise RuntimeError(f"up to {PHOTOS_TO_PDF_MAX} photos per PDF")
+        raise UserError(f"up to {PHOTOS_TO_PDF_MAX} photos per PDF")
     t0 = time.time()
     fmt = PDF_PAGE_FORMATS.get((params.get("pagesize") or "a4").strip().lower())
     if not fmt:
-        raise RuntimeError(f"unknown page size: {params.get('pagesize')}")
+        raise UserError(f"unknown page size: {params.get('pagesize')}")
 
     with tempfile.TemporaryDirectory() as td:
         srcs: list[str] = []
@@ -702,18 +716,21 @@ def collage(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     """2-4 photos onto one white mat, each cropped to its cell."""
     n = len(inputs)
     if n < 2:
-        raise RuntimeError("a collage needs at least 2 photos")
+        raise UserError("a collage needs at least 2 photos")
     if n > COLLAGE_MAX:
-        raise RuntimeError(f"up to {COLLAGE_MAX} photos per collage")
+        raise UserError(f"up to {COLLAGE_MAX} photos per collage")
     t0 = time.time()
     layout = (params.get("layout") or "auto").strip().lower()
     if layout not in COLLAGE_LAYOUTS:
-        raise RuntimeError(f"unknown layout: {layout}")
+        raise UserError(f"unknown layout: {layout}")
     cols, rows = COLLAGE_LAYOUTS[layout] or ((n, 1) if n in (2, 3) else (2, 2))
     if cols * rows < n:
-        raise RuntimeError(f"a {cols}x{rows} sheet holds only {cols * rows} photos")
-    cell = max(240, min(2400, int(params.get("cell_px") or 1080)))
-    gap = max(0, min(120, int(params.get("gap") or 16)))
+        raise UserError(f"a {cols}x{rows} sheet holds only {cols * rows} photos")
+    try:
+        cell = max(240, min(2400, int(params.get("cell_px") or 1080)))
+        gap = max(0, min(120, int(params.get("gap") or 16)))
+    except (TypeError, ValueError):
+        raise UserError("cell_px and gap must be whole numbers of pixels")
 
     sheet = Image.new("RGB", (cols * cell + gap * (cols + 1), rows * cell + gap * (rows + 1)),
                       (255, 255, 255))
@@ -1074,13 +1091,18 @@ def _invoice_json(inv: dict) -> dict:
 def invoice_maker(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     """A shop's bill, rendered locally: JSON in, one-page A4 PDF out."""
     t0 = time.time()
-    payload = json.loads(params.get("payload") or "{}")
+    try:
+        payload = json.loads(params.get("payload") or "{}")
+    except ValueError as exc:
+        raise UserError(f"payload is not valid JSON: {exc}")
+    if not isinstance(payload, dict):
+        raise UserError("payload must be a JSON object")
     shop = str(payload.get("shop") or "").strip()
     customer = str(payload.get("customer") or "").strip()
     if not shop:
-        raise RuntimeError("shop name is required")
+        raise UserError("shop name is required")
     if not customer:
-        raise RuntimeError("customer name is required")
+        raise UserError("customer name is required")
 
     raw_items = payload.get("items") or []
     items = []
@@ -1100,7 +1122,7 @@ def invoice_maker(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
         items.append({"name": name, "qty": qty, "rate": rate, "amount": round(qty * rate, 2),
                       "gst_rate": line_rate, "hsn": hsn or None})
     if not items:
-        raise RuntimeError("at least one item with a name and a rate is required")
+        raise UserError("at least one item with a name and a rate is required")
 
     rate = max(0.0, min(28.0, _num(payload.get("gstRate"))))
     for it in items:
@@ -1283,7 +1305,7 @@ def ai_image(params: dict) -> tuple[bytes, dict]:
     """Generate an image from ?prompt=. Returns (image_bytes, meta)."""
     prompt = (params.get("prompt") or "").strip()
     if not prompt:
-        raise ValueError("prompt is required")
+        raise UserError("prompt is required")
     model = (params.get("model") or CF_AI_MODEL).strip()
     token = _cf_ai_token()
     if not token:
@@ -1386,6 +1408,12 @@ class Handler(BaseHTTPRequestHandler):
         try:
             inputs = self._inputs(data) if data else []
             out, meta = run_job(parts[1], inputs, params)
+        except UserError as exc:
+            # The request is wrong, not the server: 400 so the caller (the Next
+            # route, and through it the app or a script) can show the reason. Every
+            # UserError message is written to be read by the person who sent the job.
+            print(f"worker: 400 {parts[1]}: {exc}", flush=True)
+            return self._send(400, json.dumps({"error": str(exc)[:200]}).encode(), "application/json")
         except Exception as exc:
             return self._send(500, json.dumps({"error": str(exc)[:200]}).encode(), "application/json")
         # A product that changes the file type says so; everything else keeps the
@@ -1412,11 +1440,16 @@ class Handler(BaseHTTPRequestHandler):
         ctype = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
         if ctype != "application/json":
             return [data]
-        env = json.loads(data.decode("utf-8"))
-        files = env.get("files") or []
-        # A data-only job (an invoice is JSON, not an upload) legitimately has no
-        # files — the product's parameters are the input.
-        return [base64.b64decode(f["data"]) for f in files]
+        try:
+            env = json.loads(data.decode("utf-8"))
+            files = env.get("files") or []
+            # A data-only job (an invoice is JSON, not an upload) legitimately has no
+            # files — the product's parameters are the input.
+            return [base64.b64decode(f["data"]) for f in files]
+        except (ValueError, AttributeError, TypeError, KeyError) as exc:
+            # A malformed envelope is the caller's mistake, and the one case where
+            # saying so is the whole answer.
+            raise UserError(f"body is not a valid job envelope: {exc}")
 
     def do_GET(self):  # noqa: N802
         if self.path == "/health":

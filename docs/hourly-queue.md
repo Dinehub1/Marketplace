@@ -360,8 +360,42 @@ prevent. `pages` is only *required* for split, never shape-checked. Two things t
 separators, e.g. `/^\d+([-,]\d+)*$/`) with a 400 naming the format, and decide what `pages=-1`
 should be — today it is accepted and produces a file (200), so either it is meaningful to
 pdfcpu or it silently returns the wrong pages; measure it before allowing it.
+**Update 2026-09-16 (item 19 landed):** the route now passes an engine 4xx through as a 400 with
+the engine's message, so this item's fix is only the shape check plus the `-1` question.
+Re-measured through `https://expo.dropby.co.in/api/job` after that change: `split` with
+`pages=abc` is **still 502**, because pdfcpu's own failure remains an engine 500 (the engine's
+*own* validations are the ones that answer 400 now).
 
-### 19. Engine: a bad request from the caller comes back as 500 (→ 502), not 400 (open, found 2026-09-16)
+### 19. Engine: a bad request from the caller comes back as 500 (→ 502), not 400 — DONE 2026-09-16
+Result: caller mistakes now answer **400 with the reason**, and only real faults stay a 500.
+In `services/tools/worker.py` there is a `class UserError(RuntimeError)` and every raise written
+for a *caller* to read became one: merge with one PDF, split with no range, an unsupported angle,
+a bad page-number position, an unknown pdf action, an unknown image op, 0/>20 photos, an unknown
+page size, collage photo counts and an unfillable grid, non-numeric `cell_px`/`gap`, a missing
+shop/customer/items, a `payload` that is not JSON, a missing prompt, and a malformed job envelope
+(which used to be an unhandled `json` error). Genuine faults deliberately stay `RuntimeError` →
+500: pdfcpu missing, a pdfcpu failure, no AI token, an empty Workers AI response.
+`Handler.do_POST` catches `UserError` **before** `Exception` and answers 400 (and prints
+`worker: 400 <product>: <reason>` into the pm2 log). In `apps/web/app/api/job/route.ts` an engine
+answer in 400–499 is passed through as a **400 carrying the engine's own sentence** instead of
+being collapsed into the 502; 5xx still maps to 502.
+Evidence (16 engine cases on `127.0.0.1:8099`, then 4 through the public route): 3 photos +
+`layout=2x1` → **400 `a 2x1 sheet holds only 2 photos`** (was 502); `cell_px=abc`, `op=bogus`,
+`angle=45`, split with no range, `position=99`, `action=bogus`, `pagesize=a0`, `payload={nope`,
+no shop name, no prompt, malformed envelope → all **400** with a readable message; rotate on a
+file that is not a PDF → still **500→502** `xref table: no header version available`; real jobs
+still **200** (collage 2x1, merge, invoice with HSN/UPI intact, image resize). Through
+`https://expo.dropby.co.in/api/job`: 400 with the sentence above, an unreadable PDF still 502,
+and 2 photos → **job 91**, `grid 2x1`, `size_out 2208x1112`, whose R2 file re-downloaded is a
+**19,173-byte JPEG** = `bytes_out`. No screen change was needed: `apps/mobile/lib/tools.ts`
+already throws `json.error`, so the app now shows the engine's reason.
+Process note: a plain `pm2 restart dropby-worker` this hour put pm2 into a **restart loop**
+(↺ 63 → 72, status `waiting restart`) because the new worker retires the very pid pm2 is
+tracking; recovered with `pm2 stop dropby-worker` → port free → `pm2 start ecosystem.config.js
+--only dropby-worker`, then stable for 40 s+ with one listener and `health.pid == pm2 pid`
+(3316). Do not loop on `pm2 restart`: stop, confirm 8099 is free, then start.
+Still open next door: item 18 (`pages=abc` is still a 502 — the engine's *shape* check now
+answers 400 for its own validations, but pdfcpu's failure on a nonsense range is still a 500).
 Found while guarding the collage screen: `POST https://expo.dropby.co.in/api/job` with
 `product=collage, layout=2x1` and **3** photos answers **502** — the only thing wrong was
 the request. The engine raises `RuntimeError("a 2x1 sheet holds only 2 photos")` for caller
@@ -376,3 +410,18 @@ instead of masking it, and the app can say the reason rather than "Could not fin
 Measured this hour: `pagesize=a0` → 400 (route-side check, correct), 3 photos + `layout=2x1`
 → 502 (engine 500). The three new screens guard their own inputs, so this is reachable today
 only from a script or a future screen.
+
+### 20. Workers AI image generation already works — the route just has no `ai-image` entry (found 2026-09-16)
+Found while proving that a genuine fault still answers 500: `POST 127.0.0.1:8099/job/ai-image
+?prompt=...` returned **200 with a real 509,519-byte image** from
+`@cf/black-forest-labs/flux-1-schnell`, so the engine's hosted-model path is live today. The
+token comes from `AppData\Local\hermes\.env` (`CLOUDFLARE_API_TOKEN`), not from
+`apps/web/.env`, which holds **no** AI key at all — so item 14's premise ("blocked until
+`CLOUDFLARE_AI_TOKEN` exists in `apps/web/.env`") is worth re-reading: the worker is the
+server-side half, and the route talks to the worker, so the token does not have to move into
+the web app's env for a product to use it.
+Through the app it is still nothing: `POST https://expo.dropby.co.in/api/job` with
+`product=ai-image` answers **404 "Unknown product"** because `ai-image` has no `ENGINE` entry in
+`apps/web/app/api/job/route.ts`. By item 4's three-edit rule it also needs a `products` row and a
+screen. Candidate work: "Text to image" = one route entry + one catalogue row + one screen, with
+the price measured against the real per-image cost (item 16's job) rather than guessed.
