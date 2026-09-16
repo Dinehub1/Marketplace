@@ -74,7 +74,7 @@ const READY_TOOLS: Tool[] = [
     price: "Free · ₹299/mo",
     accent: "#b91c1c",
     route: "/tools/pdf",
-    status: "server",
+    status: "ready",
   },
   {
     id: "invoice-maker",
@@ -83,7 +83,38 @@ const READY_TOOLS: Tool[] = [
     price: "₹299/mo",
     accent: "#166534",
     route: "/tools/invoice",
-    status: "server",
+    status: "ready",
+  },
+  // The three engine-backed products that had no screen until now. All free: a
+  // re-save, a pdfcpu import and a Pillow sheet cost nothing per job.
+  {
+    id: "exif-strip",
+    name: "Photo metadata cleaner",
+    job: "Removes the location, camera and time tags from a photo.",
+    price: "Free",
+    accent: "#0e7490",
+    route: "/tools/exif-strip",
+    status: "ready",
+  },
+  {
+    id: "photos-to-pdf",
+    name: "Photos to PDF",
+    job: "Up to 20 photos into one PDF, one per page, in your order.",
+    price: "Free",
+    // Same red family as the PDF toolkit tile: they are both PDF jobs, and the
+    // colour is what says so at a glance.
+    accent: "#b91c1c",
+    route: "/tools/photos-to-pdf",
+    status: "ready",
+  },
+  {
+    id: "collage",
+    name: "Photo collage",
+    job: "Two to four photos on one sheet, cut to the same size.",
+    price: "Free",
+    accent: "#a16207",
+    route: "/tools/collage",
+    status: "ready",
   },
 ];
 
@@ -239,7 +270,8 @@ export default function ToolboxGrid() {
       <Text style={s.sectionNote}>
         READY runs the whole job today. SERVER SOON means the screen is finished but the
         engine has not been given that product yet — the job is refused, out loud, rather
-        than half-done.
+        than half-done. No card wears SERVER SOON right now: every card here has both its
+        screen and its engine.
       </Text>
       <View style={s.grid}>
         {READY_TOOLS.map((t) => (

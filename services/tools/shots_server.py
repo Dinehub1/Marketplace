@@ -62,6 +62,7 @@ GROUP_LABELS = {
 SCREEN_ORDER = [
     "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools",
     "pdf-tools-rotate", "pdf-tools-numbers",
+    "exif-strip", "photos-to-pdf", "collage",
     "invoice", "tap-sprint", "word-duel", "paywall",
 ]
 
@@ -287,6 +288,31 @@ SCREEN_INFO = {
         "what": "Shop name, items, totals, PDF out — the small-business product that a shopkeeper can "
                 "use with no instructions.",
         "asserts": ["Shop name", "Your shop"],
+    },
+    "exif-strip": {
+        "title": "Photo metadata cleaner",
+        "what": "A photo file carries more than the picture: GPS coordinates, the phone that took it, "
+                "the second it was taken. This screen lists the tags the photo arrived with, sends it "
+                "for a re-save without them, and then prints the tags the file you download carries — "
+                "read back from that file by the engine, not promised. Same pixels, same size; free, "
+                "because it is a re-save on our own server.",
+        "asserts": ["Choose a photo", "no location, no camera name"],
+    },
+    "photos-to-pdf": {
+        "title": "Photos to PDF",
+        "what": "Up to 20 photos into one PDF, one photo per page, in the order you picked them — the "
+                "set of ID photos a form asks for, or a shop's stock shots for a wholesaler. The stack "
+                "on screen is the order of the document. Pages are a real paper size (A4 / Letter / A5) "
+                "at 150 dpi, each photo centred keeping its own shape instead of stretched to the page.",
+        "asserts": ["Photos into", "Page size"],
+    },
+    "collage": {
+        "title": "Photo collage",
+        "what": "Two to four photos onto one sheet in the shape people post: two across, two stacked, "
+                "a 2 × 2 square or a strip of three. Every tile is cut to the same cell so the sheet "
+                "reads as one picture. A shape that cannot hold the photos is dimmed on screen with the "
+                "reason, rather than being sent and refused by the engine.",
+        "asserts": ["A few photos,", "Shape"],
     },
     "tap-sprint": {
         "title": "Tap Sprint — reflex game",

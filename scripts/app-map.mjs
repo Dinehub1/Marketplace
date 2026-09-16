@@ -41,6 +41,17 @@ const SCREEN_FOR_FIRST = {
   camera: null, // the camera capture screen is the product screen itself
 };
 
+/**
+ * Screens that belong to an app but do not carry a product slug: the toolbox
+ * grew three jobs (metadata cleaner, photos to PDF, collage) whose screens are
+ * part of that app's grid. Without this list they would sit in the gallery's
+ * "no app claims this screen" pile, which reads like an orphan rather than a
+ * toolbox feature.
+ */
+const EXTRA_SCREENS = {
+  toolbox: ['exif-strip', 'photos-to-pdf', 'collage'],
+};
+
 const { TARGETS } = await import(pathToFileURL(path.join(REPO, 'apps', 'mobile', 'targets.mjs')).href);
 
 function screensFor(t) {
@@ -53,6 +64,7 @@ function screensFor(t) {
   }
   const first = SCREEN_FOR_FIRST[t.firstScreen];
   if (first) out.add(first);
+  for (const s of EXTRA_SCREENS[t.id] ?? []) out.add(s);
   return [...out];
 }
 
