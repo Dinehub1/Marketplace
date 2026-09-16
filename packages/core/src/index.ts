@@ -217,9 +217,16 @@ export function isPageRange(value: string): boolean {
   return parts.every((p) => PDF_PAGE_EXPR.test(p) && /[0-9l]|^(?:even|odd)$/.test(p));
 }
 
-/** The sentence a caller gets when their range cannot be read (the route's 400). */
+/** The sentence a caller gets when their range cannot be read (the route's 400).
+ *
+ *  The exclusion is shown *attached to an inclusion* here too, not as a bare `!5`:
+ *  the two sentences in this file are the only place a caller learns the grammar,
+ *  and a bare exclusion is the one form pdfcpu parses and then aborts on (measured,
+ *  item 25: `trim -p '!5'` prints `missing page numbers` and writes a 0-byte file,
+ *  while `1-,!5` is really pages 1-4 of 5). Teaching a form the engine refuses is
+ *  how a caller ends up with a 400 it cannot act on. */
 export const PDF_PAGES_HELP =
-  "pages must select pages, e.g. 1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), !5 (exclude)";
+  "pages must select pages, e.g. 1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), 1-,!5 (all but page 5)";
 
 /** The same grammar said for a screen rather than an API — one line a person reads.
  *

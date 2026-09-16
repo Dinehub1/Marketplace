@@ -89,8 +89,17 @@ test("a page range the app offers is the one the engine runs", () => {
   // Both sentences must name the capability, or the user never learns `odd` exists.
   for (const s of [PDF_PAGES_HELP, PDF_PAGES_HINT]) {
     for (const word of ["odd", "even", "l"]) assert.ok(s.includes(word), `${word} missing from "${s}"`);
+    // ...and neither may advertise a bare exclusion, because pdfcpu parses it and
+    // then aborts with `missing page numbers` (0-byte output): an exclusion selects
+    // nothing on its own, it subtracts. Both sentences were measured against the
+    // engine in item 25; the route's own 400 taught the broken form until item 26.
+    assert.ok(s.includes("1-,!5"), `the attached exclusion is missing from "${s}"`);
+    assert.equal(
+      /(?:^|[\s(])(?:!|n)\d/.test(s),
+      false,
+      `"${s}" offers a bare exclusion, which selects nothing`,
+    );
   }
-  assert.ok(PDF_PAGES_HINT.includes("1-,!5"), "the hint must show an exclusion attached to an inclusion");
 });
 
 /**
