@@ -107,7 +107,20 @@ Not done here: no screen yet — the toolbox grid still lists nine tiles, so the
 products are engine-only until item 14. Also unfixed: posting to the public host from a
 script needs a browser User-Agent (Cloudflare answers a bare python-urllib POST with 403).
 
-### 5. Video products: background removal in video (MIT)
+### 5. Video products: background removal in video (MIT) — BLOCKED 2026-09-16 on CPU cost
+**Measured this hour, engine-side, before writing anything:** rembg's u2net costs **5.2 s per
+frame** on this 4-core box at 480x360 (the model's input is a fixed 320x320, so frame size does
+not buy anything — measured 5.2 s at 480x360 and the same class of cost at 960x540). A 3-second
+clip at 10 fps is therefore ~30 frames = **2.5 minutes of a full core**, and the engine's job
+timeout is 180 s, so a video product here could only pretend to exist for one or two seconds of
+footage. The cheaper model (`u2netp`, ~4.6 MB) **cannot be fetched**: the download from
+GitHub release assets stalled at **4.8 kB/s** and timed out at 6 % after 57 s (only `u2net.onnx`
+is in the local rembg cache; `~/.u2net` does not exist). `nadermx/backgroundremover` needs torch,
+which is not installed and is a multi-GB addition to the box that serves the live site.
+**Not blocked forever, blocked on this box:** the honest options are (a) a hosted video
+segmentation model through the Workers AI token that already works, or (b) a cap of ~12 frames
+with the cost said out loud, which is not a product. Do not start it again without measuring the
+per-frame cost first — the number is above.
 `nadermx/backgroundremover` **8,053★** MIT, Python — images *and video* via ffmpeg.
 Our angle: unlocks the subtitles/video app that has no engine today, on the same VM.
 Not before the tools above are solid.
@@ -425,6 +438,14 @@ Evidence: an invoice job whose output PDF contains a decodable QR, verified by d
   or the product needs a real paid tier — which for a text report means building a
   preview that can watermark text (there is no `pdf-stamp`/`watermark` path for
   `text/markdown` today). Not changed unilaterally.
+- **`ai-image` (Text to Image) pricing (from item 20):** the catalogue row is `price_paise 0` /
+  `plan free` and the route serves the job free, because the paywall cannot take money yet
+  (Razorpay keys, item 6). Unlike the three local products this one **costs real money to run**:
+  Cloudflare bills 172.8 neurons for one 1024x1024 4-step image ≈ **Rs 0.17**, with 10,000 free
+  neurons a day (~57 images/day) before the meter starts. So "Free" on the tile would be true for
+  the customer and untrue as a business — either it becomes a paid pack (and then it needs a
+  working gateway and a preview), or the free allowance is the whole offer and the tile says so
+  ("free while the daily allowance lasts", counting jobs). His call; nothing was changed.
 
 ### 15. Invoice: sequential invoice numbering — DONE 2026-09-16
 The bill number is typed by hand, so a shop that forgets it prints "No bill number" and two
@@ -573,7 +594,7 @@ Measured this hour: `pagesize=a0` → 400 (route-side check, correct), 3 photos 
 → 502 (engine 500). The three new screens guard their own inputs, so this is reachable today
 only from a script or a future screen.
 
-### 20. Workers AI image generation already works — the route just has no `ai-image` entry (found 2026-09-16)
+### 20. Workers AI image generation already works — the route just has no `ai-image` entry — DONE 2026-09-16
 Found while proving that a genuine fault still answers 500: `POST 127.0.0.1:8099/job/ai-image
 ?prompt=...` returned **200 with a real 509,519-byte image** from
 `@cf/black-forest-labs/flux-1-schnell`, so the engine's hosted-model path is live today. The
@@ -587,6 +608,39 @@ Through the app it is still nothing: `POST https://expo.dropby.co.in/api/job` wi
 `apps/web/app/api/job/route.ts`. By item 4's three-edit rule it also needs a `products` row and a
 screen. Candidate work: "Text to image" = one route entry + one catalogue row + one screen, with
 the price measured against the real per-image cost (item 16's job) rather than guessed.
+
+**Result:** the door exists — **Text to Image** is a live product.
+- `apps/web/app/api/job/route.ts`: ENGINE gained `"ai-image": { engine: "ai-image", dataOnly:
+  true, fields: ["prompt"], free: true }`. `dataOnly` because the prompt *is* the input — there
+  is no file, the same shape the invoice maker already uses — and only `prompt` is forwarded, so
+  a caller cannot pick a model nobody measured. `FIELD_LIMITS` gained `prompt: 300` (the default
+  120-character cap is too short for a sentence describing a picture).
+- Catalogue row inserted with the **Management API** (no SQL Editor, no credentials to move):
+  `slug ai-image`, name **Text to Image**, `price_paise 0`, `plan free`, `category photo`,
+  `sort_order 32`, `cost_model free_image`, `enabled true`.
+- Evidence through `https://expo.dropby.co.in/api/job` (browser User-Agent), **job 117** =
+  HTTP **200 in 6.3 s**, `meta.model @cf/black-forest-labs/flux-1-schnell`, `generated true`,
+  `bytes 306044`, `locked false`/`free true`, and the row in `product_jobs` is **done**
+  (`duration_ms 2905`). Its `output_url` re-downloaded from R2 = **306,044 B JPEG 1024x1024**
+  (57 distinct colours in an 8x8 sample, i.e. a drawn picture, not a flat placeholder).
+  Honest edges: no prompt → **400 `prompt is required`**; a >300-character prompt → **413
+  `prompt is too long`**; `exif-strip` re-run afterwards = job **119**, still 200, so the route
+  change broke nothing else. `npm run typecheck -w @hermes/web` exit 0, then the gated
+  `npm run build && pm2 restart hermes-web`; localhost:8080, `/galaxy`,
+  sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools all 200 after.
+- One caveat measured on the way: the **first** engine call this hour answered
+  `500 {"error": "HTTP Error 400: Bad Request"}` (Cloudflare rejecting the request once) and the
+  immediate retry answered 200 with a 569 KB JPEG. The engine collapses any CF failure into one
+  line (`ai_image` catches nothing between `urlopen` and the caller), so a transient upstream 400
+  reaches the app as a 502 — worth a retry-once in the engine if it recurs, not a change to make
+  from one sample.
+- Cost, measured against the published rate rather than guessed: 1024x1024 at 4 steps =
+  4 tiles x 4.8 + 4x4 x 9.6 = **172.8 neurons ≈ $0.0019 ≈ Rs 0.17 per image**, against
+  **10,000 free neurons a day (~57 images)**, then $0.011 per 1,000 neurons. The product is
+  free to the customer today because the paywall still has no working gateway; see the parking
+  lot — **what it should cost is his call.**
+Still open: **no screen and no tile** — the toolbox grid lists eight and none is this product
+(new item 28).
 
 ### 21. tap-sprint's playing field is inert on the web build — FIXED 2026-09-16
 **Cause, measured: it was not `locationX`/`locationY` (those arrive correctly) and not
@@ -768,5 +822,28 @@ avoided. DDL is possible now: run it with the **Management API**
 (`POST https://api.supabase.com/v1/projects/xpfmqpmhmcouwzebfwhb/database/query` with
 `SUPABASE_ACCESS_TOKEN` from `apps/web/.env`), not the SQL Editor. Evidence to require: the
 row exists (REST `GET /rest/v1/invoice_counters?select=*&limit=1` → 200), a bill made on one
-storage state advances the shared counter, and a cleared device store still offers the next
+bill made on one storage state advances the shared counter, and a cleared device store still offers the next
 number from the row.
+
+### 28. Text to image: give the live product a tile and a screen (new, 2026-09-16, from item 20)
+The engine and the route now serve it (job 117, 200, a real 1024x1024 JPEG) but nothing in the
+app can reach it: `apps/mobile/lib/tools.ts`'s `READY_TOOLS` lists eight tiles and none is
+`ai-image`, and `/tools/<slug>` has no screen for it. The screen's job is small and honest: a
+text field for the prompt (the route caps it at 300 characters and the engine refuses an empty
+one with `prompt is required`), the product's own accent colour, and a result card showing the
+returned picture plus what the engine said (`meta.model`, and the seconds the job took). Two
+decisions before the tile ships: the tile must not promise more than the model can do — flux is
+fast and literal, so the copy should say "describe it plainly, one picture per run" and not
+"design a logo" — and the price, which is the parking lot's question, not the robot's.
+
+### 29. Engine: one transient upstream failure is reported as a broken server (new, 2026-09-16, from item 20)
+Measured while wiring text-to-image: the first `POST /job/ai-image` this hour answered
+`500 {"error": "HTTP Error 400: Bad Request"}` and the identical retry answered **200** with a
+569 KB JPEG. Cloudflare had refused that one request (the token was fine — a direct call with
+the same token returned 200 in the same minute), so the app saw "Could not finish the job" for
+something that would have worked on a second try. `ai_image` in `services/tools/worker.py`
+turns every upstream failure into one line, and the route maps 5xx to 502, so an intermittent
+edge failure and a real fault look identical to the caller. Honest fix: retry a hosted-model
+call **once** on a 5xx/400 from the provider, and keep the second failure as the answer — with
+the attempt count in the meta so a job row shows what happened.
+
