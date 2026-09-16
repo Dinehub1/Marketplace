@@ -161,6 +161,31 @@ const PDF_ANGLES = ["90", "180", "270", "-90", "-180", "-270"];
 const PDF_NUMBER_POSITIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
 /**
+ * One page-selection expression, in pdfcpu's own grammar — read off v0.15.0's
+ * `pdfcpu selectedpages`, not assumed, because the obvious `\d+([-,]\d+)*` is
+ * *narrower than the engine*: pdfcpu really does accept `odd`, `even`, `l`/`l-3`
+ * (last page), `3-` / `-4` (open ends) and `!5`/`n5` (exclude). A check written
+ * from the guess would have refused values the engine handles correctly.
+ *
+ * What it does refuse is what pdfcpu calls a syntax error and answers a 500 for,
+ * which the app used to read as "the server broke" (a 502 from the engine):
+ * `abc`, `1;2`, `1--2`, `1.5`, `1 - 3`. Rejecting them here means a 400 naming the
+ * format *before* a 30 MB scan is uploaded, not after.
+ */
+const PDF_PAGE_EXPR = /^(?:even|odd)$|^[!n]?(?:l(?:-\+?\d+)?|\+?\d+)$|^[!n]?(?:l(?:-\+?\d+)?|\+?\d*)-(?:l(?:-\+?\d+)?|\+?\d*)$|^[!n]?-(?:l(?:-\+?\d+)?|\+?\d+)$/;
+
+/** A comma-separated list of the expressions above, e.g. `1-3,7,!4`. */
+function isPageRange(value: string): boolean {
+  const parts = value.split(",");
+  // `l` and a digit are the only characters a real expression needs; this is what
+  // keeps a bare `-` or `,` (which the grammar above would otherwise allow) out.
+  return parts.every((p) => PDF_PAGE_EXPR.test(p) && /[0-9l]|^(?:even|odd)$/.test(p));
+}
+
+const PDF_PAGES_HELP =
+  "pages must select pages, e.g. 1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), !5 (exclude)";
+
+/**
  * The photo jobs' enums and ceilings, mirroring PDF_PAGE_FORMATS / COLLAGE_LAYOUTS /
  * PHOTOS_TO_PDF_MAX / COLLAGE_MAX in services/tools/worker.py.
  *
@@ -309,6 +334,13 @@ export async function POST(req: NextRequest) {
     // take the whole document or fail, so say which it is before the upload.
     if (action === "split" && !params.pages) {
       return NextResponse.json({ error: "Split needs a page range, e.g. 1-3,7" }, { status: 400, headers: noStore });
+    }
+    // A range pdfcpu cannot parse is a syntax error there, i.e. a 500 -> 502 here.
+    // Measured on v0.15.0: `abc`, `1;2`, `1--2` and `1.5` all fail that way, while
+    // `1-3`, `1-`, `odd`, `l` and `!6` are real selections. Shape-checked here so the
+    // caller is told the format instead of the app reporting a broken server.
+    if (params.pages && !isPageRange(params.pages)) {
+      return NextResponse.json({ error: PDF_PAGES_HELP }, { status: 400, headers: noStore });
     }
   }
 

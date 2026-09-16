@@ -365,6 +365,46 @@ def pdf_number_text(text: str) -> str:
     return out.replace("{n}", "%p").replace("{total}", "%P")
 
 
+# pdfcpu's page-selection grammar, from `pdfcpu selectedpages` on v0.15.0 — read off
+# the binary, not guessed. A range the caller typed is *their* input, so a bad one has
+# to arrive as a 400 carrying a sentence that says what a good one looks like.
+PDF_PAGES_HINT = (
+    "pages must select pages of the PDF, e.g. 1-3,7 — pdfcpu also takes odd, even, "
+    "l (the last page), 3- (from page 3 on) and !5 (exclude page 5)"
+)
+
+
+def _pdfcpu_pages(args: list[str], out_path: str, pages: str, timeout: int = 180) -> bytes:
+    """pdfcpu for a command whose page range came from the caller.
+
+    Two failures have to become a UserError, and the second one is why this helper
+    exists — both measured against pdfcpu v0.15.0 on a real 5-page file:
+
+      * a range it cannot parse or cannot satisfy exits non-zero and prints the whole
+        message (`abc` -> `-selectedPages problem: -pages "abc" => syntax error`,
+        `0` -> `invalid page number: 0 outside 1..5`, `n1` alone -> `missing page
+        numbers`). That used to reach the app as a 500 -> 502 "the server broke";
+      * a range that selects **nothing** (`3-1`, `9-12`, `!6`) exits **0** having
+        written a **0-byte** file and printed `aborted: missing page numbers!`. That
+        was worse than the 502: a 200 whose output file is empty, i.e. a finished job
+        the app would show as a blank document, stored in R2.
+
+    An empty output when the caller did **not** send a range is a genuine fault and
+    deliberately stays a RuntimeError/500.
+    """
+    try:
+        out = _pdfcpu(args, timeout=timeout)
+    except RuntimeError as exc:
+        if not pages:
+            raise
+        raise UserError(f"{PDF_PAGES_HINT} — pdfcpu said: {exc}")
+    if not os.path.exists(out_path) or os.path.getsize(out_path) == 0:
+        if pages:
+            raise UserError(f"{PDF_PAGES_HINT} — that selection holds no pages of this PDF")
+        raise RuntimeError("pdfcpu wrote an empty document for this file")
+    return out
+
+
 def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     """merge | split | compress | rotate | page-numbers, on files that never leave this machine."""
     action = (params.get("action") or "merge").strip().lower()
@@ -390,7 +430,7 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             # `trim` keeps the named pages and writes them as a new document. The
             # flag is `-p/--pages`; the long spelling with one dash is rejected by
             # pdfcpu's arg parser ("accepts between 1 and 2 arg(s), received 3").
-            _pdfcpu(["trim", "--pages", pages, srcs[0], out_path])
+            _pdfcpu_pages(["trim", "--pages", pages, srcs[0], out_path], out_path, pages)
         elif action == "compress":
             # 1. Always safe: rewrite object streams, drop duplicate resources.
             _pdfcpu(["optimize", srcs[0], out_path])
@@ -420,7 +460,7 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             # shorthand flag: '9' in -90`. `--` ends flag parsing before the
             # positional angle; measured, all six advertised values write a real
             # quarter turn (595x842 -> 842x595 for 90/270/-90/-270).
-            _pdfcpu([*args, srcs[0], "--", str(angle), out_path])
+            _pdfcpu_pages([*args, srcs[0], "--", str(angle), out_path], out_path, pages)
         elif action == "page-numbers":
             # `stamp` with %p/%P is pdfcpu's pagination: it writes a real page number
             # per page (not a running counter), so page 7 of a 3-page selection still
@@ -438,7 +478,7 @@ def pdf_tools(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
             # `--` ends flag parsing: the number text is caller-supplied and a leading
             # dash would otherwise be read as a flag.
             description = f"pos:{PDF_NUMBER_ANCHORS[pos]}, rot:0, points:10, offset: 0 14, color:#333333"
-            _pdfcpu([*args, "--", pdf_number_text(params.get("text") or ""), description, srcs[0], out_path])
+            _pdfcpu_pages([*args, "--", pdf_number_text(params.get("text") or ""), description, srcs[0], out_path], out_path, pages)
         else:
             raise UserError(f"unknown pdf action: {action}")
 
