@@ -821,16 +821,49 @@ dot it sees, plus one deliberate corner tap), reads the summary, the stored roun
 start screen after a reload. `%LOCALAPPDATA%\Temp\probe-tap-first-dot.mjs` covers the
 deadline rule and `probe-tap-21.mjs` covers click / touch-tap / timeout in one pass.
 
-### 22. The capture gate proves a screen renders, not that it works (new, 2026-09-16)
+### 22. The capture gate proves a screen renders, not that it works — DONE 2026-09-16
 Item 21's field was dead for a whole day's worth of captures because `scripts/app-shots.mjs`
 only asserts that the screen's **marker copy** is in the DOM — a screenshot of a game that
-cannot score looks exactly like one that can. Add a **per-screen interaction assertion** to
-the capture: for the screens with one obvious primary interaction (the two games, the PDF
-rotate picker, the invoice UPI field, the collage shape chips), press it and require an
-observable change (a number moves, a line appears) before the PNG is written, the same way
-the marker gate refuses to write a blank page. Start with the two games, since
-`play-tap-sprint.mjs` and the word-duel harness already do the work and can be reduced to a
-few assertions. Done when: a capture run fails loudly if an interaction stops responding.
+cannot score looks exactly like one that can.
+
+**Result: `--interact` is now a second, independent assertion in the harness, and both games
+are behind it.** A screen declares a probe in `scripts/interactions.mjs`; `app-shots.mjs`
+passes it as `screenshot.mjs --interact <name>`; the harness runs it *before* it writes the
+PNG and exits **3** unless the probe observes a change it did not put on the page itself —
+then reloads, so the picture is of the screen as it ships and not of the probe's aftermath.
+The two probes:
+- `tap-sprint-hit` — press "Start the round", find the dot by its accent colour (both
+  schemes) and tap its centre, require the round's own score to move. This is exactly the
+  number that stayed at **0** for a day while the field was deaf.
+- `word-duel-pick` — press a letter tile (the row is empty before), require a
+  `Put back <letter>` slot to appear and the tile to go disabled.
+Evidence: **4/4** live captures pass with the probe line printed —
+`tap-sprint mobile-light probe: started a round, tapped the dot at 301,240 — score 0 → 10
+(reaction 496 ms)` and `word-duel mobile-light probe: pressed Letter p — the row was empty
+and now holds "p" (tile disabled: true)` (both themes, through `https://expo.dropby.co.in`).
+The gate was then **shown to fail**, because a gate nobody has seen fail is a guess:
+`PROBE_SABOTAGE=1` (a test switch in `interactions.mjs` that makes the probe's own target
+refuse pointer events — the item-21 fault, browser-side, no app change) gives
+`exit 3` / `interactionFailed: "the playing field is not responding: a tap on the dot at
+171,331 did not move the score (still 0)"` from the harness, and `✗ probe tap-sprint
+mobile-light … 0/1 captures ok` + `exit 1` through `app-shots.mjs`.
+**Found by running that negative:** the probe-failure path was writing its diagnosis PNG to
+the gallery's own filename, i.e. a *healthy-looking* picture of a broken game would have
+silently replaced the good shot — the precise failure this item exists to stop. A probe
+failure and a transport failure now write to `%TEMP%\probe-failed-*.png` /
+`unreachable-*.png` and leave the gallery file alone (verified: the gallery PNG's MD5 is
+byte-identical before and after a sabotaged run).
+Second fix from the same evidence: the 40-capture sweep returned **five** Cloudflare error
+pages (`http=404`, `page=980x2121`, every marker "missing") for routes that answer **200**
+on `127.0.0.1:8091` in the same minute, and each one overwrote a good gallery shot. A
+non-200 is now retried once and then exits **2** (`unreachable`, no write) instead of being
+reported as a failed assertion — measured against a real 404 (`http://127.0.0.1:8092/__nope__`):
+`exit 2`, `retried: true`, target file untouched, diagnosis in `%TEMP%`.
+Full sweep after the change: **35/40 captures ok**, the 5 failures being the wellness
+screens added minutes earlier by the parallel session (their markers, their fix — see item
+33) — no screen that was passing before this item now fails.
+Still open: only the two games have a probe. The PDF rotate picker, the invoice UPI field
+and the collage shape chips are the next three named in this item — item 34.
 
 ### 23. Photo permission: a second denial leaves a button that cannot work (new, 2026-09-16)
 Found while reading `expo/examples` for item 8, in our own code rather than theirs — and the
@@ -994,5 +1027,36 @@ offer at once. The options are (a) the free on-device cut *is* the product and �
 something else (batch, larger sizes, a passport-ready crop), (b) the on-device path stays
 behind a paid tier, or (c) it stays a prototype and never ships as-is. Nothing was changed —
 the flag ships off, so today's behaviour is unchanged.
+
+### 33. A page that loads 200 with nothing on it still overwrites the gallery shot (new, 2026-09-16, from item 22)
+Item 22 stopped the *probe* and *transport* failures from writing a picture over a good one:
+a non-200 is now retried once and answers exit 2 without touching the gallery. The third
+case is untouched, and this hour's 40-capture sweep produced five of them on
+`https://expo.dropby.co.in` — `tools-hub` twice, `stretch`/`walk` three times — where the
+navigation answered **200** and the marker copy was simply not on the page yet (the same
+routes render correctly on `127.0.0.1:8091` and on the next attempt, and `/tools` does say
+"EVERYDAY TOOLS … Small jobs," when loaded on its own). A client-rendered SPA served through
+the tunnel can hand back the shell before the bundle has painted, and the marker gate then
+answers `exit 3` and writes its diagnosis PNG **to the gallery filename**, replacing a good
+shot with one that looks nearly right. Honest fix, same shape as the probe path: on a marker
+miss, reload once and re-read the DOM before declaring failure, and send the diagnosis image
+to `%TEMP%` while leaving the gallery file alone (the marker's *value* as a diagnosis is low
+precisely because the broken render looks healthy). Evidence to require: a full sweep whose
+transient failures no longer change any gallery PNG's MD5, plus one deliberately broken
+marker still failing with exit 3.
+
+### 34. Probes for the other three primary interactions (new, 2026-09-16, from item 22)
+Only the two games have a probe. The three named in item 22 are the next ones worth one, each
+with an observable change that is not the screen's own copy:
+- **PDF rotate picker** (`/tools/pdf`): press a `90 / 180 / 270` chip and require the primary
+  button's label to name the job it will run ("Rotate 270°") — the screen already computes
+  that sentence from the chip, so a dead chip shows up as a label that never changes.
+- **Invoice UPI field**: type a `name@bank` value and require the paper preview to carry it;
+  then type a malformed one and require the field to be marked bad. The preview is the
+  observable, not the input.
+- **Collage shape chips**: pick 2 photos, press `2 across`, and require the button label to
+  change to the job that will run; the dimmed "cannot hold the photos" chips are the control.
+Each probe must run at capture time like the games' do (exit 3, no gallery write) so a screen
+whose control stops responding cannot pass the gallery gate again.
 
 
