@@ -585,7 +585,7 @@ off-palette screen will come from.
 layout today because the frame does not exist yet; when `components/tool-frame.tsx` lands,
 wrap it like the other tool screens. Until then, do not touch it — it works.
 
-### 21. Build the gate `targets.mjs` promises (it does not exist)
+### 21. Build the gate `targets.mjs` promises — DONE (verified 2026-09-17, gate already landed)
 `apps/mobile/targets.mjs` says "scripts/check-targets.mjs refuses a build where two
 targets are too similar to survive review" — there is **no such file**. Store review
 (Apple 4.3, Play spam) is the single biggest external risk to this fleet, and the gate
@@ -593,13 +593,25 @@ that would catch it is missing. Build it: read TARGETS, compare name / tagline /
 category / permissions / firstScreen / aso keyword overlap, and fail with the two ids and
 the reason. Run it against the current 13 targets and report what it flags.
 
-### 22. Give the tool screens their own deep links on the test page
+**Done — it exists and it runs** (`scripts/check-targets.mjs`, bound to `prebuild:ios` /
+`prebuild:android` / `prebuild:preview`). Re-verified this hour so the next run does not
+rebuild it: `npm run check:targets` → `PASSED — 18 targets, 153 pairs compared, 0 too
+similar, 0 incomplete (rule: same category + 42% shared words + fewer than 3 visible
+differences)`, exit 0.
+
+### 22. Give the tool screens their own deep links on the test page — DONE (verified 2026-09-17)
 `/live` shows one card per app; the toolbox app hides five screens behind `/tools`. Add a
 "Screens" section that deep-links each one directly (`/tools/bg-remove`, `/tools/pdf`,
 `/tools/invoice`, `/tools/signature`, `/tools/exif-strip`, `/tools/photos-to-pdf`,
 `/tools/collage`, `/breathe`, `/tap-sprint`, `/word-duel`) with a QR each, so a person can
 test a screen instead of hunting for it. Evidence: the count of codes on the page before
 and after.
+
+**Done — the deck is live** (`SCREEN_LINKS` in `services/tools/shots_server.py`, drawn
+server-side at `/qr`). Re-verified this hour: `GET https://shots.dropby.co.in/live` → 200
+carrying every tool route (`tools/bg-remove`, `tools/collage`, `tools/exif-strip`,
+`tools/invoice`, `tools/pdf`, `tools/photos-to-pdf`, `tools/resume-checker`,
+`tools/signature`) — 41 codes on the page per item 24's entry.
 
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
@@ -1090,7 +1102,7 @@ hermes-web`; localhost:8080, `/galaxy`, sarkarmarketplace.dropby.co.in and
 expo.dropby.co.in/tools/pdf all 200 after. No engine restart was needed (the worker was not
 touched: one listener on 8099, `health.pid 6604 == pm2 pid`).
 
-### 26. Route: its own 400 hint offers a bare `!5`, which selects nothing (new, 2026-09-16, from item 25)
+### 26. Route: its own 400 hint offers a bare `!5`, which selects nothing — DONE 2026-09-17
 `PDF_PAGES_HELP` in `@hermes/core` — the sentence the route answers a bad range with — ends
 "… , -4 (up to page 4), !5 (exclude)". pdfcpu parses `!5`, but on its own it **selects
 nothing**: `trim -p '!5'` aborts with `missing page numbers` and writes a 0-byte file, which is
@@ -1098,6 +1110,33 @@ why the engine answers 400 for it (measured this hour: `!5` and `n5` alone both 
 and `odd,n1` both work). The hint should teach the working form (`1-,!5 (all but page 5)`),
 exactly as the screen's hint now does. Small: one exported string plus a gated web rebuild —
 and the string is covered by the core test, so the change is verified by the same table.
+
+**Result (2026-09-17): both 400 sentences now teach a form that runs — the route's *and* the
+engine's, because the engine's is the one the caller actually gets for this exact mistake.**
+Measuring first turned up the second copy: `POST /api/job` with `pages=!5` answers
+**400 carrying the *engine's* sentence** (the route's shape check passes `!5` — it is valid
+grammar — and pdfcpu then aborts), and that sentence ended `and !5 (exclude page 5)` — i.e. the
+400 told the caller to retype the form that had just failed. So the fix is two strings:
+`PDF_PAGES_HELP` (`packages/core/src/index.ts`) and `PDF_PAGES_HINT`
+(`services/tools/worker.py`, `1-,!5 (all but page 5)`), each with the measurement in a comment
+and a note that the language boundary is why the sentence is written twice. The core test now
+pins **both** sentences: `1-,!5` must be present and a bare exclusion (`/(?:^|[\s(])(?:!|n)\d/`)
+must be absent — proved to fail on the old text (`old flagged as a bare exclusion: true | has
+1-,!5: false`), so the new assertion is a gate and not decoration. `packages/core` **8/8** tests
+pass; `tsc --noEmit` exit 0 for `@hermes/core` and `@hermes/web`.
+Evidence, after the change: the bad range `1 - 3` through `https://expo.dropby.co.in/api/job`
+and through `localhost:8080` both answer **400** with the new sentence
+(`… -4 (up to page 4), 1-,!5 (all but page 5)`); the form the 400 now teaches really runs —
+job **136** `split pages=1-,!5` = HTTP **200**, `pages_in 5 → pages_out 4`, 28,193 B → 22,633 B,
+and job **132** the same before the worker restart; a bare `!5` still answers 400, now with
+`… 1-,!5 (all but page 5) — pdfcpu said: trim: extract pages: missing page numbers` (job **131**
+`odd` = 200, 5 → 3 pages; merge of two 5-page files = job **137**, 200, `pages_out 10`), so the
+old products are untouched. Gated `npm run build && pm2 restart hermes-web` (the new sentence is
+in the built chunk and `!5 (exclude)` is gone from `.next`); localhost:8080, /galaxy,
+sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools/pdf all **200** after.
+Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
+dropby-worker`; one listener on :8099, `health.pid 7200 == pm2 pid`, 11 products. No mobile
+change, so no `expo export` was needed (the screen already teaches `1-,!5`).
 
 ### 27. Invoice: the counter is one phone's (new, 2026-09-16, from item 15)
 Item 15 gave the bill number a real counter, but it lives in this device's AsyncStorage, so a
