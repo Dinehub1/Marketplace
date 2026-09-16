@@ -256,7 +256,8 @@ SCREEN_INFO = {
     "signature": {
         "title": "Signature &amp; stamp maker",
         "what": "Draw the signature on screen, sized to the strip a form expects, then ₹49 to download "
-                "the clean version.",
+                "the clean version. The pad is paper in both schemes — the sheet stays white and the "
+                "pen black or blue — while everything around it follows the light/dark theme.",
         "asserts": ["Sign it with", "Sign here"],
     },
     "pdf-tools": {
@@ -286,7 +287,8 @@ SCREEN_INFO = {
     "invoice": {
         "title": "Invoice / GST bill for a shop",
         "what": "Shop name, items, totals, PDF out — the small-business product that a shopkeeper can "
-                "use with no instructions.",
+                "use with no instructions. The bill preview is the printed page, so it stays white "
+                "with dark ink in both schemes: only the screen around it follows the theme.",
         "asserts": ["Shop name", "Your shop"],
     },
     "exif-strip": {
