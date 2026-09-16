@@ -28,6 +28,16 @@ import { ALLOWED_IMAGE_TYPES, R2_PREFIX, deleteObject, productPreviewKey, public
 const WORKER_URL = (process.env.PRODUCT_WORKER_URL ?? "http://127.0.0.1:8099").replace(/\/+$/, "");
 
 /**
+ * .docx — the one Office format the engine's markitdown install has an extra for.
+ * Declared before ENGINE because the table below reads it while the module loads:
+ * a `const` further down would be in its temporal dead zone and throw on import.
+ */
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+/** Documents the resume reader takes: a PDF, a Word file, or plain text. */
+const DOC_ACCEPTS = ["application/pdf", DOCX_MIME, "text/plain"];
+
+/**
  * Catalogue slug -> what the engine actually runs.
  *
  * The engine has a handful of real capabilities (rembg, Pillow recipes, pdfcpu).
@@ -68,6 +78,18 @@ const ENGINE: Record<string, {
   "exif-strip": { engine: "image-toolkit", fixed: { op: "strip-exif" }, free: true },
   "photos-to-pdf": { engine: "photos-to-pdf", multi: true, free: true, fields: ["pagesize"] },
   "collage": { engine: "collage", multi: true, free: true, fields: ["layout", "cell_px"] },
+
+  // One document in (PDF / DOCX / plain text), a Markdown reading of it out, with an
+  // optional keyword check against a list the caller sends. Free: markitdown (MIT)
+  // runs on this VM in Python, so the engine's cost per job is ₹0 and a paywall would
+  // have nothing to meter. The catalogue row (`resume-checker`, listed at ₹99) is
+  // deliberately untouched here — its price is a business decision, not a route one.
+  "resume-checker": {
+    engine: "resume-checker",
+    free: true,
+    fields: ["keywords"],
+    accepts: DOC_ACCEPTS,
+  },
 };
 
 const PRODUCTS = new Set(Object.keys(ENGINE));
@@ -75,10 +97,39 @@ const PRODUCTS = new Set(Object.keys(ENGINE));
 const IMAGE_ACCEPTS = ["image/jpeg", "image/png", "image/webp"];
 
 /**
+ * How an accepted type is named back to the caller. `image/jpeg`.split("/")[1] reads
+ * fine as "JPEG", but the DOCX mime type would come out as
+ * "VND.OPENXMLFORMATS-OFFICEDOCUMENT.WORD…", which is not a sentence anyone can act on.
+ */
+const TYPE_LABEL: Record<string, string> = {
+  "application/pdf": "PDF",
+  [DOCX_MIME]: "DOCX",
+  "text/plain": "TXT",
+  "text/markdown": "Markdown",
+};
+
+function typeLabel(type: string): string {
+  return TYPE_LABEL[type] ?? type.split("/")[1].toUpperCase();
+}
+
+/** Extension for a stored input file, so its R2 key tells the truth about the format. */
+const DOC_INPUT_EXT: Record<string, string> = {
+  "application/pdf": "pdf",
+  [DOCX_MIME]: "docx",
+  "text/plain": "txt",
+};
+
+/**
  * Fields whose value is a document, not an identifier. They get a real size limit
  * instead of the 120-character cap that keeps a query parameter a query parameter.
  */
 const LONG_FIELDS = new Set(["payload"]);
+/**
+ * Fields that are a list rather than an identifier. A keyword list is 30 terms with
+ * separators, which does not fit the 120-character cap a query parameter deserves;
+ * the engine caps the same list at 30 terms of 40 characters.
+ */
+const FIELD_LIMITS: Record<string, number> = { keywords: 700 };
 const MAX_FIELD_CHARS = 120;
 const MAX_LONG_FIELD_CHARS = 200_000;
 
@@ -135,6 +186,9 @@ const EXT_FOR_TYPE: Record<string, string> = {
   "image/png": "png",
   "image/webp": "webp",
   "application/pdf": "pdf",
+  // The document reading (markitdown) hands back Markdown, not a JPEG. Without
+  // this line its output lands in the bucket as `.bin`.
+  "text/markdown": "md",
 };
 
 /**
@@ -220,7 +274,7 @@ export async function POST(req: NextRequest) {
   for (const name of spec.fields ?? []) {
     const v = String(form.get(name) ?? "").trim();
     if (!v) continue;
-    const limit = LONG_FIELDS.has(name) ? MAX_LONG_FIELD_CHARS : MAX_FIELD_CHARS;
+    const limit = FIELD_LIMITS[name] ?? (LONG_FIELDS.has(name) ? MAX_LONG_FIELD_CHARS : MAX_FIELD_CHARS);
     if (v.length > limit) {
       return NextResponse.json({ error: `${name} is too long` }, { status: 413, headers: noStore });
     }
@@ -287,7 +341,7 @@ export async function POST(req: NextRequest) {
   for (const f of uploads) {
     if (!accepts.includes(f.type)) {
       return NextResponse.json(
-        { error: `This tool expects ${accepts.map((t) => t.split("/")[1].toUpperCase()).join(" or ")}` },
+        { error: `This tool expects ${accepts.map(typeLabel).join(" or ")}` },
         { status: 415, headers: noStore },
       );
     }
@@ -346,7 +400,7 @@ export async function POST(req: NextRequest) {
     blobs.push({
       bytes: Buffer.from(await f.arrayBuffer()),
       type: f.type,
-      ext: ALLOWED_IMAGE_TYPES[f.type] ?? (f.type === "application/pdf" ? "pdf" : "bin"),
+      ext: ALLOWED_IMAGE_TYPES[f.type] ?? DOC_INPUT_EXT[f.type] ?? "bin",
     });
   }
 
