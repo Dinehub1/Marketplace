@@ -527,7 +527,7 @@ The invoice engine can print a UPI QR from the NPCI spec string
 That gives every shopkeeper bill a way to be paid even while Razorpay keys are missing.
 Evidence: an invoice job whose output PDF contains a decodable QR, verified by decoding it.
 
-### 19. Make invoice / pdf / signature respect the theme (measurable, not a matter of taste)
+### 19. Make invoice / pdf / signature respect the theme (measurable, not a matter of taste) — DONE 2026-09-17
 Those three screens call neither `useTheme` nor `useProductUI` (0 references — verified),
 so they ignore dark mode. The proof is in the gallery: their `mobile-dark` and
 `mobile-light` captures are **byte-identical** (same MD5) while every other screen differs.
@@ -537,6 +537,48 @@ Done when: `python scripts/app-shots.mjs --only invoice` (and pdf, signature) pr
 dark and light captures whose MD5s **differ**, and the job is logged with both hashes.
 If a screen is genuinely meant to be light-only (a printed invoice, say), say so in the
 log and note it in SCREEN_INFO instead of pretending it is dark-capable.
+
+**Result: all three now follow the theme, and the two paper surfaces deliberately do not.**
+Each screen is `const ui = useProductUI("<product>")` + `makeStyles(ui)`, with the old
+module-level constants (`GREEN`/`RED`/`VIOLET` + an ink scale + a ground) kept as local
+aliases inside `makeStyles` so the style bodies did not have to be rewritten by hand:
+`ui.accent`, `ui.ink`, `ui.muted`, `ui.hairline`, `ui.bg`, `ui.c.surfaceSunken`,
+`ui.c.hairlineStrong`, `ui.accentTint` and `ui.error` replace every hex except one —
+`#fff` on a filled accent button, which is what `bg-remove`/`exif-strip` already do
+(commented in each file so a later pass does not "fix" it).
+The one design decision, and why it is not a cop-out: **the bill preview and the signature
+pad stay paper in both schemes.** A dark-mode bill would stop being a preview of the sheet
+the engine prints and the shop hands over, and its ink would have to invert with it; the
+signature is black-or-blue ink on a clear background, so a dark preview of it would be an
+invisible signature. Both read from `paletteFor("light")` (`PAPER`), documented at the top
+of each file and now in `SCREEN_INFO` for the gallery (`signature` and `invoice` were
+patched; `shots-gallery` restarted, one listener on :8092, `health` pid == pm2 pid, and
+`GET https://shots.dropby.co.in/shots` → **200** carrying both new sentences).
+The pad's inks are palette values too (`PAPER.ink` for Black — it was `#0f172a`, now the
+palette's `#0b0b0f`, a shade nobody can see on a signature; `PAPER.info` for Blue, which
+is exactly the `#1d4ed8` it was).
+Evidence — the hashes the item asked for, light vs dark, **before → after**:
+`app__invoice__mobile-light|dark` `055a80c5…` = `055a80c5…` → `4a4427ef…` vs `cd8ef94a…`;
+`app__pdf-tools__mobile-*` `e1c70b85…` = `e1c70b85…` → `0c1c257e…` vs `d4c0e1ee…`;
+`app__signature__mobile-*` `88dba925…` = `88dba925…` → `ee9b708b…` vs `ad851077…`
+(2/2, 4/4 and 2/2 captures ok through `https://expo.dropby.co.in`, marker gate green).
+Then measured in the browser rather than assumed (`%TEMP%\theme-check.mjs`, Chromium at
+390×844, both `colorScheme`s, 0 page errors): ground `rgb(251,251,253)` → `rgb(10,10,13)`
+and the headline `rgb(11,11,15)` → `rgb(245,245,247)` on all three, while **the invoice
+paper stays `rgb(255,255,255)` with `rgba(11,11,15,0.64)` ink in dark** and the signature
+pad stays white at 346×240 — i.e. the chrome inverts and the paper holds, which is the
+claim the MD5 alone cannot make (a screen that merely went dark would also differ).
+`npx tsc --noEmit` in `apps/mobile`: **0** errors in the three files (the same 20
+pre-existing errors elsewhere, all in the parallel session's wellness/tabs work);
+`npx expo export --platform web` exit 0, **3.23 MB / 3230 KB JS**; the products still run —
+job **127** `invoice-maker` through the public route = HTTP 200 with `totals_match true`,
+`tax_rows [{18,1250,225,112.5,112.5}]`, `upi_qr true`, `hsn_items 1`, and `pdf-tools rotate
+270` on a real 5-page PDF = 200, `pages_in 5 / pages_out 5`.
+No web rebuild and no engine restart: nothing in `apps/web` imports a mobile screen, so the
+live site was never touched (only `shots-gallery`, which is a 20 MB Python page server).
+Follow-up worth having (new item 38): the same measurement applied to the *whole* app in one
+pass — the audit only ever named these three, and `lib/product-ui.ts` is where the next
+off-palette screen will come from.
 
 ### 20. Wrap `breathe` in the shared frame once the frame exists
 `apps/mobile/app/breathe.tsx` is new (the ₹0 slow-breathing screen). It carries its own
@@ -1160,5 +1202,21 @@ already stores `meta` on every row — but nothing writes these yet, so "which p
 this, and at what cost" cannot be answered from the database (item 16 needs exactly that to
 price products from measured cost). Small: merge `metaFor` into the meta of any job served by
 the router when item 36 lands, and add the provider to the `/log` page's per-job line.
+
+### 38. The theme audit, in one pass over every screen (new, 2026-09-17, from item 19)
+Item 19 was written as "invoice, pdf, signature" because those three were the ones with
+identical light/dark captures — the audit found them one at a time. The honest version is the
+measurement applied to the whole app at once, because the next off-palette screen will arrive
+the same way (a raw hex in a `StyleSheet.create` at module scope, which is exactly what makes
+a screen theme-blind: it is evaluated once, outside the theme context).
+Do it mechanically: for every `apps/mobile/app/**/*.tsx`, capture at 390×844 in both
+`colorScheme`s and compare MD5 (the item-19 test), list the pairs that are identical, and for
+each one check whether it is blind by accident or light-only on purpose — `app/(tabs)/saved.tsx`
+is the only screen with neither `useTheme` nor `useProductUI` today and has **zero** raw hexes,
+so it is likely already fine through `components/ui.tsx`; confirm before changing anything.
+Also worth pinning: a screen whose style body is built at module scope cannot see the theme, so
+the review rule is "`StyleSheet.create` inside a `makeStyles(ui)`", and `%TEMP%\theme-check.mjs`
+(which measures the ground, a label and any paper surface, rather than trusting the PNG hash)
+is the tool to re-run.
 
 
