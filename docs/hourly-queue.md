@@ -419,16 +419,37 @@ product, so it is engine + route only until item 24; **(b)** the catalogue row s
 does not charge (see the parking lot — that is his decision); **(c)** markitdown's
 xlsx/pptx extras are not installed, so those formats are not claimed anywhere.
 
-### 12. colibri as the ₹0 text engine (Apache-2.0, 34k★)
+### 12. colibri as the ₹0 text engine (Apache-2.0, 34k★) — BLOCKED 2026-09-16 on this box's hardware
 `JustVugg/colibri` (Apache-2.0) streams a large MoE model from disk on CPU. The win is
 removing the API bill behind the writing products. Do NOT install it until you have
 measured: idle RAM, disk needed, and whether a single request starves `hermes-web`.
 If it does starve it, park it and say so — this box serves the live site.
 
+**Measured this hour, before any download — parked. Licence passed (Apache-2.0, 34,816★,
+pushed 2026-09-15, C, not archived — GitHub API); the hardware did not.** Written up in
+`docs/colibri-feasibility.md`. The box, measured: **4 vCPU, 8.0 GB RAM (4,854 MB free with
+the pm2 fleet up), 43.5 GB free disk on a QEMU virtual SCSI disk**, 48 % CPU.
+Against colibri's own requirements table: **OLMoE** (the only disk-fit model, 7 GB) wants
+**8 GB RAM — this box's entire RAM** and is 7B/1B-active; **Qwen3.6-35B-A3B**, the smallest
+*useful* one, wants 20 GB disk (fits) and **24 GB RAM** (does not); every larger family
+needs **85–1,600 GB of weights** against 43.5 GB free and **16–32 GB RAM** against 8. Their
+own floor is a *25 GB* box at 0.05–0.1 tok/s cold, and their docs call virtualised disks
+"neutral to negative". So the third measurement answers itself: a 4-core VM cannot stream an
+MoE and serve the live site, and nothing was installed or fetched.
+Nothing was lost by parking it: the only hosted-model product (`ai-image`) costs ₹0.17 an
+image inside a 10,000-neuron/day free tier, every other live product is local and ₹0, and the
+intended ₹0 text fallback is the local chain (`rules → tesseract → pg_trgm`) that **item 17**
+builds — which is unblocked and cheaper than any model on disk. Re-open only on a host with
+≥24 GB RAM **and** ≥120 GB free disk.
+
 ### 13. VoxCPM for the voice-over product (Apache-2.0, 37k★)
 `OpenBMB/VoxCPM` (Apache-2.0) is TTS with voice design. Turn "Text to voice-over"
 (₹99/clip) from a card with no engine into a product: text in, MP3 out, in R2, priced.
 Requires torch on CPU — measure seconds per 100 words and report them.
+**Check it against the same ceiling first (measured 2026-09-16, item 12): this box is 4 vCPU /
+8.0 GB RAM (4.7 GB free) / 43.5 GB free disk on a QEMU virtual disk.** A CPU torch wheel plus
+a VoxCPM checkpoint has to fit inside that *while* the live site and the product worker run —
+write the numbers down before the install, exactly as item 12 had to.
 
 ### 14. Wire the Workers AI token and prove one hosted model (blocked on one credential)
 Read `docs/ai-compute-plan.md`. The R2 key is NOT an AI token (tested: code 10000
