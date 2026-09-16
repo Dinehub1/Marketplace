@@ -62,7 +62,7 @@ GROUP_LABELS = {
 SCREEN_ORDER = [
     "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
     "pdf-tools-rotate", "pdf-tools-numbers",
-    "exif-strip", "photos-to-pdf", "collage",
+    "exif-strip", "photos-to-pdf", "collage", "resume-checker",
     "invoice", "tap-sprint", "word-duel", "paywall",
 ]
 
@@ -315,6 +315,15 @@ SCREEN_INFO = {
                 "reads as one picture. A shape that cannot hold the photos is dimmed on screen with the "
                 "reason, rather than being sent and refused by the engine.",
         "asserts": ["A few photos,", "Shape"],
+    },
+    "resume-checker": {
+        "title": "Document check (CV / contract / form)",
+        "what": "One document in — a PDF, a Word file or plain text — and what the file really holds "
+                "out: words, characters, pages, the email and the phone number inside it, and which "
+                "of the keywords you typed appear as whole words. The text the reader read is fetched "
+                "back from the report itself. It does not claim what a hiring system wants — that is "
+                "not knowable from this box. Read on our own server with markitdown; free per job.",
+        "asserts": ["DOCUMENT CHECK", "document says", "not counted inside", "no text layer"],
     },
     "stretch": {
         "title": "Stretch — five-minute desk routine",
@@ -1153,6 +1162,7 @@ SCREEN_LINKS = [
     ("Photo metadata", "/tools/exif-strip"),
     ("Photos to PDF", "/tools/photos-to-pdf"),
     ("Collage", "/tools/collage"),
+    ("Document check (CV)", "/tools/resume-checker"),
     ("Breathe", "/breathe"),
     ("Stretch", "/stretch"),
     ("Walk", "/walk"),

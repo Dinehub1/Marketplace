@@ -55,7 +55,7 @@ const SCREEN_FOR_FIRST = {
  * toolbox feature.
  */
 const EXTRA_SCREENS = {
-  toolbox: ['exif-strip', 'photos-to-pdf', 'collage'],
+  toolbox: ['exif-strip', 'photos-to-pdf', 'collage', 'resume-checker'],
   // Every wellness app carries the same two extra pages — the charts, and the settings that
   // move the numbers on them — so all six claim them. The hub is claimed by the two screens
   // that open from it.
