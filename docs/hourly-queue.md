@@ -672,7 +672,7 @@ catalogue row prices this at ₹99/month while the route serves it free, so the 
 either say Free (and the row becomes `price_paise 0`) or the product goes back behind the
 paywall — that is his call, not the robot's.
 
-### 25. PDF screen: its own range guard is narrower than the engine (new, 2026-09-16, from item 18)
+### 25. PDF screen: its own range guard is narrower than the engine — DONE 2026-09-16
 `apps/mobile/app/tools/pdf.tsx` validates the optional page range with
 `PAGE_PATTERN = /^[0-9,\s-]+$/` plus `/\d/`. Measured against the engine, that guard is wrong in
 both directions: it **hides real capability** (pdfcpu accepts `odd`, `even`, `l` for the last page,
@@ -686,3 +686,39 @@ The honest fix is small and needs no engine change: reuse the same grammar the r
 say in the help line what the engine really takes. Evidence to require: `npx expo export --platform
 web` at exit 0 with the bundle size, the two gallery shots of `/tools/pdf` re-captured, and a
 screenshot of the bad-input state at phone size next to a real `odd` job id.
+
+**Result:** the grammar now lives in **`@hermes/core`** (`PDF_PAGE_EXPR`, `isPageRange`,
+`PDF_PAGES_HELP`, `PDF_PAGES_HINT`) and is imported by **both** the job route and
+`apps/mobile/app/tools/pdf.tsx`, so the field and the 400 can no longer disagree — the screen
+had drifted because it owned a second copy. The field is marked bad with
+"That range cannot be read — the line above is the whole grammar", and the help line now names
+what the engine takes. One correction came out of testing rather than reading: a **bare `!5`
+selects nothing** (pdfcpu: `missing page numbers`, 0-byte output), because an exclusion
+subtracts from an inclusion — measured page lists on a 5-page file: `1-,!5` → 1,2,3,4,
+`odd,n1` → 3,5, `even,!2` → 4, `l-3-` → 2..5, `-l-3` → 1,2. The screen therefore teaches
+`1-,!5 (all but page 5)`; the route's own 400 sentence still offers a bare `!5` — item 26.
+Evidence: live `/api/job`, 5-page PDF — jobs **104** (`1-3`, 3pp) **105** (`odd`, 3pp)
+**106** (`even`, 2pp) **107** (`l`, 1pp) **108** (`3-`, 3pp) **109** (`-4`, 4pp) **111** (`1,2`,
+2pp) all 200, where the old guard refused `odd`/`even`/`l`/`!5`; **400** for `1 - 3` (the value
+the old guard let through), `abc`, `1;2`, `1--2`, `1.5`. Screen, through the exported build at
+390×844: **9/9** checks, 0 page errors — rotate and split both mark `1 - 3`, `odd` is not
+flagged, and a real split of `odd` ran **from the screen** = job **114** (`pages_in 5 →
+pages_out 3`) with the result card named `pages-odd.pdf` (the split's file name is now derived
+from the range, `!` → `no`, so `!5` cannot be saved as `pages-5.pdf`). `packages/core` **6/6**
+tests including a new measured range table; `tsc` **0** errors (core + web, 0 new in
+`pdf.tsx`); `npx expo export --platform web` exit 0, **3.2 MB / 3114 KB JS**; the four PDF
+shots re-captured with their copy asserted (`app__pdf-tools__mobile-{light,dark}`,
+`-rotate`, `-numbers`) and the bad-input state captured at phone size
+(`%LOCALAPPDATA%\Temp\pdf-tools-badrange-light.png`). Gated `npm run build && pm2 restart
+hermes-web`; localhost:8080, `/galaxy`, sarkarmarketplace.dropby.co.in and
+expo.dropby.co.in/tools/pdf all 200 after. No engine restart was needed (the worker was not
+touched: one listener on 8099, `health.pid 6604 == pm2 pid`).
+
+### 26. Route: its own 400 hint offers a bare `!5`, which selects nothing (new, 2026-09-16, from item 25)
+`PDF_PAGES_HELP` in `@hermes/core` — the sentence the route answers a bad range with — ends
+"… , -4 (up to page 4), !5 (exclude)". pdfcpu parses `!5`, but on its own it **selects
+nothing**: `trim -p '!5'` aborts with `missing page numbers` and writes a 0-byte file, which is
+why the engine answers 400 for it (measured this hour: `!5` and `n5` alone both fail; `1-,!5`
+and `odd,n1` both work). The hint should teach the working form (`1-,!5 (all but page 5)`),
+exactly as the screen's hint now does. Small: one exported string plus a gated web rebuild —
+and the string is covered by the core test, so the change is verified by the same table.
