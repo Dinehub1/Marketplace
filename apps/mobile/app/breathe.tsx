@@ -150,11 +150,14 @@ export default function Breathe() {
      through it we are. A ticker rather than four chained timers because a phase list
      changes shape when the pattern changes. */
   const startedAt = useRef<number | null>(null);
+  // Deps are [running, pattern, phases, targetMs] and NOT elapsedMs: with elapsedMs in
+  // here the effect re-ran on every tick, which reset the interval's baseline ten times
+  // a second and made the cycle counter report three cycles in ten seconds.
   useEffect(() => {
     if (!running) return;
-    startedAt.current = Date.now() - elapsedMs;
+    if (startedAt.current == null) startedAt.current = Date.now();
     const id = setInterval(() => {
-      const total = Date.now() - (startedAt.current ?? Date.now());
+      const total = Date.now() - (startedAt.current as number);
       setElapsedMs(total);
 
       let into = total / 1000;                        // seconds into the current cycle
@@ -195,7 +198,8 @@ export default function Breathe() {
       }
     }, TICK_MS);
     return () => clearInterval(id);
-  }, [running, pattern, phases, targetMs, elapsedMs, persist]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, patternId, targetMs, persist]);
 
   /* The circle: grows across the inhale, holds, and settles across the exhale. Each
      phase gets its own timing so the movement matches the breath the user is being
@@ -205,10 +209,13 @@ export default function Breathe() {
       scale.value = withTiming(1, { duration: 300, easing: Easing.out(Easing.quad) });
       return;
     }
-    const ms = Math.max(120, phase.seconds * 1000 - phaseMs);
+    // Animate on the phase CHANGE only. The breath has to take the whole phase, so the
+    // duration is the phase, and a hold deliberately leaves the scale where it is.
+    const ms = Math.max(200, phase.seconds * 1000);
     if (phase.key === "in") scale.value = withTiming(1.34, { duration: ms, easing: Easing.inOut(Easing.sin) });
     else if (phase.key === "out") scale.value = withTiming(0.78, { duration: ms, easing: Easing.inOut(Easing.sin) });
-  }, [phase.key, phase.seconds, running, phaseMs, scale]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, phase.key, phase.seconds, scale]);
 
   const circle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
   const secondsLeft = Math.max(0, Math.ceil((phase.seconds * 1000 - phaseMs) / 1000));
@@ -217,6 +224,7 @@ export default function Breathe() {
 
   function start() {
     setDone(false);
+    startedAt.current = Date.now();
     setElapsedMs(0);
     setCycles(0);
     setPhaseIndex(0);
@@ -257,8 +265,12 @@ export default function Breathe() {
 
       <View style={s.stats}>
         <Stat ui={ui} label="cycles" value={String(cycles)} />
-        <Stat ui={ui} label="elapsed" value={`${Math.floor(elapsedMs / 60_000)}m`} />
-        <Stat ui={ui} label="of" value={`${minutes}m`} />
+        <Stat
+          ui={ui}
+          label="elapsed"
+          value={`${Math.floor(elapsedMs / 60_000)}:${String(Math.floor((elapsedMs % 60_000) / 1000)).padStart(2, "0")}`}
+        />
+        <Stat ui={ui} label="target" value={`${minutes}m`} />
       </View>
 
       <View style={s.bar}>

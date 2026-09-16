@@ -36,6 +36,7 @@ const SCREEN_FOR_PRODUCT = {
 /** first-screen names in targets.mjs -> the screen slug that implements them. */
 const SCREEN_FOR_FIRST = {
   grid: 'tools-hub',
+  breathe: 'breathe',
   dashboard: null, // the shop dashboard is not built yet
   directory: 'home',
   camera: null, // the camera capture screen is the product screen itself

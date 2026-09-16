@@ -868,6 +868,12 @@ LIVE_ROUTES = {
         "Search “car wash” or “denting” and open a garage.",
         "Same test: the number on the page should be the number that dials.",
     ]),
+    "breathe": ("/breathe", [
+        "Press Begin and watch the circle: it should grow across the in-breath and settle across the out-breath, not jump.",
+        "The clock should count seconds, and a cycle should land about every 11 seconds on Coherent.",
+        "Change the pattern to 4·7·8 and check the phase words and the countdown follow it.",
+        "Put the phone down and listen for the haptic at each turn — that is the cue that works with your eyes shut.",
+    ]),
     "tap-sprint": ("/tap-sprint", [
         "Play a thirty-second round with a thumb.",
         "The score at the end is the whole product — if it is smooth, the game ships.",

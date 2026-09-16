@@ -480,6 +480,22 @@ log and note it in SCREEN_INFO instead of pretending it is dark-capable.
 layout today because the frame does not exist yet; when `components/tool-frame.tsx` lands,
 wrap it like the other tool screens. Until then, do not touch it — it works.
 
+### 21. Build the gate `targets.mjs` promises (it does not exist)
+`apps/mobile/targets.mjs` says "scripts/check-targets.mjs refuses a build where two
+targets are too similar to survive review" — there is **no such file**. Store review
+(Apple 4.3, Play spam) is the single biggest external risk to this fleet, and the gate
+that would catch it is missing. Build it: read TARGETS, compare name / tagline / store
+category / permissions / firstScreen / aso keyword overlap, and fail with the two ids and
+the reason. Run it against the current 13 targets and report what it flags.
+
+### 22. Give the tool screens their own deep links on the test page
+`/live` shows one card per app; the toolbox app hides five screens behind `/tools`. Add a
+"Screens" section that deep-links each one directly (`/tools/bg-remove`, `/tools/pdf`,
+`/tools/invoice`, `/tools/signature`, `/tools/exif-strip`, `/tools/photos-to-pdf`,
+`/tools/collage`, `/breathe`, `/tap-sprint`, `/word-duel`) with a QR each, so a person can
+test a screen instead of hunting for it. Evidence: the count of codes on the page before
+and after.
+
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins

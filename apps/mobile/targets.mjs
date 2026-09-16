@@ -12,6 +12,20 @@
  */
 export const TARGETS = [
   {
+    id: "breathe",
+    name: "Breathe: Slow Breathing",
+    bundleId: "co.dropby.breathe",
+    tagline: "Four breathing patterns, offline, with your own words",
+    storeCategory: "Health & Fitness",
+    aso: ["breathing exercise", "breathwork timer", "pranayama timer", "calm breathing"],
+    color: "#0891b2",
+    // No camera, no photos, no files: the only permission-free app in the fleet, which
+    // is also why it is the one that cannot fail on a network or cost us per session.
+    permissions: [],
+    products: [],
+    firstScreen: "breathe",
+  },
+  {
     id: "passport-photo",
     name: "Passport Photo Maker",
     bundleId: "co.dropby.passportphoto",
