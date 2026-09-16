@@ -54,9 +54,21 @@ const SCREENS = [
   { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'] },
   // The only screen with no server behind it: if this one fails, the fault is the
   // screen, never the network — so its markers are about the screen's own copy.
+  // The wellness family: five screens on one native tab bar, every one of them offline.
+  // Their markers are the copy that only that screen says.
+  { name: 'stretch', route: '/stretch', expect: ['Desk mobility', 'Start the routine'] },
+  { name: 'walk', route: '/walk', expect: ['Fast for a minute', 'Start walking'] },
+  { name: 'habits', route: '/habits', expect: ['GLASSES', 'BEADS'] },
+  { name: 'water', route: '/water', expect: ['Add a glass', 'What this is not'] },
+  { name: 'japa', route: '/japa', expect: ['Tap anywhere to count', 'bead'] },
+  { name: 'sleep', route: '/sleep', expect: ['4 IN · 7 HOLD · 8 OUT', 'Start the rounds'] },
   { name: 'breathe', route: '/breathe', expect: ['breaths a minute', 'What this is not'] },
-  { name: 'tap-sprint', route: '/tap-sprint', expect: ['How fast are your taps?'] },
-  { name: 'word-duel', route: '/word-duel', expect: ['How many words in sixty seconds?'] },
+  // `interact` (see scripts/interactions.mjs) is the difference between "the game
+  // rendered" and "the game works": tap-sprint's field was inert for a day of
+  // captures (item 21) and every PNG passed the marker check, because a screenshot
+  // of a game that cannot score looks exactly like one that can.
+  { name: 'tap-sprint', route: '/tap-sprint', expect: ['How fast are your taps?'], interact: 'tap-sprint-hit' },
+  { name: 'word-duel', route: '/word-duel', expect: ['How many words in sixty seconds?'], interact: 'word-duel-pick' },
   // The paywall is a web page, not an app screen, but it is where the money is
   // taken — so it belongs in the same gallery.
   { name: 'paywall', url: `${WEB_BASE}/unlock/33`, expect: ['Verify your', '₹'] },
@@ -154,13 +166,15 @@ async function reachable(url) {
 
 // -------------------------------------------------------------------- capture
 
-function shoot({ name, url, expect }, view) {
+function shoot({ name, url, expect, interact }, view) {
   // One file per group/screen/view: <group>__<screen>__<view>.png, which is what
   // the gallery parses to group the pictures and offer the view switcher.
   const outFile = path.join(SHOTS_DIR, `app__${name}__${view}.png`);
   const args = [HARNESS, url, outFile, '--viewport', opts.viewport, '--json', '--wait', '2200'];
   if (view.endsWith('dark')) args.push('--dark');
   for (const e of expect) args.push('--expect', e);
+  // The positive control, when the screen has one (see scripts/interactions.mjs).
+  if (interact) args.push('--interact', interact);
   const r = spawnSync(process.execPath, args, { encoding: 'utf8', env: process.env });
   const line = (r.stdout || '').trim().split('\n').filter((l) => l.trim().startsWith('{')).pop();
   let info = {};
@@ -206,11 +220,23 @@ for (const s of targets) {
     const view = `${opts.viewport}-${theme}`;
     const r = shoot({ ...s, url }, view);
     results.push(r);
-    const mark = r.code === 0 && r.ok !== false ? '✓' : r.code === 3 ? '✗ asserted' : '✗';
+    const mark =
+      r.code === 0 && r.ok !== false
+        ? '✓'
+        : r.interactionFailed
+          ? '✗ probe'
+          : r.code === 3
+            ? '✗ asserted'
+            : '✗';
     const missing = r.expectMissing ? `  missing: ${r.expectMissing.join(', ')}` : '';
+    const probe = r.interactionFailed
+      ? `  probe ${s.interact} did not happen: ${r.interactionFailed}`
+      : r.interaction
+        ? `  probe: ${r.interaction.detail}`
+        : '';
     console.log(
       `  ${mark} ${s.name.padEnd(12)} ${view.padEnd(12)} http=${r.status ?? '-'} ` +
-        `${r.bytes ? kb(r.bytes) : '-'} page=${r.dimensions ? `${r.dimensions.scrollWidth}x${r.dimensions.scrollHeight}` : '-'}${missing}`
+        `${r.bytes ? kb(r.bytes) : '-'} page=${r.dimensions ? `${r.dimensions.scrollWidth}x${r.dimensions.scrollHeight}` : '-'}${missing}${probe}`
     );
   }
 }

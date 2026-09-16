@@ -65,9 +65,14 @@ function screensFor(t) {
   }
   const first = SCREEN_FOR_FIRST[t.firstScreen];
   if (first) out.add(first);
+  // One identity owns the whole wellness family: they share a tab bar, so they are one app.
+  if (t.id === 'breathe') for (const sc of WELLNESS_SCREENS) out.add(sc);
   for (const s of EXTRA_SCREENS[t.id] ?? []) out.add(s);
   return [...out];
 }
+
+/** The wellness app's screens: one native tab bar, five products plus the hub. */
+const WELLNESS_SCREENS = ['stretch', 'walk', 'habits', 'water', 'japa', 'sleep'];
 
 const apps = TARGETS.map((t) => ({
   id: t.id,

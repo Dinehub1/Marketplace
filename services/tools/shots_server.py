@@ -60,7 +60,7 @@ GROUP_LABELS = {
 
 # The order a person walks the product in, not the alphabet.
 SCREEN_ORDER = [
-    "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe",
+    "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
     "pdf-tools-rotate", "pdf-tools-numbers",
     "exif-strip", "photos-to-pdf", "collage",
     "invoice", "tap-sprint", "word-duel", "paywall",
@@ -313,6 +313,47 @@ SCREEN_INFO = {
                 "reads as one picture. A shape that cannot hold the photos is dimmed on screen with the "
                 "reason, rather than being sent and refused by the engine.",
         "asserts": ["A few photos,", "Shape"],
+    },
+    "stretch": {
+        "title": "Stretch — five-minute desk routine",
+        "what": "Eight movements with a countdown each, built for someone who sits all day: neck and "
+                "shoulder rolls, a chest opener, a seated twist, wrists, hips, hamstrings, and a minute "
+                "of slow breathing to finish. It says it is general mobility, not physiotherapy.",
+        "asserts": ["Desk mobility", "Start the routine"],
+    },
+    "walk": {
+        "title": "Walk — interval timer",
+        "what": "Turns a walk into something with a shape: three minutes warm up, then fast for a "
+                "minute and easy for two, repeated, then three minutes cool down. No GPS, no sensors, "
+                "no account — a timer and a word on screen.",
+        "asserts": ["Fast for a minute", "Start walking"],
+    },
+    "habits": {
+        "title": "Today — the wellness hub",
+        "what": "The one screen that shows today's count for both counters without opening either, "
+                "and pushes to Stretch and Walk. It exists because a native tab bar holds five items "
+                "before iOS buries the rest behind More.",
+        "asserts": ["GLASSES", "BEADS"],
+    },
+    "water": {
+        "title": "Water — a counter, not a coach",
+        "what": "Taps to count glasses, resetting with the date, with the target presented as a "
+                "setting rather than a prescription — because there is no single right number of "
+                "glasses for everyone, and the screen says so.",
+        "asserts": ["Add a glass", "What this is not"],
+    },
+    "japa": {
+        "title": "Japa — a counting aid",
+        "what": "A 108-bead counter with a haptic per bead and a different buzz at the end of a round, "
+                "for anyone repeating a phrase. It does not teach a practice or choose words: you set "
+                "the phrase and it counts, on the device.",
+        "asserts": ["Tap anywhere to count", "bead"],
+    },
+    "sleep": {
+        "title": "Sleep — wind-down and lights out",
+        "what": "Four rounds of 4·7·8 breathing, then a twenty-minute countdown to lights out. No "
+                "claims about insomnia or sleep stages; it is the last ten minutes, and it says so.",
+        "asserts": ["4 IN · 7 HOLD · 8 OUT", "Start the rounds"],
     },
     "breathe": {
         "title": "Breathe — slow breathing",
@@ -867,6 +908,29 @@ LIVE_ROUTES = {
     "sarkarcars": ("/", [
         "Search “car wash” or “denting” and open a garage.",
         "Same test: the number on the page should be the number that dials.",
+    ]),
+    "stretch": ("/stretch", [
+        "Press Start and follow the countdown — the move name and the instruction should change every 30-45s.",
+        "The list of 8 moves is below when idle; check the whole routine fits on one screen on a small phone.",
+    ]),
+    "walk": ("/walk", [
+        "Pick 5 rounds, press Start walking: it should read Fast for 60s, then Easy for 120s, repeatedly.",
+        "The accent border should appear on the Fast phases so you can read it at arm's length while walking.",
+    ]),
+    "habits": ("/habits", [
+        "This is the hub: tap GLASSES to add water, tap BEADS to open the counter, tap Stretch or Walk to open them.",
+    ]),
+    "water": ("/water", [
+        "Tap Add a glass a few times — the big number and the filled squares should move together.",
+        "Tap the minus once to check it can go down, and that it never goes below zero.",
+    ]),
+    "japa": ("/japa", [
+        "Tap the pad repeatedly: it should count, buzz light each bead, and buzz differently at 108.",
+        "Check that a round is recorded and the bead count resets — then everything stays on the phone.",
+    ]),
+    "sleep": ("/sleep", [
+        "Press Start the rounds: Breathe in 4s, Hold 7s, Breathe out 8s, four times.",
+        "When the rounds finish it should switch to the lights-out countdown without losing the screen.",
     ]),
     "breathe": ("/breathe", [
         "Press Begin and watch the circle: it should grow across the in-breath and settle across the out-breath, not jump.",

@@ -34,6 +34,14 @@ const PRODUCT_ACCENTS: Record<string, AccentKey> = {
   "bg-remove": "positive",
   // Calm, not clinical: the breathing screen keeps the informational accent.
   breathe: "info",
+  // The wellness family: each tab keeps its own colour so the five screens read as five
+  // different jobs (a calm blue, a green for movement, teal for tracking, violet at night).
+  stretch: "positive",
+  walk: "positive",
+  water: "info",
+  japa: "gold",
+  sleep: "warning",
+  habits: "info",
   // The three toolbox products added with their screens (item 14): a re-save, a
   // pdfcpu import and a Pillow sheet, each with its own colour so two products
   // cannot be mistaken for one.

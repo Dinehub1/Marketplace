@@ -245,7 +245,7 @@ export default function Breathe() {
   }
 
   return (
-    <View style={[s.root, { paddingTop: insets.top + space.base }]}>
+    <View style={[s.root, { paddingTop: insets.top + space.base, paddingBottom: insets.bottom + 78 }]}>  {/* 78 = the floating iOS 26 tab bar */}
       <View style={s.head}>
         <Text variant="title2">Breathe</Text>
         <Text variant="meta" tone="ink2">
