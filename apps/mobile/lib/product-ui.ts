@@ -32,6 +32,8 @@ const PRODUCT_ACCENTS: Record<string, AccentKey> = {
   "pdf-tools": "critical",
   "invoice-maker": "positive",
   "bg-remove": "positive",
+  // Calm, not clinical: the breathing screen keeps the informational accent.
+  breathe: "info",
   // The three toolbox products added with their screens (item 14): a re-save, a
   // pdfcpu import and a Pillow sheet, each with its own colour so two products
   // cannot be mistaken for one.

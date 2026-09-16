@@ -426,6 +426,22 @@ The invoice engine can print a UPI QR from the NPCI spec string
 That gives every shopkeeper bill a way to be paid even while Razorpay keys are missing.
 Evidence: an invoice job whose output PDF contains a decodable QR, verified by decoding it.
 
+### 19. Make invoice / pdf / signature respect the theme (measurable, not a matter of taste)
+Those three screens call neither `useTheme` nor `useProductUI` (0 references — verified),
+so they ignore dark mode. The proof is in the gallery: their `mobile-dark` and
+`mobile-light` captures are **byte-identical** (same MD5) while every other screen differs.
+Convert each to the pattern `bg-remove` uses — `const ui = useProductUI("<product>")` plus
+`makeStyles(ui)` — with no raw hex values.
+Done when: `python scripts/app-shots.mjs --only invoice` (and pdf, signature) produces
+dark and light captures whose MD5s **differ**, and the job is logged with both hashes.
+If a screen is genuinely meant to be light-only (a printed invoice, say), say so in the
+log and note it in SCREEN_INFO instead of pretending it is dark-capable.
+
+### 20. Wrap `breathe` in the shared frame once the frame exists
+`apps/mobile/app/breathe.tsx` is new (the ₹0 slow-breathing screen). It carries its own
+layout today because the frame does not exist yet; when `components/tool-frame.tsx` lands,
+wrap it like the other tool screens. Until then, do not touch it — it works.
+
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins

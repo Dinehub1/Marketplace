@@ -60,7 +60,7 @@ GROUP_LABELS = {
 
 # The order a person walks the product in, not the alphabet.
 SCREEN_ORDER = [
-    "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools",
+    "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe",
     "pdf-tools-rotate", "pdf-tools-numbers",
     "exif-strip", "photos-to-pdf", "collage",
     "invoice", "tap-sprint", "word-duel", "paywall",
@@ -313,6 +313,15 @@ SCREEN_INFO = {
                 "reads as one picture. A shape that cannot hold the photos is dimmed on screen with the "
                 "reason, rather than being sent and refused by the engine.",
         "asserts": ["A few photos,", "Shape"],
+    },
+    "breathe": {
+        "title": "Breathe — slow breathing",
+        "what": "Four patterns (coherent 5.5, box 4·4·4·4, 4·7·8, long exhale 4·8) around a circle "
+                "that grows on the inhale and settles on the exhale, with a phrase you type yourself "
+                "and a haptic at each turn. The only product here with no server behind it: it costs "
+                "₹0 a session and works offline. The numbers on screen are arithmetic, and the screen "
+                "says plainly what it is not.",
+        "asserts": ["breaths a minute", "What this is not"],
     },
     "tap-sprint": {
         "title": "Tap Sprint — reflex game",
@@ -1405,6 +1414,44 @@ def render_perf() -> bytes:
     except Exception:
         quant_html = ""
 
+    # ---- guard banner: silent failures, made loud -------------------------------
+    alerts = d.get("alerts") or []
+    gstate = d.get("guard_state") or ("ok" if not alerts else "warn")
+    gcls = {"ok": "ok", "warn": "warn", "alert": "bad"}.get(gstate, "warn")
+    if alerts:
+        gitems = "".join(
+            f"<li><b>{html.escape(str(al.get('instance', '')))}</b> — {html.escape(str(al.get('msg', '')))}</li>"
+            for al in alerts)
+        guard_html = (f'<div class="health {gcls}"><b>Guards: {len(alerts)} alert(s)</b>'
+                      f'<ul style="margin:6px 0 0 18px">{gitems}</ul></div>')
+    else:
+        guard_html = ('<div class="health ok">Guards: no alerts — every instance running, heartbeats fresh, '
+                      'no naked positions, no out-of-window entries since the last restart, '
+                      'sizes and spreads inside limits.</div>')
+
+    # ---- verdict: is the edge showing, and does the SHAPE still clear zero? ---------
+    v = d.get("verdict") or {}
+    fired = v.get("fired") or []
+    fired_html = (f'<div style="margin-top:5px">SWITCH-OFF TRIGGER FIRED: '
+                  f'{html.escape(", ".join(str(x) for x in fired))}</div>') if fired else ""
+    if v.get("live_r") is not None:
+        vs = "bad" if (v.get("ci95") or [0, 0])[1] < 0 else (
+            "ok" if (v.get("ci95") or [0, 0])[0] > 0 else "warn")
+        verdict_html = (
+            f'<div class="health {vs}"><b>Verdict: {html.escape(str(v.get("verdict", "")))}</b>'
+            f'<div style="margin-top:5px">payoff <b>{v.get("payoff")}</b> '
+            f'(plan {v.get("plan_payoff")}) · win rate <b>{v.get("win_rate")}%</b> '
+            f'(plan {v.get("plan_win_rate")}%) · avg win <b>{v.get("avg_win_r")}R</b> · '
+            f'avg loss <b>{v.get("avg_loss_r")}R</b> · break-even win rate '
+            f'<b>{v.get("breakeven_win_rate")}%</b> · scratches {v.get("scratches")}</div>'
+            f'<div style="margin-top:5px">{html.escape(str(v.get("shape_note", "")))}</div>'
+            f'<div style="margin-top:5px">progress to a verdict: <b>{v.get("trades")}'
+            f'/{v.get("trades_needed")}</b> trades · {html.escape(str(v.get("scale_up_rule", "")))}</div>'
+            + fired_html + '</div>')
+    else:
+        verdict_html = ('<div class="health warn">Verdict: fewer than 5 live trades — '
+                        'nothing can be concluded yet.</div>')
+
     body = f"""<header>
   <h1>Trading performance — account {html.escape(str(a.get('login', '?')))}</h1>
   <div class="sub">{html.escape(str(a.get('server', '')))} · {html.escape(str(a.get('currency', '')))}
@@ -1413,6 +1460,8 @@ def render_perf() -> bytes:
 </header>
 <div class="wrap">
   <div class="health {health_class}">{html.escape(health_txt)}</div>
+  {guard_html}
+  {verdict_html}
   <div class="grid">
     <div class="kpi"><div class="lab">equity</div><div class="val">{a.get('equity', 0):,.2f}</div></div>
     <div class="kpi"><div class="lab">balance</div><div class="val">{a.get('balance', 0):,.2f}</div></div>

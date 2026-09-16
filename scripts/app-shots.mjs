@@ -52,6 +52,9 @@ const SCREENS = [
   { name: 'photos-to-pdf', route: '/tools/photos-to-pdf', expect: ['Photos into', 'Page size'] },
   { name: 'collage', route: '/tools/collage', expect: ['A few photos,', 'Shape'] },
   { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'] },
+  // The only screen with no server behind it: if this one fails, the fault is the
+  // screen, never the network — so its markers are about the screen's own copy.
+  { name: 'breathe', route: '/breathe', expect: ['breaths a minute', 'What this is not'] },
   { name: 'tap-sprint', route: '/tap-sprint', expect: ['How fast are your taps?'] },
   { name: 'word-duel', route: '/word-duel', expect: ['How many words in sixty seconds?'] },
   // The paywall is a web page, not an app screen, but it is where the money is
