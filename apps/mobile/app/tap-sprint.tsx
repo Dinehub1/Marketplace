@@ -14,14 +14,16 @@
  * not like the directory behind it. Everything else (type scale, spacing,
  * press feedback, dark mode, elevation) comes from the shared design system.
  */
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Platform,
   Pressable,
   StyleSheet,
   View,
   useWindowDimensions,
   type DimensionValue,
   type GestureResponderEvent,
+  type PressableProps,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -62,6 +64,21 @@ const ALLOW_PER_HIT_MS = 45;
 /** A fingertip is ~9mm wide and the dot can shrink to 52pt: without slop, a
  *  visually-on-target tap reads as a miss and the game feels broken. */
 const HIT_SLOP = 16;
+
+/** react-native-web waits `DEFAULT_PRESS_DELAY_MS` (50 ms) before it *activates* a
+ *  press, and a press released inside that window is only reported at all when the
+ *  Pressable also has an `onPress` handler — RNW's PressResponder only calls
+ *  `_activate` on RESPONDER_RELEASE `if (onPress != null)`. This field listens on
+ *  `onPressIn` alone, so it heard nothing from any real tap: measured on the web
+ *  build, a click and a touchscreen tap on the dot did nothing (0 hits, 0 misses,
+ *  the dot never even moved) while a 300 ms press-and-hold scored. Zeroing the
+ *  delay activates the press at pointerdown, which is also the moment the reaction
+ *  should be measured from. It is an RNW-only prop (React Native's Pressable has no
+ *  such prop, hence the widened type) and it is applied on web only, so the native
+ *  path keeps the platform's own behaviour. */
+type PressPropsWithDelay = PressableProps & { delayPressIn?: number };
+const FIELD_PRESS_PROPS =
+  Platform.OS === "web" ? ({ delayPressIn: 0 } as PressPropsWithDelay) : undefined;
 
 /** 100 points minus one per millisecond, floor 10. Stated on the start screen
  *  so the score is a rule the player can play against, not a black box. */
@@ -121,21 +138,31 @@ export default function TapSprint() {
   const scoreRef = useRef(0);
   const reactionsRef = useRef<number[]>([]);
   const missTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  /** Cancels the current dot's deadline. Stable, so the unmount effect below can
+   *  depend on it without re-running. */
+  const killMissTimer = useCallback(() => {
+    if (missTimer.current) {
+      clearTimeout(missTimer.current);
+      missTimer.current = null;
+    }
+  }, []);
+
   const phaseRef = useRef<Phase>("ready");
   const boundsRef = useRef({ w: fieldW, h: fieldH });
 
   useEffect(() => {
     phaseRef.current = phase;
-    // Leaving "playing" must kill the dot's deadline, or a timeout fires into a
-    // screen that is no longer playing. The dot itself is cleared by whoever
-    // ended the round, in the same event as that phase change.
-    return () => {
-      if (missTimer.current) {
-        clearTimeout(missTimer.current);
-        missTimer.current = null;
-      }
-    };
   }, [phase]);
+
+  // The dot's deadline is cancelled **on unmount only**. It used to be cleared by
+  // a cleanup keyed on `phase`, which was wrong twice over: a timeout that arrives
+  // after the round ended is already inert (registerMiss returns unless
+  // phaseRef.current is "playing"), and startRound() calls spawn() in the same
+  // event as setPhase("playing") — so the cleanup for the previous phase ran
+  // *after* the timer existed and deleted it, leaving the first dot of every round
+  // with no deadline at all (measured: 3.2 s of no input cost no life).
+  useEffect(() => killMissTimer, [killMissTimer]);
 
   useEffect(() => {
     if (phase !== "playing") return;
@@ -221,13 +248,6 @@ export default function TapSprint() {
       missTimer.current = null;
       registerMiss("The dot timed out — too slow.");
     }, allowed);
-  }
-
-  function killMissTimer() {
-    if (missTimer.current) {
-      clearTimeout(missTimer.current);
-      missTimer.current = null;
-    }
   }
 
   function registerHit(t: Target) {
@@ -451,8 +471,9 @@ export default function TapSprint() {
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel="Playing field. Tap the dot."
-                // onPressIn, not onPress: the reaction has to be measured from
+                // `onPressIn`, not `onPress`: the reaction has to be measured from
                 // the finger landing, not from the finger lifting.
+                {...FIELD_PRESS_PROPS}
                 onPressIn={onFieldPress}
                 style={[
                   s.field,
