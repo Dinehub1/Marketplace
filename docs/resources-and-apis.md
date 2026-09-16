@@ -49,6 +49,23 @@ Design: one server-side router (`lib/ai.ts`) tries the chain in order, with a pe
 timeout and health check, and records which provider served each job in `product_jobs`.
 Keys stay server-side, never in the app bundle.
 
+**Built 2026-09-17 (queue item 17) and measured against the live services — four corrections
+to the table, so nobody re-derives them:**
+- **Search / `pg_trgm`:** the extension's functions are **not exposed** through this project's
+  PostgREST (`POST /rest/v1/rpc/show_trgm` → `PGRST202`), so the router's search provider runs
+  PostgREST `ilike` per word (`and=(or(name,category,area), …)`) and ranks the rows with its own
+  trigram overlap. Verified: "plumber vijay nagar" → 4 rows ranked.
+- **Text:** `@cf/qwen/qwen3-30b-a3b-fp8` answers 200, and its completion arrives as
+  `result.choices[0].text` (not `result.response`) — the router reads both.
+- **Text → speech:** `melotts` is **flaky** (500 `AiError 3043` twice in a row, then 200 with
+  158 KB of MP3 minutes later); `@cf/deepgram/aura-1` answered 200 with real `audio/mpeg` for
+  `{text}` and is now the chain's second entry, so one flaky model is not an outage.
+- **Vision:** `@cf/meta/llama-3.2-11b-vision-instruct` returns **403 `Model Agreement`** until
+  the model's licence is accepted once in the dashboard, and
+  `@cf/moondream/moondream3.1-9B-A2B` cannot be called over JSON at all (`image` must be an array
+  of *binary*; every JSON shape answers 400 and multipart is refused). Until that click happens
+  the vision slot is `tesseract`, which is not installed — see queue item 35.
+
 | Capability | Primary | Fallback 1 | Fallback 2 | Local / last resort |
 |---|---|---|---|---|
 | Text (writing products) | Workers AI `@cf/qwen/qwen3-30b-a3b-fp8` ($0.051/$0.335 per M) | Gemini Flash (free) | Groq (free, fastest) | `colibri` on this CPU (₹0) |

@@ -470,7 +470,7 @@ Once one hosted model runs, measure actual cost per job from `product_jobs` dura
 the model's neuron rate, and put the number next to each price in `docs/product-plan.md`.
 The point: "₹99 voice-over" should be backed by a measured rupee cost, not an estimate.
 
-### 17. Build the provider router with the fallback chains (no keys needed)
+### 17. Build the provider router with the fallback chains (no keys needed) — DONE 2026-09-17
 `docs/resources-and-apis.md` defines the chains. Implement `apps/web/lib/ai.ts`: one
 function per capability (text, vision, translate, stt, tts, image) that walks its chain in
 order, with a 20 s timeout per provider, a health check, and the serving provider recorded
@@ -478,6 +478,48 @@ in the job's `meta`. It must work with ZERO keys configured — the local paths 
 `tesseract`, `pg_trgm`) are the terminal fallback, so the router is testable today.
 Done when: a unit-style script proves the chain falls through when the first provider
 throws, and the record names which provider answered.
+
+**Result: `apps/web/lib/ai.ts` is the router, and both halves of the done-when are shown.**
+18 providers, 8 capabilities, chains exactly as §3 lists them. `runChain(capability, input)`
+walks its chain, skips a provider that is not available (with its sentence), skips one that
+fails a health check without running it, abandons one that outlives its timeout (20 s default,
+180 s for images), retries a **remote** provider **once** on a 5xx/429 (item 29's lesson, built
+in from the start) and never retries a 4xx, then returns `{ok, answer, record}` —
+`metaFor(record)` is the object a job merges into its `meta`: `ai_provider`, `ai_try` list,
+`ai_ms`, `ai_cost`, and on failure the full reason list.
+- **Zero keys works, and it is a product not a demo:** `text` → `rules` (a template over the
+  facts we already hold — a real `businesses` row became "INDORE PLUMBER SERVICES is a plumber
+  in Rajendra Nagar. Phone: 09977849019. Rated 4.8 out of 5 in the directory.", meta
+  `ai_provider: "rules"`, ₹0), and `search` → `supabase-like` (PostgREST `ilike` candidates
+  ranked by trigram overlap: "plumber vijay nagar" → 4 rows, Astral Pipes 0.559, Vijay plumber
+  0.515). The local slots that **cannot** run are unavailable by name, not by omission:
+  `tesseract`, `whisper.cpp` and `piper` each say the measured reason (not installed / GPL
+  fork), so `vision`, `translate`, `stt`, `tts`, `image` are declared `KEY_ONLY` and the unit
+  test pins that list against a real zero-key run.
+- **The hosted paths were called for real this hour** (the shell carries the worker's
+  `CLOUDFLARE_API_TOKEN`): `text` → `@cf/qwen/qwen3-30b-a3b-fp8` 200 in 1,714 ms with a real
+  answer; `translate` → `@cf/ai4bharat/indictrans2-en-indic-1B` 200 in 1,001 ms returning
+  "आपका बिल तैयार है।" for "Your bill is ready."; `tts` → melotts **500 twice in a row**
+  (AiError 3043) on the first probe and **200 with 158,054 B of audio/mpeg** on the next run —
+  intermittent — and the documented fallback `@cf/deepgram/aura-1` answers 200 with 9,247 B of
+  audio/mpeg for `{text}` (melotts wants `prompt`, aura wants `text`, so the provider takes the
+  field name as a parameter). Both are now in the `tts` chain, so a flaky melotts is no longer
+  a single point of failure.
+- **What is honestly still missing:** `vision`. `@cf/meta/llama-3.2-11b-vision-instruct`
+  answers **403 "Model Agreement: … you must submit the prompt 'agree'"** (one dashboard click,
+  not a code problem), and the alternative `@cf/moondream/moondream3.1-9B-A2B` is **not
+  JSON-callable**: byte array, nested array, data URL and plain base64 all answer 400 "Type
+  mismatch of '/image': 'string' not in 'array','binary'" and multipart is refused as "Request
+  body is not valid json". New item 35.
+Evidence: `node --test apps/web/lib/ai.test.mjs` **14/14** (fall-through on a throw, a 5xx
+retried once and the second 5xx being the answer, a 4xx not retried, a hang abandoned at
+150 ms and the chain moving on, a bad health check skipping without a run, a chain that runs
+out naming every reason, the zero-key chain landing on `rules`, and the search shape);
+`node scripts/ai-router-report.mjs` (also `npm run ai:report`) exit **0** with the chain table,
+the two ₹0 paths, the four hosted calls and the honest vision failure printed; `tsc --noEmit`
+in `apps/web` exit 0. **No engine restart and no `npm run build`** — nothing in the web app
+imports the router yet, so the live site was never touched (item 36 wires it in).
+Test script: `npm run test:ai -w @hermes/web`.
 
 ### 18. UPI QR on the invoice (no vendor needed)
 The invoice engine can print a UPI QR from the NPCI spec string
@@ -1079,5 +1121,44 @@ with an observable change that is not the screen's own copy:
   change to the job that will run; the dimmed "cannot hold the photos" chips are the control.
 Each probe must run at capture time like the games' do (exit 3, no gallery write) so a screen
 whose control stops responding cannot pass the gallery gate again.
+
+### 35. Vision needs one dashboard click, and its alternative is not reachable (new, 2026-09-17, from item 17)
+The router's `vision` chain cannot be served today, and both reasons are measured rather than
+assumed (item 17):
+- `@cf/meta/llama-3.2-11b-vision-instruct` answers **403 `Model Agreement: Prior to using this
+  model, you must submit the prompt 'agree'`** — a one-time acceptance of Meta's community
+  licence, done in the Cloudflare dashboard (Workers AI → the model → agree). Until then the
+  bill-scan / study-photo capability is dead even with a token.
+- `@cf/moondream/moondream3.1-9B-A2B` (the chain table's other vision model) **cannot be
+  called from a JSON route**: `image` as a byte array, a nested array, a data URL and plain
+  base64 all answer `400 Bad input: Type mismatch of '/image', 'string' not in
+  'array','binary'`, and a multipart body is refused with `Request body is not valid json`. It
+  needs the model's own binary input path, which `api.cloudflare.com/.../ai/run` does not take.
+So: either he accepts the licence in the dashboard (a minute, then re-run
+`node scripts/ai-router-report.mjs` and the vision line must turn `ok=true`), or the slot stays
+honest (`tesseract` is the declared local slot and is not installed). Do not add a vision
+provider that has not answered 200 with a real image.
+
+### 36. Wire the router into a product — it is engine-side only today (new, 2026-09-17, from item 17)
+`apps/web/lib/ai.ts` is built and tested but **nothing imports it**, so no user can reach it.
+The first real use is the cheapest one and it is already proven end to end: the ₹0 `rules`
+path wrote a real listing description from a real `businesses` row, and the directory has
+~24k businesses whose pages have no prose at all. Two edits: a `description` product in
+`ENGINE` (`fields: ["business_id"]`, `dataOnly: true`, free) that loads the row, calls
+`runChain("text", {kind: "listing-description", facts: row})`, stores the text, and returns
+`metaFor(record)` so the job row says which provider answered and what it cost; then the
+service page renders it with the sentence "written from this business's own details". The
+token to unblock the hosted upgrades is still item 14 (`CLOUDFLARE_AI_TOKEN` in
+`apps/web/.env` — the router reached Workers AI this hour only because the shell exports the
+worker's token; under pm2 the web app has no AI key, so it would fall to Gemini/Groq, and with
+no free key either, to the template). Keep the labels honest: a template-written description
+must not read as if a model wrote it.
+
+### 37. `product_jobs` has no place for the provider that answered (new, 2026-09-17, from item 17)
+`metaFor(record)` returns `ai_provider` / `ai_try` / `ai_ms` / `ai_cost`, and the job route
+already stores `meta` on every row — but nothing writes these yet, so "which provider served
+this, and at what cost" cannot be answered from the database (item 16 needs exactly that to
+price products from measured cost). Small: merge `metaFor` into the meta of any job served by
+the router when item 36 lands, and add the provider to the `/log` page's per-job line.
 
 
