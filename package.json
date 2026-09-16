@@ -21,6 +21,7 @@
     "mobile:ios": "npm run ios -w @hermes/mobile",
     "mobile:android": "npm run android -w @hermes/mobile",
     "test": "npm run test --workspaces --if-present",
+    "ai:report": "node scripts/ai-router-report.mjs",
     "shots": "node scripts/app-shots.mjs",
     "shots:fast": "node scripts/app-shots.mjs --no-export",
     "check:targets": "node scripts/check-targets.mjs"

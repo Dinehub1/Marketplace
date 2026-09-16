@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint app components lib proxy.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:ai": "node --test lib/ai.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
