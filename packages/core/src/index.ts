@@ -230,3 +230,121 @@ export const PDF_PAGES_HELP =
  *  inclusion, it does not select on its own. */
 export const PDF_PAGES_HINT =
   "1-3, 7, odd, even, l (the last page), 3- (to the end), -4 (up to page 4), l-3- (the last 3), 1-,!5 (all but page 5)";
+
+/* ---------------------------------------------------------------------------
+ * Bill numbering (the invoice screen's own business, not the renderer's).
+ *
+ * The bill number used to be typed from memory every time, so the same number
+ * could be printed on two bills — a tax problem for the shop, not a cosmetic
+ * one. The rules below are pure so both the screen and its tests can read them;
+ * where the counter is *kept* (device storage today, a server row later) is the
+ * caller's decision, and the engine keeps taking whatever bill number it is
+ * sent.
+ *
+ * What the rules deliberately do NOT do: invent a series the shop never used.
+ * A number this cannot parse (`INV/26/07-A`) advances nothing, and the screen
+ * says so rather than promising a next number it cannot follow.
+ * ------------------------------------------------------------------------- */
+
+/** A parsed bill number: `INV-014` → prefix `INV-`, digits 14, width 3. */
+export type BillNo = {
+  /** Everything before the trailing digit run, exactly as typed (`""`, `"INV-"`, `"No. "`). */
+  prefix: string;
+  /** The trailing digit run as a number. */
+  digits: number;
+  /** How many digits were typed, so `014` can be followed by `015` and not `15`. */
+  width: number;
+};
+
+/**
+ * Read a bill number the way a shop writes one: a trailing run of digits, with
+ * whatever prefix the shop prefers in front of it. Returns null when there is
+ * no trailing digit run to follow (`INV/26/07-A`), which is the honest answer —
+ * a counter cannot continue a series it cannot parse.
+ */
+export function parseBillNo(value: string | null | undefined): BillNo | null {
+  const s = String(value ?? "").trim();
+  if (!s) return null;
+  const m = s.match(/^(.*?)(\d+)$/);
+  if (!m) return null;
+  const digitsText = m[2];
+  // A ten-digit "bill number" is a phone number or a typo, not a series step.
+  if (digitsText.length > 9) return null;
+  const digits = Number(digitsText);
+  if (!Number.isFinite(digits)) return null;
+  return { prefix: m[1], digits, width: digitsText.length };
+}
+
+/**
+ * Which shop a counter belongs to. A real GSTIN (15 characters, nowhere to
+ * mistype increasingly as the user types) is the strongest identity; otherwise
+ * the shop name, case- and space-folded. Null when neither is known, which
+ * means "do not count yet" rather than "count under an empty name".
+ */
+export function shopKeyOf(name: string | null | undefined, gstin?: string | null): string | null {
+  const g = String(gstin ?? "").replace(/\s+/g, "").toUpperCase();
+  if (/^[0-9A-Z]{15}$/.test(g)) return `gstin:${g}`;
+  const n = String(name ?? "").trim().toLowerCase().replace(/\s+/g, " ");
+  return n ? `shop:${n}` : null;
+}
+
+/** What the device remembers for one shop: the highest number used, and its shape. */
+export type InvoiceCounter = {
+  /** Highest bill number recorded on this device for this shop. */
+  last: number;
+  /** Digit width of `last` as typed, so `014` suggests `015`. */
+  width: number;
+  /** The prefix that came with it (`""`, `"INV-"`), so the series stays recognisable. */
+  prefix: string;
+};
+
+export type BillAdvance = {
+  /** The counter after this bill; unchanged when the number could not be read. */
+  counter: InvoiceCounter;
+  /** True when this bill moved the counter forward. */
+  moved: boolean;
+  /** True when the number was at or below the last one used on this device. */
+  alreadyUsed: boolean;
+  /** The parsed form, or null when the number is not one this can follow. */
+  parsed: BillNo | null;
+};
+
+/**
+ * Record a bill number and return the counter afterwards.
+ *
+ * Forward only: printing bill 20 and then re-printing bill 7 does not rewind the
+ * counter, because the next *new* bill is still 21. A number that cannot be
+ * parsed leaves the counter exactly as it was.
+ */
+export function advanceCounter(
+  counter: InvoiceCounter | null,
+  billNo: string | null | undefined,
+): BillAdvance {
+  const current: InvoiceCounter = counter ?? { last: 0, width: 1, prefix: "" };
+  const parsed = parseBillNo(billNo);
+  if (!parsed) return { counter: current, moved: false, alreadyUsed: false, parsed: null };
+  const moved = parsed.digits > current.last;
+  return {
+    counter: moved
+      ? { last: parsed.digits, width: parsed.width, prefix: parsed.prefix }
+      : current,
+    moved,
+    alreadyUsed: parsed.digits <= current.last,
+    parsed,
+  };
+}
+
+/** The number to offer next: last + 1, padded to the width of the last one, in
+ *  the same prefix. With no counter yet, `1` — the first bill of the series. */
+export function nextBillNo(counter: InvoiceCounter | null | undefined): string {
+  if (!counter || counter.last <= 0) return "1";
+  const n = counter.last + 1;
+  const text = String(n);
+  return `${counter.prefix}${text.padStart(Math.min(Math.max(counter.width, text.length), 9), "0")}`;
+}
+
+/** The last number used, for a sentence that says what it is counting from. */
+export function counterLabel(counter: InvoiceCounter | null | undefined): string | null {
+  if (!counter || counter.last <= 0) return null;
+  return `${counter.prefix}${String(counter.last).padStart(Math.min(Math.max(counter.width, String(counter.last).length), 9), "0")}`;
+}

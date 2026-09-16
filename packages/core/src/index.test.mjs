@@ -12,6 +12,7 @@ import {
   slugifyCategory, categoryPath, categoryAreaPath, isCategoryPath,
   cleanBusinessName, telHref, waHref, titleize, cleanArea, formatCount,
   isPageRange, PDF_PAGES_HELP, PDF_PAGES_HINT,
+  parseBillNo, shopKeyOf, advanceCounter, nextBillNo, counterLabel,
 } from "./index.ts";
 
 test("category slugs are stable permalinks", () => {
@@ -90,4 +91,68 @@ test("a page range the app offers is the one the engine runs", () => {
     for (const word of ["odd", "even", "l"]) assert.ok(s.includes(word), `${word} missing from "${s}"`);
   }
   assert.ok(PDF_PAGES_HINT.includes("1-,!5"), "the hint must show an exclusion attached to an inclusion");
+});
+
+/**
+ * Bill numbering. The screen offers the next number and refuses to promise one it
+ * cannot follow, so the rules are pinned here: what parses, what a counter does
+ * with it, and what the user is shown next. The cases are the ones a shop in Indore
+ * actually types — `014`, `INV-014`, and the `INV/26/07-A` style that no counter can
+ * continue (which is why the screen says so instead of guessing).
+ */
+test("the bill number counts itself forward and never rewinds", () => {
+  const p = (v) => parseBillNo(v);
+  assert.deepEqual(p("014"), { prefix: "", digits: 14, width: 3 });
+  assert.deepEqual(p("INV-014"), { prefix: "INV-", digits: 14, width: 3 });
+  assert.deepEqual(p(" 7 "), { prefix: "", digits: 7, width: 1 });
+  // A series a counter cannot continue, and a number that is not a bill number.
+  assert.equal(parseBillNo("INV/26/07-A"), null);
+  assert.equal(parseBillNo(""), null);
+  assert.equal(parseBillNo(null), null);
+  assert.equal(parseBillNo("1234567890"), null, "ten digits is a phone number, not a bill number");
+
+  // First bill of a series: nothing stored yet.
+  assert.equal(nextBillNo(null), "1");
+  const first = advanceCounter(null, "014");
+  assert.equal(first.moved, true);
+  assert.equal(first.alreadyUsed, false);
+  assert.equal(nextBillNo(first.counter), "015", "the width follows the number typed");
+
+  // Forward only: a reprint of 007 against a counter at 014 does not rewind it.
+  const reprint = advanceCounter({ last: 14, width: 3, prefix: "" }, "007");
+  assert.equal(reprint.moved, false);
+  assert.equal(reprint.alreadyUsed, true);
+  assert.deepEqual(reprint.counter, { last: 14, width: 3, prefix: "" });
+  assert.equal(nextBillNo(reprint.counter), "015");
+
+  // A past 9 the width cannot be honoured — 999 -> 1000, never a truncated 100.
+  assert.equal(nextBillNo(advanceCounter({ last: 999, width: 3, prefix: "" }, "999").counter), "1000");
+
+  // Editing the number up is how a shop adopts its own series, and the prefix rides along.
+  const jumped = advanceCounter({ last: 99, width: 2, prefix: "INV-" }, "INV-204");
+  assert.equal(jumped.moved, true);
+  assert.equal(nextBillNo(jumped.counter), "INV-205");
+
+  // An unparseable number changes nothing at all.
+  const unreadable = advanceCounter({ last: 5, width: 1, prefix: "" }, "INV/26/07-A");
+  assert.equal(unreadable.parsed, null);
+  assert.equal(unreadable.moved, false);
+  assert.deepEqual(unreadable.counter, { last: 5, width: 1, prefix: "" });
+  assert.equal(nextBillNo(unreadable.counter), "6");
+  assert.equal(counterLabel(unreadable.counter), "5");
+  assert.equal(counterLabel({ last: 14, width: 3, prefix: "" }), "014");
+  assert.equal(counterLabel(null), null);
+});
+
+test("a counter belongs to one shop, and a typed GSTIN is the strongest key", () => {
+  assert.equal(shopKeyOf("Sharma Traders", ""), "shop:sharma traders");
+  assert.equal(shopKeyOf("  Sharma   Traders  ", null), "shop:sharma traders", "case and spaces fold");
+  assert.equal(shopKeyOf("Sharma Traders", "27abcde1234f1z5"), "gstin:27ABCDE1234F1Z5");
+  assert.equal(shopKeyOf("Sharma Traders", "27ABCDE1234F1Z5"), "gstin:27ABCDE1234F1Z5");
+  // A half-typed GSTIN is not an identity: the name keeps the counter until the
+  // GSTIN is a real 15 characters, so a keystroke mid-typing does not fork the count.
+  assert.equal(shopKeyOf("Sharma Traders", "27ABCDE"), "shop:sharma traders");
+  assert.equal(shopKeyOf("", "27ABCDE"), null);
+  assert.equal(shopKeyOf("", ""), null, "no shop, no counter");
+  assert.notEqual(shopKeyOf("Sharma Traders"), shopKeyOf("Sharma Traders Indore"));
 });

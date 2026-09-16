@@ -23,10 +23,19 @@
  * with neither follows the bill-level GST rate, which is what this screen did before
  * per-item rates existed. The split rows below the items are the same rows the PDF
  * prints, grouped the same way.
+ *
+ * The bill number counts itself. A number typed from memory two days running is how
+ * a shop prints the same invoice twice, so the last number used per shop is kept
+ * (per shop, on this phone — `lib/invoice-counter.ts`) and the next one is offered;
+ * the field stays editable, the series only ever moves forward, and a number that
+ * was already used says so before the PDF is made. Numbering is this screen's
+ * business: the engine prints whatever number it is given.
  */
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@hermes/core";
 import { canDownloadFile, openPaywall, openResult, runJob, type JobResult } from "@/lib/tools";
+import { loadCounter, recordBillNo } from "@/lib/invoice-counter";
 
 const GREEN = "#166534";
 const INK = "#0f172a";
@@ -123,6 +132,35 @@ export default function InvoiceMaker() {
   const [error, setError] = useState<string | null>(null);
   const nextId = useRef(2);
 
+  /** The bill numbers this phone has made for the shop currently typed. */
+  const shopKey = useMemo(() => shopKeyOf(shop, gstin), [shop, gstin]);
+  const [counter, setCounter] = useState<InvoiceCounter | null>(null);
+  const [billNote, setBillNote] = useState<string | null>(null);
+  /** The number that is on the PDF currently shown, which is what the download is
+   *  named after (the field itself has already moved on to the next number). */
+  const [madeAs, setMadeAs] = useState<string | null>(null);
+  /** True once the user has typed their own number for this shop, so the counter
+   *  never overwrites a number they chose. A ref, not state: it changes no output. */
+  const billTyped = useRef(false);
+
+  useEffect(() => {
+    let live = true;
+    setBillNote(null);
+    if (!shopKey) {
+      setCounter(null);
+      return;
+    }
+    void loadCounter(shopKey).then((c) => {
+      if (!live) return;
+      setCounter(c);
+      // Offer the next number only while the field is the app's, not the user's.
+      if (!billTyped.current) setBillNo(nextBillNo(c));
+    });
+    return () => {
+      live = false;
+    };
+  }, [shopKey]);
+
   const lines = useMemo(
     () =>
       items.map((it) => {
@@ -170,6 +208,13 @@ export default function InvoiceMaker() {
         ? "Add at least one item with a name and a rate."
         : null;
 
+  // A number this phone has already used is said here, before the PDF is made —
+  // a warning after the fact is not a warning.
+  const typedBillNo = billNo.trim();
+  const parsedTyped = parseBillNo(typedBillNo);
+  const reusing = !!(shopKey && counter && parsedTyped && parsedTyped.digits <= counter.last);
+  const lastBill = counterLabel(counter);
+
   function setItem(id: number, patch: Partial<Item>) {
     setJob(null);
     setItems((prev) => prev.map((it) => (it.id === id ? { ...it, ...patch } : it)));
@@ -178,6 +223,7 @@ export default function InvoiceMaker() {
   async function makePdf() {
     setError(null);
     setJob(null);
+    setBillNote(null);
     setBusy(true);
     try {
       // Only the fields on this screen go over the wire — no template, no
@@ -186,7 +232,7 @@ export default function InvoiceMaker() {
         shop: shop.trim(),
         gstin: gstin.trim() || null,
         customer: customer.trim(),
-        billNo: billNo.trim() || null,
+        billNo: typedBillNo || null,
         date,
         gstRate,
         upi: VPA.test(upi.trim()) ? upi.trim() : null,
@@ -207,6 +253,20 @@ export default function InvoiceMaker() {
       setJob(result);
       if (!result.outputUrl && !result.previewUrl) {
         setError("The server finished without a PDF. Nothing was charged — try again.");
+      } else if (shopKey && typedBillNo) {
+        // The bill exists: remember its number so the next one follows it.
+        setMadeAs(typedBillNo);
+        const rec = await recordBillNo(shopKey, typedBillNo);
+        setCounter(rec.counter);
+        billTyped.current = false;
+        setBillNo(nextBillNo(rec.counter));
+        setBillNote(
+          !rec.parsed
+            ? `Bill “${typedBillNo}” is on the PDF. This phone cannot follow that series, so type the next number yourself.`
+            : rec.moved
+              ? `Bill ${typedBillNo} is on the PDF. The next bill from this shop is ${nextBillNo(rec.counter)} on this phone.`
+              : `Bill ${typedBillNo} is on the PDF — it was already used on this phone, so it is a reprint. The counter stays at ${counterLabel(rec.counter)}.`,
+        );
       }
     } catch (e: any) {
       setError(e?.message || "Could not make the PDF. Nothing was charged.");
@@ -218,7 +278,11 @@ export default function InvoiceMaker() {
   // The clean PDF is behind the paywall (₹299/mo), so this is the watermarked
   // preview until an order is paid — never a "download" of the paid bill.
   const outputUrl = job?.locked ? job?.previewUrl ?? null : job?.outputUrl ?? job?.previewUrl ?? null;
-  const fileName = `invoice-${(billNo.trim() || date).replace(/[^A-Za-z0-9-]/g, "")}.pdf`;
+  // The file is named after the number that is actually on the PDF. After a bill is
+  // made the field moves on to the next number, so reading it here would name the
+  // download after a bill that does not exist yet.
+  const madeBillNo = job && madeAs ? madeAs : typedBillNo;
+  const fileName = `invoice-${(madeBillNo || date).replace(/[^A-Za-z0-9-]/g, "")}.pdf`;
   // The engine's own tax rows, when it returned them: the note under the result reports
   // the engine's arithmetic rather than a second copy of the screen's.
   const jobMeta = job?.meta ?? {};
@@ -299,7 +363,10 @@ export default function InvoiceMaker() {
           <Text style={s.label}>Bill no. (optional)</Text>
           <TextInput
             value={billNo}
-            onChangeText={setBillNo}
+            onChangeText={(t) => {
+              billTyped.current = true;
+              setBillNo(t);
+            }}
             placeholder="e.g. 014"
             placeholderTextColor="#94a3b8"
             autoCapitalize="characters"
@@ -317,6 +384,20 @@ export default function InvoiceMaker() {
           />
         </View>
       </View>
+      <Text style={s.help}>
+        {!shopKey
+          ? "The number counts itself once your shop name is in: this phone remembers the last number you used for each shop."
+          : counter
+            ? `Counted on this phone: the last bill for this shop was ${lastBill}, so the next one is offered above. Type over it if you number differently.`
+            : "No bill has been made from this phone for this shop yet, so numbering starts at 1. Type over it if you number differently."}
+      </Text>
+      {reusing ? (
+        <Text style={s.missing}>
+          Bill {typedBillNo} was already used on this phone — the last one was {lastBill}. If this is a
+          reprint that is fine; otherwise use {nextBillNo(counter)}.
+        </Text>
+      ) : null}
+      {billNote ? <Text style={s.help}>{billNote}</Text> : null}
 
       <Text style={s.section}>Items</Text>
       {items.map((it) => (
