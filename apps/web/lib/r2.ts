@@ -104,6 +104,18 @@ export function listingKey(businessId: number, ext: string): string {
   return `${R2_PREFIX}/listings/${businessId}/${randomUUID()}.${ext}`;
 }
 
+/**
+ * Object key for a product's watermarked preview.
+ *
+ * Takes its OWN random id on purpose. Deriving it from the clean key
+ * (`<uuid>.jpg` -> `<uuid>.preview.jpg`) would let anyone holding the free
+ * preview URL edit it into the URL of the paid sheet, which is the whole paywall
+ * gone. Nothing the client sees may point at `output_key`.
+ */
+export function productPreviewKey(product: string, id: string, ext = "jpg"): string {
+  return `${R2_PREFIX}/products/${product}/preview/${id}.${ext}`;
+}
+
 export function publicUrlFor(key: string): string {
   return `${R2_PUBLIC_URL}/${key}`;
 }

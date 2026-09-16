@@ -41,33 +41,8 @@ export async function generateMetadata(
   if (!brand) return {};
 
   const sp = await searchParams;
-  let subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+  const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
-  // Per-brand sitemap (lib/brand-sitemap.ts): the semantic routes a visitor
-  // expects from this brand - /doctors, /plumbers, /used-cars - resolved onto
-  // real category listings and real business pages. An alias is rewritten
-  // internally rather than redirected: the URL stays what the user clicked and
-  // no round trip is spent proving it.
-  {
-    const sitemapRoute = matchBrandRoute(brand.slug, subPath);
-    if (sitemapRoute) {
-      if (sitemapRoute.kind === "alias") {
-        subPath = sitemapRoute.to;
-      } else if (sitemapRoute.kind === "detail") {
-        const detailId = Number(subPath.slice(sitemapRoute.prefix.length + 1).split("/")[0]);
-        if (!Number.isFinite(detailId) || detailId <= 0) notFound();
-        if (!(await businessExists(detailId))) notFound();
-        const { BusinessDetailPage } = await import("./pages/business-detail");
-        return <BusinessDetailPage brand={brand} businessId={detailId} />;
-      } else if (sitemapRoute.kind === "category") {
-        const sitemapCategory = await resolveCategoryRoute(sitemapRoute.match);
-        if (!sitemapCategory) notFound();
-        const sitemapPageNo = Math.max(1, Number(sp.page) || 1);
-        const { CategoryLandingPage } = await import("./pages/category-landing");
-        return <CategoryLandingPage brand={brand} category={sitemapCategory} page={sitemapPageNo} />;
-      }
-    }
-  }
   // Canonical origin for meta/OG/JSON-LD: the brand's own domain (the new
   // domain), so canonical tags consolidate on the domain we want indexed rather
   // than the one being retired.
@@ -244,7 +219,33 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   const brand = await getBrand(slug.toLowerCase());
   if (!brand) notFound();
   const sp = await searchParams;
-  const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+  let subPath = ((sp.__brand_path as string) || "/").toLowerCase();
+
+  // Per-brand sitemap (lib/brand-sitemap.ts): the semantic routes a visitor
+  // expects from this brand - /doctors, /plumbers, /used-cars - resolved onto
+  // real category listings and real business pages. An alias is rewritten
+  // internally rather than redirected: the URL stays what the user clicked and
+  // no round trip is spent proving it.
+  {
+    const sitemapRoute = matchBrandRoute(brand.slug, subPath);
+    if (sitemapRoute) {
+      if (sitemapRoute.kind === "alias") {
+        subPath = sitemapRoute.to;
+      } else if (sitemapRoute.kind === "detail") {
+        const detailId = Number(subPath.slice(sitemapRoute.prefix.length + 1).split("/")[0]);
+        if (!Number.isFinite(detailId) || detailId <= 0) notFound();
+        if (!(await businessExists(detailId))) notFound();
+        const { BusinessDetailPage } = await import("./pages/business-detail");
+        return <BusinessDetailPage brand={brand} businessId={detailId} />;
+      } else if (sitemapRoute.kind === "category") {
+        const sitemapCategory = await resolveCategoryRoute(sitemapRoute.match);
+        if (!sitemapCategory) notFound();
+        const sitemapPageNo = Math.max(1, Number(sp.page) || 1);
+        const { CategoryLandingPage } = await import("./pages/category-landing");
+        return <CategoryLandingPage brand={brand} category={sitemapCategory} page={sitemapPageNo} />;
+      }
+    }
+  }
 
   if (subPath === "/galaxy") { const { GalaxyPage } = await import("./pages/galaxy"); return <GalaxyPage brand={brand} />; }
   if (subPath === "/login") { const { WhatsAppLogin } = await import("./whatsapp-login"); return <WhatsAppLogin brand={brand} />; }

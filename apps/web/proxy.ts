@@ -66,6 +66,11 @@ export async function proxy(request: NextRequest) {
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
+    // /unlock/<job_id> is the standalone product paywall (passport photo and
+    // friends). It is not brand content, it has nothing to do with the 28
+    // directory brands, and /pay is already taken by the brand checkout — so it
+    // bypasses the brand router entirely.
+    pathname.startsWith("/unlock") ||
     pathname.startsWith("/favicon.ico") ||
     pathname.startsWith("/sites/")
   ) {

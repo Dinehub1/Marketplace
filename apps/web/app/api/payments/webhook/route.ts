@@ -37,7 +37,30 @@ export async function POST(req: NextRequest) {
   // paid, acknowledge without re-flipping the listing (Razorpay retries).
   const payRes = await db(`payments?gateway_order_id=eq.${encodeURIComponent(orderId)}&select=id,business_id,status,amount&limit=1`);
   const pay = ((await payRes.json()) as any[])[0];
-  if (!pay) return NextResponse.json({ ok: true, ignored: "unknown order" }, { status: 200 });
+
+  if (!pay) {
+    // Not a listing boost — check the product orders (per-job paywall). Both
+    // kinds of payment arrive on this one endpoint, so the same signature and the
+    // same idempotency rules cover them.
+    const ordRes = await db(
+      `orders?razorpay_order_id=eq.${encodeURIComponent(orderId)}&select=id,job_id,product,phone,status&limit=1`,
+    );
+    const ord = ((await ordRes.json()) as any[])[0];
+    if (!ord) return NextResponse.json({ ok: true, ignored: "unknown order" }, { status: 200 });
+    if (ord.status === "paid") return NextResponse.json({ ok: true, already: true }, { status: 200 });
+
+    const paymentId = event?.payload?.payment?.entity?.id ?? null;
+    const patch = await db(`orders?id=eq.${ord.id}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify({ status: "paid", razorpay_payment_id: paymentId }),
+    });
+    if (!patch.ok) return NextResponse.json({ error: "order save failed" }, { status: 500 });
+
+    // No WhatsApp message here: sending one needs an approved template id, and
+    // inventing one would be worse than not notifying.
+    return NextResponse.json({ ok: true, product_order: true, job_id: ord.job_id, product: ord.product }, { status: 200 });
+  }
   if (pay.status === "paid") return NextResponse.json({ ok: true, already: true }, { status: 200 });
 
   const businessId = Number(pay.business_id);

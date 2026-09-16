@@ -1,0 +1,268 @@
+#!/usr/bin/env node
+/**
+ * screenshot.mjs — headless screenshot helper (Playwright + Chromium).
+ *
+ * On this VM Playwright lives in its own folder so it never touches the
+ * pnpm/npm workspaces:
+ *     C:\Users\Administrator\shots\node_modules\playwright
+ * Browsers live in the shared cache: %LOCALAPPDATA%\ms-playwright
+ *
+ * Usage:
+ *   node screenshot.mjs <url> <output.png> [options]
+ *
+ * Options:
+ *   -v, --viewport <mobile|desktop|WxH>  viewport preset (default: desktop)
+ *   -d, --dsf <n>                        deviceScaleFactor (preset default: mobile 2, desktop 1)
+ *       --wait <ms>                      extra settle time after load (default: 2500)
+ *       --timeout <ms>                   navigation timeout (default: 60000)
+ *       --no-fullpage                    capture only the viewport, not the full scroll height
+ *       --mobile-ua                      also send an iPhone user-agent
+ *       --dark                           colorScheme: dark
+ *       --expect <text>                  fail (exit 3) unless this text is on the page;
+ *                                        repeatable, so a screen can be pinned by several
+ *                                        markers. This is what stops the pipeline from
+ *                                        "proving" a feature with a picture of a blank
+ *                                        page after a bad bundle.
+ *       --json                           print a JSON result line instead of human text
+ *
+ * Examples:
+ *   node screenshot.mjs https://expo.dropby.co.in/passport out.png --viewport mobile
+ *   node screenshot.mjs https://hermes.dropby.co.in/ out.png --viewport 1440x900 --no-fullpage
+ *
+ * Exit codes: 0 ok, 1 usage error, 2 navigation/render failure.
+ */
+
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const VIEWPORTS = {
+  mobile: { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
+  desktop: { width: 1440, height: 900, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
+};
+
+const IPHONE_UA =
+  'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 ' +
+  '(KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1';
+
+// ---------------------------------------------------------------- arg parsing
+
+function usage(msg) {
+  if (msg) console.error('error: ' + msg);
+  console.error(
+    'usage: node screenshot.mjs <url> <output.png> ' +
+      '[-v mobile|desktop|WxH] [-d dsf] [--wait ms] [--timeout ms] [--no-fullpage] [--mobile-ua] [--dark] [--expect text]... [--json]'
+  );
+  process.exit(1);
+}
+
+const argv = process.argv.slice(2);
+const positional = [];
+const opts = {
+  viewport: 'desktop',
+  dsf: null,
+  wait: 2500,
+  timeout: 60000,
+  fullPage: true,
+  mobileUA: false,
+  dark: false,
+  json: false,
+  expect: [],
+};
+
+for (let i = 0; i < argv.length; i++) {
+  const a = argv[i];
+  const next = () => {
+    const v = argv[++i];
+    if (v === undefined) usage(`missing value for ${a}`);
+    return v;
+  };
+  if (a === '-v' || a === '--viewport') opts.viewport = next();
+  else if (a === '-d' || a === '--dsf') opts.dsf = Number(next());
+  else if (a === '--expect') opts.expect.push(next());
+  else if (a === '--wait') opts.wait = Number(next());
+  else if (a === '--timeout') opts.timeout = Number(next());
+  else if (a === '--no-fullpage') opts.fullPage = false;
+  else if (a === '--mobile-ua') opts.mobileUA = true;
+  else if (a === '--dark') opts.dark = true;
+  else if (a === '--json') opts.json = true;
+  else if (a === '-h' || a === '--help') usage();
+  else if (a.startsWith('-')) usage(`unknown option ${a}`);
+  else positional.push(a);
+}
+
+const [url, output] = positional;
+if (!url || !output) usage('both <url> and <output.png> are required');
+
+function resolveViewport(spec) {
+  if (VIEWPORTS[spec]) return { ...VIEWPORTS[spec] };
+  const m = /^(\d+)x(\d+)$/.exec(spec);
+  if (m) {
+    const width = Number(m[1]);
+    const height = Number(m[2]);
+    const base = width <= 600 ? VIEWPORTS.mobile : VIEWPORTS.desktop;
+    return { ...base, width, height };
+  }
+  usage(`bad viewport "${spec}" (expected mobile, desktop, or WxH)`);
+}
+
+const vp = resolveViewport(opts.viewport);
+if (Number.isFinite(opts.dsf)) vp.deviceScaleFactor = opts.dsf;
+if (opts.mobileUA) vp.isMobile = true, (vp.hasTouch = true);
+
+// ------------------------------------------------------------ playwright load
+
+// The package is installed outside the workspaces; try known locations first.
+const require_ = createRequire(import.meta.url);
+const CANDIDATES = [
+  process.env.PLAYWRIGHT_MODULE,
+  'C:/Users/Administrator/shots/node_modules/playwright/index.mjs',
+  'C:/Users/Administrator/shots/node_modules/playwright/index.js',
+  path.join(path.dirname(process.execPath), 'node_modules', 'playwright', 'index.mjs'),
+];
+
+async function loadPlaywright() {
+  const errors = [];
+  for (const c of CANDIDATES.filter(Boolean)) {
+    try {
+      if (fs.existsSync(c)) return await import(pathToFileURL(c).href);
+    } catch (e) {
+      errors.push(`${c}: ${e.message}`);
+    }
+  }
+  try {
+    return await import('playwright');
+  } catch (e) {
+    errors.push(`bare "playwright": ${e.message}`);
+  }
+  try {
+    return require_('playwright');
+  } catch (e) {
+    errors.push(`require("playwright"): ${e.message}`);
+  }
+  console.error('could not load playwright. tried:\n  ' + errors.join('\n  '));
+  console.error('\ninstall it with:  cd C:/Users/Administrator/shots && npm i playwright && npx playwright install chromium');
+  process.exit(1);
+}
+
+// -------------------------------------------------------------- capture flow
+
+const { chromium } = await loadPlaywright();
+
+const outPath = path.resolve(output);
+fs.mkdirSync(path.dirname(outPath), { recursive: true });
+
+const result = { url, output: outPath, viewport: `${vp.width}x${vp.height}`, dsf: vp.deviceScaleFactor, fullPage: opts.fullPage };
+
+let browser;
+try {
+  browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu', // this VM has no GPU
+      '--hide-scrollbars',
+      '--force-color-profile=srgb',
+    ],
+  });
+
+  const context = await browser.newContext({
+    viewport: { width: vp.width, height: vp.height },
+    deviceScaleFactor: vp.deviceScaleFactor,
+    isMobile: vp.isMobile,
+    hasTouch: vp.hasTouch,
+    colorScheme: opts.dark ? 'dark' : 'light',
+    userAgent: opts.mobileUA || vp.isMobile ? IPHONE_UA : undefined,
+  });
+
+  const page = await context.newPage();
+  page.setDefaultTimeout(opts.timeout);
+  page.setDefaultNavigationTimeout(opts.timeout);
+
+  const consoleErrors = [];
+  page.on('console', (m) => {
+    if (m.type() === 'error') consoleErrors.push(m.text().slice(0, 300));
+  });
+  page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + String(e.message).slice(0, 300)));
+
+  const resp = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: opts.timeout });
+  result.status = resp ? resp.status() : null;
+
+  try {
+    await page.waitForLoadState('networkidle', { timeout: 15000 });
+  } catch {
+    /* networkidle is best-effort on SPAs that poll */
+  }
+
+  // Give fonts/animations/async data a moment to settle before the shuttered shot.
+  await page.waitForTimeout(opts.wait);
+
+  // Force lazy-loaded images into the viewport so fullPage captures render them.
+  await page.evaluate(async () => {
+    const step = window.innerHeight;
+    for (let y = 0; y < document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 300));
+  });
+
+  result.title = await page.title();
+  result.dimensions = await page.evaluate(() => ({
+    scrollWidth: document.documentElement.scrollWidth,
+    scrollHeight: document.documentElement.scrollHeight,
+  }));
+
+  // Content assertion. A screenshot of a blank page is worse than no screenshot:
+  // it looks like proof. If a marker is missing, capture the broken screen anyway
+  // (that picture is the diagnosis) and fail with a distinct exit code so a
+  // pipeline can tell "the page is wrong" from "the browser could not reach it".
+  if (opts.expect.length) {
+    const text = await page.evaluate(() => (document.body ? document.body.innerText : ''));
+    const missing = opts.expect.filter((m) => !text.includes(m));
+    result.expectChecked = opts.expect.length;
+    if (missing.length) {
+      result.expectMissing = missing;
+      result.ok = false;
+      await page.screenshot({ path: outPath, fullPage: opts.fullPage, type: 'png' });
+      if (opts.json) console.log(JSON.stringify(result));
+      else {
+        console.error(
+          `MISSING ${missing.map((m) => JSON.stringify(m)).join(', ')}\n  ${url}` +
+            `\n  -> ${outPath} (captured anyway, for diagnosis)`
+        );
+      }
+      process.exit(3);
+    }
+  }
+
+  await page.screenshot({ path: outPath, fullPage: opts.fullPage, type: 'png' });
+  result.consoleErrors = consoleErrors.slice(0, 5);
+  await context.close();
+} catch (err) {
+  result.error = String(err && err.message ? err.message : err);
+  if (browser) await browser.close().catch(() => {});
+  console.error(opts.json ? JSON.stringify({ ...result, ok: false }) : `FAILED ${url}\n  ${result.error}`);
+  process.exit(2);
+} finally {
+  if (browser) await browser.close().catch(() => {});
+}
+
+const bytes = fs.statSync(outPath).size;
+result.bytes = bytes;
+result.ok = bytes > 0;
+
+if (opts.json) {
+  console.log(JSON.stringify(result));
+} else {
+  console.log(
+    `OK  ${url}\n  -> ${outPath}\n  ${result.viewport} @${result.dsf}x  fullPage=${opts.fullPage}  ` +
+      `http=${result.status}  ${(bytes / 1024).toFixed(0)} KB  page=${result.dimensions.scrollWidth}x${result.dimensions.scrollHeight}` +
+      (result.consoleErrors.length ? `\n  console errors: ${result.consoleErrors.length}` : '')
+  );
+}
+
+process.exit(result.ok ? 0 : 2);

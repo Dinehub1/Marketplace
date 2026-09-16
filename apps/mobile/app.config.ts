@@ -83,6 +83,18 @@ const config: ExpoConfig = {
 
   plugins: [
     "expo-router",
+    // expo-image-picker is auto-linked, but its config plugin is what writes the
+    // photo/camera usage strings iOS requires. Without them a build that opens
+    // the picker is rejected by App Review (and crashes on first launch on iOS).
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "DropBy needs access to your photos to turn one into a print-ready passport sheet.",
+        cameraPermission:
+          "DropBy uses the camera so you can take a passport photo now.",
+      },
+    ],
     // SDK 57 requires these listed explicitly (the CLI flagged them as
     // "cannot automatically write to dynamic config" when it tried to add them):
     // expo-status-bar for the status bar control, expo-web-browser for the

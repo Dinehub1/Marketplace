@@ -58,3 +58,10 @@ sarkarmart-summary.txt
 combined_indore_master*.csv
 apps/web/scripts/dev-tools/images_manifest.json
 *.log
+
+# ── local build/run artefacts ─────────────────────────────────────────────
+__pycache__/
+*.pyc
+# safety copies taken before a risky edit; ad-hoc, never source
+*.bak-*
+*.bak

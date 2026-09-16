@@ -47,7 +47,7 @@ export async function createOrder(opts: {
 }
 
 /**
- * Verify a Razorpay webhook signature. The dashboard sends
+ * Verify a Razorpay *webhook* signature. The dashboard sends
  * `X-Razorpay-Signature` (HMAC-SHA256 hex of the raw body over the webhook
  * secret). Timing-safe so a malformed request can't be used to fish out bytes.
  */
@@ -59,3 +59,23 @@ export function verifyWebhookSignature(rawBody: string, signature: string | null
   if (a.length !== b.length) return false;
   return timingSafeEqual(a, b);
 }
+
+/**
+ * Verify the Checkout response: Razorpay signs `${order_id}|${payment_id}` with
+ * the key secret after a payment succeeds. This is the immediate confirmation the
+ * browser hands back; the webhook is the same news arriving independently.
+ *
+ * Both paths flip an order to 'paid', so a caller supplying a signature it cannot
+ * produce with the secret gets nothing.
+ */
+export function verifyPaymentSignature(orderId: string, paymentId: string, signature: string | null): boolean {
+  if (!KEY_SECRET || !signature || !orderId || !paymentId) return false;
+  const expected = createHmac("sha256", KEY_SECRET).update(`${orderId}|${paymentId}`).digest("hex");
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
+
+/** Is the gateway configured at all? The paywall can be shown without it. */
+export const razorpayConfigured = Boolean(KEY_ID && KEY_SECRET);
