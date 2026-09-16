@@ -440,10 +440,15 @@ export default function InvoiceMaker() {
             </Pressable>
           </View>
           <View style={s.itemMeta}>
+            {/* The field is 104 px wide (75 px of room inside it) and the placeholder is
+              * measured against that, not guessed: "HSN (optional)" measures 81.6 px and is
+              * cut off at 320, 360 and 390 px alike, "Code (optional)" is worse (85.7 px).
+              * "HSN code" is 55.3 px. The word "optional" therefore lives in the help line
+              * below, which is where it was already said. */}
             <TextInput
               value={it.hsn}
               onChangeText={(t) => setItem(it.id, { hsn: t })}
-              placeholder="HSN (optional)"
+              placeholder="HSN code"
               placeholderTextColor="#94a3b8"
               autoCapitalize="characters"
               autoCorrect={false}
@@ -479,9 +484,9 @@ export default function InvoiceMaker() {
         <Text style={s.secondaryText}>+ Add another item</Text>
       </Pressable>
       <Text style={s.help}>
-        HSN is the code a B2B bill wants on the line — leave it empty if you do not have one.
-        The rate chips set that item&apos;s own GST: “Bill” follows the rate below, which is what
-        every item does unless you change it.
+        HSN is the code a B2B bill wants on the line — it is optional, so leave it empty if you
+        do not have one. The rate chips set that item&apos;s own GST: “Bill” follows the rate below,
+        which is what every item does unless you change it.
       </Text>
 
       <Text style={s.section}>GST</Text>
