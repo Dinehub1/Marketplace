@@ -253,15 +253,37 @@ export default function Breathe() {
         </Text>
       </View>
 
-      <View style={s.circleBox}>
+      {/* The circle IS the control. On a phone the big circle is the only thing anyone
+          tries to tap, so tapping it starts and stops the session — the labelled button
+          below is a second way in, not the only way. */}
+      <Press
+        onPress={running ? stop : start}
+        accessibilityRole="button"
+        accessibilityLabel={running ? "Finish the session" : "Begin breathing"}
+        style={s.circleBox}
+      >
         <Animated.View style={[s.circle, circle]} />
         <View style={s.circleInner}>
           <Text variant="title1">{running ? phaseWord : done ? "Done" : "Ready"}</Text>
           <Text variant="meta" tone="ink2">
             {running ? `${secondsLeft}s` : `${Math.round(ratePerMinute(pattern))} breaths a minute`}
           </Text>
+          <Text variant="caption" tone="ink3" style={s.tapHint}>
+            {running ? "TAP TO FINISH" : "TAP TO BEGIN"}
+          </Text>
         </View>
-      </View>
+      </Press>
+
+      {/* Above the fold on purpose: the old layout put this button at y=872 on an
+          844-point screen, so the only visible thing was an inert circle. */}
+      <Press
+        onPress={running ? stop : start}
+        accessibilityRole="button"
+        accessibilityLabel={running ? "Finish the session" : "Start breathing"}
+        style={s.cta}
+      >
+        <Text variant="title3" style={s.ctaText}>{running ? "Finish" : done ? "Again" : "Begin"}</Text>
+      </Press>
 
       <View style={s.stats}>
         <Stat ui={ui} label="cycles" value={String(cycles)} />
@@ -347,15 +369,6 @@ export default function Breathe() {
           ) : null}
         </>
       ) : null}
-
-      <Press
-        onPress={running ? stop : start}
-        accessibilityRole="button"
-        accessibilityLabel={running ? "Stop the session" : "Start breathing"}
-        style={s.cta}
-      >
-        <Text variant="title3" style={s.ctaText}>{running ? "Finish" : done ? "Again" : "Begin"}</Text>
-      </Press>
 
       <Card style={s.infoCard}>
         <Text variant="title3">What slow breathing does</Text>
@@ -446,7 +459,7 @@ function makeStyles(ui: ProductUI) {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: ui.bg, paddingHorizontal: space.base },
     head: { gap: 4, marginBottom: space.base },
-    circleBox: { alignItems: "center", justifyContent: "center", height: 260 },
+    circleBox: { alignItems: "center", justifyContent: "center", height: 232 },
     circle: {
       position: "absolute",
       width: 190,
@@ -457,6 +470,7 @@ function makeStyles(ui: ProductUI) {
       borderColor: alpha(ui.accent, 0.42),
     },
     circleInner: { alignItems: "center", gap: 2 },
+    tapHint: { letterSpacing: 1.1, marginTop: 2 },
     stats: { flexDirection: "row", justifyContent: "space-around", marginTop: space.sm },
     bar: { height: 4, borderRadius: 2, backgroundColor: ui.hairline, marginTop: space.md, overflow: "hidden" },
     barFill: { height: 4, borderRadius: 2, backgroundColor: ui.accent },
@@ -473,7 +487,7 @@ function makeStyles(ui: ProductUI) {
     },
     doneCard: { marginTop: space.md, gap: 4 },
     cta: {
-      marginTop: space.lg,
+      marginTop: space.md,
       backgroundColor: ui.accent,
       borderRadius: radius.md,
       paddingVertical: 15,
