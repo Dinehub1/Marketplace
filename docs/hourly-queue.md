@@ -426,13 +426,45 @@ Evidence: an invoice job whose output PDF contains a decodable QR, verified by d
   preview that can watermark text (there is no `pdf-stamp`/`watermark` path for
   `text/markdown` today). Not changed unilaterally.
 
-### 15. Invoice: sequential invoice numbering (open, from item 3)
+### 15. Invoice: sequential invoice numbering — DONE 2026-09-16
 The bill number is typed by hand, so a shop that forgets it prints "No bill number" and two
 bills can carry the same one. The honest version is a running counter the app remembers
 per shop (last number + 1, editable upward): a bill numbered `014` twice is a tax problem
 for the shop, not a cosmetic one. Needs a place to keep it (the screen's own storage, or a
 `invoice_counters` row keyed by GSTIN), and the engine should keep taking whatever the app
 sends — numbering is the app's business, not the renderer's.
+
+**Result:** the number counts itself, per shop, on the device. The rules are pure and live in
+`@hermes/core` — `parseBillNo` (a trailing digit run, with whatever prefix the shop uses),
+`shopKeyOf` (a real 15-character GSTIN when there is one, else the folded shop name),
+`advanceCounter` (forward only: a reprint of `007` against a counter at `014` does not rewind
+it), `nextBillNo` (last + 1, **padded to the width of the last one** so `014` → `015`, and
+`999` → `1000` rather than a truncated `100`) and `counterLabel`. Only the *storage* is in
+`apps/mobile/lib/invoice-counter.ts` (`hermes-invoice-counters` in AsyncStorage, corrupt
+entries treated as absent, oldest counters dropped past 50 shops), because there is no
+`invoice_counters` table and a counter labelled as the shop's own when it is one phone's would
+be a lie — every sentence about it says "this phone". A number this cannot parse
+(`INV/26/07-A`) changes nothing and the screen says so instead of inventing a next number.
+The field is offered only while it is the app's own: typing in it hands it to the user
+(`billTyped` ref), and the counter never overwrites that. A number already used is said
+**before** the PDF is made, not after.
+Evidence: 8/8 `@hermes/core` tests (two new tables: parse/advance/next, and shop keys),
+then **20/20** checks at 390×844 against the live app — a fresh phone offers `1`, the POST
+that follows is job **115** (HTTP 200) and the field then offers `2` with "the next bill from
+this shop is 2 on this phone"; the counter survives a reload; a second shop starts at `1`
+again and switching back restores `2`; a seeded `{last:14,width:3}` reads back as **`015`**,
+job **116** (HTTP 200) is that bill, its download is named `invoice-015.pdf` (not after the
+number the field has already moved to), and **the PDF job 116 produced carries `No: 015` in
+its own content stream** (`pdfcpu extract -m content`), with the arithmetic intact
+(500 taxable, 45+45, `Rs. 590.00`, "Five hundred and ninety rupees only") and `totals_match
+true`. `tsc --noEmit`: 0 errors in the two files this item touched (6 pre-existing
+elsewhere); `expo export --platform web` exit 0, **3118 KB**; the two invoice gallery shots
+re-captured with the marker gate, whose invoice entry now also asserts the numbering copy.
+No engine change and no engine restart — the route's `fields` are `doc, payload`, and a bill
+number is the app's business; **no `npm run build` either**, since nothing in the web app
+imports the new core exports, so the live site was never restarted.
+Still open: the counter is one phone's. A shop billing from a tablet and a phone has two
+counters — that needs a `invoice_counters` row, which is item 27.
 
 ### 16. Invoice screen: the item meta line at 320-360 px (open, small)
 Item 13 put an HSN field plus five rate chips under each item; the shots are 390 px wide and
@@ -722,3 +754,19 @@ why the engine answers 400 for it (measured this hour: `!5` and `n5` alone both 
 and `odd,n1` both work). The hint should teach the working form (`1-,!5 (all but page 5)`),
 exactly as the screen's hint now does. Small: one exported string plus a gated web rebuild —
 and the string is covered by the core test, so the change is verified by the same table.
+
+### 27. Invoice: the counter is one phone's (new, 2026-09-16, from item 15)
+Item 15 gave the bill number a real counter, but it lives in this device's AsyncStorage, so a
+shop that bills from a tablet and a phone has two counters and can still print `015` twice.
+The fix is a row per shop (`invoice_counters`, keyed by the `shopKeyOf` value item 15 already
+produces — `gstin:<15 chars>` or `shop:<folded name>`), read at screen load and written after a
+bill, with the device store kept as the offline fallback. Two honest constraints: the same key
+function must be used on both sides (it is already pure and tested, so import it, do not
+re-derive it), and the row is not the shop's until the shop is signed in — until then the label
+stays "this phone", because a device counter presented as the shop's own is the lie item 15
+avoided. DDL is possible now: run it with the **Management API**
+(`POST https://api.supabase.com/v1/projects/xpfmqpmhmcouwzebfwhb/database/query` with
+`SUPABASE_ACCESS_TOKEN` from `apps/web/.env`), not the SQL Editor. Evidence to require: the
+row exists (REST `GET /rest/v1/invoice_counters?select=*&limit=1` → 200), a bill made on one
+storage state advances the shared counter, and a cleared device store still offers the next
+number from the row.
