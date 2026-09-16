@@ -28,10 +28,20 @@ import { useTheme } from "@/lib/theme";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
 import { Icon } from "@/components/icons";
+import {
+  EMPTY_RECORD,
+  loadGameScores,
+  recordRound,
+  sinceLabel,
+  type GameRecord,
+} from "@/lib/game-scores";
 
 /** targets.mjs colour for this build target, plus a lighter step that survives
  *  the near-black canvas (indigo #4f46e5 goes to mud on it). */
 const ACCENT = { light: "#4f46e5", dark: "#a5b4fc" };
+
+/** Key this game's round records live under in the device score store. */
+const GAME = "word-duel";
 
 const ROUND_MS = 60_000;
 const TICK_MS = 100;
@@ -155,7 +165,11 @@ export default function WordDuel() {
   const [notice, setNotice] = useState("");
   const [noticeTone, setNoticeTone] = useState<"ok" | "bad" | "plain">("plain");
   const [packUsed, setPackUsed] = useState(false);
-  const [best, setBest] = useState(0);
+  /** The record as loaded, or updated by the round that just ended. */
+  const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
+  /** False until the device store has answered, so the screen never claims
+   *  "no rounds recorded" while it is still reading them. */
+  const [recordRead, setRecordRead] = useState(false);
   const [summary, setSummary] = useState<Summary | null>(null);
 
   // Mirrors for the clock callback: a score read inside a timer closure is a
@@ -164,7 +178,6 @@ export default function WordDuel() {
   const scoreRef = useRef(0);
   const foundRef = useRef<string[]>([]);
   const hintedRef = useRef<string[]>([]);
-  const bestRef = useRef(0);
   const usedSeeds = useRef<Set<string>>(new Set());
 
   const pickedWord = rack ? picked.map((i) => rack.letters[i] ?? "").join("") : "";
@@ -183,18 +196,39 @@ export default function WordDuel() {
     return () => clearInterval(id);
   }, [phase]);
 
+  // The device record is read once, on mount: this is the number that survives
+  // closing the app, which the old "this session" best did not.
+  useEffect(() => {
+    let live = true;
+    loadGameScores()
+      .then((scores) => {
+        if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
+      })
+      .finally(() => {
+        if (live) setRecordRead(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (phase !== "over") return;
     const fs = foundRef.current;
-    const wasBest = bestRef.current;
-    bestRef.current = scoreRef.current > wasBest ? scoreRef.current : wasBest;
-    setBest(bestRef.current);
+    const longest = fs.reduce((a, b) => (b.length > a.length ? b : a), "");
     setSummary({
       score: scoreRef.current,
       words: fs.length,
-      longest: fs.reduce((a, b) => (b.length > a.length ? b : a), ""),
-      // Against the value before this round: the line above already includes it.
-      isNewBest: scoreRef.current > wasBest,
+      longest,
+      // Not decided here: the badge is set from the stored record below.
+      isNewBest: false,
+    });
+    const line = fs.length
+      ? `${fs.length} ${fs.length === 1 ? "word" : "words"} · longest ${longest.toUpperCase()}`
+      : "no words found";
+    recordRound(GAME, scoreRef.current, line).then(({ record: next, isNewBest }) => {
+      setRecord(next);
+      setSummary((prev) => (prev ? { ...prev, isNewBest } : prev));
     });
   }, [phase]);
 
@@ -386,7 +420,13 @@ export default function WordDuel() {
             </Press>
 
             <Text variant="meta" tone="ink3" style={s.centre}>
-              Best score this session: {best}
+              {!recordRead
+                ? "Reading this device's scores…"
+                : record.rounds
+                  ? `Best score on this device: ${record.best} · ${record.rounds} ${
+                      record.rounds === 1 ? "round" : "rounds"
+                    } played`
+                  : "No rounds recorded on this device yet"}
             </Text>
           </View>
         ) : null}
@@ -640,12 +680,48 @@ export default function WordDuel() {
                 </View>
                 <View style={s.row}>
                   <Text variant="meta" tone="ink2" style={{ flex: 1 }}>
-                    Best score this session
+                    Best score on this device
                   </Text>
                   <Text variant="meta" style={{ color: c.ink }}>
-                    {best}
+                    {record.best}
                   </Text>
                 </View>
+                <View style={s.row}>
+                  <Text variant="meta" tone="ink2" style={{ flex: 1 }}>
+                    Rounds played on this device
+                  </Text>
+                  <Text variant="meta" style={{ color: c.ink }}>
+                    {record.rounds}
+                  </Text>
+                </View>
+              </Card>
+            ) : null}
+
+            {record.recent.length > 0 ? (
+              <Card style={{ padding: space.base, gap: space.md }}>
+                <Text variant="title3">
+                  {record.recent.length === 1
+                    ? "Your last round"
+                    : `Your last ${record.recent.length} rounds`}
+                </Text>
+                {record.recent.map((r, i) => (
+                  <View key={`${r.at}-${i}`} style={{ gap: 2 }}>
+                    <View style={s.row}>
+                      <Text variant="meta" tone="ink2" style={{ flex: 1 }}>
+                        {r.line || "round recorded"}
+                      </Text>
+                      <Text variant="meta" style={{ color: c.ink }}>
+                        {r.score}
+                      </Text>
+                    </View>
+                    <Text variant="caption" tone="ink3">
+                      {sinceLabel(r.at)}
+                    </Text>
+                  </View>
+                ))}
+                <Text variant="caption" tone="ink3">
+                  Kept on this device, newest first — closing the app does not clear them.
+                </Text>
               </Card>
             ) : null}
 

@@ -30,10 +30,20 @@ import { useTheme } from "@/lib/theme";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
 import { Icon } from "@/components/icons";
+import {
+  EMPTY_RECORD,
+  loadGameScores,
+  recordRound,
+  sinceLabel,
+  type GameRecord,
+} from "@/lib/game-scores";
 
 /** targets.mjs colour for this build target, plus a lighter step that survives
  *  the near-black canvas (the deep pink goes muddy on it). */
 const ACCENT = { light: "#db2777", dark: "#f472b6" };
+
+/** Key this game's round records live under in the device score store. */
+const GAME = "tap-sprint";
 
 const ROUND_MS = 30_000;
 const START_LIVES = 3;
@@ -94,7 +104,11 @@ export default function TapSprint() {
   const [last, setLast] = useState<{ ms: number; points: number } | null>(null);
   const [notice, setNotice] = useState("");
   const [continueUsed, setContinueUsed] = useState(false);
-  const [best, setBest] = useState(0);
+  /** The record as loaded, or updated by the round that just ended. */
+  const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
+  /** False until the device store has answered, so the screen never claims
+   *  "no rounds recorded" while it is still reading them. */
+  const [recordRead, setRecordRead] = useState(false);
   const [summary, setSummary] = useState<Summary | null>(null);
 
   // The round clock, the lives and the dot's deadline all live in refs as well
@@ -106,7 +120,6 @@ export default function TapSprint() {
   const missesRef = useRef(0);
   const scoreRef = useRef(0);
   const reactionsRef = useRef<number[]>([]);
-  const bestRef = useRef(0);
   const missTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const phaseRef = useRef<Phase>("ready");
   const boundsRef = useRef({ w: fieldW, h: fieldH });
@@ -154,21 +167,45 @@ export default function TapSprint() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldW, fieldH]);
 
+  // The device record is read once, on mount. It is what "Best score" means on
+  // this screen now: a number that survives closing the app, not one that
+  // restarts with it.
+  useEffect(() => {
+    let live = true;
+    loadGameScores()
+      .then((scores) => {
+        if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
+      })
+      .finally(() => {
+        if (live) setRecordRead(true);
+      });
+    return () => {
+      live = false;
+    };
+  }, []);
+
   useEffect(() => {
     if (phase !== "over") return;
     const rs = reactionsRef.current;
-    const wasBest = bestRef.current;
-    bestRef.current = scoreRef.current > wasBest ? scoreRef.current : wasBest;
-    setBest(bestRef.current);
+    const hits = hitsRef.current;
+    const bestMs = rs.length ? rs.reduce((a, b) => (b < a ? b : a)) : 0;
+    const avgMs = rs.length ? Math.round(rs.reduce((a, b) => a + b, 0) / rs.length) : 0;
     setSummary({
       score: scoreRef.current,
-      hits: hitsRef.current,
+      hits,
       misses: missesRef.current,
-      bestMs: rs.length ? rs.reduce((a, b) => (b < a ? b : a)) : 0,
-      avgMs: rs.length ? Math.round(rs.reduce((a, b) => a + b, 0) / rs.length) : 0,
-      // Compared against the value before this round, not after: the session
-      // best is updated on the line above and would make every round a "best".
-      isNewBest: scoreRef.current > wasBest,
+      bestMs,
+      avgMs,
+      // Not decided here: the badge is set from the stored record below, which
+      // is the only thing that knows whether this round really beat the best.
+      isNewBest: false,
+    });
+    const line = hits
+      ? `${hits} ${hits === 1 ? "dot" : "dots"} hit · avg ${avgMs} ms · fastest ${bestMs} ms`
+      : "no dots hit";
+    recordRound(GAME, scoreRef.current, line).then(({ record: next, isNewBest }) => {
+      setRecord(next);
+      setSummary((prev) => (prev ? { ...prev, isNewBest } : prev));
     });
   }, [phase]);
 
@@ -350,7 +387,13 @@ export default function TapSprint() {
             </Press>
 
             <Text variant="meta" tone="ink3" style={s.centre}>
-              Best score this session: {best}
+              {!recordRead
+                ? "Reading this device's scores…"
+                : record.rounds
+                  ? `Best score on this device: ${record.best} · ${record.rounds} ${
+                      record.rounds === 1 ? "round" : "rounds"
+                    } played`
+                  : "No rounds recorded on this device yet"}
             </Text>
           </View>
         ) : null}
@@ -476,7 +519,36 @@ export default function TapSprint() {
                 />
                 <Row label="Average reaction" value={summary.avgMs ? `${summary.avgMs} ms` : "—"} />
                 <Row label="Fastest reaction" value={summary.bestMs ? `${summary.bestMs} ms` : "—"} />
-                <Row label="Best score this session" value={String(best)} />
+                <Row label="Best score on this device" value={String(record.best)} />
+                <Row label="Rounds played on this device" value={String(record.rounds)} />
+              </Card>
+            ) : null}
+
+            {record.recent.length > 0 ? (
+              <Card style={{ padding: space.base, gap: space.md }}>
+                <Text variant="title3">
+                  {record.recent.length === 1
+                    ? "Your last round"
+                    : `Your last ${record.recent.length} rounds`}
+                </Text>
+                {record.recent.map((r, i) => (
+                  <View key={`${r.at}-${i}`} style={{ gap: 2 }}>
+                    <View style={s.row}>
+                      <Text variant="meta" tone="ink2" style={{ flex: 1 }}>
+                        {r.line || "round recorded"}
+                      </Text>
+                      <Text variant="meta" style={{ color: c.ink }}>
+                        {r.score}
+                      </Text>
+                    </View>
+                    <Text variant="caption" tone="ink3">
+                      {sinceLabel(r.at)}
+                    </Text>
+                  </View>
+                ))}
+                <Text variant="caption" tone="ink3">
+                  Kept on this device, newest first — closing the app does not clear them.
+                </Text>
               </Card>
             ) : null}
 
