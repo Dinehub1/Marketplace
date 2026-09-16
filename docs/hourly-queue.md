@@ -33,6 +33,10 @@ run, do not invent a second layout — pick the next item and log this as blocke
 Once it exists, wrapping `bg-remove`, `pdf`, `invoice`, `signature` is mechanical: keep
 each screen's own logic, replace only the outer layout, and confirm the web export builds.
 
+**Still absent 2026-09-16 03:00:** `apps/mobile/components/tool-frame.tsx` and
+`apps/mobile/lib/history.ts` do not exist, so this hour took item 11 and left this
+blocked — logged, not invented.
+
 ### 2. PDF toolkit upgrade from Stirling-PDF — DONE 2026-09-16
 Result: the licence was read in full and the decision is written up in
 `docs/stirling-pdf-license.md`. The root `LICENSE` is MIT with seven carve-outs,
@@ -314,12 +318,55 @@ Prototype it behind a flag on the bg-remove screen and measure: model download s
 seconds on a phone, and whether the result is good enough for a passport photo. If it
 works, jobs stop queueing behind the VM's CPU.
 
-### 11. markitdown as the document engine (MIT, 184k★)
-`microsoft/markitdown` (MIT) turns Office/PDF/images into Markdown in Python, on this VM.
-Prototype it against the CV path first: a real PDF resume → Markdown → keyword score.
-That one engine feeds the resume/ATS check, document translation, bill extraction and
-notes-from-lecture products. Evidence: a job id whose `meta` shows the extracted text
-length, plus the markdown saved under `marketplace/` in R2.
+### 11. markitdown as the document engine (MIT, 184k★) — DONE 2026-09-16
+Result: the document engine is live as the catalogue's own **`resume-checker`** product
+(`Resume Keyword Check` — that row already existed, so no new catalogue row was needed).
+One document in (PDF / DOCX / plain text), a Markdown reading of it out, plus an optional
+keyword check. Licence verified by API, not a blurb: `microsoft/markitdown` **MIT**,
+184,612★, pushed 2026-09-16, not archived, Python; installed as `markitdown[pdf,docx]`
+**0.1.7**.
+Engine (`services/tools/worker.py`, `resume_check`): markitdown does the conversion and
+the scoring layer only states what is measurable in the text — characters, words, pages
+(pdfcpu), whether an email/phone is present, which of ten heading words appear, and for
+each caller-supplied keyword whether the document mentions it (whole-word, so `sql` is
+not "found" inside `mysql`). Nothing claims what "an ATS wants"; that is not knowable
+from this box.
+Route (`apps/web/app/api/job/route.ts`): `resume-checker` is `free: true` (a ₹0 local
+job), reads `keywords` (capped at 700 characters), accepts `application/pdf` / `.docx` /
+`text/plain`. `text/markdown` was added to `EXT_FOR_TYPE` — without it the report would
+have been stored in the bucket as `.bin` — document inputs now get a truthful
+`.docx`/`.txt` key instead of `.bin`, and the 415 sentence names formats through a small
+label map (the DOCX mime type used to render as "VND.OPENXMLFORMATS-OFFICEDOCUMENT.WORD…").
+Evidence: job **93** (a real 3-page resume PDF — `posquit0/Awesome-CV`'s example, used
+only as test input) = HTTP 200, `text_len 9705`, `words 1362`, `pages 3`,
+`emails [posquit0.bj@gmail.com]`, headings `summary, experience, education, projects`,
+`keywords_found [Kubernetes, Terraform]`, `keywords_missing [Python, Salesforce, Excel]`;
+its output `marketplace/products/resume-checker/8752b41a….md` re-downloaded from R2
+(10,172 bytes) and **all five keyword claims checked against the extracted text itself**
+(5/5 agree). Job **94** = a real DOCX (1,189-byte OOXML fixture, labelled "Test fixture -
+not a real person's CV"), HTTP 200, `input_suffix .docx`, email and a 9876543210-shaped
+phone found, `keywords_found [SAP, forklift]`, `keywords_missing [Python]`. Both rows
+`done` in `product_jobs` (93: 2,480 ms, 94: 188 ms).
+Honest refusals: a photo through the route → **415** `This tool expects PDF or DOCX or
+TXT`; a JPEG handed straight to the engine → **400** `that file is a JPEG image, not a
+document — a photo has no text layer…`; 31 keywords → **400** `at most 30 keywords in one
+check (31 were sent)`; random bytes → **400** "no readable text". That last guard was
+added this hour because markitdown returns the *string* `None` for bytes it cannot
+identify, so a length test alone reported a 4-character "document" — a real false
+positive, found by testing rather than by reading.
+Regression check, because the install **downgraded `onnxruntime` 1.27.0 → 1.20.1**
+(magika pins `<1.21`): `bg-remove` (rembg/u2net) still answers **200, 409,082 B**, and
+`exif-strip`, `collage` (2x1) and `pdf-tools merge` are 200 too.
+Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
+dropby-worker` (one listener, `health.pid 6560 == pm2 pid`); `npm run typecheck -w
+@hermes/web` exit 0 — it caught a real TDZ error (`DOC_ACCEPTS` read by the ENGINE table
+while the module loads) that was fixed before the gated `npm run build && pm2 restart
+hermes-web`, after which localhost:8080 and `/galaxy` are 200.
+Still open from this item: **(a)** no screen — the toolbox grid has no tile for this
+product, so it is engine + route only until item 24; **(b)** the catalogue row still says
+₹99/month while the route serves the job free, so a screen would show a price the job
+does not charge (see the parking lot — that is his decision); **(c)** markitdown's
+xlsx/pptx extras are not installed, so those formats are not claimed anywhere.
 
 ### 12. colibri as the ₹0 text engine (Apache-2.0, 34k★)
 `JustVugg/colibri` (Apache-2.0) streams a large MoE model from disk on CPU. The win is
@@ -372,6 +419,12 @@ Evidence: an invoice job whose output PDF contains a decodable QR, verified by d
   (Indore directory / SarkarHealth / SarkarCars) re-check that decision with him.
 - Native builds: `eas build` needs his Expo/Apple login.
 - Expo Go tunnel from this VM fails (anonymous ngrok timeout) — see the skill.
+- **`resume-checker` pricing (from item 11):** the catalogue row says ₹99/month and
+  `plan: monthly`, but the route serves the job free because it costs ₹0 to run. Either
+  the row becomes `price_paise 0` (free, like `exif-strip` / `photos-to-pdf` / `collage`)
+  or the product needs a real paid tier — which for a text report means building a
+  preview that can watermark text (there is no `pdf-stamp`/`watermark` path for
+  `text/markdown` today). Not changed unilaterally.
 
 ### 15. Invoice: sequential invoice numbering (open, from item 3)
 The bill number is typed by hand, so a shop that forgets it prints "No bill number" and two
@@ -579,3 +632,17 @@ offer `Linking.openSettings()` (web is unaffected — the browser dialog is the 
 denied state at phone size with the Settings affordance visible, plus the same screen after
 `canAskAgain` is false — the two states must not read identically, which is exactly how the
 current one fails.
+
+### 24. Toolbox tile + screen for the document check (new, 2026-09-16, from item 11)
+`resume-checker` runs end to end (job 93/94) but nothing in the app can reach it: the
+toolbox grid's `READY_TOOLS` has eight tiles and none of them is this product, and
+`/tools/<slug>` has no screen. The engine's output is Markdown, so the screen's job is to
+show the three facts that mean something to a person — how many words the file really
+carries, whether an email and a phone were found in it, and which of the keywords they
+typed are actually in the document — with the full text behind a "show the text" toggle.
+Keep the honest edges: say "the words that appear in your file", never "what ATS wants";
+a scan or a photo answers 400 with its reason and the screen must show that sentence
+(`lib/tools.ts` already throws `json.error`). One decision before the tile ships: the
+catalogue row prices this at ₹99/month while the route serves it free, so the tile must
+either say Free (and the row becomes `price_paise 0`) or the product goes back behind the
+paywall — that is his call, not the robot's.
