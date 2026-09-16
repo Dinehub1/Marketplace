@@ -295,6 +295,25 @@ If it does starve it, park it and say so — this box serves the live site.
 (₹99/clip) from a card with no engine into a product: text in, MP3 out, in R2, priced.
 Requires torch on CPU — measure seconds per 100 words and report them.
 
+### 14. Wire the Workers AI token and prove one hosted model (blocked on one credential)
+Read `docs/ai-compute-plan.md`. The R2 key is NOT an AI token (tested: code 10000
+"Authentication error"). Until `CLOUDFLARE_AI_TOKEN` exists in `apps/web/.env`, this item
+is **blocked** — log it as blocked once, then stop re-reporting it.
+When the token appears, first job: subtitles. `@cf/openai/whisper` at $0.0005 per audio
+minute, called from `/api/job` with the token kept server-side. Evidence: a real audio
+file → transcript text, with the meta showing seconds and the model used.
+
+### 15. Translation product on indictrans2 (needs the same token)
+`@cf/ai4bharat/indictrans2-en-indic-1B` at $0.342/M tokens is purpose-built for
+Hindi↔English and priced below every general model. Build "Hindi ↔ English document
+translation" (₹49) as: markitdown extracts → indicTrans2 translates → markitdown rebuilds.
+Evidence: a real contract/resume page in Hindi, translated, both files in R2.
+
+### 16. Price our products from real cost, not guesses
+Once one hosted model runs, measure actual cost per job from `product_jobs` duration and
+the model's neuron rate, and put the number next to each price in `docs/product-plan.md`.
+The point: "₹99 voice-over" should be backed by a measured rupee cost, not an estimate.
+
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins
