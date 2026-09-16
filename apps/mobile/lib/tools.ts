@@ -71,9 +71,21 @@ function WEB_BASE(): string {
   }
 }
 
-type FileKind = "image" | "pdf";
+type FileKind = "image" | "pdf" | "doc";
 
-const ACCEPT: Record<FileKind, string> = { image: "image/*", pdf: "application/pdf" };
+/**
+ * The document check reads a PDF, a Word file or plain text, and the browser's
+ * file dialog must offer all three — a picker that offered only PDF would hide
+ * two formats the product can really read. These are the same three types the
+ * route accepts (`DOC_ACCEPTS` in apps/web/app/api/job/route.ts).
+ */
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+const ACCEPT: Record<FileKind, string> = {
+  image: "image/*",
+  pdf: "application/pdf",
+  doc: "application/pdf,.docx,.txt",
+};
 
 /**
  * The most files one job may carry. The route caps `photos-to-pdf` at 20 and
@@ -192,7 +204,8 @@ async function pickOnDevice(kind: FileKind, multiple: boolean): Promise<PickedFi
 
   const DocumentPicker = require("expo-document-picker");
   const res = await DocumentPicker.getDocumentAsync({
-    type: "application/pdf",
+    // A kind that takes more than one format passes a list rather than one string.
+    type: kind === "doc" ? ["application/pdf", DOCX_MIME, "text/plain"] : "application/pdf",
     copyToCacheDirectory: true,
     multiple,
   });

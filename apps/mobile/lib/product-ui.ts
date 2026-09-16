@@ -48,6 +48,10 @@ const PRODUCT_ACCENTS: Record<string, AccentKey> = {
   "exif-strip": "info",
   "photos-to-pdf": "critical",
   "collage": "gold",
+  // The document check is a diagnosis rather than a repair, so it borrows the
+  // amber that already means "look at this" (photo-repair): a green would read as
+  // "passed", which no text check can promise.
+  "resume-checker": "warning",
 };
 
 /** Fallback accent when a screen is not tied to one catalogue product. */
