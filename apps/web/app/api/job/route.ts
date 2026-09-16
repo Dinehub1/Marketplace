@@ -535,6 +535,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save the result" }, { status: 502, headers: noStore });
   }
 
+  /**
+   * The engine's own measurements are stored with the job.
+   *
+   * They used to exist only in the response body: the screen read `meta` once and
+   * it was gone, so the table could not answer "which model served this job, and
+   * what did it cost" — the measurement the product prices are meant to come from
+   * (`product_jobs.meta`, migration 20260917000001). PostgREST takes a JSON object
+   * for a jsonb column directly; that was measured against a scratch table before
+   * this was written, not assumed.
+   *
+   * An empty object stores NULL (no measurement is not a measurement of nothing),
+   * and a blob over the cap is left out rather than truncated: half a measurement
+   * is worse than none. It is not silent — the meta still goes to the caller, and
+   * the engine's meta has never come near 16 KB (the invoice's full `tax_rows` is
+   * ~400 bytes).
+   */
+  const META_ROW_CAP = 16_384;
+  const rowMeta =
+    Object.keys(meta).length > 0 && JSON.stringify(meta).length <= META_ROW_CAP ? meta : null;
+
   const insert = await db("product_jobs", {
     method: "POST",
     headers: { Prefer: "return=representation" },
@@ -546,6 +566,7 @@ export async function POST(req: NextRequest) {
       preview_key: previewKey,
       status: "done",
       duration_ms: durationMs,
+      meta: rowMeta,
     }]),
   });
   if (!insert.ok) {
