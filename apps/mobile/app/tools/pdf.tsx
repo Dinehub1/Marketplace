@@ -12,16 +12,11 @@
  *
  * The work runs on the server behind /api/job with product=pdf-tools.
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { isPageRange, PDF_PAGES_HINT } from "@hermes/core";
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
-
-const RED = "#b91c1c";
-const INK = "#0f172a";
-const MUTED = "#64748b";
-const LINE = "#e2e8f0";
-const BG = "#f8fafc";
+import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
 type ActionId = "merge" | "split" | "compress" | "rotate" | "page-numbers";
 
@@ -76,6 +71,8 @@ function rangeFileName(range: string): string {
 }
 
 export default function PdfToolkit() {
+  const ui = useProductUI("pdf-tools");
+  const s = useMemo(() => makeStyles(ui), [ui]);
   const [action, setAction] = useState<ActionId>("merge");
   const [files, setFiles] = useState<PickedFile[]>([]);
   const [pages, setPages] = useState("");
@@ -211,7 +208,7 @@ export default function PdfToolkit() {
               <View style={[s.radio, on && s.radioOn]}>{on ? <View style={s.radioDot} /> : null}</View>
               <View style={{ flex: 1 }}>
                 <View style={s.actionHead}>
-                  <Text style={[s.actionName, on && { color: RED }]}>{a.name}</Text>
+                  <Text style={[s.actionName, on && { color: ui.accent }]}>{a.name}</Text>
                   <Text style={s.actionNeeds}>{a.needs}</Text>
                 </View>
                 <Text style={s.actionJob}>{a.job}</Text>
@@ -285,7 +282,7 @@ export default function PdfToolkit() {
               setJob(null);
             }}
             placeholder={DEFAULT_NUMBER_TEXT}
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={ui.faint}
             style={s.input}
             autoCapitalize="none"
             autoCorrect={false}
@@ -307,7 +304,7 @@ export default function PdfToolkit() {
               setJob(null);
             }}
             placeholder={action === "split" ? "1-3, 7" : "all of them"}
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={ui.faint}
             style={[s.input, !rangeOk && s.inputBad]}
             autoCapitalize="none"
             autoCorrect={false}
@@ -425,7 +422,17 @@ export default function PdfToolkit() {
   );
 }
 
-const s = StyleSheet.create({
+function makeStyles(ui: ProductUI) {
+  // This screen has no paper metaphor, so every colour comes from the palette and
+  // dark mode is not a second code path: the RGB values that used to sit here
+  // (#b91c1c red, #0f172a ink, #f8fafc ground) are now the pdf-tools accent and
+  // the semantic ink/hairline/canvas tokens.
+  const RED = ui.accent;
+  const INK = ui.ink;
+  const MUTED = ui.muted;
+  const LINE = ui.hairline;
+  const BG = ui.bg;
+  return StyleSheet.create({
   root: { flex: 1, backgroundColor: BG },
   wrap: { padding: 22, paddingBottom: 48, maxWidth: 520, width: "100%", alignSelf: "center" },
   badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 },
@@ -442,15 +449,15 @@ const s = StyleSheet.create({
     borderColor: LINE,
     borderRadius: 12,
     padding: 12,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  actionOn: { borderColor: RED, backgroundColor: "#fef2f2" },
+  actionOn: { borderColor: RED, backgroundColor: ui.accentTint },
   radio: {
     width: 18,
     height: 18,
     borderRadius: 9,
     borderWidth: 1.5,
-    borderColor: "#cbd5e1",
+    borderColor: ui.c.hairlineStrong,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -458,7 +465,7 @@ const s = StyleSheet.create({
   radioDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: RED },
   actionHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   actionName: { color: INK, fontSize: 14.5, fontWeight: "800" },
-  actionNeeds: { color: "#94a3b8", fontSize: 10.5, fontWeight: "700" },
+  actionNeeds: { color: ui.faint, fontSize: 10.5, fontWeight: "700" },
   actionJob: { color: MUTED, fontSize: 12, lineHeight: 16.5, marginTop: 2 },
   label: { color: INK, fontWeight: "700", fontSize: 13, marginBottom: 8 },
   input: {
@@ -469,10 +476,10 @@ const s = StyleSheet.create({
     paddingVertical: 11,
     fontSize: 15,
     color: INK,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  inputBad: { borderColor: "#fca5a5" },
-  rangeBad: { color: "#b91c1c", fontSize: 11.5, marginTop: 6, lineHeight: 16 },
+  inputBad: { borderColor: ui.error },
+  rangeBad: { color: ui.error, fontSize: 11.5, marginTop: 6, lineHeight: 16 },
   help: { color: MUTED, fontSize: 11.5, marginTop: 6, lineHeight: 16 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
@@ -481,9 +488,9 @@ const s = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  chipOn: { borderColor: RED, backgroundColor: "#fef2f2" },
+  chipOn: { borderColor: RED, backgroundColor: ui.accentTint },
   chipText: { color: INK, fontSize: 14, fontWeight: "700" },
   chipTextOn: { color: RED },
   grid: {
@@ -500,28 +507,28 @@ const s = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  cellOn: { borderColor: RED, backgroundColor: "#fef2f2" },
+  cellOn: { borderColor: RED, backgroundColor: ui.accentTint },
   cellText: { color: MUTED, fontSize: 17, fontWeight: "700", lineHeight: 20 },
   cellTextOn: { color: RED },
   stackHead: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 20, marginBottom: 8 },
-  stackCount: { color: "#94a3b8", fontSize: 11.5, fontWeight: "700" },
+  stackCount: { color: ui.faint, fontSize: 11.5, fontWeight: "700" },
   stack: {
     borderWidth: 1,
     borderColor: LINE,
     borderRadius: 12,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  stackEmpty: { color: "#94a3b8", fontSize: 12.5, paddingVertical: 12, textAlign: "center" },
+  stackEmpty: { color: ui.faint, fontSize: 12.5, paddingVertical: 12, textAlign: "center" },
   row: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 8 },
   rowIndex: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: ui.c.surfaceSunken,
     color: MUTED,
     fontSize: 11,
     fontWeight: "800",
@@ -540,16 +547,19 @@ const s = StyleSheet.create({
     paddingVertical: 13,
     alignItems: "center",
     marginTop: 10,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
   secondaryText: { color: INK, fontWeight: "700", fontSize: 14 },
   primary: { backgroundColor: RED, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginTop: 12 },
   dim: { opacity: 0.45 },
+  // The one hex the palette does not carry: white text on a filled accent button,
+  // as the other product screens do.
   primaryText: { color: "#fff", fontWeight: "800", fontSize: 15 },
-  error: { color: "#b91c1c", fontSize: 13, marginTop: 12, lineHeight: 18 },
+  error: { color: ui.error, fontSize: 13, marginTop: 12, lineHeight: 18 },
   result: { marginTop: 20 },
   linkRow: { paddingVertical: 10 },
   link: { color: RED, fontSize: 13, fontWeight: "700" },
   hint: { color: MUTED, fontSize: 11.5, marginTop: 10, lineHeight: 16 },
-  foot: { color: "#94a3b8", fontSize: 11, marginTop: 22, textAlign: "center", lineHeight: 16 },
-});
+  foot: { color: ui.faint, fontSize: 11, marginTop: 22, textAlign: "center", lineHeight: 16 },
+  });
+}

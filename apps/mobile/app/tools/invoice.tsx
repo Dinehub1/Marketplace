@@ -34,14 +34,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@hermes/core";
+import { paletteFor } from "@hermes/tokens";
 import { canDownloadFile, openPaywall, openResult, runJob, type JobResult } from "@/lib/tools";
 import { loadCounter, recordBillNo } from "@/lib/invoice-counter";
+import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
-const GREEN = "#166534";
-const INK = "#0f172a";
-const MUTED = "#64748b";
-const LINE = "#e2e8f0";
-const BG = "#f8fafc";
+/**
+ * The bill preview is a *printed page*, so it is drawn as paper in both schemes:
+ * a white sheet with dark ink, which is what the engine's PDF looks like and what
+ * comes out of the printer. Everything around it — the page ground, the labels,
+ * the chips, the inputs — follows the theme, which is what the gallery's light and
+ * dark captures of this screen now differ in.
+ */
+const PAPER = paletteFor("light");
 
 const GST_RATES = [0, 5, 12, 18];
 /** The same shape the engine accepts (name@bank): a QR is only printed for a real
@@ -119,6 +124,8 @@ function today(): string {
 }
 
 export default function InvoiceMaker() {
+  const ui = useProductUI("invoice-maker");
+  const s = useMemo(() => makeStyles(ui), [ui]);
   const [shop, setShop] = useState("");
   const [gstin, setGstin] = useState("");
   const [upi, setUpi] = useState("");
@@ -311,7 +318,7 @@ export default function InvoiceMaker() {
           setJob(null);
         }}
         placeholder="As it should print on the bill"
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor={ui.faint}
         style={s.input}
       />
       <Text style={s.label}>GSTIN (optional)</Text>
@@ -319,7 +326,7 @@ export default function InvoiceMaker() {
         value={gstin}
         onChangeText={setGstin}
         placeholder="15 characters, if you are registered"
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor={ui.faint}
         autoCapitalize="characters"
         autoCorrect={false}
         style={s.input}
@@ -333,7 +340,7 @@ export default function InvoiceMaker() {
           setJob(null);
         }}
         placeholder="yourname@bank"
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor={ui.faint}
         autoCapitalize="none"
         autoCorrect={false}
         style={s.input}
@@ -355,7 +362,7 @@ export default function InvoiceMaker() {
         value={customer}
         onChangeText={setCustomer}
         placeholder="Name or firm"
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor={ui.faint}
         style={s.input}
       />
       <View style={s.twoUp}>
@@ -368,7 +375,7 @@ export default function InvoiceMaker() {
               setBillNo(t);
             }}
             placeholder="e.g. 014"
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={ui.faint}
             autoCapitalize="characters"
             style={s.input}
           />
@@ -379,7 +386,7 @@ export default function InvoiceMaker() {
             value={date}
             onChangeText={setDate}
             placeholder="DD-MM-YYYY"
-            placeholderTextColor="#94a3b8"
+            placeholderTextColor={ui.faint}
             style={s.input}
           />
         </View>
@@ -407,14 +414,14 @@ export default function InvoiceMaker() {
               value={it.name}
               onChangeText={(t) => setItem(it.id, { name: t })}
               placeholder="What you sold"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={ui.faint}
               style={[s.input, s.itemName]}
             />
             <TextInput
               value={it.qty}
               onChangeText={(t) => setItem(it.id, { qty: t })}
               placeholder="Qty"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={ui.faint}
               keyboardType="decimal-pad"
               style={[s.input, s.itemQty]}
             />
@@ -422,7 +429,7 @@ export default function InvoiceMaker() {
               value={it.rate}
               onChangeText={(t) => setItem(it.id, { rate: t })}
               placeholder="Rate"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={ui.faint}
               keyboardType="decimal-pad"
               style={[s.input, s.itemRate]}
             />
@@ -449,7 +456,7 @@ export default function InvoiceMaker() {
               value={it.hsn}
               onChangeText={(t) => setItem(it.id, { hsn: t })}
               placeholder="HSN code"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor={ui.faint}
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={8}
@@ -464,7 +471,7 @@ export default function InvoiceMaker() {
                   accessibilityState={{ selected: it.gstRate === r }}
                   style={[s.chip, it.gstRate === r && s.chipOn]}
                 >
-                  <Text style={[s.chipText, it.gstRate === r && { color: GREEN }]}>
+                  <Text style={[s.chipText, it.gstRate === r && { color: ui.accent }]}>
                     {r === null ? "Bill" : `${r}%`}
                   </Text>
                 </Pressable>
@@ -502,7 +509,7 @@ export default function InvoiceMaker() {
             accessibilityState={{ selected: gstRate === r }}
             style={[s.rate, gstRate === r && s.rateOn]}
           >
-            <Text style={[s.rateText, gstRate === r && { color: GREEN }]}>{r}%</Text>
+            <Text style={[s.rateText, gstRate === r && { color: ui.accent }]}>{r}%</Text>
           </Pressable>
         ))}
       </View>
@@ -676,7 +683,16 @@ export default function InvoiceMaker() {
   );
 }
 
-const s = StyleSheet.create({
+function makeStyles(ui: ProductUI) {
+  // The accent, the ink scale, the hairlines and the page ground come from the
+  // palette, so dark mode is not a second code path. The bill preview is the one
+  // deliberate exception and uses PAPER (see the note at the top of the file).
+  const GREEN = ui.accent;
+  const INK = ui.ink;
+  const MUTED = ui.muted;
+  const LINE = ui.hairline;
+  const BG = ui.bg;
+  return StyleSheet.create({
   root: { flex: 1, backgroundColor: BG },
   wrap: { padding: 22, paddingBottom: 48, maxWidth: 520, width: "100%", alignSelf: "center" },
   badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 },
@@ -694,7 +710,7 @@ const s = StyleSheet.create({
     paddingVertical: 11,
     fontSize: 14.5,
     color: INK,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
   twoUp: { flexDirection: "row", gap: 10 },
   itemBlock: { marginBottom: 14 },
@@ -709,22 +725,22 @@ const s = StyleSheet.create({
     borderRadius: 9,
     paddingVertical: 6,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  chipOn: { borderColor: GREEN, backgroundColor: "#f0fdf4" },
+  chipOn: { borderColor: GREEN, backgroundColor: ui.accentTint },
   chipText: { color: MUTED, fontSize: 11.5, fontWeight: "700" },
   itemName: { flex: 1, minWidth: 90 },
   itemQty: { width: 54, textAlign: "center" },
   itemRate: { width: 78, textAlign: "right" },
   itemRemove: { width: 26, alignItems: "center", justifyContent: "center" },
-  itemRemoveText: { color: "#b91c1c", fontSize: 20, fontWeight: "700", lineHeight: 22 },
+  itemRemoveText: { color: ui.error, fontSize: 20, fontWeight: "700", lineHeight: 22 },
   secondary: {
     borderWidth: 1.5,
     borderColor: GREEN,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
     marginTop: 4,
   },
   secondaryText: { color: GREEN, fontWeight: "700", fontSize: 13.5 },
@@ -736,48 +752,55 @@ const s = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 11,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  rateOn: { borderColor: GREEN, backgroundColor: "#f0fdf4" },
+  rateOn: { borderColor: GREEN, backgroundColor: ui.accentTint },
   rateText: { color: INK, fontWeight: "800", fontSize: 14 },
   help: { color: MUTED, fontSize: 11.5, marginTop: 8, lineHeight: 16 },
+  // ── The bill itself: paper, in both schemes ───────────────────────────────
+  // A bill preview that went dark-mode would stop being a preview of the thing
+  // the engine prints and the shop hands over, and the ink would have to invert
+  // with it. So these rows read from PAPER (the light palette) on purpose.
   paper: {
-    backgroundColor: "#fff",
+    backgroundColor: PAPER.surface,
     borderWidth: 1,
-    borderColor: LINE,
+    borderColor: PAPER.hairline,
     borderRadius: 12,
     padding: 14,
   },
   paperHead: { flexDirection: "row", alignItems: "baseline", justifyContent: "space-between", gap: 8 },
-  paperShop: { color: INK, fontSize: 16, fontWeight: "800", flexShrink: 1 },
-  paperDoc: { color: MUTED, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 },
-  paperMeta: { color: MUTED, fontSize: 11, marginTop: 3 },
-  paperRule: { height: 1, backgroundColor: LINE, marginVertical: 10 },
-  paperLabel: { color: MUTED, fontSize: 10, fontWeight: "800", letterSpacing: 0.8 },
-  paperCustomer: { color: INK, fontSize: 13.5, fontWeight: "700", marginTop: 2 },
+  paperShop: { color: PAPER.ink, fontSize: 16, fontWeight: "800", flexShrink: 1 },
+  paperDoc: { color: PAPER.ink2, fontSize: 10, fontWeight: "800", letterSpacing: 1.2 },
+  paperMeta: { color: PAPER.ink2, fontSize: 11, marginTop: 3 },
+  paperRule: { height: 1, backgroundColor: PAPER.hairline, marginVertical: 10 },
+  paperLabel: { color: PAPER.ink2, fontSize: 10, fontWeight: "800", letterSpacing: 0.8 },
+  paperCustomer: { color: PAPER.ink, fontSize: 13.5, fontWeight: "700", marginTop: 2 },
   th: { flexDirection: "row", marginBottom: 4 },
-  thText: { color: MUTED, fontSize: 10, fontWeight: "800", letterSpacing: 0.4 },
+  thText: { color: PAPER.ink2, fontSize: 10, fontWeight: "800", letterSpacing: 0.4 },
   tr: { flexDirection: "row", paddingVertical: 3, alignItems: "flex-start" },
-  td: { color: INK, fontSize: 12.5 },
-  tdHsn: { color: MUTED, fontSize: 9.5, marginTop: 1 },
+  td: { color: PAPER.ink, fontSize: 12.5 },
+  tdHsn: { color: PAPER.ink2, fontSize: 9.5, marginTop: 1 },
   colName: { flex: 3 },
   colQty: { flex: 1, textAlign: "center" },
   colRate: { flex: 1.6, textAlign: "right" },
   colAmt: { flex: 1.8, textAlign: "right", fontWeight: "700" },
-  paperEmpty: { color: "#94a3b8", fontSize: 12, paddingVertical: 4 },
+  paperEmpty: { color: PAPER.ink3, fontSize: 12, paddingVertical: 4 },
   totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 2 },
-  totalLabel: { color: MUTED, fontSize: 12 },
-  totalValue: { color: INK, fontSize: 12.5 },
-  grandRow: { marginTop: 6, borderTopWidth: 1, borderTopColor: LINE, paddingTop: 8 },
-  grandLabel: { color: INK, fontSize: 14, fontWeight: "800" },
-  grandValue: { color: INK, fontSize: 16, fontWeight: "800" },
-  paperWords: { color: MUTED, fontSize: 11, marginTop: 8, lineHeight: 15 },
-  missing: { color: "#92400e", fontSize: 12.5, marginTop: 14, lineHeight: 18 },
-  error: { color: "#b91c1c", fontSize: 13, marginTop: 12, lineHeight: 18 },
+  totalLabel: { color: PAPER.ink2, fontSize: 12 },
+  totalValue: { color: PAPER.ink, fontSize: 12.5 },
+  grandRow: { marginTop: 6, borderTopWidth: 1, borderTopColor: PAPER.hairline, paddingTop: 8 },
+  grandLabel: { color: PAPER.ink, fontSize: 14, fontWeight: "800" },
+  grandValue: { color: PAPER.ink, fontSize: 16, fontWeight: "800" },
+  paperWords: { color: PAPER.ink2, fontSize: 11, marginTop: 8, lineHeight: 15 },
+  missing: { color: ui.c.warning, fontSize: 12.5, marginTop: 14, lineHeight: 18 },
+  error: { color: ui.error, fontSize: 13, marginTop: 12, lineHeight: 18 },
   primary: { backgroundColor: GREEN, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginTop: 16 },
   dim: { opacity: 0.45 },
+  // Only the one hex the palette does not carry: white text on a filled accent
+  // button (the same choice the other product screens make).
   primaryText: { color: "#fff", fontWeight: "800", fontSize: 15 },
   result: { marginTop: 18 },
   hint: { color: MUTED, fontSize: 12, marginTop: 8, lineHeight: 17 },
-  foot: { color: "#94a3b8", fontSize: 11, marginTop: 22, textAlign: "center", lineHeight: 16 },
-});
+  foot: { color: ui.faint, fontSize: 11, marginTop: 22, textAlign: "center", lineHeight: 16 },
+  });
+}

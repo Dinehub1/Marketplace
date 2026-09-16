@@ -15,19 +15,27 @@ import { useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { paletteFor } from "@hermes/tokens";
 import Svg, { Path, Line } from "react-native-svg";
 import { saveDataUrl } from "@/lib/tools";
+import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
-const VIOLET = "#6d28d9";
-const INK = "#0f172a";
-const MUTED = "#64748b";
-const LINE = "#e2e8f0";
-const BG = "#f8fafc";
+/**
+ * The pad and the exported PNG are paper, in both schemes: the sheet you sign on
+ * is white and the pen is black or blue, because that is what a signature is and
+ * what the file has to look like when it lands on a form. The chrome around the
+ * pad — ground, headings, chips, the result frame — follows the theme, which is
+ * what the gallery's light and dark captures of this screen now differ in.
+ */
+const PAPER = paletteFor("light");
 
 const WIDTHS = [2.4, 4, 7];
+/** The two inks are the artifact, not the theme: a dark-mode signature is not a
+ *  white signature. Both values come from the light palette (PAPER.ink is its
+ *  near-black, PAPER.info its blue), so no colour is invented here. */
 const INKS = [
-  { id: "ink", label: "Black", value: "#0f172a" },
-  { id: "blue", label: "Blue", value: "#1d4ed8" },
+  { id: "ink", label: "Black", value: PAPER.ink },
+  { id: "blue", label: "Blue", value: PAPER.info },
 ];
 
 type Pt = { x: number; y: number };
@@ -82,6 +90,8 @@ function rasteriseOnWeb(svg: string, w: number, h: number): Promise<string> {
 }
 
 export default function SignatureMaker() {
+  const ui = useProductUI("signature-maker");
+  const s = useMemo(() => makeStyles(ui), [ui]);
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [live, setLive] = useState<Stroke | null>(null);
   const [width, setWidth] = useState(WIDTHS[1]);
@@ -201,7 +211,7 @@ export default function SignatureMaker() {
               y1={pad.h - 58}
               x2={pad.w * 0.9}
               y2={pad.h - 58}
-              stroke={LINE}
+              stroke={PAPER.hairline}
               strokeWidth={1.5}
               strokeDasharray="6 6"
             />
@@ -247,7 +257,7 @@ export default function SignatureMaker() {
             accessibilityState={{ selected: width === w }}
             style={[s.tool, width === w && s.toolOn]}
           >
-            <View style={{ height: w, width: 20, borderRadius: w, backgroundColor: width === w ? VIOLET : MUTED }} />
+            <View style={{ height: w, width: 20, borderRadius: w, backgroundColor: width === w ? ui.c.brandSecondary : ui.muted }} />
           </Pressable>
         ))}
         <View style={s.spacer} />
@@ -326,7 +336,16 @@ export default function SignatureMaker() {
   );
 }
 
-const s = StyleSheet.create({
+function makeStyles(ui: ProductUI) {
+  // Everything around the paper follows the theme. The violet is this screen's
+  // identity: the brand's own secondary, which is violet in both schemes (the pad
+  // and the exported PNG are the paper exception — see the note at the top).
+  const VIOLET = ui.c.brandSecondary;
+  const INK = ui.ink;
+  const MUTED = ui.muted;
+  const LINE = ui.hairline;
+  const BG = ui.bg;
+  return StyleSheet.create({
   root: { flex: 1, backgroundColor: BG },
   wrap: { padding: 22, paddingBottom: 48, maxWidth: 520, width: "100%", alignSelf: "center" },
   badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 },
@@ -336,10 +355,10 @@ const s = StyleSheet.create({
   sub: { color: MUTED, fontSize: 15, lineHeight: 22, marginBottom: 18 },
   pad: {
     height: PAD_H,
-    backgroundColor: "#fff",
+    backgroundColor: PAPER.surface,
     borderRadius: 16,
     borderWidth: 1.5,
-    borderColor: LINE,
+    borderColor: PAPER.hairline,
     overflow: "hidden",
   },
   padHint: {
@@ -348,8 +367,8 @@ const s = StyleSheet.create({
     justifyContent: "center",
     gap: 4,
   },
-  padHintText: { color: "#cbd5e1", fontSize: 20, fontWeight: "800" },
-  padHintSub: { color: "#cbd5e1", fontSize: 12 },
+  padHintText: { color: PAPER.ink4, fontSize: 20, fontWeight: "800" },
+  padHintSub: { color: PAPER.ink4, fontSize: 12 },
   label: { color: INK, fontWeight: "700", fontSize: 13, marginTop: 18, marginBottom: 8 },
   toolRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   tool: {
@@ -360,9 +379,9 @@ const s = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1.5,
     borderColor: LINE,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
-  toolOn: { borderColor: VIOLET, backgroundColor: "#f5f3ff" },
+  toolOn: { borderColor: VIOLET, backgroundColor: ui.c.brandAccent },
   spacer: { width: 4 },
   textTool: {
     paddingHorizontal: 12,
@@ -371,24 +390,29 @@ const s = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1.5,
     borderColor: LINE,
-    backgroundColor: "#fff",
+    backgroundColor: ui.surface,
   },
   textToolText: { color: INK, fontSize: 12.5, fontWeight: "700" },
   primary: { backgroundColor: VIOLET, borderRadius: 14, paddingVertical: 15, alignItems: "center", marginTop: 18 },
   dim: { opacity: 0.45 },
+  // The one hex the palette does not carry: white text on a filled accent button,
+  // as the other product screens do.
   primaryText: { color: "#fff", fontWeight: "800", fontSize: 15 },
-  error: { color: "#b91c1c", fontSize: 13, marginTop: 12, lineHeight: 18 },
+  error: { color: ui.error, fontSize: 13, marginTop: 12, lineHeight: 18 },
   result: { marginTop: 6 },
   resultPad: {
-    backgroundColor: "#eef2f7",
+    // The exported PNG has black ink on a clear background, so its frame is paper
+    // too: on a dark inset the signature would be invisible.
+    backgroundColor: PAPER.surfaceInset,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: LINE,
+    borderColor: PAPER.hairline,
     padding: 8,
     height: 150,
   },
   resultImage: { width: "100%", height: "100%" },
   resultMeta: { color: MUTED, fontSize: 11.5, marginTop: 8 },
   hint: { color: MUTED, fontSize: 12, lineHeight: 17, marginTop: 8 },
-  foot: { color: "#94a3b8", fontSize: 11, marginTop: 22, lineHeight: 16, textAlign: "center" },
-});
+  foot: { color: ui.faint, fontSize: 11, marginTop: 22, lineHeight: 16, textAlign: "center" },
+  });
+}
