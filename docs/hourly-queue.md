@@ -215,6 +215,27 @@ no screen posts to them. A card is tappable only if a screen exists, and the gri
 each, not three new marketing tiles. `collage` and `photos-to-pdf` also need the first
 multi-file picker in the app (the PDF screen takes exactly one file today).
 
+### 8. Expo examples as the pattern for the tool frame (MIT, exact stack)
+`expo/examples` (3,728★, MIT) is dozens of complete runnable Expo apps — camera, image
+picker, file sharing — in our SDK. When the design frame is blocked, this is the
+unblocking work: read the camera and file-picker examples and write down the three
+patterns worth copying (how they handle permission denial, the capture screen layout,
+the share sheet). Log the notes, do not copy code yet.
+Done when: `docs/expo-examples-notes.md` exists with the three patterns and the exact
+example paths they came from.
+
+### 9. Port 3 real tools from ImageToolbox's catalogue (Apache-2.0)
+`T8RIN/ImageToolbox` (14,641★) holds ~100 image operations. Pick **collage**, **EXIF
+strip** and **PDF from images** — each is cheap with Pillow + pdfcpu in `worker.py`,
+each turns a "coming soon" card into a product, and Apache-2.0 allows attribution-only
+reuse of the algorithm/UI ideas. One per run, with a real job id as evidence.
+
+### 10. In-app background removal prototype (Apache-2.0)
+`huggingface/transformers.js` (16,297★, Apache-2.0) runs segmentation in the browser.
+Prototype it behind a flag on the bg-remove screen and measure: model download size,
+seconds on a phone, and whether the result is good enough for a passport photo. If it
+works, jobs stop queueing behind the VM's CPU.
+
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins
