@@ -465,9 +465,39 @@ Through the app it is still nothing: `POST https://expo.dropby.co.in/api/job` wi
 screen. Candidate work: "Text to image" = one route entry + one catalogue row + one screen, with
 the price measured against the real per-image cost (item 16's job) rather than guessed.
 
-### 21. tap-sprint's playing field is inert on the web build (open, found 2026-09-16)
-Found while verifying item 7 with a browser instead of a screenshot: a round of
-tap-sprint can be _started_ and the clock runs, but **no input reaches the field** — the
+### 21. tap-sprint's playing field is inert on the web build — FIXED 2026-09-16
+**Cause, measured: it was not `locationX`/`locationY` (those arrive correctly) and not
+the field's registration — it is react-native-web's press delay.** RNW's Pressable waits
+`DEFAULT_PRESS_DELAY_MS` = **50 ms** before it *activates* a press, and a press released
+inside that window is only reported at all when the Pressable **also** has an `onPress`
+handler — `PressResponder._performTransitionSideEffects` calls `_activate` on
+RESPONDER_RELEASE only `if (onPress != null)`. The field listens on `onPressIn` alone, so
+every real tap (a click, a `touchscreen.tap()`, any press shorter than 50 ms) was dropped
+on the floor, while a **300 ms press-and-hold scored**. Bisected on the exported build:
+with `onPress={() => {}}` added, presses worked; with only a `console.log` added, a click
+and a touch tap still did nothing — so the handler was never called, i.e. the earlier
+"the tap does nothing" reading was right but the reason was wrong.
+Fix: `delayPressIn={0}` on the field (web only — RNW-only prop, widened type so the
+native path is untouched), so the press activates at pointerdown, the moment the reaction
+should be measured from.
+Second, independent bug in the same screen: the first dot of every round had no deadline.
+`startRound()` calls `spawn()` in the same event as `setPhase("playing")`, so the `[phase]`
+effect's cleanup for the previous phase ran *after* the timer existed and deleted it
+(measured: 3.2 s of no input cost no life). The deadline is now cancelled on unmount only
+(a timeout arriving after the round is over is already inert — `registerMiss` returns
+unless the phase is "playing").
+Evidence: a **real round played** through the exported build at 390×844 — 190 taps → **190
+dots hit, score 1900**, avg reaction 156 ms, fastest 141 ms, plus one deliberate corner tap
+counted as a miss with "That was the field, not the dot — a miss."; the device record reads
+`{"best":1900,"rounds":1,"recent":[{"score":1900,"line":"190 dots hit · avg 156 ms · fastest
+141 ms"}]}` and after a reload the start screen reads "Best score on this device: 1900 · 1
+round played". The first dot now times out: lives 3 → 1 in 3.2 s ("The dot timed out — too
+slow."), 6/6 and 10/10 checks green, `tsc --noEmit` 0 errors in the file, no page errors.
+Note for the next screen with a custom press surface: a bare `Pressable` + `onPressIn` is
+the trap — use the design system's `Press` (it has `onPress`) or set `delayPressIn={0}`.
+
+**Original finding, kept for the record** (open, found 2026-09-16):
+a round of tap-sprint can be _started_ and the clock runs, but **no input reaches the field** — the
 round always ends with `Dots hit 0 / Misses 0 / Lives lost 0`, which is how a 30-second
 round can end without a single thing happening in it.
 Measured at 390×844 against the exported web build (`127.0.0.1:8091`, the same bundle
@@ -503,3 +533,22 @@ dot's deadline survives the phase change; (3) prove it with a played round that 
 above 0 — the verification script is at `%LOCALAPPDATA%\Temp\verify-games.mjs` (it drives
 the export at phone size, reads `hermes-game-scores` back and reloads to check
 persistence).
+
+**Answered by the fix:** (1) is wrong — `locationX/Y` are supplied and correct (measured
+`loc=167,267` for a press at page `183,386` on a field at `16,119`); the field's `NaN` was
+never the problem. (2) was right, but only for the **first dot of a round**. (3) is now the
+standing check: `%LOCALAPPDATA%\Temp\play-tap-sprint.mjs` plays a whole round (taps every
+dot it sees, plus one deliberate corner tap), reads the summary, the stored round and the
+start screen after a reload. `%LOCALAPPDATA%\Temp\probe-tap-first-dot.mjs` covers the
+deadline rule and `probe-tap-21.mjs` covers click / touch-tap / timeout in one pass.
+
+### 22. The capture gate proves a screen renders, not that it works (new, 2026-09-16)
+Item 21's field was dead for a whole day's worth of captures because `scripts/app-shots.mjs`
+only asserts that the screen's **marker copy** is in the DOM — a screenshot of a game that
+cannot score looks exactly like one that can. Add a **per-screen interaction assertion** to
+the capture: for the screens with one obvious primary interaction (the two games, the PDF
+rotate picker, the invoice UPI field, the collage shape chips), press it and require an
+observable change (a number moves, a line appears) before the PNG is written, the same way
+the marker gate refuses to write a blank page. Start with the two games, since
+`play-tap-sprint.mjs` and the word-duel harness already do the work and can be reduced to a
+few assertions. Done when: a capture run fails loudly if an interaction stops responding.
