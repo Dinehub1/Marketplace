@@ -314,6 +314,21 @@ Once one hosted model runs, measure actual cost per job from `product_jobs` dura
 the model's neuron rate, and put the number next to each price in `docs/product-plan.md`.
 The point: "₹99 voice-over" should be backed by a measured rupee cost, not an estimate.
 
+### 17. Build the provider router with the fallback chains (no keys needed)
+`docs/resources-and-apis.md` defines the chains. Implement `apps/web/lib/ai.ts`: one
+function per capability (text, vision, translate, stt, tts, image) that walks its chain in
+order, with a 20 s timeout per provider, a health check, and the serving provider recorded
+in the job's `meta`. It must work with ZERO keys configured — the local paths (rules,
+`tesseract`, `pg_trgm`) are the terminal fallback, so the router is testable today.
+Done when: a unit-style script proves the chain falls through when the first provider
+throws, and the record names which provider answered.
+
+### 18. UPI QR on the invoice (no vendor needed)
+The invoice engine can print a UPI QR from the NPCI spec string
+`upi://pay?pa=<vpa>&pn=<name>&am=<amount>&cu=INR&tn=<note>` — no payment gateway, no key.
+That gives every shopkeeper bill a way to be paid even while Razorpay keys are missing.
+Evidence: an invoice job whose output PDF contains a decodable QR, verified by decoding it.
+
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins
