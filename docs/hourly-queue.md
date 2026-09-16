@@ -15,7 +15,11 @@ status here so the next hour does not repeat the work.
 4. **Licenses are checked, never assumed.** Only MIT / Apache-2.0 / BSD code may be
    copied into the app. AGPL/LGPL/Elastic stay out (read-only reference), CC0 lists are fine to read.
 5. **Honest labels.** If an engine does not implement a product, the screen says so.
-6. **Low-resource VM.** This box runs the live site; no GPU, no 20-minute npm installs,
+6. **No long-lived CPU-heavy servers on this box.** A Metro dev server started here
+   once ate 69% of the CPU and starved the product engine: the same passport job took
+   58 s while it ran and 7 s when it was stopped. Tunnels/dev servers must be asked for
+   by the user, started under pm2 with a name, and stopped when the test is over.
+7. **Low-resource VM.** This box runs the live site; no GPU, no 20-minute npm installs,
    no more than ~1 heavy process at a time.
 
 ## Queue
@@ -155,11 +159,16 @@ restarted its worker (5336 → 7800, both loading the same `worker.py` from 16:0
 socket lingered, so 5336 was stopped too. Final state: **one** listener on 8099, pm2 pid 7800,
 health ok, and jobs 53/54 re-run through the public route as HTTP 200 afterwards.
 
-### 11. Gallery: describe the two new PDF shots (open, small)
-`services/tools/shots_server.py` has a `SCREEN_INFO` map; `app__pdf-tools-rotate` and
-`app__pdf-tools-numbers` are new screen names with no entry, so the modal shows the shot
-without the "what this screen is" line (they still carry the asserted marker copy). Paste
-two entries by the existing ones and `pm2 restart shots-gallery`.
+### 11. Gallery: describe the two new PDF shots — DONE 2026-09-16
+`SCREEN_INFO` now has `pdf-tools-rotate` and `pdf-tools-numbers` (title, what-it-is, and the
+markers the capture asserted), and both names are in `SCREEN_ORDER` so they sort beside
+`pdf-tools`. They were also in the wrong *tile*: `scripts/app-map.mjs` only knew
+`pdf-tools` for that product, so the two shots sat in "Screens no app claims"; the product
+now maps to all three screens, so the PDF Toolkit tile reads **3 shots**.
+Evidence: `GET https://shots.dropby.co.in/shots` → **200**, 50,739 B, containing
+"PDF toolkit — rotate, open" and the asserted line "one quarter turn"; the toolbox tile
+reads "3 shots"; `pm2 restart shots-gallery` left exactly one listener on :8092 with
+`health` pid == pm2 pid.
 
 ### 9. New candidate: Stirling-PDF's Pipeline endpoint as a job chain (blocked on licence)
 Their `pipeline/Pipeline` controller chains operations into one request, which is what
@@ -207,13 +216,41 @@ Worker restarted once (`dropby-worker`, pid 8980, one listener on :8099, `health
 pid`); no Next rebuild was needed — the route's `fields` are `doc, payload`, so the new
 per-item data rides inside the existing payload.
 
-### 14. Toolbox grid: give the three new products real tiles and screens (open, found 2026-09-16)
-`exif-strip`, `photos-to-pdf` and `collage` are live behind `/api/job` (item 4) but the
-toolbox grid (`apps/mobile/app/tools/index.tsx`, `READY_TOOLS`) still lists nine tiles, and
-no screen posts to them. A card is tappable only if a screen exists, and the grid's rule is
-"a grid of dead tiles is worse than a short grid" — so this is three screens plus one entry
-each, not three new marketing tiles. `collage` and `photos-to-pdf` also need the first
-multi-file picker in the app (the PDF screen takes exactly one file today).
+### 14. Toolbox grid: give the three new products real tiles and screens — DONE 2026-09-16
+The three engine-only products now have screens and tiles, and the app has its first
+multi-file picker:
+- `lib/tools.ts` gained **`pickFiles(kind, {multiple})`** — one `<input multiple>` on the
+  web, `allowsMultipleSelection` on the native gallery, `multiple` on the document picker —
+  with `pickFile` kept as `pickFiles(…)[0]`, so no existing screen changed shape. Order is
+  the user's order and is never re-sorted: for these products the order *is* the job.
+- **`/tools/exif-strip`** (Photo metadata cleaner): one photo in, and the screen shows its
+  work — the tags the file arrived with, and the tags the file you download carries, both
+  read back from the saved file by the engine.
+- **`/tools/photos-to-pdf`**: a visible stack (the stack is the page order), page size A4 /
+  Letter / A5, up to 20 photos, "Make the PDF · N pages".
+- **`/tools/collage`**: 2–4 photos, shape chips 2 across / 2 down / 2×2 / 3 across / auto; a
+  shape that cannot hold the photos is **dimmed with the reason on it** rather than sent and
+  refused. `lib/product-ui.ts` gave all three their own accent.
+- `READY_TOOLS` is now **8 tiles** (was 5) and the two cards that still wore **SERVER SOON**
+  (`pdf-tools`, `invoice-maker`) are `ready` — their engines have implemented them since items
+  2 and 13, so the label was stale; the section note says so out loud.
+Evidence (all through `https://expo.dropby.co.in/api/job`, browser User-Agent): job **78**
+`exif-strip` 200 — `exif_in: [datetime, gps, make, model, orientation, software]`,
+`exif_out: []`, and the R2 file re-downloaded measures 1200×800 with **no EXIF keys and no
+GPS IFD**; job **79** `photos-to-pdf` 200 — `pages_out: 2`, and the PDF re-downloaded is
+**2 pages of 595×842 pt** (real A4); job **80** `collage` 200 — `grid 2x1`, `size_out
+2208x1112` (= 2×1080 cells + 3×16 gaps, measured). Guard cases answer honestly: `pagesize=a0`
+→ **400** "pagesize must be one of: a4, letter, a5".
+`npx tsc --noEmit` in `apps/mobile`: **0 errors in the files this item touched** (6
+pre-existing errors remain elsewhere: `app.config.ts`, `(tabs)/_layout.tsx`, `account.tsx`).
+`npx expo export --platform web` → **3.2 MB** bundle, exit 0; `/tools`, `/tools/exif-strip`,
+`/tools/photos-to-pdf`, `/tools/collage` all **200**; four screens re-captured through the
+marker gate (`app__exif-strip__mobile-{light,dark}`, `app__photos-to-pdf__…`,
+`app__collage__…`, plus the 8-tile `app__tools-hub__…`) and all four now claim their app in
+`app-map.mjs` (`EXTRA_SCREENS`), so the gallery shows them under **Everyday Tools & Photo
+Fix** with their `SCREEN_INFO` line.
+Not done here: the collage shape guard is on the screen, but the engine still answers **500**
+(→ 502 through the route) for a shape it cannot fill — item 19.
 
 ### 8. Expo examples as the pattern for the tool frame (MIT, exact stack)
 `expo/examples` (3,728★, MIT) is dozens of complete runnable Expo apps — camera, image
@@ -225,6 +262,10 @@ Done when: `docs/expo-examples-notes.md` exists with the three patterns and the 
 example paths they came from.
 
 ### 9. Port 3 real tools from ImageToolbox's catalogue (Apache-2.0)
+**Done by other items — do not redo:** `collage`, `exif-strip` (EXIF strip) and
+`photos-to-pdf` (PDF from images) are engine-backed since item 4 and got their screens and
+grid tiles in item 14 (2026-09-16). The feature checklist was used from
+`T8RIN/ImageToolbox` (14,631★, Apache-2.0); no code was copied.
 `T8RIN/ImageToolbox` (14,641★) holds ~100 image operations. Pick **collage**, **EXIF
 strip** and **PDF from images** — each is cheap with Pillow + pdfcpu in `worker.py`,
 each turns a "coming soon" card into a product, and Apache-2.0 allows attribution-only
@@ -235,6 +276,24 @@ reuse of the algorithm/UI ideas. One per run, with a real job id as evidence.
 Prototype it behind a flag on the bg-remove screen and measure: model download size,
 seconds on a phone, and whether the result is good enough for a passport photo. If it
 works, jobs stop queueing behind the VM's CPU.
+
+### 11. markitdown as the document engine (MIT, 184k★)
+`microsoft/markitdown` (MIT) turns Office/PDF/images into Markdown in Python, on this VM.
+Prototype it against the CV path first: a real PDF resume → Markdown → keyword score.
+That one engine feeds the resume/ATS check, document translation, bill extraction and
+notes-from-lecture products. Evidence: a job id whose `meta` shows the extracted text
+length, plus the markdown saved under `marketplace/` in R2.
+
+### 12. colibri as the ₹0 text engine (Apache-2.0, 34k★)
+`JustVugg/colibri` (Apache-2.0) streams a large MoE model from disk on CPU. The win is
+removing the API bill behind the writing products. Do NOT install it until you have
+measured: idle RAM, disk needed, and whether a single request starves `hermes-web`.
+If it does starve it, park it and say so — this box serves the live site.
+
+### 13. VoxCPM for the voice-over product (Apache-2.0, 37k★)
+`OpenBMB/VoxCPM` (Apache-2.0) is TTS with voice design. Turn "Text to voice-over"
+(₹99/clip) from a card with no engine into a product: text in, MP3 out, in R2, priced.
+Requires torch on CPU — measure seconds per 100 words and report them.
 
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
@@ -282,3 +341,19 @@ prevent. `pages` is only *required* for split, never shape-checked. Two things t
 separators, e.g. `/^\d+([-,]\d+)*$/`) with a 400 naming the format, and decide what `pages=-1`
 should be — today it is accepted and produces a file (200), so either it is meaningful to
 pdfcpu or it silently returns the wrong pages; measure it before allowing it.
+
+### 19. Engine: a bad request from the caller comes back as 500 (→ 502), not 400 (open, found 2026-09-16)
+Found while guarding the collage screen: `POST https://expo.dropby.co.in/api/job` with
+`product=collage, layout=2x1` and **3** photos answers **502** — the only thing wrong was
+the request. The engine raises `RuntimeError("a 2x1 sheet holds only 2 photos")` for caller
+mistakes exactly as it does for a genuine fault, and `services/tools/worker.py` turns every
+`RuntimeError` into an HTTP **500**, so `route.ts` (which maps engine failure to 502) has no
+way to tell "you asked for something impossible" from "the server broke".
+The same shape is behind item 18 (`pages=abc`).
+Fix in the engine first: a `UserError` (or a `RuntimeError` raised for a caller-input reason)
+should answer **400** with the same message — the messages are already written for a user to
+read — and only an unexpected exception stays a 500. Then the route can pass a 4xx through
+instead of masking it, and the app can say the reason rather than "Could not finish the job".
+Measured this hour: `pagesize=a0` → 400 (route-side check, correct), 3 photos + `layout=2x1`
+→ 502 (engine 500). The three new screens guard their own inputs, so this is reachable today
+only from a script or a future screen.
