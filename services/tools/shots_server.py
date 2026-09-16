@@ -756,23 +756,36 @@ EXPO_WEB = os.environ.get("EXPO_WEB", "https://expo.dropby.co.in").rstrip("/")
 EXPO_GO_FALLBACK = os.environ.get("EXPO_GO_URL", "").rstrip("/")
 
 
-def expo_go_url() -> str:
+# Cache the ngrok lookup: it is called once per card (14 times a page), and with the
+# dev server stopped each call sat on its timeout — 14 x 1.5 s of nothing, on a page
+# whose whole job is to load fast. Ten seconds is short enough that starting Metro
+# makes the codes appear without a restart.
+_GO_CACHE = {"at": 0.0, "url": ""}
+
+
+def expo_go_url(max_age: float = 10.0) -> str:
     """The live Expo Go address, or "" when nothing is tunnelling.
 
     Expo's CLI runs ngrok underneath, and ngrok answers on 127.0.0.1:4040 with the
     public URLs it currently has. Asking it is the only way to keep a printed QR
     correct across restarts — the URL is per-session, not a setting.
     """
+    now = time.time()
+    if now - _GO_CACHE["at"] < max_age:
+        return _GO_CACHE["url"]
+    found = EXPO_GO_FALLBACK
     try:
-        with urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=1.5) as fh:
+        with urllib.request.urlopen("http://127.0.0.1:4040/api/tunnels", timeout=1.0) as fh:
             data = json.load(fh)
         for t in data.get("tunnels") or []:
             url = str(t.get("public_url") or "")
             if url.startswith("https://") and "exp.direct" in url:
-                return "exp://" + url[len("https://"):].rstrip("/")
+                found = "exp://" + url[len("https://"):].rstrip("/")
+                break
     except Exception:
         pass
-    return EXPO_GO_FALLBACK
+    _GO_CACHE.update(at=now, url=found)
+    return found
 
 
 def expo_go_link(route: str) -> str:
