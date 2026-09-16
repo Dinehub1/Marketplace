@@ -276,14 +276,27 @@ Fix** with their `SCREEN_INFO` line.
 Not done here: the collage shape guard is on the screen, but the engine still answers **500**
 (→ 502 through the route) for a shape it cannot fill — item 19.
 
-### 8. Expo examples as the pattern for the tool frame (MIT, exact stack)
-`expo/examples` (3,728★, MIT) is dozens of complete runnable Expo apps — camera, image
-picker, file sharing — in our SDK. When the design frame is blocked, this is the
-unblocking work: read the camera and file-picker examples and write down the three
-patterns worth copying (how they handle permission denial, the capture screen layout,
-the share sheet). Log the notes, do not copy code yet.
-Done when: `docs/expo-examples-notes.md` exists with the three patterns and the exact
-example paths they came from.
+### 8. Expo examples as the pattern for the tool frame (MIT, exact stack) — DONE 2026-09-16
+Result: `docs/expo-examples-notes.md` is written, and the three patterns are in it with
+exact paths and line numbers: **(1) permission in two phases** — `permission === null`
+means "render nothing", denial replaces the whole surface with one button
+(`with-camera/App.tsx:22-35`); **(2) the capture screen is two states in one view, not a
+modal** — `uri ? renderPicture(uri) : renderCamera()` (line 124), an absolutely-positioned
+shutter row at `bottom: 44` with an 85 px ring / 70 px disc, and press feedback through a
+`Pressable` that *has* an `onPress` (the prop whose absence deafened tap-sprint, item 21);
+**(3) every picker reduces to `{uri, name, type}` and mimeType is the contract** —
+`with-s3/app/index.tsx` refuses to upload without one, converts once with
+`fetch(uri).blob()`; the older `with-formdata-image-upload/App.js` is the counter-example
+(its `pickerResult.cancelled` is the SDK ≤47 spelling, and `type: image/${ext}` produces the
+non-existent `image/jpg`).
+**The third pattern item 8 named does not exist there:** authenticated code search gives
+`expo-sharing repo:expo/examples` **0** hits and `expo-document-picker` **0**, so the share
+sheet has no example to copy and cannot be claimed as one.
+Licence and stack verified by API, not by a blurb: MIT, 3,728★, pushed 2026-09-03, 755 blobs
+in the tree, and every example read pins `expo ^57.0.1 / react 19.2.3 / react-native 0.86.0`
+— the same generation as `apps/mobile`. No code copied. The three deltas it produces
+(`canAskAgain` → Settings in `lib/tools.ts`, a review state before the passport job is sent,
+one secondary affordance in the frame's result card) belong with item 1's frame, not here.
 
 ### 9. Port 3 real tools from ImageToolbox's catalogue (Apache-2.0)
 **Done by other items — do not redo:** `collage`, `exif-strip` (EXIF strip) and
@@ -552,3 +565,17 @@ observable change (a number moves, a line appears) before the PNG is written, th
 the marker gate refuses to write a blank page. Start with the two games, since
 `play-tap-sprint.mjs` and the word-duel harness already do the work and can be reduced to a
 few assertions. Done when: a capture run fails loudly if an interaction stops responding.
+
+### 23. Photo permission: a second denial leaves a button that cannot work (new, 2026-09-16)
+Found while reading `expo/examples` for item 8, in our own code rather than theirs — and the
+example has the same defect. `apps/mobile/lib/tools.ts:172-175` reads `granted` and then says
+"Turn it on in Settings" with no way to reach Settings; `apps/mobile/app/passport.tsx:55-61`
+only says permission is needed. On iOS a second denial answers
+`granted: false, canAskAgain: false` and the OS will not prompt again, so on those devices
+the sentence is advice with no route and the picker stays dead for the life of the install.
+The honest fix is small: when `canAskAgain === false`, say that iOS will not ask again and
+offer `Linking.openSettings()` (web is unaffected — the browser dialog is the permission and
+`passport.tsx` already skips the request there). Evidence to require: a screenshot of the
+denied state at phone size with the Settings affordance visible, plus the same screen after
+`canAskAgain` is false — the two states must not read identically, which is exactly how the
+current one fails.
