@@ -325,11 +325,49 @@ strip** and **PDF from images** — each is cheap with Pillow + pdfcpu in `worke
 each turns a "coming soon" card into a product, and Apache-2.0 allows attribution-only
 reuse of the algorithm/UI ideas. One per run, with a real job id as evidence.
 
-### 10. In-app background removal prototype (Apache-2.0)
-`huggingface/transformers.js` (16,297★, Apache-2.0) runs segmentation in the browser.
+### 10. In-app background removal prototype (Apache-2.0) — DONE 2026-09-16
+`huggingface/transformers.js` (16,296★, Apache-2.0) runs segmentation in the browser.
 Prototype it behind a flag on the bg-remove screen and measure: model download size,
 seconds on a phone, and whether the result is good enough for a passport photo. If it
 works, jobs stop queueing behind the VM's CPU.
+
+**Result: it runs, and it is measured.** `/tools/bg-remove` has a web-only flag row
+("Cut it on this device — prototype"), **off by default**, and with it on the matting
+runs in the browser: the photo is never uploaded and the VM does no work. The full
+table is in `docs/bg-remove-on-device.md`; the short version, Chromium at 390×844 on
+this box, `Xenova/modnet` through `@huggingface/transformers@4.3.0`:
+
+| | fp32 (25.9 MB model) | q8 (6.6 MB model) — shipped default |
+|---|---|---|
+| pipeline ready, first use | 6.2 s | 5.8 s |
+| cut, first / second run | 7.0 s / 6.5 s | 6.0 s / 5.6 s |
+| output | 1024×683 RGBA PNG, 448 KB | 1024×683 RGBA PNG, 465 KB |
+| alpha clear / opaque / partial | 73.5 % / 24.6 % / 1.9 % | 72.4 % / 24.1 % / 3.4 % |
+
+First use costs **~12 MB** (model 6,632,188 B + `ort-wasm` 5,547,616 B, read off the
+CDN's own `content-length`); every cut after that is the seconds above and nothing else.
+q8 is the default: a quarter of the download, ~15 % faster, slightly softer edge.
+Quality was checked by the numbers, not by eye — in the app's own PNG all four corner
+alphas are **0** and the centre is **254** — which proves a matte, not hair-level
+quality on a phone photo; that is why the screen says "prototype".
+Licences: `Xenova/modnet` is Apache-2.0 (network: ZHKKKe/MODNet, Apache-2.0);
+`briaai/RMBG-1.4` was rejected as **non-commercial**.
+How it stays cheap: no npm install — `@huggingface/transformers` drags `sharp`,
+`onnxruntime-node` and a 145 MB `onnxruntime-web`, so the browser loads the library
+from a **pinned CDN URL** via `new Function("url", "return import(url)")`, which Metro
+never sees. The bundle is therefore still **3.2 MB**, unchanged.
+Evidence: the served exported build at 390×844 — 8/8 checks with the flag on (the
+screen's own measured line read "the model came down in 7.9 s and the cut took 7.1 s,
+the PNG is 465 KB at 1024×683. Your photo was not uploaded."), 0 page errors, and the
+PNG the screen produced re-read with Pillow: RGBA 1024×683, 72.4 % fully clear, corners
+0, centre 254. The server path is untouched with the flag off: jobs **122**, **123**
+and **124** (a second pick in the same session) all HTTP **200**, the result card still
+"Unlock the clean PNG · ₹99". `tsc --noEmit`: 0 errors in the two files touched (the
+same 6 pre-existing elsewhere); `npx expo export --platform web` exit 0, **3.2 MB**;
+both `app__bg-remove__mobile-{light,dark}` shots re-captured through the marker gate.
+Not done, and not pretending: no real-phone number (this is the VM's Chromium), no
+vendored library with an integrity hash, and no fallback rule if a browser cannot run
+it — those are the new item 31.
 
 ### 11. markitdown as the document engine (MIT, 184k★) — DONE 2026-09-16
 Result: the document engine is live as the catalogue's own **`resume-checker`** product
@@ -911,4 +949,34 @@ placeholder needs 55.3 px and the 8-character max typed value 53.9 px, both into
 field can give up 8 px), or item 16's own suggestion — one chip that opens the four rates.
 Evidence to require: a phone-sized photo or screenshot of the chip row at 320 px, plus the same
 row after the change.
+
+### 31. Ship the on-device cut: vendor the library, measure a real phone, add the fallback (new, 2026-09-16, from item 10)
+Item 10 proved the browser can do the matting (12 MB first run, ~6 s a cut, a real matte on
+`Xenova/modnet`) and left it behind a flag. Three things stand between that and a shipped
+feature, in this order:
+1. **Vendor the library.** The prototype loads `@huggingface/transformers@4.3.0` from jsdelivr
+   at runtime, which is fine for a measurement and not for a product: it needs a pinned
+   integrity hash and a decision about the app's Content-Security-Policy. `new Function` is
+   also what keeps Metro from seeing the specifier — replacing it means copying the browser
+   build into `apps/mobile/assets/` (or adding the package, which brings `sharp`,
+   `onnxruntime-node` and a 145 MB `onnxruntime-web`).
+2. **A real-phone number.** Every figure in `docs/bg-remove-on-device.md` is this VM's
+   Chromium on 4 cores; a phone's WebAssembly may be several times slower, and the 6.6 MB
+   model download is the other half of the wait. The phone-test page is
+   `https://shots.dropby.co.in/`.
+3. **A fallback rule.** No WebAssembly, an old Safari, or no connection for the first model
+   download must fall back to the server path *silently*, and the screen must not show a
+   spinner that will never finish.
+Also honest to fix while in there: the model is a **portrait** matter (person, shoulders,
+hair) — the tile and the copy must not promise a product shot.
+
+### 32. The on-device cut is free and unwatermarked, the server cut sells for ₹99 (new, 2026-09-16, from item 10 — needs his decision)
+With the prototype flag on, the screen produces a full-resolution PNG with no watermark and
+no paywall, because the work happens on the user's own device and costs us nothing; with the
+flag off, the same photo gets a watermarked preview and a ₹99 unlock. Both cannot be the
+offer at once. The options are (a) the free on-device cut *is* the product and ₹99 buys
+something else (batch, larger sizes, a passport-ready crop), (b) the on-device path stays
+behind a paid tier, or (c) it stays a prototype and never ships as-is. Nothing was changed —
+the flag ships off, so today's behaviour is unchanged.
+
 
