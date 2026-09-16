@@ -1291,6 +1291,9 @@ already stores `meta` on every row — but nothing writes these yet, so "which p
 this, and at what cost" cannot be answered from the database (item 16 needs exactly that to
 price products from measured cost). Small: merge `metaFor` into the meta of any job served by
 the router when item 36 lands, and add the provider to the `/log` page's per-job line.
+The column this needs now exists and the route writes the engine's own meta into it — item 40,
+done 2026-09-17 (`product_jobs.meta jsonb`). What is still missing is only the `metaFor` half,
+which cannot run before item 36 puts the router behind a product.
 
 ### 38. The theme audit, in one pass over every screen (new, 2026-09-17, from item 19)
 Item 19 was written as "invoice, pdf, signature" because those three were the ones with
@@ -1321,7 +1324,7 @@ the engine's regex to international formats changes a shared product's output, a
 "I have an Indian mobile on my bill" is the useful answer. Decide, then either widen it or leave
 the label as it is.
 
-### 40. `product_jobs` has no `meta` column — item 37's premise is wrong (new, 2026-09-17, from item 24)
+### 40. `product_jobs` has no `meta` column — item 37's premise is wrong (new, 2026-09-17, from item 24) — DONE 2026-09-17
 Measured: `GET /rest/v1/product_jobs?select=*&limit=1` returns exactly `id, product, phone,
 input_key, output_key, status, error, duration_ms, created_at, finished_at, preview_key` — there is
 **no `meta`**. So item 37's "the route already stores `meta` on every row" is not true of this
@@ -1331,5 +1334,31 @@ table, and the job route's response `meta` (which the screens read) is not persi
 https://api.supabase.com/v1/projects/xpfmqpmhmcouwzebfwhb/database/query` with the
 `SUPABASE_ACCESS_TOKEN` already in `apps/web/.env` — so item 37 is a two-part job: add the column,
 then merge `metaFor(record)` into it.
+
+**Result (2026-09-17): the column exists and the route writes to it.** `alter table
+public.product_jobs add column if not exists meta jsonb` was applied with the Management API and
+recorded as `supabase/migrations/20260917000001_product_jobs_meta.sql`, and
+`apps/web/app/api/job/route.ts` now stores the engine's `x-job-meta` object on the `done` row
+(`meta: rowMeta`) instead of handing it to the caller and forgetting it. Two deliberate shapes:
+an empty object stores **NULL** (no measurement is not a measurement of nothing, and rows that
+predate the column keep NULL), and a blob over 16 KB is left out rather than truncated. The
+PostgREST behaviour this depends on was **measured, not assumed**: a JSON object sent for a jsonb
+column is taken as the value, including nested objects/arrays (`{"m":{"tax_rows":[{"rate":18,
+"taxable":1250.5,"cgst":112.5}],"totals_match":true}}` round-tripped), probed on a scratch table
+`public.__meta_probe` which was dropped in the same hour.
+Evidence: through `https://expo.dropby.co.in/api/job` (browser User-Agent) — job **138**
+`exif-strip` = HTTP 200 and its row now reads `meta.exif_in [datetime, gps, make, model,
+orientation, software]` / `exif_out []` (exactly the response's own object), job **139**
+`pdf-tools split pages=1-3` = 200 with `meta.pages_in 5 / pages_out 3 / bytes_out 17176`.
+The pre-change rows are untouched (`id 134-137`, including two `failed` ones, read `meta: null`)
+and the failure path still writes without the column (job **140** `failed`,
+`error "bad request: merge needs at least two PDFs"`, `meta null`), so nothing that worked before
+changed shape. `npm run typecheck -w @hermes/web` exit 0, then the gated
+`npm run build && pm2 restart hermes-web`; `localhost:8080` (200), `sarkarmarketplace.dropby.co.in`
+(200) and `expo.dropby.co.in/tools` (200) after — **the engine was not restarted** (one listener on
+:8099, pid 7200 == pm2 pid) because no engine file changed.
+Still open, now unblocked: **item 37's second half** — `metaFor(record)` is only produced once the
+router serves a product (item 36), so no row carries `ai_provider`/`ai_cost` yet; and the `/log`
+page's per-job line can now actually read a provider out of the row.
 
 
