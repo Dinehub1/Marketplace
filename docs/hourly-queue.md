@@ -456,20 +456,45 @@ product engine, and it produces nothing. Stopping it is one command
 and if he does want phone access, a dev-client build or a hostname on the existing
 Cloudflare tunnel replaces it (that needs a token with DNS + Tunnel edit rights).
 
-### 18. Route: an unparseable `pages` range is a 502, not a 400 (open, found 2026-09-16)
-Found while measuring item 10: `pdf-tools` with `pages=abc` answers **502** from
-`https://expo.dropby.co.in/api/job` (both `split` and `rotate`), which is exactly the
-"failure the user cannot explain" the route's own comment says the enum checks exist to
-prevent. `pages` is only *required* for split, never shape-checked. Two things to fix in
-`apps/web/app/api/job/route.ts`: reject anything that is not a page list (digits with `-`/`,`
-separators, e.g. `/^\d+([-,]\d+)*$/`) with a 400 naming the format, and decide what `pages=-1`
-should be — today it is accepted and produces a file (200), so either it is meaningful to
-pdfcpu or it silently returns the wrong pages; measure it before allowing it.
-**Update 2026-09-16 (item 19 landed):** the route now passes an engine 4xx through as a 400 with
-the engine's message, so this item's fix is only the shape check plus the `-1` question.
-Re-measured through `https://expo.dropby.co.in/api/job` after that change: `split` with
-`pages=abc` is **still 502**, because pdfcpu's own failure remains an engine 500 (the engine's
-*own* validations are the ones that answer 400 now).
+### 18. Route: an unparseable `pages` range is a 502, not a 400 — DONE 2026-09-16
+**Done, and the item's own suggested regex was wrong — measured before writing it.** Two facts
+had to come off the binary first. `pdfcpu selectedpages` (v0.15.0) documents a grammar much
+richer than `\d+([-,]\d+)*`: it also takes `odd`, `even`, `l` (last page), `3-` / `-4` (open
+ends) and `!5` / `n5` (exclude). A check written from the guess would have refused ranges the
+engine handles correctly. And `pages=-1` is **meaningful**: `-#` means "first page – page #", so
+`-1` is page 1 and produces a real 1-page PDF (889 B, byte-identical to `pages=1`) — allowed and
+documented, not a silent wrong answer.
+The bigger defect found by measuring it: `3-1`, `9-12` and `!6` select nothing, and pdfcpu
+**exits 0** having written a **0-byte file** while printing `aborted: missing page numbers!`. The
+engine saw a clean exit and handed back a 200 whose output is empty — a finished job the app
+would show as a blank document, stored in R2. That is worse than the 502 this item was about.
+Fix in the two files, one item:
+- `services/tools/worker.py`: new `_pdfcpu_pages(args, out_path, pages)`, used by the three
+  actions that take a caller range (split/trim, rotate, page-numbers). A non-zero pdfcpu exit on
+  a caller-supplied range is a `UserError` (400 with `PDF_PAGES_HINT`, pdfcpu's own sentence
+  appended); a 0-byte output on a caller-supplied range is a `UserError` naming the range. With
+  no range sent, an empty output stays a `RuntimeError` → 500, because that is a real fault.
+- `apps/web/app/api/job/route.ts`: `PDF_PAGE_EXPR` + `isPageRange()` implement pdfcpu's own
+  grammar (verified against 39 values: 26 that must pass, 13 that must fail, 0 disagreements), so
+  a range pdfcpu cannot parse is a **400 naming the format before the file is uploaded** — a 30 MB
+  scan is not free to send and wait for a failure.
+Evidence, engine first: **23/23** cases on `127.0.0.1:8099` against a real 5-page PDF — 400 for
+`abc`, `1;2`, `1--2`, `1.5`, `1 - 3`, `0`, `n1`, `3-1`, `9-12`, `!6` (and the same for rotate and
+page-numbers), 200 with the right page count for `1-3` (3), `1-` (5), `odd` (3), `even` (2), `l`
+(1), `1,2` (2), `-1` (1), plus rotate/page-numbers/compress with no range unchanged (5 pages).
+Then through `https://expo.dropby.co.in/api/job`, browser User-Agent: **9/9** — jobs **97**
+(`split 1-3`, `pages_in 5`, `pages_out 3`, 1253 B), **98** (`odd` → 3 pages), **99** (`rotate 270`,
+no range, 5 pages), **100** (`compress`) all 200; the 400s carry `pages must select pages, e.g.
+1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), !5 (exclude)`; the two
+empty-selection cases are recorded as `failed` rows **95/96** (the route's own shape check answers
+before a row exists, which is the intent). Merge re-run = jobs **102**/**103**, 200.
+`npm run typecheck -w @hermes/web` exit 0, then the gated `npm run build && pm2 restart
+hermes-web`; `localhost:8080`, `/galaxy`, `sarkarmarketplace.dropby.co.in` and `expo.dropby.co.in`
+all 200 afterwards. Worker restarted as `pm2 stop` → port free → `pm2 start --only dropby-worker`
+(never a plain restart, see item 12): one listener on 8099, `health.pid 6604 == pm2 pid`.
+Still open next door: the **screen** (`apps/mobile/app/tools/pdf.tsx`) guards the range with
+`/^[0-9,\s-]+$/`, which is narrower than the engine (it hides `odd`/`l` from the app) and wider in
+one place (`1 - 3` passes the screen and is now refused by the engine) — see the new item 25.
 
 ### 19. Engine: a bad request from the caller comes back as 500 (→ 502), not 400 — DONE 2026-09-16
 Result: caller mistakes now answer **400 with the reason**, and only real faults stay a 500.
@@ -646,3 +671,18 @@ a scan or a photo answers 400 with its reason and the screen must show that sent
 catalogue row prices this at ₹99/month while the route serves it free, so the tile must
 either say Free (and the row becomes `price_paise 0`) or the product goes back behind the
 paywall — that is his call, not the robot's.
+
+### 25. PDF screen: its own range guard is narrower than the engine (new, 2026-09-16, from item 18)
+`apps/mobile/app/tools/pdf.tsx` validates the optional page range with
+`PAGE_PATTERN = /^[0-9,\s-]+$/` plus `/\d/`. Measured against the engine, that guard is wrong in
+both directions: it **hides real capability** (pdfcpu accepts `odd`, `even`, `l` for the last page,
+`3-` and `-4` for open ends, `!5` to exclude — the screen refuses all of them, and its help text
+says only "a range like 1-3 or single pages like 1,4,9"), and it **lets through** `1 - 3`, which
+pdfcpu calls a syntax error, so the user now gets the engine's 400 saying "pages must select pages
+of the PDF" for something the screen showed as valid input.
+The honest fix is small and needs no engine change: reuse the same grammar the route now has
+(`PDF_PAGE_EXPR` / `isPageRange` in `apps/web/app/api/job/route.ts`, which is pdfcpu's own
+`selectedpages` grammar) on the screen, mark the field bad for a range that cannot be parsed, and
+say in the help line what the engine really takes. Evidence to require: `npx expo export --platform
+web` at exit 0 with the bundle size, the two gallery shots of `/tools/pdf` re-captured, and a
+screenshot of the bad-input state at phone size next to a real `odd` job id.
