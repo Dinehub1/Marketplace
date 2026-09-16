@@ -189,3 +189,44 @@ export function formatCount(n: number | null | undefined): string {
   if (n == null) return "";
   return n.toLocaleString("en-IN");
 }
+
+/**
+ * pdfcpu's own page-selection grammar — the one thing the web route and the app
+ * screen must agree on, so it lives here instead of in either of them.
+ *
+ * Read off pdfcpu v0.15.0's `pdfcpu selectedpages`, not assumed, because the
+ * obvious `\d+([-,\s]\d+)*` is *narrower than the engine*: pdfcpu really does
+ * accept `odd`, `even`, `l` / `l-3` (last page), `3-` and `-4` (open ends) and
+ * `!5` / `n5` (exclude). A guard written from the guess refuses values the engine
+ * handles correctly — which is exactly what the app's own PDF screen did: it hid
+ * `odd`, `even`, `l`, `3-`, `-4` and `!5` from the user, while letting `1 - 3`
+ * through, a value pdfcpu calls a syntax error.
+ *
+ * What it refuses is that syntax error (`abc`, `1;2`, `1--2`, `1.5`, `1 - 3`), so
+ * a bad range is answered before a 30 MB scan is uploaded rather than after.
+ * Imported by `apps/web/app/api/job/route.ts` (its 400) and by
+ * `apps/mobile/app/tools/pdf.tsx` (the field's own guard).
+ */
+export const PDF_PAGE_EXPR = /^(?:even|odd)$|^[!n]?(?:l(?:-\+?\d+)?|\+?\d+)$|^[!n]?(?:l(?:-\+?\d+)?|\+?\d*)-(?:l(?:-\+?\d+)?|\+?\d*)$|^[!n]?-(?:l(?:-\+?\d+)?|\+?\d+)$/;
+
+/** A comma-separated list of the expressions above, e.g. `1-3,7,!4`. */
+export function isPageRange(value: string): boolean {
+  const parts = value.split(",");
+  // `l` and a digit are the only characters a real expression needs; this is what
+  // keeps a bare `-` or `,` (which the grammar above would otherwise allow) out.
+  return parts.every((p) => PDF_PAGE_EXPR.test(p) && /[0-9l]|^(?:even|odd)$/.test(p));
+}
+
+/** The sentence a caller gets when their range cannot be read (the route's 400). */
+export const PDF_PAGES_HELP =
+  "pages must select pages, e.g. 1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), !5 (exclude)";
+
+/** The same grammar said for a screen rather than an API — one line a person reads.
+ *
+ *  The exclusion form is shown *attached to an inclusion*, because that is the only
+ *  way it works: measured on a 5-page file, `1-,!5` really is pages 1-4 and
+ *  `odd,n1` is pages 3 and 5, while a bare `!5` makes pdfcpu abort with
+ *  `missing page numbers` and a 0-byte file — an exclusion subtracts from an
+ *  inclusion, it does not select on its own. */
+export const PDF_PAGES_HINT =
+  "1-3, 7, odd, even, l (the last page), 3- (to the end), -4 (up to page 4), l-3- (the last 3), 1-,!5 (all but page 5)";

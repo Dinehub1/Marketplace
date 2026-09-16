@@ -13,6 +13,7 @@
  * The work runs on the server behind /api/job with product=pdf-tools.
  */
 import { useState } from "react";
+import { isPageRange, PDF_PAGES_HINT } from "@hermes/core";
 import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
 
@@ -64,7 +65,15 @@ const POSITIONS: { value: string; label: string; short: string }[] = [
 /** pdfcpu writes %p/%P; the engine also takes {n}/{total}. Both are shown. */
 const DEFAULT_NUMBER_TEXT = "Page {n} of {total}";
 
-const PAGE_PATTERN = /^[0-9,\s-]+$/;
+/**
+ * The split's output file is named after the range the user asked for, in a form
+ * a filesystem is happy with. `!` becomes `no` so an exclude (`!5`) is not saved
+ * as `pages-5.pdf`, which would read as its opposite.
+ */
+function rangeFileName(range: string): string {
+  const safe = range.replace(/!/g, "no").replace(/[^0-9a-z-]/gi, "").replace(/,+/g, "-");
+  return `pages-${safe || "kept"}.pdf`;
+}
 
 export default function PdfToolkit() {
   const [action, setAction] = useState<ActionId>("merge");
@@ -81,10 +90,14 @@ export default function PdfToolkit() {
   const single = action !== "merge";
   // A page range is optional for rotate and numbering, but a range that cannot be
   // read is never sent: the engine would either reject it or rotate the wrong pages.
+  // The check is `isPageRange` from @hermes/core — the very function the job route
+  // uses for its 400 — so the field cannot refuse a range the engine accepts
+  // (`odd`, `even`, `l`, `3-`, `-4`, `!5`) nor pass one pdfcpu calls a syntax error.
   const usesPages = action === "split" || action === "rotate" || action === "page-numbers";
   const pagesTrimmed = pages.trim();
-  const pagesOk = action === "split" ? PAGE_PATTERN.test(pagesTrimmed) && /\d/.test(pagesTrimmed) : true;
-  const rangeOk = !usesPages || pagesTrimmed === "" || (PAGE_PATTERN.test(pagesTrimmed) && /\d/.test(pagesTrimmed));
+  const rangeBad = pagesTrimmed !== "" && !isPageRange(pagesTrimmed);
+  const pagesOk = action === "split" ? isPageRange(pagesTrimmed) : true;
+  const rangeOk = !usesPages || pagesTrimmed === "" || isPageRange(pagesTrimmed);
 
   function choose(next: ActionId) {
     setAction(next);
@@ -164,7 +177,7 @@ export default function PdfToolkit() {
     action === "merge"
       ? "merged.pdf"
       : action === "split"
-        ? `pages-${pagesTrimmed.replace(/[^0-9-]/g, "") || "kept"}.pdf`
+        ? rangeFileName(pagesTrimmed)
         : action === "compress"
           ? `${(files[0]?.name ?? "document").replace(/\.pdf$/i, "")}-small.pdf`
           : action === "rotate"
@@ -301,9 +314,14 @@ export default function PdfToolkit() {
           />
           <Text style={s.help}>
             {action === "split"
-              ? "A range like 1-3 or single pages like 1,4,9. Anything not listed is dropped."
-              : "Leave it empty for every page, or name the ones you mean: 1-3, 7."}
+              ? `A range the engine reads, and anything you do not list is dropped: ${PDF_PAGES_HINT}.`
+              : `Leave it empty for every page, or name the ones you mean: ${PDF_PAGES_HINT}.`}
           </Text>
+          {rangeBad ? (
+            <Text style={s.rangeBad}>
+              That range cannot be read — the line above is the whole grammar.
+            </Text>
+          ) : null}
         </>
       ) : null}
 
@@ -454,6 +472,7 @@ const s = StyleSheet.create({
     backgroundColor: "#fff",
   },
   inputBad: { borderColor: "#fca5a5" },
+  rangeBad: { color: "#b91c1c", fontSize: 11.5, marginTop: 6, lineHeight: 16 },
   help: { color: MUTED, fontSize: 11.5, marginTop: 6, lineHeight: 16 },
   chips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
   chip: {
