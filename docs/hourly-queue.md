@@ -487,12 +487,44 @@ imports the new core exports, so the live site was never restarted.
 Still open: the counter is one phone's. A shop billing from a tablet and a phone has two
 counters — that needs a `invoice_counters` row, which is item 27.
 
-### 16. Invoice screen: the item meta line at 320-360 px (open, small)
+### 16. Invoice screen: the item meta line at 320-360 px — DONE 2026-09-16
 Item 13 put an HSN field plus five rate chips under each item; the shots are 390 px wide and
 the line fits there. A 320 px phone (iPhone SE 1st gen, the narrowest still in use) may wrap
 the chips or squeeze the HSN field to the point where `HSN 8544` cannot be read. Re-shoot
 `/tools/invoice` at 320 and 360 px, and if it wraps, drop the chips to a per-item tap that
 opens the four rates instead of showing all five inline.
+
+**Result (measured first, then the one real fix):** the line **does not wrap** and nothing on the
+screen is clipped at 320 px, so the fix this item anticipated was not needed. What the measurement
+did turn up:
+- The item meta row at 320 px: HSN field **104 px** (75 px of room inside it) + five chips of
+  **30 px** each (the row's 276 px, minus the field and the gaps, split five ways). The widest
+  labels "12%" / "18%" measure **26.7 px** into 28 px of chip — single line, 1.3 px of slack.
+  At 360 px the chips are 38 px, at 390 px they are 44 px (15 px of slack).
+- `document.scrollWidth` equals the viewport at all three widths, **no** element's right edge
+  leaves the viewport, no text element reports `scrollWidth > clientWidth`, and an 8-character
+  HSN (`85441190`, 53.9 px) fits the field's 75 px — so the item's own worry ("`HSN 8544` cannot
+  be read") does not happen. `HSN 8544` measured 55.2 px.
+- **The one clipped string was the field's own placeholder.** `HSN (optional)` measures **81.6 px**
+  against 75 px of room: cut off at 320 px *and at 360 and 390*, i.e. in the shots that were
+  already in the gallery. `Code (optional)` is worse (85.7 px). Fixed by making the placeholder
+  **`HSN code`** (55.3 px, 19.7 px of slack) and saying the word "optional" in the help line that
+  already said it ("HSN is the code a B2B bill wants on the line — it is optional, so leave it
+  empty if you do not have one"), with the px figures in a code comment so the longer placeholder
+  is not restored by a later pass. No geometry changed, so the tight 320 px chip row is untouched.
+Evidence: a filled bill (Shop "Sharma Electricals", GSTIN, UPI id, customer "Verma Traders",
+one item "Copper wire 1.5 sq mm" @ ₹1250, HSN 85441190, 18%) rendered and measured at **320 / 360 /
+390** — before: placeholder 81.6 → 75; after: 55.3 → 75, `clipped: []`, `beyond: []`, every paper
+row (Taxable value / CGST 9% / SGST 9% / Total, ₹1,475.00) unclipped, 0 page errors.
+`npx expo export --platform web` exit 0, bundle **3,193,106 B / 3118 KB**; the served bundle on
+`127.0.0.1:8091` and `expo.dropby.co.in` contains `HSN code` and no longer contains `HSN (optional)`;
+the two gallery shots re-captured through the marker gate (117 KB each, 390x844); `tsc --noEmit`
+still exactly the same 6 pre-existing errors, **0** in `invoice.tsx`; **job 120** through
+`https://expo.dropby.co.in/api/job` = HTTP **200**, `totals_match true`, `hsn_items 1`,
+`upi_qr true`, `total 1475` — the product still runs end to end. No engine restart and no
+`npm run build` (nothing in the web app imports this screen, so the live site was never touched).
+Still open, new item 30: the 1.3 px of slack on "18%" at 320 px is slack in Chrome's font stack
+on this VM, not on a phone.
 
 **Order note 2026-09-16:** item 5 (video, `backgroundremover`) needs a torch + ffmpeg install
 of several GB on the box that serves the live site, so it must run in an hour that does
@@ -846,4 +878,21 @@ turns every upstream failure into one line, and the route maps 5xx to 502, so an
 edge failure and a real fault look identical to the caller. Honest fix: retry a hosted-model
 call **once** on a 5xx/400 from the provider, and keep the second failure as the answer — with
 the attempt count in the meta so a job row shows what happened.
+
+### 30. The rate chips at 320 px have 1.3 px of slack — check them on a real phone (new, 2026-09-16, from item 16)
+Item 16 measured the invoice item line at 320 px and nothing wraps or clips, but the margin is
+thin in exactly one place: the five rate chips are **30 px** wide at 320 px and their widest
+labels ("12%", "18%") measure **26.7 px** — 28 px of chip, so **1.3 px** of slack, single line.
+That 26.7 px is Chrome's font stack on this VM (the field's computed font is the
+`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial` stack); a real iPhone
+(SF Pro) or Android (Roboto) resolves a different face, and a face ~5% wider would push the label
+past the chip's border — the text does not wrap (it is one token) and nothing clips it, so the
+symptom would be a label slightly wider than its chip, not an unreadable one.
+Do not "fix" this by guessing: open `/tools/invoice` on a real phone (the phone-test page is
+`https://shots.dropby.co.in/`) and read the chip row. If a label overflows, the honest options in
+order of cost are the chip font at 11 instead of 11.5, `itemHsn` at 96 px instead of 104 (the
+placeholder needs 55.3 px and the 8-character max typed value 53.9 px, both into 69 px, so the
+field can give up 8 px), or item 16's own suggestion — one chip that opens the four rates.
+Evidence to require: a phone-sized photo or screenshot of the chip row at 320 px, plus the same
+row after the change.
 
