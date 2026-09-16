@@ -1069,6 +1069,8 @@ LIVE_PAGE = """<!DOCTYPE html>
   <!--LOG-->
   <h2>Apps</h2>
   <div class="grid"><!--APPS--></div>
+  <h2>Every screen, one code each</h2>
+  <div class="grid"><!--SCREENS--></div>
   <h2>The website</h2>
   <div class="grid"><!--WEB--></div>
   <footer><!--FOOT--></footer>
@@ -1126,6 +1128,51 @@ def _live_card(name, color, meta, tagline, url, try_steps, stills_id=None, route
     )
 
 
+# Every screen worth testing on a phone, in the order a person would walk the products.
+# The app cards above answer "does this app work"; this section answers "does THIS screen
+# work", which is the question that actually gets asked when a screen misbehaves.
+SCREEN_LINKS = [
+    ("Passport photo", "/passport"),
+    ("Tools hub", "/tools"),
+    ("Background remover", "/tools/bg-remove"),
+    ("PDF toolkit", "/tools/pdf"),
+    ("Invoice / GST bill", "/tools/invoice"),
+    ("Signature", "/tools/signature"),
+    ("Photo metadata", "/tools/exif-strip"),
+    ("Photos to PDF", "/tools/photos-to-pdf"),
+    ("Collage", "/tools/collage"),
+    ("Breathe", "/breathe"),
+    ("Stretch", "/stretch"),
+    ("Walk", "/walk"),
+    ("Today (wellness hub)", "/habits"),
+    ("Water", "/water"),
+    ("Japa", "/japa"),
+    ("Sleep", "/sleep"),
+    ("Tap Sprint", "/tap-sprint"),
+    ("Word Duel", "/word-duel"),
+]
+
+
+def render_screens_section() -> str:
+    go = expo_go_url()
+    out = []
+    for label, route in SCREEN_LINKS:
+        url = EXPO_WEB + route
+        box = _qr_box(url, "Web")
+        if go:
+            box += _qr_box(expo_go_link(route), "Expo Go")
+        out.append(
+            '<article class="app"><div class="bar" style="background:#334155"></div><div class="in">'
+            '<div class="aname">' + esc(label) + "</div>"
+            '<div class="rurl">' + esc(url.replace("https://", "")) + "</div>"
+            '<div class="qrrow">' + box + "</div>"
+            '<div class="btns"><a class="btn" href="' + esc(url) + '">Open</a>'
+            '<a class="btn ghost" href="/shots">Stills</a></div>'
+            "</div></article>"
+        )
+    return "".join(out)
+
+
 def render_live() -> bytes:
     manifest = load_apps()
     apps_html, web_html = [], []
@@ -1176,6 +1223,7 @@ def render_live() -> bytes:
     return (LIVE_PAGE.replace("<!--SUB-->", sub)
                      .replace("<!--LOG-->", log_section(limit=3))
                      .replace("<!--APPS-->", "".join(apps_html))
+                     .replace("<!--SCREENS-->", render_screens_section())
                      .replace("<!--WEB-->", "".join(web_html))
                      .replace("<!--FOOT-->", foot)).encode()
 

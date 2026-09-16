@@ -23,18 +23,27 @@
  *                                        markers. This is what stops the pipeline from
  *                                        "proving" a feature with a picture of a blank
  *                                        page after a bad bundle.
+ *       --interact <name>                run a named probe from scripts/interactions.mjs
+ *                                        (e.g. tap-sprint-hit) and fail (exit 3) unless it
+ *                                        observes the change it is looking for. --expect
+ *                                        proves the screen rendered; --interact proves the
+ *                                        screen does something. The page is reloaded after
+ *                                        a successful probe, so the PNG is of the screen
+ *                                        itself and not of the probe's aftermath.
  *       --json                           print a JSON result line instead of human text
  *
  * Examples:
  *   node screenshot.mjs https://expo.dropby.co.in/passport out.png --viewport mobile
  *   node screenshot.mjs https://hermes.dropby.co.in/ out.png --viewport 1440x900 --no-fullpage
  *
- * Exit codes: 0 ok, 1 usage error, 2 navigation/render failure.
+ * Exit codes: 0 ok, 1 usage error, 2 navigation/render failure, 3 an assertion failed
+ *             (a --expect marker was missing, or --interact did not observe its change).
  */
 
 import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 const VIEWPORTS = {
@@ -69,6 +78,7 @@ const opts = {
   dark: false,
   json: false,
   expect: [],
+  interact: null,
 };
 
 for (let i = 0; i < argv.length; i++) {
@@ -81,6 +91,7 @@ for (let i = 0; i < argv.length; i++) {
   if (a === '-v' || a === '--viewport') opts.viewport = next();
   else if (a === '-d' || a === '--dsf') opts.dsf = Number(next());
   else if (a === '--expect') opts.expect.push(next());
+  else if (a === '--interact') opts.interact = next();
   else if (a === '--wait') opts.wait = Number(next());
   else if (a === '--timeout') opts.timeout = Number(next());
   else if (a === '--no-fullpage') opts.fullPage = false;
@@ -187,8 +198,32 @@ try {
   });
   page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + String(e.message).slice(0, 300)));
 
-  const resp = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: opts.timeout });
-  result.status = resp ? resp.status() : null;
+  // A non-200 is a transport failure, not a verdict on the screen: the sweep of 40
+  // captures this hour got five error pages back from the public host (http=404,
+  // page=980x2121, every marker "missing") while the same routes answer 200 on the
+  // local preview — i.e. Cloudflare/the tunnel, not the app. Retry once, and if the
+  // page still will not load, say so with exit 2 and leave the gallery alone instead
+  // of writing an error page over a screen that is fine.
+  let resp = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    resp = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: opts.timeout });
+    result.status = resp ? resp.status() : null;
+    if (resp && resp.status() < 400) break;
+    if (attempt === 1) {
+      result.retried = true;
+      await page.waitForTimeout(2000);
+    }
+  }
+  if (!resp || resp.status() >= 400) {
+    const diag = path.join(os.tmpdir(), `unreachable-${path.basename(outPath)}`);
+    await page.screenshot({ path: diag, fullPage: opts.fullPage, type: 'png' }).catch(() => {});
+    result.ok = false;
+    result.unreachable = true;
+    if (opts.json) console.log(JSON.stringify(result));
+    else console.error(`UNREACHABLE ${url} → HTTP ${result.status}\n  -> ${diag} (${outPath} left as it was)`);
+    await context.close().catch(() => {});
+    process.exit(2);
+  }
 
   try {
     await page.waitForLoadState('networkidle', { timeout: 15000 });
@@ -198,6 +233,45 @@ try {
 
   // Give fonts/animations/async data a moment to settle before the shuttered shot.
   await page.waitForTimeout(opts.wait);
+
+  // The interaction probe (the positive control). This runs *before* the picture is
+  // taken: --expect proves the screen rendered, this proves it still does something.
+  // Item 21 is why it exists — tap-sprint's field was deaf for a day of captures and
+  // every one of those PNGs passed the marker check.
+  if (opts.interact) {
+    const { runInteraction } = await import(new URL('./interactions.mjs', import.meta.url).href);
+    try {
+      result.interaction = await runInteraction(page, opts.interact);
+    } catch (e) {
+      result.interactionFailed = String(e && e.message ? e.message : e);
+      result.ok = false;
+      // A probe failure is NOT a picture of a broken screen — the screen looks
+      // perfect, which is the whole reason this gate exists (item 21: a dead field
+      // photographed exactly like a working one). So the diagnosis image goes to the
+      // temp dir and the gallery keeps its last known-good shot, instead of a fresh,
+      // healthy-looking PNG silently replacing it.
+      const diag = path.join(os.tmpdir(), `probe-failed-${path.basename(outPath)}`);
+      await page.screenshot({ path: diag, fullPage: opts.fullPage, type: 'png' });
+      result.interactionDiagnosis = diag;
+      if (opts.json) console.log(JSON.stringify(result));
+      else {
+        console.error(
+          `INTERACTION ${opts.interact} DID NOT HAPPEN: ${result.interactionFailed}\n  ${url}` +
+            `\n  -> ${diag} (diagnosis only; ${outPath} left as it was)`
+        );
+      }
+      process.exit(3);
+    }
+    // Reload, so the PNG is of the screen as it ships rather than of the probe's
+    // aftermath (a round in progress, a half-filled row).
+    try {
+      await page.reload({ waitUntil: 'domcontentloaded', timeout: opts.timeout });
+      await page.waitForLoadState('networkidle', { timeout: 15000 });
+    } catch {
+      /* the reload is best-effort; the marker check below still has to pass */
+    }
+    await page.waitForTimeout(opts.wait);
+  }
 
   // Force lazy-loaded images into the viewport so fullPage captures render them.
   await page.evaluate(async () => {
@@ -222,7 +296,13 @@ try {
   // pipeline can tell "the page is wrong" from "the browser could not reach it".
   if (opts.expect.length) {
     const text = await page.evaluate(() => (document.body ? document.body.innerText : ''));
-    const missing = opts.expect.filter((m) => !text.includes(m));
+    // Case- and whitespace-insensitive on purpose: a marker exists to prove the screen's
+    // copy rendered, not to pin how it is capitalised. Uppercase eyebrow labels ("DESK
+    // MOBILITY · THE ROUTINE") are a design choice, and a case-sensitive compare failed a
+    // screen that was working perfectly.
+    const norm = (v) => v.replace(/\s+/g, ' ').trim().toLowerCase();
+    const hay = norm(text);
+    const missing = opts.expect.filter((m) => !hay.includes(norm(m)));
     result.expectChecked = opts.expect.length;
     if (missing.length) {
       result.expectMissing = missing;

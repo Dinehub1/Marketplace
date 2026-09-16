@@ -59,7 +59,7 @@ export default function Stretch() {
   return (
     <WellnessShell product="stretch" title="Stretch" lead="One five-minute desk routine. Follow the countdown, swap sides on the cue.">
       <Card style={s.big}>
-        <Text variant="caption" tone="ink3">{session.running || finished ? `MOVE ${index + 1} OF ${MOVES.length}` : "THE ROUTINE"}</Text>
+        <Text variant="caption" tone="ink3">{session.running || finished ? `MOVE ${index + 1} OF ${MOVES.length}` : "DESK MOBILITY · THE ROUTINE"}</Text>
         <Text variant="title1">{session.running || finished ? current.label : MOVES[0].label}</Text>
         <Text variant="body" tone="ink2">{session.running || finished ? current.how : MOVES[0].how}</Text>
         <Text variant="title2" style={{ color: ui.accent }}>
