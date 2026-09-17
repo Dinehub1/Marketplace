@@ -1345,7 +1345,7 @@ be photographed: it exists in the product registry, the target manifest and `app
 no web export renders the toolbox hub, so the rendered-tile evidence has to wait for the
 per-target export (item 46) or the first dev build.
 
-### 29. Engine: one transient upstream failure is reported as a broken server (new, 2026-09-16, from item 20)
+### 29. Engine: one transient upstream failure is reported as a broken server — DONE 2026-09-17
 Measured while wiring text-to-image: the first `POST /job/ai-image` this hour answered
 `500 {"error": "HTTP Error 400: Bad Request"}` and the identical retry answered **200** with a
 569 KB JPEG. Cloudflare had refused that one request (the token was fine — a direct call with
@@ -1355,6 +1355,55 @@ turns every upstream failure into one line, and the route maps 5xx to 502, so an
 edge failure and a real fault look identical to the caller. Honest fix: retry a hosted-model
 call **once** on a 5xx/400 from the provider, and keep the second failure as the answer — with
 the attempt count in the meta so a job row shows what happened.
+
+**Result (2026-09-17): one shared call path, one retry, and the attempt count reaches the row.**
+`_cf_ai_run(model, payload, token, timeout, keep_http_error)` in `services/tools/worker.py` is now
+the only place the engine calls Workers AI — both hosted products go through it (`ai_image` and
+the translate chain's `_cf_ai_json`; `grep urlopen` shows no third one). It retries once, and the
+rules are written where the code is:
+- **Retried:** a transport error (timeout, reset, unreadable body) and HTTP **400**/408/429/5xx.
+  The 400 is in the list *because it is the status measured flapping* (the two jobs above); a 400
+  the model means repeats and the second failure is reported as-is, at the price of one extra call
+  on a request that was already failing.
+- **Never retried:** 401/403 — a refused token or an unaccepted model licence is the answer, and a
+  second call is the same error with more latency.
+- **The deadline bounds the whole call, retries included** (`timeout` is what urlopen is handed),
+  so the retry cannot double the time a job can hang; a second attempt is not started with less
+  than 5 s of budget left.
+- **A failure that survives the retry names the model, the status and the attempt count** instead
+  of `HTTP Error 400: Bad Request`: measured directly on the engine,
+  `POST 127.0.0.1:8099/job/ai-image?prompt=test&model=@cf/nope/nope` → **500** in 2.1 s with
+  `Workers AI @cf/nope/nope failed after 2 attempts: HTTP 400 {"success":false,"errors":[{"code":7000,"message":"No route for that URI"}]}; …`
+  (500 → 502 through the route, which is right: an upstream outage is a fault, not a caller mistake).
+- **The translate chain keeps its own semantics**, which is why the helper takes `keep_http_error`:
+  `_translate_piece` reads the *status* to tell "the pair is refused" (a 4xx → `UserError` → 400)
+  from an outage, so the last HTTPError is re-raised rather than wrapped. Wrapping it would have
+  turned a caller mistake into a 502.
+Evidence, and how it was obtained rather than asserted — **`scripts/test-worker-retry.py`, 14/14
+checks, exit 0**: it starts a scripted HTTP server, points `CF_AI_BASE` at it and counts the calls
+that *actually arrive*, so the retry is proven by traffic and not by a mock of the code under test.
+Cases: `400 then 200` recovered (2 calls, real 632 B JPEG decoded from the JSON path, prompt is the
+body, token sent) · `500 then 200` recovered · a working call is **not** retried (1 call,
+`attempts 1`) · **403 makes exactly one call** and the error names it · a persistent 500 stops at
+2 calls and says "after 2 attempts" · a 404 still arrives at the translate chain as an **HTTPError**
+(its contract) · with 1 s of budget and a server that takes 2 s there is **one** call and it returns
+in 1.00 s. That last case is what found a real defect in the first version: the budget guard ran on
+every attempt, so a short-timeout call sent **nothing** and reported "after 0 attempts" — the guard
+now applies to retries only (comment in the code says so).
+Live, after `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
+dropby-worker`
+(one listener, `health.pid 8164 == pm2 pid`, 12 products), through
+`https://expo.dropby.co.in/api/job` with a browser User-Agent: **job 151** `ai-image` = HTTP 200 in
+5.7 s, `meta.model @cf/black-forest-labs/flux-1-schnell`, `bytes 537872`, **`attempts 1`** — and the
+`product_jobs` row 151 carries it (`meta.attempts = 1`, alongside `model`/`bytes`/`shape`), which is
+the "a job row shows what happened" half of the item. Regression, same minute: **job 152**
+`translate-doc` en→hi = 200 in 12.5 s, `engines {qwen3-30b-a3b-fp8: 1}`, `neurons 22` — the
+`_cf_ai_json` change did not alter translation — and **job 153** `exif-strip` = 200 (a local product,
+untouched).
+Still open, and it is a label the change made *slightly* wrong: `usage["attempts"]` on translate's
+fallback leg counts its own loop, not the transport calls the shared helper now makes, so that one
+field can read 1 when 2 calls went out. Cosmetic and rare (only on a retried call), and deliberately
+not fixed in the same hour as the behaviour it describes — new item 47.
 
 ### 30. The rate chips at 320 px have 1.3 px of slack — check them on a real phone (new, 2026-09-16, from item 16)
 Item 16 measured the invoice item line at 320 px and nothing wraps or clips, but the margin is
@@ -1677,3 +1726,14 @@ generated app config, or `EXPO_PUBLIC_*` inlined at build time), which also give
 target-specific screen a shot; (b) make the harness assert what the shipped build really says
 (a hub that lists nothing is not a fault) instead of copy from another target; (c) whichever is
 chosen, item 33's marker-miss path must stop writing to the gallery filename.
+
+### 47. Translate's `attempts` counts its own loop, not the calls the retry made (new, 2026-09-17, from item 29)
+Item 29 put every hosted Workers AI call behind one helper that retries once, and `ai-image`
+records what happened (`meta.attempts`). The translate chain does not: `_translate_piece`'s
+fallback leg labels its own `for attempt in (1, 2)` rounds as `usage["attempts"]`, so on a call
+the helper retried the row reads `attempts: 1` while two HTTP calls went out — the same
+"understate what happened" shape item 40 fixed for cost. The fix is small now the seam exists:
+have `_cf_ai_json` return the attempt count from `_cf_ai_run` (it already receives it and
+discards it) and add it to the leg's usage, then pin it with a case in
+`scripts/test-worker-retry.py` — a scripted 500-then-200 answered through `_cf_ai_json` must
+report 2. Do not change the retry behaviour to make the label easier; the label follows the calls.
