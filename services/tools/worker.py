@@ -1325,6 +1325,32 @@ CF_AI_MODEL = os.environ.get("CF_AI_IMAGE_MODEL", "@cf/black-forest-labs/flux-1-
 CF_AI_TOKEN_ENV = os.environ.get("CLOUDFLARE_API_TOKEN", "")
 _HERMES_ENV = r"C:\Users\Administrator\AppData\Local\hermes\.env"
 
+# The endpoint as one constant rather than an f-string written twice: the retry below is
+# tested against a local server that refuses the first call (queue item 29), and a test
+# that cannot point the call somewhere else can only be a mock of the code under test.
+CF_AI_BASE = "https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/{model}"
+
+# --- one retry per hosted call, because one edge refusal is not an outage ---------------
+# Measured before this existed (queue items 20 and 29): the first POST /job/ai-image of an
+# hour answered 500 {"error": "HTTP Error 400: Bad Request"} and the *identical* retry
+# answered 200 with a 569 KB JPEG — the token was fine in the same minute, so that 400 came
+# off the edge, not out of the request. Until now that was the caller's whole answer
+# ("Could not finish the job"), which is how a hiccup reads as a broken server.
+#
+# Retried: a transport error (timeout, reset, unreadable body) and HTTP 400/408/429/5xx.
+# The 400 is in the list only because it is the status that was measured flapping; a 400
+# the *model* means repeats and the second failure is reported as-is. The price is one extra
+# call on a request that was already failing, and the attempt count rides in the job's meta.
+# Never retried: 401/403 — a refused token or an unaccepted model licence is the answer, and
+# a second call is the same error with more latency.
+CF_AI_ATTEMPTS = 2
+CF_AI_RETRY_STATUS = frozenset({400, 408, 429, 500, 502, 503, 504, 520, 521, 522, 523, 524})
+CF_AI_RETRY_PAUSE_S = 0.4
+# The retry must not double the time a job can hang: the deadline bounds the whole call
+# (retries included) rather than each attempt, and a second attempt is not started when
+# what is left of it is too small to be useful.
+CF_AI_RETRY_MIN_S = 5
+
 # Models verified working on this account (Workers Free plan, 2026-09-16):
 #   @cf/black-forest-labs/flux-1-schnell          3.4s  best default
 #   @cf/bytedance/stable-diffusion-xl-lightning   3.3s
@@ -1350,6 +1376,69 @@ def _cf_ai_token() -> str:
     return ""
 
 
+def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
+               keep_http_error: bool = False) -> tuple[bytes, str, int]:
+    """One Workers AI call, retried once. Returns (body, content_type, attempts_made).
+
+    A failure that survives the retry is a real fault (500 through the route), but the
+    sentence names the model, what the service said and how many attempts were made, so a
+    job row says what happened instead of `HTTP Error 400: Bad Request`.
+
+    `keep_http_error` is for the translate chain, which reads the *status* to tell a refused
+    language pair (a caller mistake, answered 400) from an outage: with it set, the last
+    HTTPError is re-raised rather than wrapped, so a generic RuntimeError cannot turn a 400
+    into a 502.
+
+    The deadline bounds the whole call, retries included — and it is what is handed to
+    urlopen, so a single attempt cannot outlive it either (bar the socket's own last read).
+    """
+    url = CF_AI_BASE.format(account=CF_AI_ACCOUNT, model=model)
+    deadline = time.monotonic() + timeout
+    reasons: list[str] = []
+    last_http: urllib.error.HTTPError | None = None
+
+    for attempt in range(1, CF_AI_ATTEMPTS + 1):
+        budget = deadline - time.monotonic()
+        # Only a *retry* needs leftover budget; the first call always goes. Measured by
+        # scripts/test-worker-retry.py, which caught the opposite: a guard on every attempt
+        # made a short-timeout call send nothing at all and report "after 0 attempts".
+        if attempt > 1 and budget <= 1:
+            break
+        req = urllib.request.Request(   # fresh per attempt: urlopen owns what it is given
+            url,
+            data=json.dumps(payload).encode(),
+            headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=max(budget, 1.0)) as resp:
+                return resp.read(), resp.headers.get("Content-Type", ""), attempt
+        except urllib.error.HTTPError as exc:
+            last_http = exc
+            detail = ""
+            try:
+                detail = exc.read()[:160].decode("utf-8", "replace").strip()
+            except Exception:  # noqa: BLE001 — a body that cannot be read is not the point
+                pass
+            reasons.append(f"HTTP {exc.code}" + (f" {detail}" if detail else ""))
+            if exc.code not in CF_AI_RETRY_STATUS:
+                break
+        except Exception as exc:  # noqa: BLE001 — timeout, reset, unreadable body
+            reasons.append(f"{type(exc).__name__}: {exc}")
+
+        if attempt < CF_AI_ATTEMPTS and deadline - time.monotonic() > CF_AI_RETRY_MIN_S:
+            time.sleep(CF_AI_RETRY_PAUSE_S)
+        else:
+            break
+
+    if keep_http_error and last_http is not None:
+        raise last_http
+    tried = len(reasons)
+    raise RuntimeError(
+        f"Workers AI {model} failed after {tried} attempt{'' if tried == 1 else 's'}"
+        + (f" in {timeout}s" if tried == 0 else "")
+        + ": " + "; ".join(reasons)[:240])
+
+
 def ai_image(params: dict) -> tuple[bytes, dict]:
     """Generate an image from ?prompt=. Returns (image_bytes, meta)."""
     prompt = (params.get("prompt") or "").strip()
@@ -1371,14 +1460,7 @@ def ai_image(params: dict) -> tuple[bytes, dict]:
         if params.get("seed"):
             payload["seed"] = int(params["seed"])
 
-    req = urllib.request.Request(
-        f"https://api.cloudflare.com/client/v4/accounts/{CF_AI_ACCOUNT}/ai/run/{model}",
-        data=json.dumps(payload).encode(),
-        headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=180) as resp:
-        ctype = resp.headers.get("Content-Type", "")
-        raw = resp.read()
+    raw, ctype, attempts = _cf_ai_run(model, payload, token)
 
     if ctype.startswith("application/json"):
         b64 = (json.loads(raw).get("result") or {}).get("image")
@@ -1399,6 +1481,9 @@ def ai_image(params: dict) -> tuple[bytes, dict]:
         "steps": int(payload.get("num_steps") or 4),
         "shape": "sent in the request" if sent_shape
                  else "model default (flux-1-schnell: 1024x1024, 4 steps)",
+        # How many calls this picture actually took (item 29): 1 is the normal run, 2 means
+        # the edge refused the first one and the retry was what produced the image.
+        "attempts": attempts,
     }
 
 
@@ -1696,14 +1781,16 @@ def _chunks(text: str, limit: int = TRANSLATE_CHUNK_CHARS) -> list[str]:
 
 
 def _cf_ai_json(model: str, payload: dict, token: str) -> dict:
-    """One Workers AI call that answers JSON. The caller reads `result`."""
-    req = urllib.request.Request(
-        f"https://api.cloudflare.com/client/v4/accounts/{CF_AI_ACCOUNT}/ai/run/{model}",
-        data=json.dumps(payload).encode(),
-        headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
-    )
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        return json.loads(resp.read()) or {}
+    """One Workers AI call that answers JSON. The caller reads `result`.
+
+    Goes through the same retry as the image path (item 29) — a transient edge refusal used
+    to end a translation job. `keep_http_error` because this chain reads the status: a 4xx
+    from the fallback model is the service refusing the language pair, which is the caller's
+    mistake and answers 400, so it must not arrive wrapped in a generic RuntimeError.
+    """
+    body, _ctype, _attempts = _cf_ai_run(model, payload, token, timeout=120,
+                                         keep_http_error=True)
+    return json.loads(body) or {}
 
 
 def _translate_piece(text: str, source: str, target: str, token: str) -> tuple[str, dict]:
