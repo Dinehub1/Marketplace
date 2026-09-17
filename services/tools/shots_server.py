@@ -1311,12 +1311,23 @@ LOG_PAGE = """<!DOCTYPE html>
   .llab { color:#64748b; min-width:74px; font-size:11px; text-transform:uppercase; letter-spacing:.05em; padding-top:1px; }
   .lval { color:#cbd5e1; flex:1; }
   .llinks { margin-top:7px; display:flex; gap:10px; flex-wrap:wrap; font-size:12.5px; }
+  .jhead { font-size:14px; margin:2px 0 2px; }
+  .jobrow { background:var(--card); border:1px solid var(--line); border-radius:10px;
+            padding:7px 10px; margin-bottom:6px; display:flex; flex-wrap:wrap; gap:6px 9px;
+            align-items:baseline; font-size:12.5px; font-variant-numeric:tabular-nums; }
+  .jid { color:#64748b; }
+  .jprod { font-weight:600; }
+  .jms { color:var(--dim); }
+  .jby { color:#93c5fd; }
+  .jcost { color:var(--dim); flex:1 1 100%; font-size:11.5px; }
+  .jerr { color:#fca5a5; flex:1 1 100%; font-size:11.5px; }
+  .jtries { color:#64748b; flex:1 1 100%; font-size:11px; }
 </style></head><body>
 <header>
   <h1>Build log</h1>
   <div class="sub"><!--SUB--></div>
 </header>
-<div class="wrap"><!--BODY--></div>
+<div class="wrap"><!--JOBS--><!--BODY--></div>
 </body></html>"""
 
 
@@ -1374,6 +1385,143 @@ def log_section(limit: int = 4) -> str:
     return "".join(log_card(e) for e in shown) + more
 
 
+# ---------------------------------------------------------------------------
+# /log — one line per recent job, with the provider that answered (queue item 37).
+#
+# Why the page server reads the table itself: a job's provider and cost exist only in
+# `product_jobs.meta` (written by apps/web/app/api/job/route.ts), and nothing rendered
+# them anywhere. Two measured facts shape the read:
+#   * the PUBLISHABLE key cannot see these rows — `GET /rest/v1/product_jobs` with it
+#     answers 200 and an EMPTY array while the service key returns all of them (RLS),
+#     so a panel built on the anon key would say "no jobs" while 155 exist;
+#   * the page is opened from a phone at an arbitrary minute, so the read is cached
+#     in-process for a minute and shared by every request (one read per minute, not
+#     one per view — this box serves the live site too).
+# The service-role key stays server-side and is never put on the page; when Supabase
+# cannot be reached the panel says so and the rest of the page still renders.
+# ---------------------------------------------------------------------------
+
+WEB_ENV = os.environ.get("WEB_ENV", r"C:\Users\Administrator\Marketplace\apps\web\.env")
+JOBS_LIMIT = 12
+JOBS_TTL = 60.0
+JOBS_CACHE: dict = {"at": 0.0, "rows": None}
+
+
+def _env_kv(name: str) -> str:
+    """One value from the process env, else from the web app's own .env file."""
+    value = os.environ.get(name)
+    if value and value.strip():
+        return value.strip().strip('"').strip("'")
+    try:
+        with open(WEB_ENV, "r", encoding="utf-8") as fh:
+            for raw in fh:
+                key, _, val = raw.strip().partition("=")
+                if key == name:
+                    return val.strip().strip('"').strip("'")
+    except Exception:
+        pass
+    return ""
+
+
+def recent_jobs() -> tuple[list, str]:
+    """The newest `product_jobs` rows, plus a reason when they could not be read."""
+    now = time.time()
+    if JOBS_CACHE["rows"] is not None and now - JOBS_CACHE["at"] < JOBS_TTL:
+        return JOBS_CACHE["rows"], ""
+    url = (_env_kv("SUPABASE_URL") or _env_kv("NEXT_PUBLIC_SUPABASE_URL")).rstrip("/")
+    key = _env_kv("SUPABASE_SERVICE_ROLE_KEY")
+    if not url or not key:
+        return JOBS_CACHE["rows"] or [], "no Supabase URL/key on this host"
+    query = ("product_jobs?select=id,product,status,duration_ms,created_at,error,meta"
+             "&order=id.desc&limit=" + str(JOBS_LIMIT))
+    req = urllib.request.Request(
+        url + "/rest/v1/" + query,
+        headers={"apikey": key, "Authorization": "Bearer " + key, "Accept": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            rows = json.loads(resp.read().decode("utf-8"))
+        if not isinstance(rows, list):
+            raise ValueError("the answer was not a list")
+    except Exception as exc:
+        # Keep the last good read on screen rather than blanking the panel.
+        return JOBS_CACHE["rows"] or [], "the job table could not be read just now (" + type(exc).__name__ + ")"
+    JOBS_CACHE.update({"at": now, "rows": rows})
+    return rows, ""
+
+
+def job_provider(meta: dict) -> str:
+    """Who answered this job, read off the row's own meta — never guessed."""
+    if not isinstance(meta, dict) or not meta:
+        return "no meta recorded"
+    if meta.get("ai_provider"):
+        return "by " + str(meta["ai_provider"])
+    if meta.get("model"):
+        return "by " + str(meta["model"])
+    if isinstance(meta.get("engines"), dict) and meta["engines"]:
+        return "by " + ", ".join(f"{k} x{v}" for k, v in meta["engines"].items())
+    return "local — no model"
+
+
+def job_facts(meta: dict) -> list:
+    """The numbers on the row worth a line: cost, usage, attempts, what it did."""
+    if not isinstance(meta, dict):
+        return []
+    out = []
+    if meta.get("ai_cost"):
+        out.append(str(meta["ai_cost"])[:110])
+    if meta.get("neurons"):
+        out.append(str(meta["neurons"]) + " neurons billed")
+    if meta.get("attempts"):
+        n = meta["attempts"]
+        out.append(str(n) + " upstream attempt" + ("" if str(n) == "1" else "s"))
+    if meta.get("op"):
+        out.append(str(meta["op"]))
+    if meta.get("bytes") and not meta.get("ai_cost"):
+        out.append(str(meta["bytes"]) + " B out")
+    return out
+
+
+def render_jobs() -> str:
+    rows, why = recent_jobs()
+    note = ('one line per <code>product_jobs</code> row, newest first — the provider and the '
+            'cost are read from the row\'s own <code>meta</code>, not guessed')
+    if rows and JOBS_CACHE["at"]:
+        age = int(max(0.0, time.time() - JOBS_CACHE["at"]))
+        # The read is cached for a minute, so the page says how old it is rather than
+        # implying the last minute of jobs did not happen.
+        note += " · read " + (str(age) + " s ago" if age else "just now")
+    if why:
+        note += ' · <span class="jerr" style="display:inline">' + esc(why) + "</span>"
+    head = '<h2 class="jhead">Recent jobs</h2><div class="legend">' + note + "</div>"
+    if not rows:
+        return head + '<div class="legend">No job rows to show.</div>'
+    cards = []
+    for job in rows:
+        meta = job.get("meta") if isinstance(job.get("meta"), dict) else {}
+        status = str(job.get("status") or "?")
+        colour = {"done": "#6ee7b7", "failed": "#fca5a5"}.get(status, "#fbbf24")
+        ms = job.get("duration_ms")
+        took = "—" if ms is None else (f"{ms / 1000:.1f} s" if ms >= 1000 else f"{ms} ms")
+        facts = job_facts(meta)
+        tries = meta.get("ai_tries") if isinstance(meta.get("ai_tries"), list) else []
+        cards.append(
+            '<div class="jobrow">'
+            '<span class="jid">#' + esc(str(job.get("id"))) + "</span>"
+            '<span class="jprod">' + esc(str(job.get("product"))) + "</span>"
+            '<span class="jstat" style="color:' + colour + '">' + esc(status) + "</span>"
+            '<span class="jms">' + esc(took) + "</span>"
+            '<span class="jby">' + esc(job_provider(meta)) + "</span>"
+            + ('<span class="jerr">' + esc(str(job.get("error"))[:160]) + "</span>"
+               if job.get("error") else "")
+            + ('<span class="jcost">' + esc(" · ".join(facts)) + "</span>" if facts else "")
+            + ('<span class="jtries">tried: ' + esc(" → ".join(str(t) for t in tries)) + "</span>"
+               if len(tries) > 1 else "")
+            + "</div>"
+        )
+    return head + "".join(cards)
+
+
 def render_log() -> bytes:
     data = load_build_log()
     entries = data.get("entries") or []
@@ -1381,7 +1529,8 @@ def render_log() -> bytes:
            "<code>python scripts/build-log.py</code> · <a href=\"/\">test the apps</a> · "
            "<a href=\"/shots\">stills</a>")
     body = log_section(limit=0) if entries else log_section(limit=0)
-    return (LOG_PAGE.replace("<!--SUB-->", sub).replace("<!--BODY-->", body)).encode()
+    return (LOG_PAGE.replace("<!--JOBS-->", render_jobs())
+            .replace("<!--SUB-->", sub).replace("<!--BODY-->", body)).encode()
 
 
 PERF_JSON = os.environ.get("PERF_JSON", r"C:\bridge\perf.json")
