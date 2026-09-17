@@ -24,6 +24,7 @@
     "_comment_mobile": "The trailing `--` is load-bearing. Without it, `npm run mobile -- --port 8082` is parsed by npm itself: npm eats `--port`, passes a bare `8082` on to `expo start`, and expo reads it as a project root and dies with 'Invalid project root'. With it, the arguments reach expo. APP_TARGET works the same way: `APP_TARGET=japa npm run mobile -- --port 8082` (set it in the shell, not after `--`, because it is read by app.config.ts and not by expo's CLI).",
     "test": "npm run test --workspaces --if-present",
     "ai:report": "node scripts/ai-router-report.mjs",
+    "cost:report": "node scripts/cost-report.mjs",
     "shots": "node scripts/app-shots.mjs",
     "shots:fast": "node scripts/app-shots.mjs --no-export",
     "check:targets": "node scripts/check-targets.mjs",
