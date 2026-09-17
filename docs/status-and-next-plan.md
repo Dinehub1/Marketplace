@@ -15,10 +15,10 @@ node scripts/check-targets.mjs                 # Apple 4.3 / Play spam gate
 | family | listings | ready | owed a first screen |
 |---|---|---|---|
 | Wellness | 1 | 1 | — |
-| Product apps | 7 | 5 | room-redesign, subtitles-voice |
+| Product apps | 7 | 6 | room-redesign |
 | Directory | 3 | 3 | — |
 | Games | 4 | 4 | — |
-| **Total** | **15** | **13** | **2** |
+| **Total** | **15** | **14** | **1** |
 
 ### The wellness regroup (2026-09-18)
 
@@ -39,13 +39,14 @@ screen and dropping the shared hub, and add a target back to `targets.mjs`.
 ### Gates green on the last measured run
 
 - `check-fleet.mjs` — 15 targets resolve: unique name, slug and bundle id; art on disk;
-  every declared route exists. 13/15 publishable, 2 owed (listed above).
+  every declared route exists. 14/15 publishable, 1 owed (room-redesign).
 - `check-targets.mjs` — 15 targets, 105 pairs compared, 0 too similar.
 - `check:games` — Block Clear and Merge rules hold (21 Merge rules).
 - `check:resume` — 37 résumé layout rules hold, with no PDF library installed.
+- `check:captions` — 47 subtitle rules hold, with no AI token.
 - `typecheck` — clean across all workspaces.
 
-Catalogue: **11 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
+Catalogue: **13 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
 
 Web is separate and already live: **27 brand sites** on one multi-tenant Next.js router,
 plus the three data brands (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
@@ -62,14 +63,14 @@ repo's own rules forbid. So the four divide by what the engine can actually do:
 |---|---|---|---|
 | ~~Resume Builder~~ | ~~`resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker`~~ | **DONE 2026-09-18** — `resume-builder` + `resume-checker` live (2/3); `application-writer` still `route: null` and shows honestly as coming soon | shipped |
 | ~~Shop Toolkit~~ | ~~dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker~~ | **DONE 2026-09-18** — dashboard first screen at `/shop`; 1 of 7 jobs live (the GST bill), the other six labelled coming soon on the app's own front door | first screen shipped, app thin |
-| Subtitles & Voice-over | `subtitles` (STT), `voiceover` (TTS) | neither exists — `whisper.cpp` and `Piper` are named in the worker's docstring but **not implemented** | Needs hosted Workers AI STT/TTS. Real engine work. |
-| Room Redesign | image-to-image restyle of a photo | no img2img; the worker only has text-to-image (`flux-1-schnell`) | Needs an img2img model that has not been measured. |
+| ~~Subtitles & Voice-over~~ | ~~`subtitles` (STT), `voiceover` (TTS)~~ | **DONE 2026-09-18** — whisper-large-v3-turbo and melotts wired; chooser + two screens; 2/2 jobs live. Captions are an SRT (not burnt into video — no ffmpeg) and the voice is English only, both said on the screen | shipped |
+| Room Redesign | image-to-image restyle of a photo | no img2img in the worker; the `stable-diffusion-v1-5-img2img` docs page now **404s**, so availability is unconfirmed | Confirm a callable img2img model, then build — or park it honestly |
 
-Order: **Subtitles & Voice-over → Room Redesign**, the two that need hosted models.
+Order: **Room Redesign**, the last listing owed a first screen.
 
-**`13/15 publishable` is a structural number, not a shipping decision.** `check-fleet` asks
+**`14/15 publishable` is a structural number, not a shipping decision.** `check-fleet` asks
 whether a listing *could* be submitted — does it resolve, is its first screen real. Shop
-Toolkit passes it with one job of seven built, and Resume Builder with two of three. Neither
+Toolkit passes it with one job of seven built and Resume Builder with two of three. Neither
 should reach a store until its listing copy matches what the build actually does, or the
 missing jobs are built.
 
@@ -86,7 +87,7 @@ a new engine product can be written and typechecked here but its 200 can only be
 the VM. Every engine change therefore lands with that gap named, and the job id that proves
 it is recorded on the VM rather than claimed from here.
 
-5. Then submit the thirteen that are ready — after the listing-copy check above.
+5. Then submit the fourteen that are ready — after the listing-copy check above.
 
 ### P1 — advertising is the money path (decided 2026-09-18)
 

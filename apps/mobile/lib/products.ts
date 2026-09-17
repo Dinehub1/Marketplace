@@ -267,17 +267,17 @@ export const PRODUCTS: Record<string, Product> = {
   subtitles: {
     slug: "subtitles",
     label: "Subtitles for reels",
-    blurb: "Captions burnt into a short video.",
+    blurb: "A caption file, timed to your audio.",
     price: "₹49/video",
-    route: null,
+    route: "/tools/subtitles",
     icon: "system",
   },
   voiceover: {
     slug: "voiceover",
     label: "Text to voice-over",
-    blurb: "A read-through of your script.",
+    blurb: "Your script read aloud, as an MP3.",
     price: "₹99/clip",
-    route: null,
+    route: "/tools/voiceover",
     icon: "phone",
   },
 

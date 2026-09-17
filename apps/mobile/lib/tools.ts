@@ -71,7 +71,7 @@ function WEB_BASE(): string {
   }
 }
 
-type FileKind = "image" | "pdf" | "doc";
+type FileKind = "image" | "pdf" | "doc" | "audio";
 
 /**
  * The document check reads a PDF, a Word file or plain text, and the browser's
@@ -81,10 +81,32 @@ type FileKind = "image" | "pdf" | "doc";
  */
 const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
+/**
+ * What the transcriber takes. The list is the route's `AUDIO_ACCEPTS` minus the aliases no
+ * picker ever reports, so the OS filters to files the engine can actually read instead of
+ * letting someone choose a video and meet a 400 after the upload.
+ *
+ * Deliberately no video: the model reads an audio track, and an mp4 would have to be demuxed
+ * first. The screen tells the person to export the audio from their editor, which is a
+ * sentence rather than a failure.
+ */
+const AUDIO_MIMES = [
+  "audio/mpeg",
+  "audio/mp4",
+  "audio/m4a",
+  "audio/x-m4a",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/webm",
+  "audio/ogg",
+  "audio/flac",
+];
+
 const ACCEPT: Record<FileKind, string> = {
   image: "image/*",
   pdf: "application/pdf",
   doc: "application/pdf,.docx,.txt",
+  audio: AUDIO_MIMES.join(","),
 };
 
 /**
@@ -161,7 +183,7 @@ function pickOnWeb(kind: FileKind, multiple: boolean): Promise<PickedFile[]> {
       finish(
         list.map((f) => ({
           uri: url?.createObjectURL ? url.createObjectURL(f) : "",
-          name: f.name || (kind === "pdf" ? "document.pdf" : "photo.jpg"),
+          name: f.name || (kind === "pdf" ? "document.pdf" : kind === "audio" ? "audio.m4a" : "photo.jpg"),
           type: f.type || ACCEPT[kind],
           size: f.size,
           blob: f,
@@ -205,15 +227,20 @@ async function pickOnDevice(kind: FileKind, multiple: boolean): Promise<PickedFi
   const DocumentPicker = require("expo-document-picker");
   const res = await DocumentPicker.getDocumentAsync({
     // A kind that takes more than one format passes a list rather than one string.
-    type: kind === "doc" ? ["application/pdf", DOCX_MIME, "text/plain"] : "application/pdf",
+    type:
+      kind === "doc"
+        ? ["application/pdf", DOCX_MIME, "text/plain"]
+        : kind === "audio"
+          ? AUDIO_MIMES
+          : "application/pdf",
     copyToCacheDirectory: true,
     multiple,
   });
   if (res.canceled || !res.assets?.length) return [];
   return res.assets.map((a: any) => ({
     uri: a.uri,
-    name: a.name || "document.pdf",
-    type: a.mimeType || "application/pdf",
+    name: a.name || (kind === "audio" ? "audio.m4a" : "document.pdf"),
+    type: a.mimeType || (kind === "audio" ? "audio/mpeg" : "application/pdf"),
     size: a.size,
   }));
 }

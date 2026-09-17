@@ -2162,3 +2162,38 @@ worker's Python 3.11 with its dependencies, so the caption *format* is verified 
 transcription is not. The two model ids and their prices are from Cloudflare's model docs, not
 from a 200. The first `subtitles` and `voiceover` job ids on the VM close it; if a model id is
 wrong the job answers 502 and the meta names the model it tried.
+
+### 58. Subtitles & Voice-over: the three screens — DONE 2026-09-18 (fleet 13/15 → 14/15)
+Item 57 built the engine; this hour gave it a front door and two product screens, and only
+`room-redesign` is now owed a first screen.
+
+- `apps/mobile/app/subtitles/index.tsx` — the chooser first screen. Two full-width cards rather
+  than a grid of tiles, because the two jobs take different things in (a file, words) and the
+  deciding fact is what comes back out. Rendered from `TARGET.products`, so a product with no
+  screen can never be advertised here as if it had one. **The two limits are stated on this
+  screen**: captions come back as a file, not as text burnt into a video, and the voice speaks
+  English only.
+- `apps/mobile/app/tools/subtitles.tsx` — audio in, timed `.srt` out. The language choice is
+  three chips (Auto / English / Hindi) rather than a free-text code, because a text field is a
+  way to send `gujrati` and read a 400 the screen could have prevented. The result card prints
+  the engine's own meta — cues, words, transcribed span — and the transcript preview.
+- `apps/mobile/app/tools/voiceover.tsx` — script in, MP3 out, with a live character counter
+  against the engine's 4,000-character cap, two starter scripts, and the English-only sentence
+  said once and plainly.
+- `lib/tools.ts` — a fourth `FileKind`, `audio`, whose mime list mirrors the route's
+  `AUDIO_ACCEPTS` so the OS filters to files the engine can read. **No video**, on purpose.
+- `targets.mjs` (`FIRST_ROUTE` → `/subtitles`), `products.ts` (both routes, and two blurbs
+  corrected: "Captions burnt into a short video" → "A caption file, timed to your audio", which
+  is what the engine actually returns), `app-map.mjs` (`chooser → subtitles-chooser`) and
+  `app-shots.mjs` (three captures, each with marker copy only that screen owns) follow.
+
+Evidence, from the repo root: `npm run typecheck` → clean in all three workspaces;
+`npx expo export --platform web` → exit 0, 2.8 MB, and the bundle carries every screen's own
+copy ("Captions and voice", "What these do, exactly", "Video files are not accepted", "Make the
+captions", "The caption file", "This build speaks English only", "Make the voice-over");
+`node scripts/check-fleet.mjs` → `subtitles-voice co.dropby.subtitlesvoice /subtitles 2/2 ok`,
+**14/15 publishable, 1 owed** (room-redesign).
+
+**Still unproven, and unchanged from item 57:** no hosted call has run from here. The screens,
+the picker, the file kinds, the SRT format and the route contracts are verified; the two model
+calls are not. The first `subtitles` and `voiceover` job ids on the VM close it.

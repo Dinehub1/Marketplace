@@ -281,7 +281,7 @@ export const FIRST_ROUTE = {
   "pdf-tools": "/tools/pdf",
   toolbox: "/tools",
   "room-redesign": null, // screen not built
-  "subtitles-voice": null, // screen not built
+  "subtitles-voice": "/subtitles",
   "resume-builder": "/tools/resume-builder",
   "shop-toolkit": "/shop",
 

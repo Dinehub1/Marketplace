@@ -39,6 +39,7 @@ const SCREEN_FOR_FIRST = {
   grid: 'tools-hub',
   wellness: 'habits',
   form: 'resume-builder', // the CV form is the Résumé Builder's first screen
+  chooser: 'subtitles-chooser', // the two-job picker that opens Subtitles & Voice-over
   dashboard: 'shop-dashboard', // the Shop Toolkit's front door, not the toolbox grid
   directory: 'home',
   camera: null, // the camera capture screen is the product screen itself

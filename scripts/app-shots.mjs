@@ -116,6 +116,11 @@ const SCREENS = [
   // The Shop Toolkit's own first screen. It is not the toolbox hub on purpose — a shop's
   // front door is one action, not a grid — so its marker is copy only this screen owns.
   { name: 'shop-dashboard', route: '/shop', expect: ['Your shop', 'Make a bill'] },
+  // The Subtitles & Voice-over chooser, and the two product screens behind it. The chooser's
+  // marker is its own honest-limits block, which no other screen carries.
+  { name: 'subtitles-chooser', route: '/subtitles', expect: ['Captions and voice', 'What these do, exactly'] },
+  { name: 'subtitles', route: '/tools/subtitles', expect: ['Captions, timed', 'The audio'] },
+  { name: 'voiceover', route: '/tools/voiceover', expect: ['read aloud', 'The script'] },
   // The number game. Its picture is taken after a slide for the same reason: an arrow
   // that reaches the board and one that does nothing look identical in a still.
   { name: 'merge-tiles', route: '/merge-tiles', expect: ['Slide the tiles, double the numbers', 'Four by four'], interact: 'merge-tiles-slide' },
