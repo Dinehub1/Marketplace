@@ -107,6 +107,27 @@ const ENGINE: Record<string, {
   // no working gateway (Razorpay keys are missing); what it *should* cost is a
   // business decision, not a route one (docs/hourly-queue.md, parking lot).
   "ai-image": { engine: "ai-image", dataOnly: true, fields: ["prompt"], free: true },
+
+  // Document translation: one document in (PDF / DOCX / plain text), the same text
+  // in another Indian language out, with `@cf/meta/m2m100-1.2b` on Workers AI. The
+  // catalogue row (`translate-doc`, "Document Translation", Rs 49) already existed —
+  // the engine was the missing half. Only `source` and `target` are forwarded, and
+  // the language set is checked below so an unsupported code is a 400 naming the ones
+  // that work (measured: the service refuses `te`/`as`, and some codes translate the
+  // sentence into something that no longer says it).
+  //
+  // `free: true` for the same reason `ai-image` is free, plus one more: this job does
+  // cost money per run (m2m100 is billed per M tokens; the engine puts the real token
+  // counts in `meta`), and a *paid* text product has no preview at all — the
+  // `previewEngine` step below only watermarks images and PDFs, so a locked markdown
+  // job would be a price with nothing to look at. What it should cost is a business
+  // decision (parking lot), so the route says free and the tile can say free honestly.
+  "translate-doc": {
+    engine: "translate-doc",
+    free: true,
+    fields: ["source", "target"],
+    accepts: DOC_ACCEPTS,
+  },
 };
 
 const PRODUCTS = new Set(Object.keys(ENGINE));
@@ -188,6 +209,19 @@ const PDF_NUMBER_POSITIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
  */
 const PDF_PAGE_FORMATS = ["a4", "letter", "a5"];
 const COLLAGE_LAYOUTS = ["auto", "2x1", "1x2", "2x2", "3x1"];
+
+/**
+ * Languages the translation product offers, mirroring TRANSLATE_LANGS in
+ * services/tools/worker.py — the Python/TS boundary is why this list is written
+ * twice, exactly like the PDF page grammar. Written from a round-trip measurement,
+ * not from the model's marketing: each code below took "Payment is due within thirty
+ * days of the invoice date." into the language and back to English with the thirty
+ * days intact. That test removed `gu` (5 probes, 5 wrong numbers — eighteen days,
+ * three months, a hundred days, sixty days) and `te` (no engine answered it at all).
+ * The engine checks the same set, so a caller who bypasses this route still cannot
+ * ask for a language nobody verified.
+ */
+const TRANSLATE_LANGS = ["en", "hi", "bn", "mr", "ta", "ml", "kn", "pa", "or", "as", "ur"];
 const PHOTO_JOB_LIMITS: Record<string, { files: number; totalBytes: number }> = {
   "photos-to-pdf": { files: 20, totalBytes: 60 * 1024 * 1024 },
   collage: { files: 4, totalBytes: 40 * 1024 * 1024 },
@@ -347,6 +381,24 @@ export async function POST(req: NextRequest) {
     }
     if (params.cell_px && !/^\d{2,4}$/.test(params.cell_px)) {
       return NextResponse.json({ error: "cell_px must be a number of pixels, 240 to 2400" }, { status: 400, headers: noStore });
+    }
+  }
+
+  // The translation product's two language codes, checked before any bytes move: a
+  // language the engine does not offer has to be a 400 that names the ones it does,
+  // not a 502 after a 30 MB scan has been uploaded and translated halfway.
+  if (product === "translate-doc") {
+    for (const name of ["source", "target"]) {
+      const code = (params[name] ?? "").toLowerCase();
+      if (!code) {
+        return NextResponse.json({ error: `${name} language is required — one of: ${TRANSLATE_LANGS.join(", ")}` }, { status: 400, headers: noStore });
+      }
+      if (!TRANSLATE_LANGS.includes(code)) {
+        return NextResponse.json({ error: `'${code}' is not one of the languages this tool translates (${TRANSLATE_LANGS.join(", ")})` }, { status: 400, headers: noStore });
+      }
+    }
+    if (params.source.toLowerCase() === params.target.toLowerCase()) {
+      return NextResponse.json({ error: "source and target are the same language — that is not a translation" }, { status: 400, headers: noStore });
     }
   }
 
