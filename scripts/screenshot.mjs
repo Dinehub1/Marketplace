@@ -20,9 +20,13 @@
  *       --dark                           colorScheme: dark
  *       --expect <text>                  fail (exit 3) unless this text is on the page;
  *                                        repeatable, so a screen can be pinned by several
- *                                        markers. This is what stops the pipeline from
- *                                        "proving" a feature with a picture of a blank
- *                                        page after a bad bundle.
+ *                                        markers. A miss reloads once and re-reads before it
+ *                                        is a verdict (a tunnel can hand back the shell before
+ *                                        the bundle paints), and a miss that survives that
+ *                                        writes its diagnosis to %TEMP% while leaving the
+ *                                        output PNG as it was — never over a good gallery shot.
+ *                                        This is what stops the pipeline from "proving" a
+ *                                        feature with a picture of a blank page after a bad bundle.
  *       --interact <name>                run a named probe from scripts/interactions.mjs
  *                                        (e.g. tap-sprint-hit) and fail (exit 3) unless it
  *                                        observes the change it is looking for. --expect
@@ -274,15 +278,17 @@ try {
   }
 
   // Force lazy-loaded images into the viewport so fullPage captures render them.
-  await page.evaluate(async () => {
-    const step = window.innerHeight;
-    for (let y = 0; y < document.body.scrollHeight; y += step) {
-      window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 120));
-    }
-    window.scrollTo(0, 0);
-    await new Promise((r) => setTimeout(r, 300));
-  });
+  const forceLazy = () =>
+    page.evaluate(async () => {
+      const step = window.innerHeight;
+      for (let y = 0; y < document.body.scrollHeight; y += step) {
+        window.scrollTo(0, y);
+        await new Promise((r) => setTimeout(r, 120));
+      }
+      window.scrollTo(0, 0);
+      await new Promise((r) => setTimeout(r, 300));
+    });
+  await forceLazy();
 
   result.title = await page.title();
   result.dimensions = await page.evaluate(() => ({
@@ -291,31 +297,66 @@ try {
   }));
 
   // Content assertion. A screenshot of a blank page is worse than no screenshot:
-  // it looks like proof. If a marker is missing, capture the broken screen anyway
-  // (that picture is the diagnosis) and fail with a distinct exit code so a
-  // pipeline can tell "the page is wrong" from "the browser could not reach it".
-  if (opts.expect.length) {
+  // it looks like proof. Case- and whitespace-insensitive on purpose: a marker exists to
+  // prove the screen's copy rendered, not to pin how it is capitalised (uppercase eyebrow
+  // labels are a design choice, and a case-sensitive compare failed a working screen).
+  const norm = (v) => v.replace(/\s+/g, ' ').trim().toLowerCase();
+  const readMissing = async () => {
     const text = await page.evaluate(() => (document.body ? document.body.innerText : ''));
-    // Case- and whitespace-insensitive on purpose: a marker exists to prove the screen's
-    // copy rendered, not to pin how it is capitalised. Uppercase eyebrow labels ("DESK
-    // MOBILITY · THE ROUTINE") are a design choice, and a case-sensitive compare failed a
-    // screen that was working perfectly.
-    const norm = (v) => v.replace(/\s+/g, ' ').trim().toLowerCase();
     const hay = norm(text);
-    const missing = opts.expect.filter((m) => !hay.includes(norm(m)));
+    return opts.expect.filter((m) => !hay.includes(norm(m)));
+  };
+
+  if (opts.expect.length) {
     result.expectChecked = opts.expect.length;
+    let missing = await readMissing();
+    if (missing.length) {
+      // A client-rendered SPA behind a tunnel can hand back the shell before the bundle
+      // has painted, so a 200 whose marker is absent is usually a race and not a broken
+      // screen: five of the forty captures of 2026-09-16 read as missing (tools-hub twice,
+      // stretch/walk three times) on routes that render correctly on the next attempt and
+      // on 127.0.0.1:8091 in the same minute. Reload once and re-read before calling it a
+      // failure. The reload is a real network round-trip — that is what `markerRetried`
+      // and the request count in the test below are for.
+      result.markerRetried = true;
+      try {
+        await page.reload({ waitUntil: 'domcontentloaded', timeout: opts.timeout });
+        await page.waitForLoadState('networkidle', { timeout: 15000 });
+      } catch {
+        /* best effort: the re-read below is the verdict */
+      }
+      await page.waitForTimeout(opts.wait);
+      await forceLazy();
+      missing = await readMissing();
+      result.markersRecovered = missing.length === 0;
+    }
     if (missing.length) {
       result.expectMissing = missing;
       result.ok = false;
-      await page.screenshot({ path: outPath, fullPage: opts.fullPage, type: 'png' });
+      // Diagnosis only. The marker's value *as a picture* is low precisely because a
+      // broken render of a working screen looks healthy — which is how five of these
+      // silently replaced good gallery shots in one sweep. So the image goes to the temp
+      // dir and the gallery keeps its last known-good PNG, exactly as the probe and
+      // transport paths already do.
+      const diag = path.join(os.tmpdir(), `marker-missing-${path.basename(outPath)}`);
+      await page.screenshot({ path: diag, fullPage: opts.fullPage, type: 'png' }).catch(() => {});
+      result.markerDiagnosis = diag;
       if (opts.json) console.log(JSON.stringify(result));
       else {
         console.error(
-          `MISSING ${missing.map((m) => JSON.stringify(m)).join(', ')}\n  ${url}` +
-            `\n  -> ${outPath} (captured anyway, for diagnosis)`
+          `MISSING ${missing.map((m) => JSON.stringify(m)).join(', ')} (checked twice, with a reload)\n  ${url}` +
+            `\n  -> ${diag} (diagnosis only; ${outPath} left as it was)`
         );
       }
       process.exit(3);
+    }
+    // A recovered read still gets its picture, but the reloaded page's own geometry is
+    // what is recorded (the pre-reload numbers describe the shell).
+    if (result.markerRetried) {
+      result.dimensions = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        scrollHeight: document.documentElement.scrollHeight,
+      }));
     }
   }
 

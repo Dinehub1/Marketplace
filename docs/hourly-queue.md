@@ -1451,7 +1451,7 @@ something else (batch, larger sizes, a passport-ready crop), (b) the on-device p
 behind a paid tier, or (c) it stays a prototype and never ships as-is. Nothing was changed —
 the flag ships off, so today's behaviour is unchanged.
 
-### 33. A page that loads 200 with nothing on it still overwrites the gallery shot (new, 2026-09-16, from item 22)
+### 33. A page that loads 200 with nothing on it still overwrites the gallery shot — DONE 2026-09-17
 Item 22 stopped the *probe* and *transport* failures from writing a picture over a good one:
 a non-200 is now retried once and answers exit 2 without touching the gallery. The third
 case is untouched, and this hour's 40-capture sweep produced five of them on
@@ -1467,6 +1467,41 @@ to `%TEMP%` while leaving the gallery file alone (the marker's *value* as a diag
 precisely because the broken render looks healthy). Evidence to require: a full sweep whose
 transient failures no longer change any gallery PNG's MD5, plus one deliberately broken
 marker still failing with exit 3.
+
+**Result (2026-09-17): the marker gate now retries before it judges, and a failure can no
+longer touch a gallery file.** In `scripts/screenshot.mjs` the marker read became
+`readMissing()`; a miss sets `markerRetried`, **reloads the page once** (a real network
+round-trip), re-scrolls for lazy images, re-reads, and records `markersRecovered`. Only a miss
+that survives the second read is a verdict — and that verdict writes its diagnosis to
+`%TEMP%\marker-missing-<name>.png` (`markerDiagnosis` in the `--json` line) while the output
+PNG is **never opened**. A healthy first read pays nothing: no reload, one request.
+The gate was proved with a real socket rather than a mock of the function under test:
+`scripts/test-marker-retry.mjs` starts a scripted HTTP server (shell first, real page on the
+second request), points the harness at it, and **counts the requests that arrive** —
+**12/12 checks, exit 0**: (A) shell-then-ready recovers, `markerRetried true`,
+`markersRecovered true`, **2 requests arrived**, a 39,675 B PNG written; (B) a marker that
+never arrives exits **3** naming it, the seeded gallery file is **byte-identical**
+(`44bd3135…` → `44bd3135…`) and the 35,898 B diagnosis lands in `%TEMP%`; (C) a healthy read
+captures with **1 request** and no reload. Then the negative control, because a gate nobody
+has seen fail proves nothing: the same test against the pre-fix harness (`HARNESS=… git show
+HEAD:scripts/screenshot.mjs`) scores **5/12, exit 1** — **1 request** (no reload), exit 3 on a
+screen that was fine, and the target file rewritten (`f1bea830…` → `20a9ff34…`), i.e. exactly
+the defect this item names.
+Evidence at scale — a **full 50-capture sweep** (`node scripts/app-shots.mjs --no-export`)
+against `https://expo.dropby.co.in`: **48/50 ok**, the two failures being `tools-hub`
+light+dark (item 46: a web export cannot render that hub at all), and **the MD5s of both
+failed shots are unchanged** (`3c1830e3…`, `6ded01a8…` before and after) — 0 of the failed
+captures changed a byte, while the 20 that were *successfully* re-shot differ (live listings
+and the animated wellness screens), and both diagnoses went to `%TEMP%\marker-missing-app__tools-hub__*.png`
+(60,435 / 59,711 B) with nothing of that name in the gallery folder. One live-host check of
+the same path: `--expect "NO SUCH COPY ON THIS SCREEN"` on `/tools/pdf` → **exit 3**,
+`markerRetried true`, `markersRecovered false`, seeded target **identical**, 107,368 B
+diagnosis in temp. Every probe still passes in the same sweep (`pdf-tools` 180° chip,
+`invoice` UPI paper line, `collage` "3 across", both games), so the retry did not disturb the
+positive controls. No app change, no engine restart, no `npm run build`; one listener per port
+(8099 pid 8164 == `pm2 pid`, 8080, 8091, 8092), 0 stray browsers left behind.
+**New item 48:** now that a failure never writes, a gallery file that is *already* wrong stays
+wrong until its capture passes again — which is the state of the two `app__tools-hub__*` shots.
 
 ### 34. Probes for the other three primary interactions — DONE 2026-09-17
 Only the two games have a probe. The three named in item 22 are the next ones worth one, each
@@ -1737,3 +1772,16 @@ have `_cf_ai_json` return the attempt count from `_cf_ai_run` (it already receiv
 discards it) and add it to the leg's usage, then pin it with a case in
 `scripts/test-worker-retry.py` — a scripted 500-then-200 answered through `_cf_ai_json` must
 report 2. Do not change the retry behaviour to make the label easier; the label follows the calls.
+
+### 48. A gallery shot that is already wrong now stays wrong (new, 2026-09-17, from item 33)
+Item 33 made a failed capture leave the gallery file alone, which is right — but it also means
+a file that a *past* failure already overwrote is frozen in that state until a capture of that
+screen passes. That is exactly where `app__tools-hub__mobile-{light,dark}.png` stand: item 28
+disclosed that its diagnostic run wrote the marketplace-fallback render over both, and because
+`APP_TARGET` is not embedded in a web export (item 46) no export can pass their `['EVERYDAY
+TOOLS', 'Small jobs,']` marker, so the sweep re-fails them every hour and (correctly) no longer
+replaces them. The tile therefore shows a picture of a hub that lists nothing while the copy
+under it describes the toolbox. Two honest options, neither of them this hour's item: fix the
+per-target export (item 46) and re-capture, or take the two files out of the gallery and let the
+tile read "nothing yet" with the reason — a wrong picture is worse than no picture. Nothing was
+deleted: they are not this run's files.
