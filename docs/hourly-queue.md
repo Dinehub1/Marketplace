@@ -1237,7 +1237,7 @@ Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.
 dropby-worker`; one listener on :8099, `health.pid 7200 == pm2 pid`, 11 products. No mobile
 change, so no `expo export` was needed (the screen already teaches `1-,!5`).
 
-### 27. Invoice: the counter is one phone's (new, 2026-09-16, from item 15)
+### 27. Invoice: the counter is one phone's — BLOCKED 2026-09-17 (a shared counter has no owner to write under)
 Item 15 gave the bill number a real counter, but it lives in this device's AsyncStorage, so a
 shop that bills from a tablet and a phone has two counters and can still print `015` twice.
 The fix is a row per shop (`invoice_counters`, keyed by the `shopKeyOf` value item 15 already
@@ -1253,7 +1253,24 @@ row exists (REST `GET /rest/v1/invoice_counters?select=*&limit=1` → 200), a bi
 bill made on one storage state advances the shared counter, and a cleared device store still offers the next
 number from the row.
 
-### 28. Text to image: give the live product a tile and a screen (new, 2026-09-16, from item 20)
+**Blocked on a dependency that does not exist: a shop key that identifies an account.** The
+whole point of the row is that two devices share one counter, and sharing needs a key that a
+*server* can check. Measured this hour: the app's only account identity is the owner sign-in
+(`apps/mobile/lib/owner.tsx`, `app/owner/sign-in.tsx`, a phone token sent as `x-phone-token`
+and validated by a route — not by RLS), the invoice screen is reachable with **no** account at
+all, and `shopKeyOf` keys on a GSTIN or a folded shop name, neither of which is bound to an
+account anywhere. So an `invoice_counters` row keyed by that value can only be exposed two
+ways, and both are wrong: anon-writable (anyone who knows a shop name can advance or corrupt
+another shop's series — a public write surface on a table a shopkeeper's tax numbering
+depends on), or writable only by the signed-in owner (in which case the key must be the
+*account*, not the GSTIN, and every unsigned shop still has two counters — the bug this item
+exists to fix). The honest shape is the second one with the key changed to the account, which
+is a design decision plus a new server route (service-role write behind the phone token) and a
+screen that knows whether it is signed in — not the one-file change the item assumed. Not
+started, and nothing was added to the database. When he wants a shop-wide counter, the
+question to answer first is which identity a shop's bills belong to.
+
+### 28. Text to image: give the live product a tile and a screen — DONE 2026-09-17
 The engine and the route now serve it (job 117, 200, a real 1024x1024 JPEG) but nothing in the
 app can reach it: `apps/mobile/lib/tools.ts`'s `READY_TOOLS` lists eight tiles and none is
 `ai-image`, and `/tools/<slug>` has no screen for it. The screen's job is small and honest: a
@@ -1263,6 +1280,70 @@ returned picture plus what the engine said (`meta.model`, and the seconds the jo
 decisions before the tile ships: the tile must not promise more than the model can do — flux is
 fast and literal, so the copy should say "describe it plainly, one picture per run" and not
 "design a logo" — and the price, which is the parking lot's question, not the robot's.
+
+**Result: the screen exists, it runs the job, and the tile comes with it.** The item's premise
+was half stale and the measurement is what fixed it: there is no `READY_TOOLS` anywhere in the
+app — the grid renders `TARGET.products` through `lib/products.ts` (item 14's rewrite), so a
+product appears on the hub when it has a `products.ts` entry with a `route` **and** is in its
+target's product list. Both are now true for `ai-image`:
+- `apps/mobile/app/tools/ai-image.tsx` (new, the 13th toolbox screen): one prompt field with a
+  live `n/300` counter, the accent from `product-ui.ts` (`ai-image: "info"`, the other photo
+  products' family), and a result card carrying the picture back with the engine's own numbers
+  (model, `1024 × 1024 pixels`, steps + `shape`, file size) and the "Save the picture · free"
+  row. The whole style body is inside `makeStyles(ui)`, so it follows dark mode from birth.
+- Honesty copy, all of it from measurements rather than taste: the screen says the model *draws
+  a sentence literally* and **does not design a logo** (flux is fast and literal), that the same
+  words give a different picture each run (the model samples), that a person in the picture is
+  not a real person, and that the run is free **while it costs us about ₹0.18 inside a daily
+  free allowance of roughly 57 pictures** (docs/product-plan.md, measured from job 148's meta).
+  Nothing is priced on the screen: it prints what the server answered (`free` / `locked`), so if
+  the row ever moves behind the paywall the unlock button appears by itself — the parking-lot
+  price question is untouched.
+- The tile: `products.ts` gained the `ai-image` entry (`price "Free"`, matching the catalogue
+  row's `price_paise 0` / `plan free` — the only one of the three "served free" products whose
+  row agrees with the route, so the tile can say Free honestly) and `targets.mjs` lists it in
+  the **toolbox** target's products, which is what the hub grid, `app-map.mjs` and
+  `scripts/check-targets.mjs` all read.
+Evidence, all through `https://expo.dropby.co.in` at 390×844 with the screen's own button:
+**job 150** = HTTP **200 in 6.6 s** — `output_url` a real R2 JPEG, `meta.model
+@cf/black-forest-labs/flux-1-schnell`, `width/height 1024`, `steps 4`, `shape "model default
+(flux-1-schnell: 1024x1024, 4 steps)"`, 447,961 B — and job **149** the same (601,185 B, 16.6 s)
+on the run that also proved the timing: **10/10 checks, 0 page errors**, including the `<img>`
+really decoding **1024×1024** (the first probe read `naturalWidth 0` because it looked before
+the 600 KB JPEG had landed — the probe had to wait for `complete`, which is the difference
+between "a URL is on the page" and "a picture rendered"). Honest edges shown by the same run:
+an empty prompt leaves the button `aria-disabled="true"` (no request at all), and 301 characters
+is refused on the screen in words *before* the upload ("That is 301 characters and the server
+takes 300 — shorten it.").
+The gallery and the phone page follow the product registry, so the new screen arrived in all
+three places: `node scripts/app-shots.mjs --only ai-image` captured both schemes through the
+marker gate (`app__ai-image__mobile-light|dark`, 105 KB each, `71948da3…` vs `9b9ff9c6…` —
+different hashes, so it is theme-aware), `app-map.mjs` claims it for the toolbox app (28 screens
+now) and `shots_server.py` has its `SCREEN_INFO` line plus a deep link with its own QR
+(`GET https://shots.dropby.co.in/shots` → 200 carrying "Text to image (one picture per run)";
+`/live` now has **42** codes against item 24's 41, and `tools/ai-image` is on the page).
+`npx tsc --noEmit` in `apps/mobile`: the same pre-existing typed-route errors elsewhere (12 in
+`(wellness)`/tabs work), **0** in the files this item touched; `npx expo export --platform web`
+exit 0, **3.23 MB total / 3282 KB JS**; `npm run check:targets` still **PASSED — 19 targets,
+171 pairs, 0 too similar, 0 incomplete**. No engine restart and no web rebuild (nothing in
+`apps/web` changed, so the live site was never touched); `pm2 restart shots-gallery` left one
+listener on :8092, `pm2 pid == the listening pid (8820)`.
+**One finding that changes what the gallery can prove (new item 46):** `expo export --platform
+web` **ignores `APP_TARGET`** — two exports, one with `APP_TARGET=toolbox`, produced a
+byte-identical bundle (`entry-ebe2bac3…`, 0 hits for "Everyday Tools", "Indore Business
+Directory" in both), because the target is resolved at *runtime* from
+`Constants.expoConfig.extra.target` and a web export never carries it (`expo config --type
+public` does see the env var, so the loss is in the export's embedded config). So the served
+build is always the marketplace fallback: `/tools` renders "DIRECTORY · 0 here · 0 to come" and
+the `tools-hub` capture, which asserts `['EVERYDAY TOOLS', 'Small jobs,']`, **cannot pass** in
+any web export. Probed it to be sure (`node scripts/app-shots.mjs --only tools-hub`) → exit 3,
+missing both markers, and — because item 33 is still open — the failure path **overwrote the two
+`app__tools-hub__mobile-{light,dark}` gallery PNGs** (`be833de6…` twice, i.e. the previous shot
+was theme-blind too) with the fallback render; disclosed because it is a gallery file I changed
+as a side effect of a diagnostic, not as part of this item. The tile itself could therefore not
+be photographed: it exists in the product registry, the target manifest and `app-map.mjs`, but
+no web export renders the toolbox hub, so the rendered-tile evidence has to wait for the
+per-target export (item 46) or the first dev build.
 
 ### 29. Engine: one transient upstream failure is reported as a broken server (new, 2026-09-16, from item 20)
 Measured while wiring text-to-image: the first `POST /job/ai-image` this hour answered
@@ -1559,3 +1640,40 @@ fields that carry a grammar: the **PDF page-range field** (`/tools/pdf`, item 25
 range pdfcpu would refuse must mark the field bad with the sentence, not fail at the engine)
 and the **document check's keyword box** (`/tools/resume-checker`, capped at 30 — the refusal
 is client-side and has never been captured). Both are one probe each with no new plumbing.
+
+### 45. The Text to Image screen's two controls have no probe (new, 2026-09-17, from item 28)
+`/tools/ai-image` is the first screen whose *only* control sends a job that bills us money
+(≈ ₹0.18 a run), which makes it the wrong candidate for item 43's canary — but its two
+observable behaviours are free to check and neither is covered:
+- an empty prompt must leave the button inert (`aria-disabled="true"` was measured this hour),
+  so a probe types nothing and requires the button to stay disabled, then types one character
+  and requires it to arm;
+- the `n/300` counter is the screen's own arithmetic, and 301 characters must mark the field bad
+  with the sentence before anything is sent (measured: "That is 301 characters and the server
+  takes 300 — shorten it.").
+Both are capture-time assertions with **no job sent**, so a capture sweep costs nothing. The
+rule that keeps it honest: if this screen ever gets a probe that presses "Draw the picture", it
+must be the *only* such screen and it must run once per sweep, not once per scheme — which is
+item 43's stated constraint.
+
+### 46. A web export ignores `APP_TARGET`, so target-specific captures assert copy that cannot render (new, 2026-09-17, from item 28)
+Measured this hour: `APP_TARGET=toolbox npx expo export --platform web` and a plain export
+produce a **byte-identical** bundle (`entry-ebe2bac3…`, no "Everyday Tools", "Indore Business
+Directory" present in both), because `lib/target.ts` reads the target at *runtime* from
+`Constants.expoConfig.extra.target` and the web export does not embed it — `expo config --type
+public` with the same env var *does* resolve the toolbox target, so the loss is the export's
+embedded config, not the env plumbing. Consequences, both real today:
+- the served preview (`expo.dropby.co.in`, `expo-preview`) is always the marketplace fallback, so
+  `/tools` shows "DIRECTORY · 0 here · 0 to come" and **no hub tile can be photographed in a web
+  export** — including the Text to Image tile added in item 28, whose existence is currently
+  evidenced by the registry (`products.ts` + `targets.mjs` + `app-map.mjs`), not by a picture;
+- `scripts/app-shots.mjs`'s `tools-hub` entry asserts `['EVERYDAY TOOLS', 'Small jobs,']`, which
+  that build cannot produce, so the capture fails (probed: exit 3, missing both markers) — and
+  because item 33 is still open, the failure wrote its render over the two
+  `app__tools-hub__mobile-{light,dark}` gallery PNGs.
+The honest fixes, cheapest first: (a) an export per target into a subdirectory the preview can
+serve (`APP_TARGET=<id>` with the config passed explicitly, e.g. `--config` pointing at a
+generated app config, or `EXPO_PUBLIC_*` inlined at build time), which also gives every
+target-specific screen a shot; (b) make the harness assert what the shipped build really says
+(a hub that lists nothing is not a fault) instead of copy from another target; (c) whichever is
+chosen, item 33's marker-miss path must stop writing to the gallery filename.
