@@ -37,14 +37,9 @@ const SCREEN_FOR_PRODUCT = {
 /** first-screen names in targets.mjs -> the screen slug that implements them. */
 const SCREEN_FOR_FIRST = {
   grid: 'tools-hub',
-  breathe: 'breathe',
+  wellness: 'habits',
   dashboard: null, // the shop dashboard is not built yet
   directory: 'home',
-  stretch: 'stretch',
-  walk: 'walk',
-  water: 'water',
-  japa: 'japa',
-  sleep: 'sleep',
   camera: null, // the camera capture screen is the product screen itself
 };
 
@@ -60,14 +55,9 @@ const EXTRA_SCREENS = {
   // The shop dashboard's sign-in is the only shop-toolkit screen that exists today (the
   // dashboard itself is `firstScreen: dashboard`, still unbuilt). Item 38 photographed it.
   'shop-toolkit': ['owner-sign-in'],
-  // Every wellness app carries the same two extra pages — the charts, and the settings that
-  // move the numbers on them — so all six claim them. The hub is claimed by the two screens
-  // that open from it.
-  ...Object.fromEntries(
-    ['breathe', 'stretch', 'walk', 'water', 'japa', 'sleep'].map((id) => [id, ['progress', 'profile']]),
-  ),
-  water: ['habits', 'progress', 'profile'],
-  japa: ['habits', 'progress', 'profile'],
+  // Wellness is one listing with six practices: the hub it opens on, the six practice
+  // screens, and the two shared pages (the charts, and the settings that move them).
+  wellness: ['habits', 'breathe', 'stretch', 'walk', 'water', 'japa', 'sleep', 'progress', 'profile'],
 };
 
 const { TARGETS } = await import(pathToFileURL(path.join(REPO, 'apps', 'mobile', 'targets.mjs')).href);

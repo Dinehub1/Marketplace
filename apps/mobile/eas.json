@@ -43,20 +43,6 @@
         "APP_TARGET": "block-clear"
       }
     },
-    "breathe": {
-      "extends": "production",
-      "channel": "breathe",
-      "env": {
-        "APP_TARGET": "breathe"
-      }
-    },
-    "japa": {
-      "extends": "production",
-      "channel": "japa",
-      "env": {
-        "APP_TARGET": "japa"
-      }
-    },
     "merge-tiles": {
       "extends": "production",
       "channel": "merge-tiles",
@@ -113,20 +99,6 @@
         "APP_TARGET": "shop-toolkit"
       }
     },
-    "sleep": {
-      "extends": "production",
-      "channel": "sleep",
-      "env": {
-        "APP_TARGET": "sleep"
-      }
-    },
-    "stretch": {
-      "extends": "production",
-      "channel": "stretch",
-      "env": {
-        "APP_TARGET": "stretch"
-      }
-    },
     "subtitles-voice": {
       "extends": "production",
       "channel": "subtitles-voice",
@@ -148,18 +120,11 @@
         "APP_TARGET": "toolbox"
       }
     },
-    "walk": {
+    "wellness": {
       "extends": "production",
-      "channel": "walk",
+      "channel": "wellness",
       "env": {
-        "APP_TARGET": "walk"
-      }
-    },
-    "water": {
-      "extends": "production",
-      "channel": "water",
-      "env": {
-        "APP_TARGET": "water"
+        "APP_TARGET": "wellness"
       }
     },
     "word-duel": {

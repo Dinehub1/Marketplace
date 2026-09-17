@@ -3,113 +3,112 @@
 Measured, not estimated. The readiness number comes from the gate that already exists:
 
 ```bash
-node scripts/check-fleet.mjs          # report; exits 0 while apps are still owed a screen
-node scripts/check-fleet.mjs --require-ready   # release form; exits 1 until all 20 are publishable
+node scripts/check-fleet.mjs                   # report; exits 0 while apps are still owed a screen
+node scripts/check-fleet.mjs --require-ready   # release form; exits 1 until every listing is publishable
+node scripts/check-targets.mjs                 # Apple 4.3 / Play spam gate
 ```
 
 ## Where we are
 
-**20 store listings from one Expo codebase. 16 can be submitted today; 4 cannot.**
+**15 store listings from one Expo codebase. 11 can be submitted today; 4 cannot.**
 
 | family | listings | ready | owed a first screen |
 |---|---|---|---|
-| Wellness | 6 | 6 | — |
+| Wellness | 1 | 1 | — |
 | Product apps | 7 | 3 | room-redesign, subtitles-voice, resume-builder, shop-toolkit |
 | Directory | 3 | 3 | — |
 | Games | 4 | 4 | — |
-| **Total** | **20** | **16** | **4** |
+| **Total** | **15** | **11** | **4** |
 
-Also green on the last logged hour (queue items 41–42, 2026-09-18):
+### The wellness regroup (2026-09-18)
 
-- `node scripts/check-targets.mjs` — 20 targets, 190 pairs compared, 0 too similar (Apple 4.3 / Play spam gate).
-- `npm run check:games` — Block Clear and Merge rules all hold (21 Merge rules).
-- `npm run typecheck -w @hermes/mobile` — clean; `npx expo export --platform web` — exit 0, 2.71 MB.
+The six wellness listings (breathe, stretch, walk, water, japa, sleep) were **one app with
+six doors**: one tab bar, one Today hub, one Progress page, one Profile page — opening
+Stretch, Walk and Water produced the same shell. Six bundle ids of one app is the shape
+Apple 4.3 ("multiple Bundle IDs of the same app") and Play's repetitive-content policy
+reject, and that rejection lands on the developer account, not on one listing.
 
-Readiness of the catalogue itself: **8 of 29 products have a screen**. The Toolbox app
-declares 14 products and has built 5; the four owed apps are owed their whole product set,
-not one tile.
+They are now a single listing, **Wellness: Daily Practices** (`co.dropby.wellness`),
+opening on the Today hub (`/habits`) with all six practices inside. `check-targets.mjs`
+never caught this because it compares words — name, subtitle, ASO keywords — and never
+screens; that gap is recorded in `targets.mjs` so the decision is not re-litigated.
 
-Web is separate and already live: **27 brand sites on one multi-tenant Next.js router**,
-plus the three data brands that survive (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
+If one practice later earns its own listing, split it by giving that build its own first
+screen and dropping the shared hub, and add a target back to `targets.mjs`.
 
-## Ready now (16)
+### Gates green on the last measured run
 
-- **Wellness (6):** Breathe, Stretch, Walk, Water, Japa, Sleep — each opens on its own screen, no permissions.
-- **Product (3):** Passport Photo Maker, PDF Toolkit, Everyday Tools & Photo Fix (toolbox, 5/14 built).
-- **Directory (3):** SarkarHealth, Indore Business Directory, Car Service & Dealers Indore.
-- **Games (4):** Tap Sprint, Word Duel, Block Clear, Merge: Number Tiles.
+- `check-fleet.mjs` — 15 targets resolve: unique name, slug and bundle id; art on disk;
+  every declared route exists. 11/15 publishable, 4 owed (listed above).
+- `check-targets.mjs` — 15 targets, 105 pairs compared, 0 too similar.
+- `check:games` — Block Clear and Merge rules hold (21 Merge rules).
+- `typecheck` — clean across all workspaces.
 
-## Not ready (4)
+Catalogue: **9 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
 
-| listing | bundle id | what is missing |
-|---|---|---|
-| Room Redesign: AI Interior | `co.dropby.roomredesign` | camera → redesign screen (0/1 products) |
-| Subtitles & Voice-over | `co.dropby.subtitlesvoice` | chooser + subtitles + voice-over (0/2) |
-| Resume Builder & ATS Check | `co.dropby.resumebuilder` | form + 3 resume products (0/3) |
-| Shop Toolkit: Bills & Catalogue | `co.dropby.shoptoolkit` | dashboard + 7 shop products (1/7 — invoice only) |
-
-Each is a roadmap entry on purpose, but `check-fleet --require-ready` (which every
-`prebuild:*` hook runs) refuses a store build while any of them is unbuilt.
+Web is separate and already live: **27 brand sites** on one multi-tenant Next.js router,
+plus the three data brands (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
 
 ## Next plan, in order
 
-### P0 — turn 16/20 into 20/20 (engineering; no permission needed)
+### P0 — get to 15/15 (engineering; no permission needed)
 
-1. **Room Redesign** — a first screen that opens on its own product, not the marketplace.
-2. **Subtitles & Voice-over** — needs the Whisper route live first (see P1).
+1. **Room Redesign** — a first screen that opens on its own product.
+2. **Subtitles & Voice-over** — needs the Whisper route first (see P1).
 3. **Resume Builder** — the form screen plus `resume-builder`, `resume-checker`, `application-writer`.
 4. **Shop Toolkit** — the dashboard plus the seven shop products.
-5. Then submit the 16 that are ready.
+5. Then submit the eleven that are ready.
 
-### P1 — unblock revenue and the AI products (needs you)
+### P1 — advertising is the money path (decided 2026-09-18)
 
-6. **Razorpay keys** (`RAZORPAY_KEY_ID` / `_SECRET` / `_WEBHOOK_SECRET`, queue item 6) — no
-   order can be paid today, so the passport paywall cannot complete end to end. Do not fake a payment.
-7. **`CLOUDFLARE_AI_TOKEN`** in `apps/web/.env` (item 14) — first job: subtitles via
-   `@cf/openai/whisper`; then translation on `indictrans2` (item 15).
-8. **One Cloudflare dashboard click** (item 35) — accept Meta's licence for the vision model,
-   or bill-scan / study-photo stays dead even with a token.
-9. **EAS / Apple / Expo login** — native builds and store submissions (parking lot).
+6. **AdMob first, mediated.** AdMob is the only network a brand-new publisher can start
+   with; connect AppLovin / Meta / Unity as demand through mediation (bidding), because
+   eCPM is an auction outcome, not a price list you choose from.
+7. **`ad_events` table + the Networks section** — one table per network to *onboard*
+   (formats, integration type, min payout, payout method/currency, requirements, whether it
+   needs a live published app) and one measured view (impressions, eCPM, fill, revenue per
+   network / format / country). The apps keep touching only `components/ad-slot.tsx`.
+8. **Keep the paywall code, unconfigured** — Razorpay stays in the tree, keys stay empty.
+   The rewarded ad is the free credit path that converts to a cash customer.
+9. Prerequisites before real fill: app live in a store, `app-ads.txt` on dropby.co.in, a
+   privacy-policy URL, iOS ATT + Google consent SDK, Data Safety form, ad-SDK disclosure,
+   and the payment threshold + identity verification.
 
-### P2 — finish what is already half-built
+Honest expectation: with ~zero installs, ads pay ~₹0. At ~$8 rewarded eCPM, 1,000 completed
+views ≈ ₹700, and games need tens of thousands of installs before that matters. Ads-only
+means the near-term job is installs, not revenue.
 
-10. **Toolbox: 9 of 14 tiles still `route: null`** — photo repair, product photo, card maker,
-    marksheet maker, worksheet maker, translate-doc, study-helper, notes-from-audio, cover-maker.
-11. **Text to image** (item 28) — engine and route are live (job 117, a real 1024×1024 JPEG);
-    the tile and screen are missing.
-12. **Shared tool frame** — `components/tool-frame.tsx` and `lib/history.ts` do not exist,
-    which blocks items 1 and 20 (wrap the tool screens and Breathe). Verified absent today.
+### P2 — unblock the rest (needs you)
+
+10. `CLOUDFLARE_AI_TOKEN` in `apps/web/.env` (queue item 14) — subtitles, and the remaining
+    hosted paths.
+11. One Cloudflare dashboard click to accept Meta's vision licence (item 35), or bill-scan /
+    study-photo stays dead.
+12. EAS / Apple / Expo login for native and store builds.
 
 ### P3 — hardening already in the queue (no device, no credential)
 
-13. Interaction probes for PDF rotate, invoice UPI, collage chips (item 34).
-14. Theme audit over every screen in one pass (item 38).
-15. `product_jobs.meta` column (item 40), then merge `metaFor` (item 37) and price products
-    from measured cost (item 16).
-16. Engine: retry a hosted call once on a transient upstream 5xx (item 29).
-17. Gallery: a 200 page with nothing on it must not overwrite a good shot (item 33).
-18. Wire the AI router into a real product — the ₹0 listing-description path (item 36).
-19. Deep links per screen on the test page (item 22); route hint `!5` (item 26); invoice
-    counter per phone (item 27).
-20. VoxCPM voice-over (item 13) — measure it against the 4 vCPU / 8 GB ceiling before installing.
+13. Items 41–44: the Document Translation screen, the /log cost page, probes that stop before
+    the upload, bad-input probes.
+14. Items 45–48: Text-to-Image probes, `APP_TARGET` in the web export, the retry's attempt
+    count, and a gallery shot that is already wrong staying wrong.
+15. Items 49–52: directory descriptions in batches, a failed job keeping its provider, the
+    directory feed probe, and the web tab bar's labels following the theme.
+16. Items 1 and 20 — the shared tool frame (`components/tool-frame.tsx`, `lib/history.ts`)
+    still does not exist, so wrapping the tool screens stays blocked.
 
 ### P4 — your calls (parking lot, do not start unilaterally)
 
-21. Pricing: on-device background cut free vs ₹99 (item 32); `resume-checker` ₹99/mo but served
-    free; `ai-image` free vs measured ₹0.17/job; document-check tile price (item 24).
-22. Widen the India-only phone check, or keep the label (item 39).
-23. Re-check the Apple 4.3 decision for the three directory twins before submitting.
-24. Stop the wedged `expo-dev` tunnel (item 17).
+17. Pricing: on-device background cut free vs ₹99 (item 32); `ai-image` free vs a measured
+    ₹0.18/job; `resume-checker` ₹99/mo but served free; document-check tile (item 24).
+18. Widen the India-only phone check, or keep the label (item 39).
+19. Re-check the Apple 4.3 decision before submitting the three directory twins.
+20. Stop the wedged `expo-dev` tunnel (item 17).
 
 ### Blocked — do not re-attempt blind
 
 - Video background removal (item 5) — CPU cost on this box.
-- colibri (item 12) and the VoxCPM install — box ceiling (4 vCPU / 8.0 GB / 43.5 GB free).
+- colibri (item 12) and VoxCPM (item 13) — box ceiling (4 vCPU / 8.0 GB / 43.5 GB free).
 - Stirling-PDF Pipeline (item 9) — licence.
+- The chips-at-320 px measurement and the on-device cut (items 30, 31) — need a real phone.
 - Photo-permission fix (item 23) — native-only evidence; needs the first dev build.
-
-## Closed (for reference)
-
-Items 2, 3, 4, 8, 10–14, 15, 16, 17, 18, 19, 20-route, 21, 22-capture, 25, 41, 42 are
-DONE in `docs/hourly-queue.md`; item 9 (ImageToolbox) and item 21 (the targets gate) are
-done in the tree even though their headings still read open.

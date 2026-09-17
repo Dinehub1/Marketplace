@@ -1,7 +1,7 @@
 # @hermes/mobile
 
 Native iOS and Android apps, built with Expo (SDK 57, New Architecture, Expo Router).
-**One codebase, twenty store listings** — see "Twenty apps from one codebase" below.
+**One codebase, fifteen store listings** — see "Fifteen apps from one codebase" below.
 
 The marketplace build has two modes:
 
@@ -27,7 +27,7 @@ in the root `package.json` and no `App.tsx` beside it, and fail with:
 Unable to resolve "../../App" from "node_modules/expo/AppEntry.js"
 ```
 
-Use `npm run app -- <id>` (see "Twenty apps from one codebase") or `npm run mobile`,
+Use `npm run app -- <id>` (see "Fifteen apps from one codebase") or `npm run mobile`,
 which both start Expo with `apps/mobile` as the working directory. The tell-tale sign of
 the mistake is a `.expo/` directory appearing in the repo root.
 
@@ -47,29 +47,39 @@ rendering an empty directory that looks like a data problem.
 In development `EXPO_PUBLIC_WEB_BASE_URL` must be a LAN address
 (`http://192.168.x.x:3001`) — on a phone or simulator, `localhost` is the device.
 
-## Twenty apps from one codebase
+## Fifteen apps from one codebase
 
-This app is not one app. `targets.mjs` defines twenty store listings — six wellness
-apps, seven product apps, three directory apps and four games — and `APP_TARGET` decides
+This app is not one app. `targets.mjs` defines fifteen store listings — one wellness app,
+seven product apps, three directory apps and four games — and `APP_TARGET` decides
 which one a build is:
 
 ```bash
-APP_TARGET=breathe npx expo start          # run the Breathe app
+APP_TARGET=wellness npx expo start         # run the wellness app
 APP_TARGET=toolbox npx expo start          # run the toolbox instead
 npx expo start                             # no target = the marketplace
 ```
 
+**Why wellness is one listing and not six.** Breathe, Stretch, Walk, Water, Japa and Sleep
+were six targets with six names, six bundle ids and six icons — and one app underneath:
+one tab bar, one Today hub, one Progress page, one Profile page. Opening Stretch, Walk and
+Water gave the same shell, which is the "multiple Bundle IDs of the same app" shape Apple
+4.3 and Play's repetitive-content policy reject, and that rejection lands on the developer
+account rather than on one listing. `scripts/check-targets.mjs` could not catch it: that
+gate compares names, subtitles and keywords, never screens. So they are one listing with
+six practices; if one practice later earns its own listing, split it by giving that build
+its own first screen and dropping the shared hub.
+
 Everything a store listing is judged on comes from that one word, resolved in
 `app.config.ts` and read back at runtime by `lib/target.ts`:
 
-| | comes from | example (`APP_TARGET=breathe`) |
+| | comes from | example (`APP_TARGET=wellness`) |
 | --- | --- | --- |
-| name, slug, scheme | target | `Breathe: Slow Breathing` / `breathe` |
-| bundle id / package | target | `co.dropby.breathe` |
-| icon, adaptive icon, splash | `assets/targets/<id>/` | `assets/targets/breathe/icon.png` |
+| name, slug, scheme | target | `Wellness: Daily Practices` / `wellness` |
+| bundle id / package | target | `co.dropby.wellness` |
+| icon, adaptive icon, splash | `assets/targets/<id>/` | `assets/targets/wellness/icon.png` |
 | accent colour | target | `#0891b2` |
 | permissions | target | `INTERNET` only — no camera |
-| **first screen** | `FIRST_ROUTE` in `targets.mjs` | `/breathe` |
+| **first screen** | `FIRST_ROUTE` in `targets.mjs` | `/habits` |
 
 The first screen matters most. Each app opens on its own product: `app/index.tsx` reads
 the target and redirects. Four targets have `firstRoute: null` because their screen is
@@ -87,7 +97,7 @@ node -e "import('./apps/mobile/lib/products.ts')"   # or just read the file
 ### Store art
 
 ```bash
-npm run icons -w @hermes/mobile        # regenerate 20 icon sets from targets.mjs
+npm run icons -w @hermes/mobile        # regenerate one icon set per target from targets.mjs
 ```
 
 These are generated monograms — distinct, shippable placeholders. Replace them with
@@ -155,7 +165,7 @@ npm run check:games                                  # do the games' rules still
 ```
 
 `check:targets` is the spam/4.3 gate. `check:fleet` resolves the real `app.config.ts` for
-all twenty and asserts a unique name, slug and bundle id, art on disk, and a first
+all fifteen and asserts a unique name, slug and bundle id, art on disk, and a first
 screen that exists — then reports how much of each listing is actually built. It exits 0
 while apps are still owed a screen, so it can be run daily; `--require-ready` is the
 release form that refuses. Both run as `check:release` before a build, which is why a

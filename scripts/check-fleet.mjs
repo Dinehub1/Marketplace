@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * check-fleet.mjs — the publish-readiness gate for all twenty apps.
+ * check-fleet.mjs — the publish-readiness gate for all fifteen apps.
  *
  * `check-targets.mjs` answers "are two of these listings too alike to survive review?".
  * This answers the other half: "does each one actually resolve to a real, buildable app?"

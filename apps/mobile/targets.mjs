@@ -1,5 +1,5 @@
 /**
- * Standalone app targets — one codebase, twenty genuinely different apps.
+ * Standalone app targets — one codebase, fifteen genuinely different apps.
  *
  * Play Store rejects "Spam and Minimum Functionality" and Apple rejects guideline
  * 4.3 duplicate apps. The defence is not a different icon: it is a different
@@ -11,82 +11,36 @@
  * Each target names the product modules it exposes from lib/products.ts.
  */
 export const TARGETS = [
+  // The six wellness practices are ONE app, not six listings.
+  //
+  // They always shared a tab bar, a Today hub, a Progress page and a Profile page; the only
+  // thing that ever made them look like six apps was six names on six icons. Six bundle ids
+  // of one app is exactly what Apple 4.3 ("multiple Bundle IDs of the same app") and Play's
+  // repetitive-content policy reject — and that rejection lands on the *developer account*,
+  // which would take the rest of the fleet down with it. Found by opening Stretch, Walk and
+  // Water and getting the same shell. `check-targets.mjs` could not see it, because it
+  // compares words (name, subtitle, keywords), never screens — so the decision is recorded
+  // here rather than left to the gate.
   {
-    id: "breathe",
-    name: "Breathe: Slow Breathing",
-    bundleId: "co.dropby.breathe",
-    tagline: "Four breathing patterns, offline, with your own words",
+    id: "wellness",
+    name: "Wellness: Daily Practices",
+    bundleId: "co.dropby.wellness",
+    tagline: "Breathe, stretch, walk, count water and beads, then wind down",
     storeCategory: "Health & Fitness",
-    aso: ["breathing exercise", "breathwork timer", "pranayama timer", "calm breathing"],
+    aso: [
+      "breathing exercise",
+      "desk stretches",
+      "interval walk timer",
+      "water tracker",
+      "mala counter",
+      "sleep breathing",
+    ],
     color: "#0891b2",
-    // No camera, no photos, no files: the only permission-free app in the fleet, which
+    // No camera, no photos, no files: the only permission-free listing in the fleet, which
     // is also why it is the one that cannot fail on a network or cost us per session.
     permissions: [],
     products: [],
-    firstScreen: "breathe",
-  },
-  {
-    id: "stretch",
-    name: "Stretch: Desk Mobility",
-    bundleId: "co.dropby.stretch",
-    tagline: "A five-minute desk routine, one move at a time",
-    storeCategory: "Health & Fitness",
-    aso: ["desk stretches", "office stretch routine", "mobility timer", "neck and shoulder stretch"],
-    color: "#7c3aed",
-    permissions: [],
-    products: [],
-    firstScreen: "stretch",
-  },
-  {
-    id: "walk",
-    name: "Walk: Interval Timer",
-    bundleId: "co.dropby.walk",
-    tagline: "Fast and easy intervals for a walk that counts",
-    storeCategory: "Health & Fitness",
-    aso: ["interval walk timer", "walking workout timer", "fast slow intervals", "walking pace trainer"],
-    color: "#059669",
-    permissions: [],
-    products: [],
-    firstScreen: "walk",
-  },
-  {
-    id: "water",
-    name: "Water: Daily Counter",
-    bundleId: "co.dropby.water",
-    tagline: "Count your glasses. Your target, your phone, nobody else's business",
-    storeCategory: "Health & Fitness",
-    aso: ["water tracker", "hydration reminder", "drink water counter", "daily water goal"],
-    color: "#0284c7",
-    permissions: [],
-    products: [],
-    firstScreen: "water",
-  },
-  {
-    id: "japa",
-    name: "Japa: Mala Counter",
-    bundleId: "co.dropby.japa",
-    tagline: "A 108-bead counter with a buzz each bead, and your own phrase",
-    storeCategory: "Lifestyle",
-    // Deliberately not a prayer app: it counts and it buzzes. That is the whole product,
-    // and saying so is what keeps it clear of both religious-claims review risk and the
-    // "another meditation app" pile.
-    aso: ["mala counter", "japa counter", "108 beads", "mantra counter", "tally counter"],
-    color: "#b45309",
-    permissions: [],
-    products: [],
-    firstScreen: "japa",
-  },
-  {
-    id: "sleep",
-    name: "Sleep: Wind Down",
-    bundleId: "co.dropby.sleep",
-    tagline: "4-7-8 rounds, then lights out",
-    storeCategory: "Health & Fitness",
-    aso: ["sleep breathing", "4-7-8 breathing", "wind down timer", "bedtime breathing"],
-    color: "#4338ca",
-    permissions: [],
-    products: [],
-    firstScreen: "sleep",
+    firstScreen: "wellness",
   },
   {
     id: "passport-photo",
@@ -318,13 +272,9 @@ export const gameTargets = () => TARGETS.filter((t) => t.game);
  * Apple 4.3 rejection, and it is also just a lie to the person who installed it.
  */
 export const FIRST_ROUTE = {
-  // Wellness: the app *is* the screen. One screen each, plus the shared charts/settings.
-  breathe: "/breathe",
-  stretch: "/stretch",
-  walk: "/walk",
-  water: "/water",
-  japa: "/japa",
-  sleep: "/sleep",
+  // Wellness: one app, six practices. It opens on the Today hub, which lists all six —
+  // the screen that shows a first-time user what the app is for.
+  wellness: "/habits",
 
   // Product apps, by the one screen each leads with.
   "passport-photo": "/passport",

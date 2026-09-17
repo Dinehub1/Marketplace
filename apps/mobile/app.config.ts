@@ -8,7 +8,7 @@ import { TARGETS, byId, familyOf, firstRouteFor } from "./targets.mjs";
  * environment instead of being committed, and so the *identity* below can be resolved
  * from `targets.mjs` rather than retyped. `app.json` cannot read `process.env`.
  *
- * One codebase builds twenty store apps. Which one is decided here, by `APP_TARGET`:
+ * One codebase builds fifteen store apps. Which one is decided here, by `APP_TARGET`:
  *
  *   APP_TARGET=breathe npx expo start
  *   APP_TARGET=toolbox eas build --profile preview
@@ -52,7 +52,7 @@ const BRAND_SLUG = process.env.BRAND_SLUG ?? target.id;
 const BRAND_NAME = process.env.BRAND_NAME ?? target.name;
 /**
  * Permission names as declared in targets.mjs. Annotated because the manifest is a plain
- * `.mjs` file, so TypeScript infers a union of the twenty object shapes and a bare
+ * `.mjs` file, so TypeScript infers a union of the fifteen object shapes and a bare
  * `.includes("MICROPHONE")` on that union narrows to `never`.
  */
 const PERMISSIONS: string[] = [...target.permissions];

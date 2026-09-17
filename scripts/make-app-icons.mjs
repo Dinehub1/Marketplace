@@ -2,7 +2,7 @@
 /**
  * make-app-icons.mjs — one icon set per store target, drawn rather than lettered.
  *
- * Twenty listings need twenty icons, and an icon is the first thing a reviewer compares between two
+ * Fifteen listings need fifteen icons, and an icon is the first thing a reviewer compares between two
  * submissions: the same picture twice is evidence the apps are one app, which is exactly what Play's
  * "Spam and Minimum Functionality" and Apple's 4.3 reject. So the icons are generated from
  * `targets.mjs` — the same file the duplicate gate reads — rather than hand-managed, because
@@ -54,12 +54,7 @@ const { MARKS, TILE_SVG } = await import(
  * — the one thing this file exists to prevent.
  */
 const MONOGRAM = {
-  breathe: 'BR',
-  stretch: 'ST',
-  walk: 'WK',
-  water: 'WA',
-  japa: 'JP',
-  sleep: 'SL',
+  wellness: 'WL',
   'passport-photo': 'PP',
   'pdf-tools': 'PDF',
   'room-redesign': 'RR',
