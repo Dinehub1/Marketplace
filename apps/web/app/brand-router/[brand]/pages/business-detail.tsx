@@ -166,6 +166,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: biz.name,
+    ...((biz as any).description ? { description: (biz as any).description } : {}),
     ...(biz.category ? { additionalType: biz.category } : {}),
     ...(biz.address
       ? {
@@ -303,6 +304,22 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
       <main className="flex-1 mx-auto max-w-5xl w-full px-6 py-7 md:py-9">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
           <div className="md:col-span-3 space-y-4">
+            {/* About: the only prose on the page, and it is written from this listing's
+                own row by the ₹0 router path (product `listing-description` in
+                apps/web/app/api/job/route.ts) — name, category, area, phone, rating and
+                nothing else. The line underneath says so, because a template must not
+                read as if a model had visited the shop. Rows with no description render
+                nothing at all rather than a placeholder. */}
+            {typeof (biz as any).description === "string" && (biz as any).description.trim() !== "" && (
+              <div className="card p-6">
+                <h2 className="heading-sm mb-3">About {cleanBusinessName(biz.name)}</h2>
+                <p className="text-sm leading-relaxed opacity-80">{(biz as any).description}</p>
+                <p className="mt-3 text-xs opacity-55">
+                  Written from this business’s own details — the name, category, area, phone and rating
+                  shown on this page. A fixed sentence shape filled from those facts, not a model’s account.
+                </p>
+              </div>
+            )}
             <div className="card p-6">
               <h2 className="heading-sm mb-5">Business details</h2>
               <div className="space-y-4 text-sm">
