@@ -442,7 +442,7 @@ intended ₹0 text fallback is the local chain (`rules → tesseract → pg_trgm
 builds — which is unblocked and cheaper than any model on disk. Re-open only on a host with
 ≥24 GB RAM **and** ≥120 GB free disk.
 
-### 13. VoxCPM for the voice-over product (Apache-2.0, 37k★)
+### 13. VoxCPM for the voice-over product (Apache-2.0, 37k★) — BLOCKED 2026-09-17 on this box's hardware
 `OpenBMB/VoxCPM` (Apache-2.0) is TTS with voice design. Turn "Text to voice-over"
 (₹99/clip) from a card with no engine into a product: text in, MP3 out, in R2, priced.
 Requires torch on CPU — measure seconds per 100 words and report them.
@@ -450,6 +450,18 @@ Requires torch on CPU — measure seconds per 100 words and report them.
 8.0 GB RAM (4.7 GB free) / 43.5 GB free disk on a QEMU virtual disk.** A CPU torch wheel plus
 a VoxCPM checkpoint has to fit inside that *while* the live site and the product worker run —
 write the numbers down before the install, exactly as item 12 had to.
+
+**Measured this hour, before any download — parked, and the repo's own README is the evidence.**
+`torch` is **not installed** on this box (`python -c "import torch"` → `ModuleNotFoundError`;
+`pip list` has no torch), so the item's dependency is missing. The upstream requirement line is
+`Python ≥ 3.10 (<3.13), PyTorch ≥ 2.5.0, **CUDA ≥ 12.0**`, and the **latest release (VoxCPM2) is
+a 2B-parameter** model; the only performance figure the README publishes is **RTF ≈ 0.13 on an
+NVIDIA RTX 4090** (and ~0.3 with the plain PyTorch path). This VM has **no GPU**, 4 vCPU and
+4.7 GB free RAM, and it serves the live site and the product engine — a 2B model on CPU plus a
+multi-GB torch wheel is the same class of install that parked item 5 (`backgroundremover`) and
+item 12 (colibri). Nothing was installed or fetched. Re-open only on a CUDA host; the item's
+own "measure seconds per 100 words" cannot be answered on this box, which is why it is parked
+with the numbers rather than half-built.
 
 ### 14. Wire the Workers AI token and prove one hosted model (blocked on one credential)
 Read `docs/ai-compute-plan.md`. The R2 key is NOT an AI token (tested: code 10000
@@ -459,11 +471,50 @@ When the token appears, first job: subtitles. `@cf/openai/whisper` at $0.0005 pe
 minute, called from `/api/job` with the token kept server-side. Evidence: a real audio
 file → transcript text, with the meta showing seconds and the model used.
 
-### 15. Translation product on indictrans2 (needs the same token)
-`@cf/ai4bharat/indictrans2-en-indic-1B` at $0.342/M tokens is purpose-built for
-Hindi↔English and priced below every general model. Build "Hindi ↔ English document
-translation" (₹49) as: markitdown extracts → indicTrans2 translates → markitdown rebuilds.
-Evidence: a real contract/resume page in Hindi, translated, both files in R2.
+### 15. Translation product on indictrans2 (needs the same token) — DONE 2026-09-17, on a better engine
+Built: **Document Translation** is a live product (catalogue row `translate-doc`,
+"Document Translation", Rs 49 one_time — the row already existed; the engine was the
+missing half). One document in (PDF / DOCX / TXT), the same text in another language out
+as Markdown, with the header saying which engine ran and that it is machine translation.
+The item's premise was half wrong and measuring it first is what saved the product:
+`@cf/ai4bharat/indictrans2-en-indic-1B` **ignores both language fields** — Hindi sent as
+`source_lang=hin_Deva, target_lang=eng_Latn` came back in *Hindi*, and English with
+`target_lang=tam_Taml` came back in *Hindi* too — so it is English → Hindi whatever the
+caller asks, and its input is cut at **256 tokens** (a 1,080-character Hindi paragraph
+came back as a repetitive sentence that was not a translation of it). The engine therefore
+runs a **chain**: `@cf/qwen/qwen3-30b-a3b-fp8` first (an LLM — faithful: it keeps names,
+dates and figures, where m2m100's Hindi output said "RUB 350" and called both parties
+seller) and `@cf/meta/m2m100-1.2b` as the second leg. The LLM is a *thinking* model, and
+`chat_template_kwargs: {"enable_thinking": false}` answers 200 with an **empty string**, so
+thinking is budgeted for (max_tokens 2048, an empty answer retried at 4096) — the reason
+the first language sweep of this hour looked like every language had failed.
+Languages offered are the ones that passed a **round trip** ("Payment is due within thirty
+days of the invoice date." out and back, thirty days intact): en, hi, bn, mr, ta, ml, kn,
+pa, or, as, ur. Two were removed by that test rather than shipped with a caveat — **`gu`**
+(5 probes, 5 wrong numbers: eighteen days, three months, a hundred days, sixty days) and
+**`te`** (empty from the LLM, and m2m100 refuses the code outright).
+Evidence, all through `https://expo.dropby.co.in/api/job` with a browser User-Agent:
+**job 141** hi→en (200, `engines {qwen3: 1}`, 54 neurons, `chars_in 517`) and **job 142**
+en→hi (200, 47 neurons) — both outputs re-downloaded from R2 as `.md` under
+`marketplace/products/translate-doc/` and read back: the English keeps Seller/Buyer, 100
+bags, 350 rupees, 35,000, 15 September 2026; the Hindi keeps 15 सितंबर 2026, 14 दिनों, 30
+दिनों, 35,000, 18 प्रतिशत. **Job 143** is a real PDF with a text layer (`input_suffix .pdf`,
+200) translated en→hi. Honest refusals through the same route: `target=te` / `target=zz` →
+**400** naming the offered codes, `source==target` → 400, no `target` → 400, a PNG → **415**,
+a 9,799-character document → **400** "translates up to 9000 in one job (about four pages)".
+Rows 141-145 are `done`/`failed` in `product_jobs` with the engine's `meta` (item 40's
+column) recording `engines`, `neurons`, `chars_in`. Regressions: `resume-checker` **145** and
+`pdf-tools merge` **146** both still 200. `npm run typecheck -w @hermes/web` exit 0, then the
+gated `npm run build && pm2 restart hermes-web`; localhost:8080, sarkarmarketplace and
+expo.dropby.co.in/tools all 200 after. Engine restarted as stop → port free → start (one
+listener on 8099, `health.pid 7384 == pm2 pid`).
+Measurements worth keeping: a ~500-character document takes 3.8-11 s and bills ~40-54
+neurons (≈ Rs 0.05 at the $0.011 per 1,000 neurons the ai-image comment already records), so
+the 10,000 free neurons a day are roughly 200 documents/day. Two honest quality notes: the
+LLM reflowed one PDF's sentence order inside a paragraph (content intact, order not), and it
+translated "wiring" as "तारावली" — which is why the output says machine translation on its face.
+**Still open:** no screen and no toolbox tile (new item 41), and the ₹49 row against a route
+that serves it free is the parking-lot price question (same shape as `resume-checker`).
 
 ### 16. Price our products from real cost, not guesses
 Once one hosted model runs, measure actual cost per job from `product_jobs` duration and
@@ -619,6 +670,16 @@ carrying every tool route (`tools/bg-remove`, `tools/collage`, `tools/exif-strip
   (Indore directory / SarkarHealth / SarkarCars) re-check that decision with him.
 - Native builds: `eas build` needs his Expo/Apple login.
 - Expo Go tunnel from this VM fails (anonymous ngrok timeout) — see the skill.
+- **`translate-doc` pricing (from item 15):** the catalogue row says "Document Translation",
+  ₹49 `one_time`, but the route serves the job **free** (`free: true`) and the response says so.
+  It is free for two reasons, both measured: the paywall cannot take money yet (Razorpay keys,
+  item 6), and a *paid* text product has no preview path at all — the route's watermark step only
+  handles images and PDFs, so a locked markdown job would be a price with nothing to look at.
+  Unlike the three local toolbox products this one **costs real money to run**: ~40-54 neurons per
+  500-character document ≈ **Rs 0.05** at the published $0.011 per 1,000 neurons, inside the
+  10,000 free neurons a day (≈ 200 documents/day). Either the row becomes `price_paise 0` /
+  `plan free` (and the tile says Free like `exif-strip`), or the product needs a paid tier with
+  the real cost behind it. His call; nothing was changed.
 - **`resume-checker` pricing (from item 11):** the catalogue row says ₹99/month and
   `plan: monthly`, but the route serves the job free because it costs ₹0 to run. Either
   the row becomes `price_paise 0` (free, like `exif-strip` / `photos-to-pdf` / `collage`)
@@ -1359,6 +1420,25 @@ changed shape. `npm run typecheck -w @hermes/web` exit 0, then the gated
 :8099, pid 7200 == pm2 pid) because no engine file changed.
 Still open, now unblocked: **item 37's second half** — `metaFor(record)` is only produced once the
 router serves a product (item 36), so no row carries `ai_provider`/`ai_cost` yet; and the `/log`
-page's per-job line can now actually read a provider out of the row.
+page's per-job line can now actually read a provider out of the row — item 15's translation jobs
+(141-143) are the first rows that carry a provider and a cost in `meta` (`engines`, `neurons`),
+because the engine records them itself.
+
+### 41. Document Translation: give the live product a screen and a tile (new, 2026-09-17, from item 15)
+The engine and the route serve it (jobs 141/142/143, 200) but nothing in the app can reach
+it: `READY_TOOLS` in `apps/mobile/app/tools/index.tsx` has eight tiles and none is
+`translate-doc`, and `/tools/<slug>` has no screen. The screen is small and needs no new
+plumbing — `lib/tools.ts` already has `pickFiles("doc")` (item 24) and `DOC_ACCEPTS` matches
+the route: a document card, two language pickers fed from the **route's own list** (en, hi,
+bn, mr, ta, ml, kn, pa, or, as, ur — never a free-text code, or the user types `gu` and gets
+a 400 the screen could have prevented), and a result card showing the translated text plus
+what the engine measured (`meta.engines`, `meta.seconds`, `meta.neurons`). Two honesty rules
+from the measurements: say **"machine translation — read it before you send it"** on the
+card, not in small print (Gujarati is not even offered because the figures came back wrong,
+and "wiring" came back as "तारावली"), and do not price the job on the screen — after a run it
+should print what the server answered, exactly as `resume-checker`'s screen does. The tile is
+the same price decision as item 24's (parking lot), so the screen can land first and the tile
+waits for his call.
+
 
 
