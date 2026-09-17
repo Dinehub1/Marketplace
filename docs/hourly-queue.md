@@ -516,10 +516,48 @@ translated "wiring" as "तारावली" — which is why the output says 
 **Still open:** no screen and no toolbox tile (new item 41), and the ₹49 row against a route
 that serves it free is the parking-lot price question (same shape as `resume-checker`).
 
-### 16. Price our products from real cost, not guesses
+### 16. Price our products from real cost, not guesses — DONE 2026-09-17
 Once one hosted model runs, measure actual cost per job from `product_jobs` duration and
 the model's neuron rate, and put the number next to each price in `docs/product-plan.md`.
 The point: "₹99 voice-over" should be backed by a measured rupee cost, not an estimate.
+
+**Result (2026-09-17): the cost column exists and every figure in it comes from a row.**
+`scripts/cost-report.mjs` (`npm run cost:report`) reads the live `product_jobs` + `products`
+tables and prints price beside measured cost per product, with the basis for each number:
+- **billed** — the provider's own usage figure. `translate-doc` carries `meta.neurons`
+  (54 / 47 / 35 on jobs 141-143, straight from the Workers AI response) →
+  **47 neurons ≈ Rs 0.05** a document. The script also recomputes those neurons from the
+  published token rates (qwen3-30b-a3b-fp8 4625/M in, 30475/M out) and prints the two side by
+  side: 54.5 vs 54, 47.9 vs 47, 35.1 vs 35 — **+0.9 % / +1.9 % / +0.3 %**, so the rate table and
+  the bill describe the same job.
+- **table** — `ai-image` gets no usage back (the response *is* the JPEG), so its cost had to be
+  made readable off the row. `ai_image` in `services/tools/worker.py` now records the request
+  shape with the picture (`width`, `height`, `steps`, and `shape` saying whether the size was
+  sent or is the model's own default — flux-1-schnell rejects extra properties, so a job that
+  sends none really runs 1024×1024 at 4 steps and the row now says so). Job **148** = HTTP 200
+  through `https://expo.dropby.co.in/api/job`, 356,551 B, meta `{width 1024, height 1024,
+  steps 4, shape "model default (flux-1-schnell: 1024x1024, 4 steps)"}`, the R2 file
+  re-downloaded and measured 1024×1024 JPEG; the row carries the same meta (item 40's column).
+  That is 4 tiles × 4.8 + 16 tile-steps × 9.6 = **172.8 neurons ≈ Rs 0.18** an image, measured
+  from the request shape rather than recalled from a comment.
+- **Rs 0** — the other 11 products that have run (passport-photo 26 runs / 5.7 s, pdf-tools 53 /
+  0.9 s, invoice-maker 11 / 1.0 s, bg-remove 8 / 7.7 s, resume-checker 6 / 2.7 s, …). No meter
+  exists to read, so the evidence is the run count and the recorded speed, not a zero.
+The report's one hard rule: it **exits 1** if a product outside `{ai-image, translate-doc}` ever
+shows a billed figure — a "free" product that quietly started calling a hosted model. That gate
+was **shown to fail**, not just written: `COST_REPORT_HOSTED=none node scripts/cost-report.mjs`
+empties the hosted set (the same test-switch shape as `PROBE_SABOTAGE`) and the run fails with
+`translate-doc: billed neurons but not a hosted product`, exit 1, while the normal run exits 0.
+Also settled by the measurement: the 10,000 free neurons a day are **57 images** or **~212
+documents** at these per-run figures, and the report prints both.
+`docs/product-plan.md`'s old three-line Cost table (which called translation Rs 0) is replaced by
+the measured table, with the rates it was converted at: $0.011 per 1,000 neurons
+(`developers.cloudflare.com/workers-ai/platform/pricing`, read 2026-09-17) at USD 1 = INR 96.02
+fetched live by the script on 2026-09-17. **The price question itself is untouched** — `ai-image`,
+`translate-doc` and `resume-checker` are still free to the customer because the paywall has no
+gateway; what changed is that the cost behind each free run is now a number.
+Worker restarted as stop → port free → start (one listener on :8099, `health.pid 8168 == pm2
+pid`, 12 products); no web rebuild, so the live site was never restarted.
 
 ### 17. Build the provider router with the fallback chains (no keys needed) — DONE 2026-09-17
 `docs/resources-and-apis.md` defines the chains. Implement `apps/web/lib/ai.ts`: one
@@ -1442,3 +1480,15 @@ waits for his call.
 
 
 
+
+### 42. The cost table is a CLI script; the page he opens is /log (new, 2026-09-17, from item 16)
+`npm run cost:report` now prints price-beside-measured-cost per product, and the only place a
+person sees it is a terminal on this VM. The page he actually opens on his phone is
+`https://shots.dropby.co.in/log` (and `/perf` for trading), so the same numbers should be a panel
+there: one row per product, price, runs, median seconds, cost per run, and the basis
+(`billed` / `table` / `Rs 0`). The honest constraint is the same rule the script enforces — a
+hosted product must never render as `Rs 0` on the page, and a product with no measured run must
+read "no measured run", not a zero. Cheapest shape: have `scripts/build-log.py` (or the shots
+server, which already re-reads its folder per request) shell out to the same script and cache the
+result for a minute, rather than recomputing Supabase on every page view — this box serves the
+live site too.

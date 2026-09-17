@@ -90,13 +90,48 @@ app_users           phone -> profile (name, email, city), created_at, last_seen
 `product_jobs` is the heart of it: every upload → output is one auditable row, so cost,
 speed and failure are measurable per product from day one instead of guessed.
 
-## Cost
+## Cost — measured per run, not estimated (2026-09-17)
 
-| Path | Cost |
-|---|---|
-| PDF, subtitles, voice-over, translation, image cleanup | ₹0 — runs on the VM (pdfcpu, whisper, Piper, rembg) |
-| Image generation | Free daily allowance now; Cloudflare Workers Paid (~$5/mo) when volume demands |
-| Text | Free tier now, pay only when a product proves demand |
+Every price below is the `products` catalogue row; every cost is read out of `product_jobs` by
+`npm run cost:report` (`scripts/cost-report.mjs`). The two belong side by side, because the
+first version of this table priced 28 products before one of them had run and called
+translation ₹0 when it is a hosted model call that bills per token.
+
+The rates the report prints with every run of it: Cloudflare Workers AI at **$0.011 per 1,000
+neurons**, with **10,000 neurons free per day** (`developers.cloudflare.com/workers-ai/platform/pricing`,
+read 2026-09-17), converted at a rate the report fetches live — USD 1 = **INR 96.02** on
+2026-09-17 (`open.er-api.com`). A rupee figure without its exchange rate is not a measurement.
+
+| Product | Price (catalogue) | Runs | Median run | Cost per run | Where the number comes from |
+|---|---|---|---|---|---|
+| `passport-photo` | ₹49 one-time | 26 done | 5.7 s | **₹0** | Pillow + pdfcpu on this VM; no meter to read |
+| `bg-remove` | ₹99 pack | 8 done | 7.7 s | **₹0** | rembg/u2net, local model, no cloud call |
+| `invoice-maker` | ₹299/mo | 11 done | 1.0 s | **₹0** | pdfcpu + qrcode, local |
+| `pdf-tools` | ₹299/mo | 53 done | 0.9 s | **₹0** | pdfcpu, local |
+| `resume-checker` | ₹99/mo (served free) | 6 done | 2.7 s | **₹0** | markitdown + regexes, local |
+| `exif-strip` · `photos-to-pdf` · `collage` | free | 5 / 2 / 3 done | 0.2 / 0.9 / 0.3 s | **₹0** | Pillow + pdfcpu, local |
+| `photo-repair` · `product-photo` | ₹99 each | 1 / 2 done | 0.4 / 9.3 s | **₹0** | Pillow, local |
+| `ai-image` | free (route serves it free) | 2 done | 2.9 s | **₹0.18** | billed per 512×512 tile and per step; 172.8 neurons for 1024×1024 at 4 steps, read from job 148's own `meta` (`width`/`height`/`steps`) |
+| `translate-doc` | ₹49 one-time (route serves it free) | 3 done | 10.9 s | **₹0.05** | the provider's own usage figure: `meta.neurons` 54 / 47 / 35 on jobs 141-143 |
+
+Two things the numbers settle:
+
+- **The free daily allowance is a real ceiling, and it is small.** 10,000 neurons/day is
+  **57 images** or **~212 translated documents** at the measured per-run figures. Past that,
+  Workers Paid bills the same $0.011 per 1,000 neurons.
+- **Only two products spend money at all** (`ai-image`, `translate-doc`), and the report fails
+  if a product outside those two ever shows a billed figure — a "free" product that quietly
+  started calling a hosted model is the failure this checks for.
+
+What is *not* in the table: the 19 enabled catalogue rows with no measured run (`room-redesign`,
+`voiceover`, `subtitles`, the six small-business rows…). No cost is claimed for a product that
+has never run, and no engine is allowed to be built against an unmeasured price.
+
+**The price question is still his** and is recorded in `docs/hourly-queue.md`'s parking lot:
+`ai-image`, `translate-doc` and `resume-checker` are served free today because the paywall has no
+working gateway (Razorpay keys, queue item 6), and a paid text job has no preview path. What
+changed here is that the cost behind each free run is now a measured number (₹0.18, ₹0.05, ₹0)
+rather than a guess, so the decision can be made with it.
 
 ## Phases
 
