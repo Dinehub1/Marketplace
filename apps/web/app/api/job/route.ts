@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { isPageRange, PDF_PAGES_HELP } from "@hermes/core";
+import { metaFor, runChain, type Capability } from "@/lib/ai";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { ALLOWED_IMAGE_TYPES, R2_PREFIX, deleteObject, productPreviewKey, publicUrlFor, putObject, r2Configured } from "@/lib/r2";
@@ -59,6 +60,8 @@ const ENGINE: Record<string, {
   multi?: boolean;
   free?: boolean;
   dataOnly?: boolean;
+  /** Served by the router in lib/ai.ts instead of by the Python engine. */
+  router?: Capability;
 }> = {
   "passport-photo": { engine: "passport-photo", fields: ["size"] },
   "bg-remove": { engine: "bg-remove" },
@@ -127,6 +130,25 @@ const ENGINE: Record<string, {
     free: true,
     fields: ["source", "target"],
     accepts: DOC_ACCEPTS,
+  },
+
+  // The first product the router in lib/ai.ts serves itself — there is no Python
+  // engine behind it. `business_id` is the whole input: the route loads that row from
+  // our own directory and hands its fields to `runChain("text", …)` as *facts*, and
+  // the ₹0 `rules` path writes one paragraph out of them (no model, no key, which is
+  // why it runs under pm2 where `apps/web/.env` has no AI token). The text is stored
+  // on `businesses.description` — the column exists and every one of the ~24k rows
+  // is NULL — so the service page can render it, and the job's meta says which
+  // provider answered (`metaFor`), which is the half item 37 could not do before.
+  //
+  // `free: true`: the rules path costs ₹0 and there is nothing to watermark (a
+  // locked markdown job would be a price with no preview, item 15's lesson).
+  "listing-description": {
+    engine: "listing-description",
+    free: true,
+    dataOnly: true,
+    fields: ["business_id"],
+    router: "text",
   },
 };
 
@@ -293,6 +315,68 @@ async function callWorker(product: string, blobs: { bytes: Buffer; type: string 
   });
 }
 
+/**
+ * A mistake the *caller* made in a router-served job (an id that is not a business).
+ * It answers 400 with its own sentence, exactly like the engine's `UserError`: a
+ * request we cannot honour must not read as "the server broke" (item 19's lesson).
+ */
+class CallerError extends Error {}
+
+/**
+ * Write one paragraph about a directory listing, from the listing's own row.
+ *
+ * The input is a `businesses` row we already hold and the writer is the router's ₹0
+ * `rules` path, so this job has no engine, no upload and no key — the whole thing runs
+ * inside the Next process. The facts handed to the template are the *only* things it
+ * may say: `name` (required), `category`, `area`, `phone` and `rating`, nothing else,
+ * so a listing cannot acquire a claim its row does not contain.
+ *
+ * The text is saved to `businesses.description` because that is where the service page
+ * can read it (one column, additive — no row is deleted, no other column is touched).
+ * The job's output is the same text as a `.md` object in R2, like every other product.
+ */
+async function describeListing(id: number) {
+  const res = await db(`businesses?id=eq.${id}&select=id,name,category,area,phone,rating&limit=1`);
+  if (!res.ok) throw new Error(`PostgREST answered ${res.status} reading businesses`);
+  const rows = (await res.json()) as Array<Record<string, unknown>>;
+  const biz = rows[0];
+  if (!biz) throw new CallerError(`there is no business with id ${id} in the directory`);
+
+  const facts: Record<string, string | number | null> = {
+    name: typeof biz.name === "string" ? biz.name : "",
+    category: typeof biz.category === "string" ? biz.category : null,
+    area: typeof biz.area === "string" ? biz.area : null,
+    phone: typeof biz.phone === "string" ? biz.phone : null,
+    rating: typeof biz.rating === "number" ? biz.rating : null,
+  };
+
+  const outcome = await runChain("text", { kind: "listing-description", facts });
+  const text = (outcome.answer?.text ?? "").trim();
+  if (!text) {
+    throw new Error(outcome.record.detail ?? "no provider in the text chain could write a description");
+  }
+
+  const written = await db(`businesses?id=eq.${id}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify({ description: text }),
+  });
+  if (!written.ok) throw new Error(`PostgREST answered ${written.status} storing the description`);
+
+  return {
+    text,
+    meta: {
+      business_id: id,
+      chars: text.length,
+      facts_used: Object.entries(facts)
+        .filter(([, v]) => v !== null && v !== "")
+        .map(([k]) => k),
+      ...(outcome.answer?.meta ?? {}),
+      ...metaFor(outcome.record),
+    },
+  };
+}
+
 export async function POST(req: NextRequest) {
   if (!r2Configured) {
     return NextResponse.json({ error: "Storage is not configured yet" }, { status: 503, headers: noStore });
@@ -402,6 +486,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // The listing writer's one parameter: an id in our own directory. Checked before the
+  // job row is created so a typo is a 400 naming the field, not a 500 from the loader.
+  if (product === "listing-description" && !/^\d{1,12}$/.test(params.business_id ?? "")) {
+    return NextResponse.json(
+      { error: "business_id is required — the id of a business in this directory, e.g. 119465" },
+      { status: 400, headers: noStore },
+    );
+  }
+
   // One file for most products, several for the ones that combine documents. A
   // data-only product (the invoice maker) has no file at all: its parameters are
   // the input.
@@ -499,37 +592,52 @@ export async function POST(req: NextRequest) {
   let meta: Record<string, unknown> = {};
   let contentType = "image/jpeg";
   try {
-    const res = await callWorker(spec.engine, blobs, params);
-    if (!res.ok) {
-      const text = (await res.text().catch(() => "")).slice(0, 300);
-      // The engine answers 400 for a request it cannot honour (a page range, a
-      // count, a shape) with a message written for the caller. Passing that status
-      // and text through is the difference between "a 2x1 sheet holds only 2
-      // photos" and a 502 "Could not finish the job. Please try again.", which
-      // blames the server for the caller's own input. Anything 5xx stays a 502:
-      // that one really is ours.
-      if (res.status >= 400 && res.status < 500) {
-        let reason = "";
-        try {
-          reason = String(JSON.parse(text)?.error ?? "").slice(0, 300);
-        } catch {
-          reason = text;
+    // Two ways to serve a job: the Python engine on loopback, or — for the one product
+    // whose whole input is a row we already hold — the router in this process. The
+    // branch is here, and not in the engine, because the router is TypeScript and the
+    // ₹0 path must work under pm2 where apps/web/.env holds no AI token.
+    if (spec.router) {
+      const served = await describeListing(Number(params.business_id));
+      out = Buffer.from(served.text, "utf8");
+      meta = served.meta;
+      contentType = "text/markdown";
+    } else {
+      const res = await callWorker(spec.engine, blobs, params);
+      if (!res.ok) {
+        const text = (await res.text().catch(() => "")).slice(0, 300);
+        // The engine answers 400 for a request it cannot honour (a page range, a
+        // count, a shape) with a message written for the caller. Passing that status
+        // and text through is the difference between "a 2x1 sheet holds only 2
+        // photos" and a 502 "Could not finish the job. Please try again.", which
+        // blames the server for the caller's own input. Anything 5xx stays a 502:
+        // that one really is ours.
+        if (res.status >= 400 && res.status < 500) {
+          let reason = "";
+          try {
+            reason = String(JSON.parse(text)?.error ?? "").slice(0, 300);
+          } catch {
+            reason = text;
+          }
+          await recordFailure(product, phone, inputKey, `bad request: ${reason || res.status}`, Date.now() - started);
+          return NextResponse.json(
+            { error: reason || "That request cannot be made" },
+            { status: 400, headers: noStore },
+          );
         }
-        await recordFailure(product, phone, inputKey, `bad request: ${reason || res.status}`, Date.now() - started);
-        return NextResponse.json(
-          { error: reason || "That request cannot be made" },
-          { status: 400, headers: noStore },
-        );
+        throw new Error(`worker ${res.status}: ${text}`);
       }
-      throw new Error(`worker ${res.status}: ${text}`);
+      contentType = (res.headers.get("content-type") ?? "image/jpeg").split(";")[0].trim();
+      const rawMeta = res.headers.get("x-job-meta");
+      if (rawMeta) { try { meta = JSON.parse(rawMeta); } catch { meta = {}; } }
+      out = Buffer.from(await res.arrayBuffer());
+      if (out.length === 0) throw new Error("worker returned an empty file");
     }
-    contentType = (res.headers.get("content-type") ?? "image/jpeg").split(";")[0].trim();
-    const rawMeta = res.headers.get("x-job-meta");
-    if (rawMeta) { try { meta = JSON.parse(rawMeta); } catch { meta = {}; } }
-    out = Buffer.from(await res.arrayBuffer());
-    if (out.length === 0) throw new Error("worker returned an empty file");
   } catch (e: any) {
     const durationMs = Date.now() - started;
+    if (e instanceof CallerError) {
+      await recordFailure(product, phone, inputKey, `bad request: ${e.message}`, durationMs);
+      return NextResponse.json({ error: e.message }, { status: 400, headers: noStore });
+    }
     await recordFailure(product, phone, inputKey, e?.message ?? "worker unreachable", durationMs);
     return NextResponse.json({ error: "Could not finish the job. Please try again." }, { status: 502, headers: noStore });
   }
