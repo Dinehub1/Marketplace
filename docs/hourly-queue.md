@@ -1687,7 +1687,7 @@ page does not. `/shots`, `/` and `/perf` are all still **200**. No app change, n
 no engine restart: one Python file plus `pm2 restart shots-gallery` (one listener on :8092, pid
 2092 == `pm2 pid`); the test instance on :8095 was killed and the port is free again.
 
-### 38. The theme audit, in one pass over every screen (new, 2026-09-17, from item 19)
+### 38. The theme audit, in one pass over every screen — DONE 2026-09-17
 Item 19 was written as "invoice, pdf, signature" because those three were the ones with
 identical light/dark captures — the audit found them one at a time. The honest version is the
 measurement applied to the whole app at once, because the next off-palette screen will arrive
@@ -1702,6 +1702,73 @@ Also worth pinning: a screen whose style body is built at module scope cannot se
 the review rule is "`StyleSheet.create` inside a `makeStyles(ui)`", and `%TEMP%\theme-check.mjs`
 (which measures the ground, a label and any paper surface, rather than trusting the PNG hash)
 is the tool to re-run.
+
+**Result (2026-09-17): the rule is a script now (`npm run theme:audit`), and the app is clean —
+with the six screens nobody had ever photographed included.**
+`scripts/theme-audit.mjs` derives its route list from the filesystem (every
+`apps/mobile/app/**/*.tsx` that is not a `_layout`), so a new screen is audited the hour it lands
+instead of when someone remembers it. Per route, in both `colorScheme`s at 390×844: navigate,
+wait for the screen to paint its own text, screenshot (the item-19 md5 pair), then measure the
+page's **own** colours — the ground, the ink of the first text element, and every text and fill
+colour on the page. The verdict is deliberately not the hash (an animation or a live list differs
+for reasons that are not the theme) and not the ground (the shell sets that, so it moves even for
+a module-scope `StyleSheet.create`): it is that **the screen's own colours move**.
+Whole app: **30/30 screens move between schemes, exit 0, 0 page errors** — ground
+`rgb(251,251,253)` → `rgb(10,10,13)` on every route, e.g. `/tools/pdf`'s ink
+`rgb(180,35,24)` → `rgb(248,113,113)` and `/browse`'s `rgba(11,11,15,0.42)` →
+`rgba(245,245,247,0.58)`. **Nothing needed fixing:** every colour literal in `app/**` and
+`components/**` is either `#fff` on a filled accent button (the one hex item 19 kept on purpose)
+or an `ACCENT = {light, dark}` pair — the three screens the item named as suspects
+(`tap-sprint`, `word-duel`, `block-clear` carry module-scope sheets) and `saved.tsx` (no theme
+hook at all) are layout-only and move, measured rather than assumed.
+What held is printed, because it is the residue a hash cannot show: the brand fill
+`rgb(34,84,61)` on the directory's call buttons (a target colour, constant by design), the tab
+bar's own labels `rgb(139,139,139)` / `rgb(56,161,105)` — **the `unstable-native-tabs` web build
+keeps one grey in both schemes while the bar's own container follows the theme** (candidate 52) —
+and the bill/signature paper surfaces (item 19's deliberate exception).
+The gate was **shown to fail**, because a gate nobody has watched fail proves nothing:
+`THEME_AUDIT_SABOTAGE=1` (a browser-side stylesheet pinning every colour, no app change — the same
+shape as `interactions.mjs`'s `PROBE_SABOTAGE`) gives `/tools/pdf` `SAME` hashes, `0 moved`,
+`! FAILED — the ground did not move`, **exit 1**, and the same route without the switch is
+`ok — 1/1`.
+And the gap the item was really about: the gallery had **no** light/dark pair for `browse`,
+`search`, `saved`, `account`, `business`, `owner-sign-in` — six of the app's own screens, so most
+of the directory app could not be checked for dark mode at all. All six are in the capture
+manifest now, captured through the marker gate (`12/12` ok) with pairs that differ: `browse`
+`fe742bfd` vs `f3e065c0`, `search` `e4d44624` vs `cd8c8493`, `saved` `bd274928` vs `52f0ca15`,
+`account` `2af04668` vs `6d4bb326`, `business` `30ae7b14` vs `a878acde`, `owner-sign-in`
+`4034e534` vs `cb7d5a63`; claimed in `app-map.mjs` (35 screens captured, the three directory apps
+now list 6 each, shop-toolkit claims `owner-sign-in`) and described in `SCREEN_INFO`
+(`GET https://shots.dropby.co.in/shots` → **200**, 106,706 B carrying all six titles). One
+finding from the same measurement: `/owner` and `/owner/sign-in` render **the same** screen while
+signed out (identical hashes), so the dashboard's own picture waits for a signed-in capture — the
+route claims are honest about it in `SCREEN_INFO`.
+Also found on the way, and fixed: `SCREEN_INFO` already had a `business` key, so the entry written
+first was dead code behind Python's last-key-wins; the pre-existing entry now carries the capture's
+own detail (`business 119465`, the row job 154 wrote a description for) and an AST check on both
+dicts reports no duplicates. Process: one `pm2 restart shots-gallery` (one listener on :8092, pid
+`5196` == `pm2 pid`); **no app change, no `expo export`, no engine restart, no `npm run build`** —
+the live site and the product worker were never touched.
+
+### 51. The directory feed has no probe, and its marker is header copy (new, 2026-09-17, from item 38)
+Item 43 counted six interaction probes and none of them runs a job; item 38 added six screens to
+the capture manifest and none of *them* has a probe either. The one that matters is `/browse`: its
+marker is the header line ("N verified businesses you can call straight away"), which renders
+whether or not a single listing arrived — the same reason `home` carries `expect: []`. A probe is
+cheap and needs no job: from `/browse`, press one listing card and require the route to change to
+`/business/<id>`, then require the listing page's own marker to appear. A feed that renders its
+header over an empty list, or a card whose press does nothing (item 21's fault class), would pass
+every marker check in the gallery today.
+
+### 52. The tab bar's labels do not follow the theme on the web build (new, 2026-09-17, from item 38)
+Measured while auditing every screen: the web build of `expo-router/unstable-native-tabs` keeps
+its label colours fixed in both schemes — inactive `rgb(139,139,139)`, the active label the
+target's brand colour — while the bar's container does follow the theme (`rgb(39,39,39)` in dark).
+So on the web preview a dark-mode tab bar wears a light-mode grey. Nothing was changed: the
+component is the library's, and whether this is real on iOS/Android (where UITabBarController and
+Material tint the bar themselves) cannot be answered from this box — there is no native build
+(parking lot). Worth one look on the first dev build; if it is the library's CSS, the honest fix
+is an upstream issue or a local override, not a change to any screen.
 
 ### 39. The "phone found" check is India-only, and the label now says so (new, 2026-09-17, from item 24)
 Measured while building the document check: the engine's pattern is
