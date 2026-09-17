@@ -282,7 +282,7 @@ export const FIRST_ROUTE = {
   toolbox: "/tools",
   "room-redesign": null, // screen not built
   "subtitles-voice": null, // screen not built
-  "resume-builder": null, // screen not built
+  "resume-builder": "/tools/resume-builder",
   "shop-toolkit": null, // dashboard not built
 
   // Directory apps share the listing feed; the brand row scopes what it lists.

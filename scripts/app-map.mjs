@@ -38,6 +38,7 @@ const SCREEN_FOR_PRODUCT = {
 const SCREEN_FOR_FIRST = {
   grid: 'tools-hub',
   wellness: 'habits',
+  form: 'resume-builder', // the CV form is the Résumé Builder's first screen
   dashboard: null, // the shop dashboard is not built yet
   directory: 'home',
   camera: null, // the camera capture screen is the product screen itself

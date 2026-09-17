@@ -98,6 +98,28 @@ const ENGINE: Record<string, {
     accepts: DOC_ACCEPTS,
   },
 
+  // The résumé builder: a JSON payload in, a vector A4 PDF out — the one new engine
+  // product that needs no model, no token and no network. pdfcpu draws it from
+  // `services/tools/resume_layout.py`, so the cost per job is ₹0 and every page rule
+  // (wrapping, where the breaks fall, no heading stranded at the foot) is asserted on a
+  // machine with no PDF library at all by `scripts/check-resume.py`.
+  //
+  // `dataOnly` because the résumé *is* the input — there is no file to upload, the same
+  // shape as the invoice maker. The output is vector text on purpose: a résumé is read by
+  // screening software before it is read by a person, and an image-only PDF is one an ATS
+  // cannot parse.
+  //
+  // Free for the same reason the other new products are: the paywall has no working
+  // gateway (Razorpay keys are missing), so a paid résumé would be a price nobody could
+  // pay. The catalogue row is the product plan's ₹499; what it should cost is a business
+  // decision, not a route one.
+  "resume-builder": {
+    engine: "resume-builder",
+    dataOnly: true,
+    fields: ["payload"],
+    free: true,
+  },
+
   // Text to image: the one product whose picture is drawn by a hosted model
   // (@cf/black-forest-labs/flux-1-schnell on Workers AI, with the token already on
   // this box). The engine has run it for hours; with no entry here the app answered

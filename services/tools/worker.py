@@ -29,6 +29,12 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from PIL import Image, ImageOps
 
+# The résumé's page rules live in their own module with no renderer in it, so
+# `scripts/check-resume.py` can assert wrapping, page breaks and orphaned headings on a
+# machine that has no PDF library at all. This import resolves because Python puts this
+# file's directory on `sys.path` when it runs the script.
+import resume_layout
+
 
 class UserError(RuntimeError):
     """A job that cannot be done because the *request* is wrong, not the server.
@@ -1973,9 +1979,66 @@ def translate_doc(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     }
 
 
+def resume_builder(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
+    """A résumé, rendered locally: one JSON payload in, a vector A4 PDF out.
+
+    This function is deliberately the *only* half that touches pdfcpu. What fits on a page
+    — wrapping, where the breaks fall, never leaving a heading stranded at the foot — is
+    `resume_layout.layout()`, which imports nothing and is asserted by
+    `scripts/check-resume.py` with plain python3. So a page-rule regression is catchable on
+    any machine, and the renderer cannot quietly disagree with the check about what a page
+    holds.
+
+    The output is vector text on purpose: a résumé is read by software before it is read by
+    a person, and an image-only PDF is one an applicant tracking system cannot parse. That
+    is also why the screen offers no "make it pretty" option — a designed template is a
+    later product, and a half-designed one is worse than none.
+    """
+    t0 = time.time()
+    try:
+        payload = json.loads(params.get("payload") or "{}")
+    except ValueError as exc:
+        raise UserError(f"payload is not valid JSON: {exc}")
+
+    try:
+        result = resume_layout.layout(payload)
+    except resume_layout.LayoutError as exc:
+        # The caller's own text was wrong, not the server's: UserError so the route answers
+        # 400 with this sentence, which the screen can show as-is.
+        raise UserError(str(exc))
+
+    spec = resume_layout.to_pdfcpu(result)
+    with tempfile.TemporaryDirectory() as td:
+        spec_path = os.path.join(td, "resume.json")
+        out_path = os.path.join(td, "resume.pdf")
+        with open(spec_path, "w", encoding="utf-8") as fh:
+            json.dump(spec, fh)
+        _pdfcpu(["create", spec_path, out_path])
+        with open(out_path, "rb") as fh:
+            out = fh.read()
+        pages = pdf_page_count(out_path)
+
+    meta = result["meta"]
+    return out, {
+        "doc": "resume",
+        "render": "vector",
+        "pages": pages,
+        "blocks": meta["blocks"],
+        "experience": meta["experience"],
+        "education": meta["education"],
+        "has_summary": meta["has_summary"],
+        "has_skills": meta["has_skills"],
+        # The layout's own warnings, passed through rather than re-derived: a screen that
+        # guesses why a CV is weak is a screen that eventually guesses wrong.
+        "warnings": result["warnings"],
+        "ms": int((time.time() - t0) * 1000),
+        "content_type": "application/pdf",
+    }
+
+
 PRODUCTS = ["passport-photo", "bg-remove", "watermark", "pdf-tools", "image-toolkit",
             "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage",
-            "resume-checker", "translate-doc"]
+            "resume-checker", "resume-builder", "translate-doc"]
 
 
 def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dict]:

@@ -38,6 +38,8 @@
     "check:games": "npm run check:game && npm run check:merge",
     "_comment_check_timer": "The wellness timer engine's arithmetic, asserted without a screen. Pause/resume banking, background catch-up, exactly-once completion, phase boundaries, and the Stretch routine's 300-second total are all claims about numbers, and a screenshot cannot check a number.",
     "check:timer": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-timer.mjs",
+    "_comment_check_resume": "The résumé builder's page rules — wrapping, where the breaks fall, never stranding a heading at the foot of a page — live in services/tools/resume_layout.py, because that is the renderer's language and the module imports nothing at all. scripts/check-resume.py asserts them with plain python3 and no PDF library; the .mjs wrapper is how the Node gate runner reaches it on a Mac (python3) and on the Windows VM (python / PYTHON311).",
+    "check:resume": "node scripts/check-resume.mjs",
     "icons": "node scripts/make-app-icons.mjs",
     "_comment_sounds": "Merge's four sounds are synthesized here rather than downloaded, so they are ours outright and the recipe is readable. It refuses to write a file that is silent, which is the bug the first version of this script shipped.",
     "sounds": "node scripts/make-game-sounds.mjs",

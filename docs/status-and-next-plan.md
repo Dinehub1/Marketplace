@@ -15,10 +15,10 @@ node scripts/check-targets.mjs                 # Apple 4.3 / Play spam gate
 | family | listings | ready | owed a first screen |
 |---|---|---|---|
 | Wellness | 1 | 1 | — |
-| Product apps | 7 | 3 | room-redesign, subtitles-voice, resume-builder, shop-toolkit |
+| Product apps | 7 | 4 | room-redesign, subtitles-voice, shop-toolkit |
 | Directory | 3 | 3 | — |
 | Games | 4 | 4 | — |
-| **Total** | **15** | **11** | **4** |
+| **Total** | **15** | **12** | **3** |
 
 ### The wellness regroup (2026-09-18)
 
@@ -39,12 +39,13 @@ screen and dropping the shared hub, and add a target back to `targets.mjs`.
 ### Gates green on the last measured run
 
 - `check-fleet.mjs` — 15 targets resolve: unique name, slug and bundle id; art on disk;
-  every declared route exists. 11/15 publishable, 4 owed (listed above).
+  every declared route exists. 12/15 publishable, 3 owed (listed above).
 - `check-targets.mjs` — 15 targets, 105 pairs compared, 0 too similar.
 - `check:games` — Block Clear and Merge rules hold (21 Merge rules).
+- `check:resume` — 37 résumé layout rules hold, with no PDF library installed.
 - `typecheck` — clean across all workspaces.
 
-Catalogue: **9 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
+Catalogue: **11 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
 
 Web is separate and already live: **27 brand sites** on one multi-tenant Next.js router,
 plus the three data brands (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
@@ -59,13 +60,19 @@ repo's own rules forbid. So the four divide by what the engine can actually do:
 
 | app | what it needs | engine today | verdict |
 |---|---|---|---|
-| Resume Builder | `resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker` | `resume-checker` exists (screen + engine); the other two do not | **Local work, no AI.** Buildable now. |
-| Shop Toolkit | dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker | `invoice-maker` exists; the rest are data-only forms and tables | **Local work.** Buildable, largest of the four. |
+| ~~Resume Builder~~ | ~~`resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker`~~ | **DONE 2026-09-18** — `resume-builder` + `resume-checker` live (2/3); `application-writer` still `route: null` and shows honestly as coming soon | shipped |
+| Shop Toolkit | dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker | `invoice-maker` exists; the rest are data-only forms and tables | **Local work.** Buildable, largest of the three left. |
 | Subtitles & Voice-over | `subtitles` (STT), `voiceover` (TTS) | neither exists — `whisper.cpp` and `Piper` are named in the worker's docstring but **not implemented** | Needs hosted Workers AI STT/TTS. Real engine work. |
 | Room Redesign | image-to-image restyle of a photo | no img2img; the worker only has text-to-image (`flux-1-schnell`) | Needs an img2img model that has not been measured. |
 
-Order: **Resume Builder → Shop Toolkit → Subtitles & Voice-over → Room Redesign**, so the
-two that need no hosted AI are finished and shipped first.
+Order: **Shop Toolkit → Subtitles & Voice-over → Room Redesign**, so the work that needs no
+hosted AI is finished and shipped first.
+
+Resume Builder landed as engine work plus a screen, not a screen: the page rules live in
+`services/tools/resume_layout.py` (a module that imports nothing, so `npm run check:resume`
+asserts wrapping, page breaks, atomic bullets and orphaned headings with no PDF library
+installed), and `resume_builder()` in `worker.py` renders that layout through the invoice's own
+pdfcpu path. **Its one unproven half:** the pdfcpu render itself has not run on the VM yet.
 
 **The verification constraint, stated plainly.** The product engine (`services/tools/worker.py`,
 `127.0.0.1:8099`) runs **only on the Windows VM**. This Mac has none of its dependencies —
@@ -74,26 +81,40 @@ a new engine product can be written and typechecked here but its 200 can only be
 the VM. Every engine change therefore lands with that gap named, and the job id that proves
 it is recorded on the VM rather than claimed from here.
 
-5. Then submit the eleven that are ready.
+5. Then submit the twelve that are ready.
 
 ### P1 — advertising is the money path (decided 2026-09-18)
 
+The sourced research is filed under `docs/ad-monetisation/`: the main report, the 2026 eCPM
+benchmarks (every figure labelled independent or vendor), the rejection/ban research, the
+per-network onboarding sheets, the India network list, the consent/privacy declarations, and
+the Indian tax framework for foreign ad revenue. It corrected three things this plan had
+wrong — Meta Audience Network is alive and bidding-only, India is paid by **USD wire, not
+INR**, and app-ads.txt is mandatory for new AdMob apps and cannot be completed pre-launch.
+
 6. **AdMob first, mediated.** AdMob is the only network a brand-new publisher can start
-   with; connect AppLovin / Meta / Unity as demand through mediation (bidding), because
+   with; connect AppLovin / Meta / InMobi as demand through mediation (bidding), because
    eCPM is an auction outcome, not a price list you choose from.
 7. **`ad_events` table + the Networks section** — one table per network to *onboard*
    (formats, integration type, min payout, payout method/currency, requirements, whether it
    needs a live published app) and one measured view (impressions, eCPM, fill, revenue per
-   network / format / country). The apps keep touching only `components/ad-slot.tsx`.
+   network / format / country). The apps keep touching only `components/ad-slot.tsx`. Show
+   first-party measured eCPM as the only "earns most" signal and keep vendor rates in a
+   separate, clearly labelled unverified column.
 8. **Keep the paywall code, unconfigured** — Razorpay stays in the tree, keys stay empty.
-   The rewarded ad is the free credit path that converts to a cash customer.
+   The rewarded ad is the free credit path that converts to a cash customer. One IAP at
+   ~$3 is worth roughly a thousand India-tier rewarded impressions, so the paywall is not
+   the thing to delete.
 9. Prerequisites before real fill: app live in a store, `app-ads.txt` on dropby.co.in, a
    privacy-policy URL, iOS ATT + Google consent SDK, Data Safety form, ad-SDK disclosure,
    and the payment threshold + identity verification.
 
-Honest expectation: with ~zero installs, ads pay ~₹0. At ~$8 rewarded eCPM, 1,000 completed
-views ≈ ₹700, and games need tens of thousands of installs before that matters. Ads-only
-means the near-term job is installs, not revenue.
+Honest expectation: with ~zero installs, ads pay ~₹0, and every network's floor is $100 of
+accumulated earnings before anything is paid out — at India-tier rewarded rates that is on
+the order of 74,000 completed views. Ads-only means the near-term job is installs, not
+revenue. **Also policy-critical:** never put an ad on a dead-end screen (a "done" or
+"exported" page), never float a banner over content, and treat the first app as a low-risk
+pilot — a disabled AdMob account cannot rejoin.
 
 ### P2 — unblock the rest (needs you)
 

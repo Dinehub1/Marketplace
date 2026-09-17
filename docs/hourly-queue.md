@@ -2057,3 +2057,35 @@ rule from item 40, and put a case in `scripts/cost-report.mjs`'s data — a fail
 a billed figure must not be counted as a `Rs 0` run. Evidence to require: a deliberately failing
 hosted job whose row carries `meta.attempts` / `meta.model`, and the panel's line for it showing
 the provider instead of "no meta recorded".
+
+### 55. The Résumé Builder — DONE 2026-09-18 (fleet 11/15 → 12/15)
+Four listings were still owed a first screen (room-redesign, subtitles-voice, resume-builder,
+shop-toolkit). Résumé Builder is now the twelfth publishable listing, and it needed a product the
+engine did not have — so this hour was engine work plus a screen, not a screen.
+
+- `services/tools/resume_layout.py` — the page rules with no renderer in them: wrapping, where the
+  breaks fall, a bullet that never splits across a page, a section heading that is never the last
+  thing on a page, and a hard stop at three pages instead of a silent truncation. It imports
+  **nothing**, which is the point: the machine this was written on has no Pillow, no pdfcpu and no
+  PDF library at all.
+- `scripts/check-resume.py` — 37 rules asserted with plain `python3`, over résumés a person would
+  actually write. `npm run check:resume` reaches it through `scripts/check-resume.mjs`, which finds
+  the interpreter on a Mac (`python3`) and on this VM (`python` / `PYTHON311`).
+- `worker.py` — `resume_builder()` renders the layout with the invoice's own pdfcpu `create` path, so
+  the output is vector text and selectable: a CV is read by screening software before a person.
+- `apps/web/app/api/job/route.ts` — the `resume-builder` spec (`dataOnly`, `payload`, free, with the
+  reason free is the honest price while Razorpay has no keys).
+- `apps/mobile/app/tools/resume-builder.tsx` — the form first screen. `resume-checker`'s screen
+  already existed and is now reachable from the same listing: 2 of that target's 3 products.
+
+Evidence, all from the repo root: `npm run check:resume` → **37 ok, 0 failed**; `npm run typecheck` →
+clean in all three workspaces; `npx expo export --platform web` → exit 0, 2.8 MB, and the emitted
+bundle carries the screen's own copy ("A CV the software", "Make the CV PDF", "One line is one
+bullet"), which is what proves Metro resolved the new route; `node scripts/check-fleet.mjs` →
+`resume-builder co.dropby.resumebuilder /tools/resume-builder 2/3 ok`, **12/15 publishable, 3 owed**.
+
+**The one gap, named rather than papered over:** the pdfcpu render itself is not proven from this
+box. The engine runs only on the VM, a dev checkout has none of its dependencies, and :8099 is
+loopback-only — so the layout and the JSON handoff are verified here and the PDF is not. The call
+shape is the invoice's, which is live, and the first résumé job id on the VM is what closes it. If
+pdfcpu rejects the spec the job answers 502 rather than half-rendering a CV.

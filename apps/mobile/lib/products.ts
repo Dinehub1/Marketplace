@@ -135,7 +135,7 @@ export const PRODUCTS: Record<string, Product> = {
     label: "Resume builder",
     blurb: "A CV laid out for the screening software.",
     price: "₹499",
-    route: null,
+    route: "/tools/resume-builder",
     icon: "account",
   },
   "resume-checker": {
@@ -143,7 +143,7 @@ export const PRODUCTS: Record<string, Product> = {
     label: "ATS check",
     blurb: "What the parser actually sees in your CV.",
     price: "Included in ₹499",
-    route: null,
+    route: "/tools/resume-checker",
     icon: "search",
   },
   "application-writer": {
