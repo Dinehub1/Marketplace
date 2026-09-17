@@ -22,6 +22,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -1576,9 +1577,305 @@ def resume_check(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Documents -> another language (queue item 15)
+#
+# The catalogue row is `translate-doc` ("Document Translation", Rs 49, one_time):
+# it already existed, and the engine was the missing half.
+#
+# Two engines, in a chain, and the order is a measurement rather than a preference.
+#
+# PRIMARY: @cf/qwen/qwen3-30b-a3b-fp8 with a translation prompt. Measured on the
+# Hindi fixture below: faithful (keeps names, dates and figures) where the purpose-
+# built translation models were not. It is a *thinking* model, and that has two
+# consequences worth writing down: `chat_template_kwargs: {"enable_thinking": false}`
+# answers **200 with an empty string** (measured), so thinking has to be budgeted for
+# — max_tokens 2048, and an empty response is retried once at 4096 before the chain
+# moves on. Sentences take 10-20 s and a 500-character document 4-6 s, so the cost is
+# dominated by thinking, not by length.
+#
+# FALLBACK: @cf/meta/m2m100-1.2b, which honours source_lang/target_lang. The router's
+# translate chain names @cf/ai4bharat/indictrans2-en-indic-1B first; measured here
+# 2026-09-17 it IGNORES both language fields — Hindi sent as `source_lang=hin_Deva,
+# target_lang=eng_Latn` came back in *Hindi*, and English with `target_lang=tam_Taml`
+# came back in *Hindi* too — so it is English -> Hindi whatever the caller asks for,
+# and its input is cut at 256 tokens (a 1,080-character Hindi paragraph answered with
+# a repetitive sentence that was not a translation of it). m2m100 is the honest second
+# leg: it answered hi->en and en->hi correctly, but its Hindi output is visibly poorer
+# ("RUB 350", the two parties both called seller) which is why it is not the first leg.
+#
+# A language is offered only when a **round trip** kept the sentence intact — the
+# probe is "Payment is due within thirty days of the invoice date." translated into
+# the language and back to English, and the English has to come back saying thirty
+# days. That test removed two languages that look fine from the outside:
+#   - `gu` (Gujarati): 5 probes, 5 wrong numbers — eighteen days, three months, a
+#     hundred days, sixty days. The figure is what a bill is *about*, so it is not
+#     offered rather than shipped with a caveat.
+#   - `te` (Telugu): the LLM answer was empty and m2m100 refuses the code outright
+#     (400 "Invalid data for input ... target"), so there is no leg to serve it.
+# m2m100 alone had also failed `ml`, `ne` and `or` (the thirty days vanished) — those
+# three are fine on the primary leg, which is where they are served from.
+# Re-run that round-trip probe before adding a code here, on both legs.
+# ---------------------------------------------------------------------------
+TRANSLATE_MODEL = "@cf/qwen/qwen3-30b-a3b-fp8"          # primary leg (an LLM)
+TRANSLATE_FALLBACK_MODEL = "@cf/meta/m2m100-1.2b"       # second leg (a translation model)
+TRANSLATE_LANG_NAMES = {
+    "en": "English", "hi": "Hindi", "bn": "Bengali", "mr": "Marathi", "ta": "Tamil",
+    "ml": "Malayalam", "kn": "Kannada", "pa": "Punjabi", "or": "Odia",
+    "as": "Assamese", "ur": "Urdu",
+}
+TRANSLATE_LANGS = TRANSLATE_LANG_NAMES
+TRANSLATE_LANG_LIST = ", ".join(TRANSLATE_LANGS)
+
+# One request per chunk: it keeps every call inside the model's own input size and
+# keeps a long document from becoming one 180-second call the route would abandon.
+# Measured here: a ~500-character document in 3.8-5.8 s and a single sentence in
+# 10-20 s (thinking dominates), so the ceiling below is roughly 10 chunks — about
+# four A4 pages — and stays clear of the route's 180 s ceiling while the live site
+# keeps its CPU.
+TRANSLATE_CHUNK_CHARS = 900
+MAX_TRANSLATE_CHARS = 9000
+
+
+def _split_long(text: str, limit: int) -> list[str]:
+    """A single long paragraph, cut on sentence ends (then on spaces as a last resort)."""
+    pieces: list[str] = []
+    rest = text
+    while len(rest) > limit:
+        window = rest[:limit]
+        cut = max(window.rfind(". "), window.rfind("। "), window.rfind("? "), window.rfind("! "))
+        if cut < limit // 3:
+            cut = window.rfind(" ")
+        if cut < limit // 3:
+            cut = limit - 1
+        pieces.append(rest[:cut + 1].strip())
+        rest = rest[cut + 1:].strip()
+    if rest:
+        pieces.append(rest)
+    return [p for p in pieces if p]
+
+
+def _chunks(text: str, limit: int = TRANSLATE_CHUNK_CHARS) -> list[str]:
+    """Paragraph-shaped chunks of at most `limit` characters.
+
+    A paragraph is what the model translates best and a document's shape is worth
+    keeping: consecutive short paragraphs are packed up to the limit, and a
+    paragraph longer than it is split on sentence ends.
+    """
+    out: list[str] = []
+    buf: list[str] = []
+
+    def flush() -> None:
+        if buf:
+            out.append("\n".join(buf))
+            buf.clear()
+
+    for para in re.split(r"\n\s*\n", text.strip()):
+        para = para.strip()
+        if not para:
+            continue
+        for piece in ([para] if len(para) <= limit else _split_long(para, limit)):
+            if buf and len("\n".join([*buf, piece])) > limit:
+                flush()
+            buf.append(piece)
+    flush()
+    return out
+
+
+def _cf_ai_json(model: str, payload: dict, token: str) -> dict:
+    """One Workers AI call that answers JSON. The caller reads `result`."""
+    req = urllib.request.Request(
+        f"https://api.cloudflare.com/client/v4/accounts/{CF_AI_ACCOUNT}/ai/run/{model}",
+        data=json.dumps(payload).encode(),
+        headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+    )
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        return json.loads(resp.read()) or {}
+
+
+def _translate_piece(text: str, source: str, target: str, token: str) -> tuple[str, dict]:
+    """One chunk through the chain, with one retry per leg.
+
+    Leg 1 is the LLM and it is called **twice** on purpose: it is a thinking model, and
+    a run that spends its whole token budget thinking comes back 200 with an empty
+    string (measured — that is also what `enable_thinking: false` does), so the second
+    call gets a bigger budget before the chain gives up on it. Leg 2 is m2m100, which
+    needs none of that but is a poorer translator. A 4xx from leg 2 is the service
+    refusing the language pair, which is the caller's problem, so it answers 400.
+    """
+    reasons: list[str] = []
+    for max_tokens in (2048, 4096):
+        try:
+            result = _cf_ai_json(TRANSLATE_MODEL, {
+                "messages": [{
+                    "role": "user",
+                    "content": (f"Translate the following {TRANSLATE_LANGS[source]} text into "
+                                f"{TRANSLATE_LANGS[target]}. Keep every number, name, date and "
+                                "amount exactly as it is written. Reply with the translation "
+                                "only, with no notes and no explanation.\n\n" + text),
+                }],
+                "max_tokens": max_tokens,
+            }, token).get("result") or {}
+            out = (result.get("response") or "").strip()
+            if out:
+                usage = dict(result.get("usage") or {})
+                usage["engine"] = TRANSLATE_MODEL
+                return out, usage
+            reasons.append(f"{TRANSLATE_MODEL} came back empty at max_tokens {max_tokens}")
+        except urllib.error.HTTPError as exc:
+            reasons.append(f"{TRANSLATE_MODEL} HTTP {exc.code}")
+        except Exception as exc:  # noqa: BLE001 — timeout, socket, unreadable body
+            reasons.append(f"{TRANSLATE_MODEL} failed: {exc}")
+
+    refused = False
+    for attempt in (1, 2):
+        try:
+            result = _cf_ai_json(TRANSLATE_FALLBACK_MODEL, {
+                "text": text, "source_lang": source, "target_lang": target,
+            }, token).get("result") or {}
+            out = (result.get("translated_text") or "").strip()
+            if not out:
+                raise RuntimeError("the fallback model returned no text")
+            usage = dict(result.get("usage") or {})
+            usage["engine"] = TRANSLATE_FALLBACK_MODEL
+            usage["attempts"] = attempt
+            return out, usage
+        except urllib.error.HTTPError as exc:
+            detail = exc.read()[:160].decode("utf-8", "replace").strip()
+            if exc.code < 500 and exc.code != 429:
+                refused = True
+                reasons.append(f"{TRANSLATE_FALLBACK_MODEL} refused: {detail}")
+                break
+            reasons.append(f"{TRANSLATE_FALLBACK_MODEL} HTTP {exc.code}")
+        except Exception as exc:  # noqa: BLE001
+            reasons.append(f"{TRANSLATE_FALLBACK_MODEL} failed: {exc}")
+
+    joined = "; ".join(reasons)
+    if refused:
+        raise UserError(f"no engine could translate {TRANSLATE_LANGS[source]} into "
+                        f"{TRANSLATE_LANGS[target]}: {joined[:200]}")
+    raise RuntimeError(f"no engine could translate this text ({joined[:200]})")
+
+
+def translate_doc(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
+    """A document in; the same text in another language out, as Markdown.
+
+    The output IS the translation (its `content_type` says `text/markdown`), with a
+    short header saying which model ran, in which direction, and what it cost in
+    tokens — because a machine translation nobody proof-reads is only honest when
+    the page says it is one.
+    """
+    if not inputs:
+        raise UserError("a document is required")
+    data = inputs[0]
+    if not data:
+        raise UserError("the file is empty")
+
+    source = (params.get("source") or "").strip().lower()
+    target = (params.get("target") or "").strip().lower()
+    for name, code in (("source", source), ("target", target)):
+        if not code:
+            raise UserError(f"{name} language is required — one of: {TRANSLATE_LANG_LIST}")
+        if code not in TRANSLATE_LANGS:
+            raise UserError(f"'{code}' is not one of the languages this engine translates "
+                            f"({TRANSLATE_LANG_LIST})")
+    if source == target:
+        raise UserError(f"source and target are both '{source}' — that is not a translation")
+
+    kind = _image_kind(data)
+    if kind:
+        raise UserError(
+            f"that file is a {kind} image, not a document — a photo has no text layer, "
+            "so send a PDF, DOCX or text file (OCR the photo first)")
+    suffix = _doc_suffix(data)
+
+    fd, path = tempfile.mkstemp(suffix=suffix)
+    try:
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data)
+        try:
+            from markitdown import MarkItDown
+        except ImportError as exc:
+            raise RuntimeError(f"markitdown is not installed on this VM: {exc}")
+        try:
+            text = (MarkItDown().convert(path).text_content or "").strip()
+        except Exception as exc:
+            raise UserError(f"could not read that document: {exc}")
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+    if len(re.findall(r"\w", text, re.UNICODE)) < 10:
+        raise UserError("no readable text was found in that document — a scan or a photo "
+                        "has no text layer until it is OCR'd")
+    if len(text) > MAX_TRANSLATE_CHARS:
+        raise UserError(f"that document is {len(text)} characters; this engine translates up to "
+                        f"{MAX_TRANSLATE_CHARS} in one job (about four pages of text) — send it in parts")
+
+    token = _cf_ai_token()
+    if not token:
+        raise RuntimeError("CLOUDFLARE_API_TOKEN missing (worker env or Hermes .env)")
+
+    pieces = _chunks(text)
+    started = time.time()
+    translated: list[str] = []
+    tokens_in = tokens_out = neurons = 0
+    engines: dict[str, int] = {}
+    for piece in pieces:
+        out, usage = _translate_piece(piece, source, target, token)
+        translated.append(out)
+        tokens_in += int(usage.get("prompt_tokens") or 0)
+        tokens_out += int(usage.get("completion_tokens") or 0)
+        neurons += int(float(usage.get("neurons") or 0))
+        engines[usage["engine"]] = engines.get(usage["engine"], 0) + 1
+    seconds = round(time.time() - started, 1)
+    out_text = "\n\n".join(translated)
+    engine_label = ", ".join(f"`{name}` ({count})" for name, count in engines.items())
+
+    lines = [
+        "# Document translation",
+        "",
+        f"{TRANSLATE_LANGS[source]} ({source}) to {TRANSLATE_LANGS[target]} ({target}), "
+        f"translated by {engine_label}. Machine translation: read it before you send it.",
+        "",
+        "| what | value |", "|---|---|",
+        f"| characters in | {len(text)} |",
+        f"| characters out | {len(out_text)} |",
+        f"| paragraphs sent | {len(pieces)} |",
+        f"| seconds | {seconds} |",
+        f"| model tokens in / out | {tokens_in} / {tokens_out} |",
+        f"| neurons billed | {neurons} |",
+        "",
+        f"## In {TRANSLATE_LANGS[target]}",
+        "",
+        out_text,
+        "",
+    ]
+    return ("\n".join(lines) + "\n").encode("utf-8"), {
+        "model": TRANSLATE_MODEL,
+        "engines": engines,
+        "fallback": TRANSLATE_FALLBACK_MODEL,
+        "source": source,
+        "target": target,
+        "langs": [source, target],
+        "extractor": f"markitdown {_markitdown_version()}",
+        "input_suffix": suffix,
+        "chars_in": len(text),
+        "chars_out": len(out_text),
+        "chunks": len(pieces),
+        "seconds": seconds,
+        "tokens_in": tokens_in,
+        "tokens_out": tokens_out,
+        "neurons": neurons,
+        "content_type": "text/markdown",
+    }
+
+
 PRODUCTS = ["passport-photo", "bg-remove", "watermark", "pdf-tools", "image-toolkit",
             "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage",
-            "resume-checker"]
+            "resume-checker", "translate-doc"]
 
 
 def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
@@ -1611,6 +1908,8 @@ def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dic
         return ai_image(params)
     if product == "resume-checker":
         return resume_check(inputs, params)
+    if product == "translate-doc":
+        return translate_doc(inputs, params)
     raise KeyError(product)
 
 
