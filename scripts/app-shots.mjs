@@ -52,6 +52,10 @@ const SCREENS = [
   { name: 'photos-to-pdf', route: '/tools/photos-to-pdf', expect: ['Photos into', 'Page size'] },
   { name: 'collage', route: '/tools/collage', expect: ['A few photos,', 'Shape'], interact: 'collage-shape-pick' },
   { name: 'resume-checker', route: '/tools/resume-checker', expect: ['DOCUMENT CHECK', 'document says', 'not counted inside', 'no text layer'] },
+  // The one toolbox screen whose job is run by a hosted model: its markers are the
+  // badge, the sentence that says it draws rather than designs, and the cap that says
+  // a run cannot be undone.
+  { name: 'ai-image', route: '/tools/ai-image', expect: ['TEXT TO IMAGE', 'and the model draws it', 'One picture per run'] },
   { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'], interact: 'invoice-upi-preview' },
   // The only screen with no server behind it: if this one fails, the fault is the
   // screen, never the network — so its markers are about the screen's own copy.

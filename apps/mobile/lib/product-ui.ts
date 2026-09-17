@@ -52,6 +52,9 @@ const PRODUCT_ACCENTS: Record<string, AccentKey> = {
   // amber that already means "look at this" (photo-repair): a green would read as
   // "passed", which no text check can promise.
   "resume-checker": "warning",
+  // Text to image is the same family as the other photo products (it makes a
+  // picture), so it keeps their accent rather than inventing a sixth meaning.
+  "ai-image": "info",
 };
 
 /** Fallback accent when a screen is not tied to one catalogue product. */

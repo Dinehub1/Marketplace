@@ -178,7 +178,7 @@ export const TARGETS = [
     // passport-photo, pdf-tools and invoice-maker are deliberately NOT here: each has
     // its own target, and an app that offers a product it does not lead with is the
     // "two listings are one app" signal the gate exists to catch.
-    products: ["bg-remove", "signature-maker", "exif-strip", "photos-to-pdf", "collage", "card-maker", "photo-repair", "product-photo", "worksheet-maker", "translate-doc", "study-helper", "cover-maker", "marksheet-maker", "notes-from-audio"],
+    products: ["bg-remove", "signature-maker", "exif-strip", "photos-to-pdf", "collage", "ai-image", "card-maker", "photo-repair", "product-photo", "worksheet-maker", "translate-doc", "study-helper", "cover-maker", "marksheet-maker", "notes-from-audio"],
     firstScreen: "grid",
   },
   {

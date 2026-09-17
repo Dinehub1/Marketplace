@@ -115,6 +115,21 @@ export const PRODUCTS: Record<string, Product> = {
     route: "/tools/collage",
     icon: "map",
   },
+  // Text to image runs on the server (a hosted model, not this box), so it is the
+  // one photo product here that needs a connection and costs us money per run:
+  // 172.8 neurons ≈ ₹0.18 for a 1024×1024 picture, measured from job 148's own
+  // `meta` (docs/product-plan.md). It is sold free — the catalogue row `ai-image`
+  // is `price_paise 0` / `plan free` and the route serves it free — so "Free" is
+  // the truth today, not an ambition. What it *should* cost is the parking-lot
+  // question; the tile must not quietly answer it.
+  "ai-image": {
+    slug: "ai-image",
+    label: "Text to image",
+    blurb: "Describe a picture in words; the model draws it.",
+    price: "Free",
+    route: "/tools/ai-image",
+    icon: "star",
+  },
   "resume-builder": {
     slug: "resume-builder",
     label: "Resume builder",

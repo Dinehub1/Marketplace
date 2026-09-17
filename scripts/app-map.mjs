@@ -31,6 +31,7 @@ const SCREEN_FOR_PRODUCT = {
   'invoice-maker': ['invoice'],
   'bg-remove': ['bg-remove'],
   'signature-maker': ['signature'],
+  'ai-image': ['ai-image'],
 };
 
 /** first-screen names in targets.mjs -> the screen slug that implements them. */

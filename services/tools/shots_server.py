@@ -62,7 +62,7 @@ GROUP_LABELS = {
 SCREEN_ORDER = [
     "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
     "pdf-tools-rotate", "pdf-tools-numbers",
-    "exif-strip", "photos-to-pdf", "collage", "resume-checker",
+    "exif-strip", "photos-to-pdf", "collage", "resume-checker", "ai-image",
     "invoice", "tap-sprint", "word-duel", "paywall",
 ]
 
@@ -324,6 +324,17 @@ SCREEN_INFO = {
                 "back from the report itself. It does not claim what a hiring system wants — that is "
                 "not knowable from this box. Read on our own server with markitdown; free per job.",
         "asserts": ["DOCUMENT CHECK", "document says", "not counted inside", "no text layer"],
+    },
+    "ai-image": {
+        "title": "Text to image (one picture per run)",
+        "what": "Type what should be in the picture and the server draws it with an open image model on "
+                "Workers AI (flux-1-schnell) — no photo needed, nothing uploaded from the phone. The "
+                "card shows the picture back with the model's own numbers (size, steps, file), and the "
+                "copy says plainly what this is not: it draws a sentence literally, it does not design "
+                "a logo or set type, the same words give a different picture each run, and a person in "
+                "the picture is not a real person. Free to the customer; each run bills us about "
+                "₹0.18 inside a daily free allowance of roughly 57 pictures, and the screen says so.",
+        "asserts": ["TEXT TO IMAGE", "and the model draws it", "One picture per run"],
     },
     "stretch": {
         "title": "Stretch — five-minute desk routine",
@@ -1163,6 +1174,7 @@ SCREEN_LINKS = [
     ("Photos to PDF", "/tools/photos-to-pdf"),
     ("Collage", "/tools/collage"),
     ("Document check (CV)", "/tools/resume-checker"),
+    ("Text to image", "/tools/ai-image"),
     ("Breathe", "/breathe"),
     ("Stretch", "/stretch"),
     ("Walk", "/walk"),
