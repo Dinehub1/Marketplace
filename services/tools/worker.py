@@ -1385,8 +1385,21 @@ def ai_image(params: dict) -> tuple[bytes, dict]:
         if not b64:
             raise RuntimeError("Workers AI returned no image")
         raw = base64.b64decode(b64)
-    return raw, {"model": model, "content_type": "image/jpeg", "generated": True,
-                 "bytes": len(raw)}
+
+    # An image job is billed per 512x512 tile and per step (Cloudflare's published image rate
+    # table), and a flux model rejects extra properties outright — so a job that sends no
+    # size/steps really runs at the model's own default, and the only way the cost can be read
+    # off the row later (queue item 16) is if the shape is recorded with the picture. `shape`
+    # says which of the two this job was; nothing here guesses what the model did with it.
+    sent_shape = any(k in payload for k in ("width", "height", "num_steps"))
+    return raw, {
+        "model": model, "content_type": "image/jpeg", "generated": True, "bytes": len(raw),
+        "width": int(payload.get("width") or 1024),
+        "height": int(payload.get("height") or 1024),
+        "steps": int(payload.get("num_steps") or 4),
+        "shape": "sent in the request" if sent_shape
+                 else "model default (flux-1-schnell: 1024x1024, 4 steps)",
+    }
 
 
 # ---------------------------------------------------------------------------
