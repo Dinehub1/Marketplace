@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { errorMessage } from "@/lib/errors";
 
 type Agent = {
   id: string;
@@ -50,8 +51,8 @@ export function AgentControls({ agents, tasks }: { agents: Agent[]; tasks: Task[
       } else {
         setMessage("❌ " + data.error);
       }
-    } catch (err: any) {
-      setMessage("❌ " + err.message);
+    } catch (err) {
+      setMessage("❌ " + errorMessage(err));
     }
     setBusy(null);
   }
@@ -67,8 +68,8 @@ export function AgentControls({ agents, tasks }: { agents: Agent[]; tasks: Task[
       } else {
         setMessage("❌ " + data.error);
       }
-    } catch (err: any) {
-      setMessage("❌ " + err.message);
+    } catch (err) {
+      setMessage("❌ " + errorMessage(err));
     }
     setBusy(null);
   }
@@ -90,8 +91,8 @@ export function AgentControls({ agents, tasks }: { agents: Agent[]; tasks: Task[
       } else {
         setMessage("❌ " + data.error);
       }
-    } catch (err: any) {
-      setMessage("❌ " + err.message);
+    } catch (err) {
+      setMessage("❌ " + errorMessage(err));
     }
     setBusy(null);
   }

@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
-import { clientIp, rateLimit } from "@/lib/rate-limit";
+import {rateLimit } from "@/lib/rate-limit";
 import { createOrder } from "@/lib/razorpay";
 import { paymentsConfigured, productPrice } from "@/lib/product-orders";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { ProductJobRow, OrderRow } from "@/lib/db-types";
 
 /**
  * POST /api/orders — buy the clean file for one job.
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
   }
 
   const jobRes = await db(`product_jobs?id=eq.${jobId}&select=id,product,phone,status,output_key`);
-  const job = ((await jobRes.json()) as any[])[0];
+  const job = await asRow<ProductJobRow>(jobRes);
   // A job that is not finished has nothing to sell; a job of another number is
   // indistinguishable from a missing one on purpose (ids are sequential).
   if (!job || job.status !== "done" || !job.output_key) {
@@ -59,10 +61,10 @@ export async function POST(req: NextRequest) {
       headers: { Prefer: "return=representation" },
       body: JSON.stringify({ phone }),
     });
-    const claimed = claim.ok ? ((await claim.json()) as any[]) : [];
+    const claimed = claim.ok ? (await asRows<OrderRow>(claim)) : [];
     if (claimed.length === 0) {
       const again = await db(`product_jobs?id=eq.${jobId}&select=phone`);
-      const row = ((await again.json()) as any[])[0];
+      const row = await asRow<OrderRow>(again);
       if (!row || row.phone !== phone) {
         return NextResponse.json({ error: "This photo belongs to another number" }, { status: 403, headers: noStore });
       }
@@ -75,7 +77,7 @@ export async function POST(req: NextRequest) {
 
   // Already paid: hand back the state instead of taking money twice.
   const paidRes = await db(`orders?job_id=eq.${jobId}&phone=eq.${encodeURIComponent(phone)}&status=eq.paid&select=id&limit=1`);
-  if (paidRes.ok && ((await paidRes.json()) as any[]).length > 0) {
+  if (paidRes.ok && (await asRows<OrderRow>(paidRes)).length > 0) {
     return NextResponse.json(
       { ok: true, already: true, paid: true, job_id: jobId, product: job.product, price_paise: pricePaise },
       { headers: noStore },
@@ -96,7 +98,7 @@ export async function POST(req: NextRequest) {
     `orders?job_id=eq.${jobId}&phone=eq.${encodeURIComponent(phone)}&status=eq.pending` +
       `&select=id,razorpay_order_id,amount_paise,created_at&order=created_at.desc&limit=1`,
   );
-  const pending = ((await pendingRes.json()) as any[])[0];
+  const pending = await asRow<OrderRow>(pendingRes);
   if (pending?.razorpay_order_id && Date.now() - new Date(pending.created_at).getTime() < PENDING_REUSE_MS) {
     return NextResponse.json(
       {

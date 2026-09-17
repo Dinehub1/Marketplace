@@ -1,13 +1,16 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
 import { ClaimBox } from "./claim-box";
-import { ReviewsBox } from "./reviews-box";
 import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
 import { safeJsonLd } from "@/lib/json-ld";
-import { BusinessCard } from "@/components/directory/BusinessCard";
+import { BusinessCard, type BusinessCardData } from "@/components/directory/BusinessCard";
+import { ReviewsBox } from "./reviews-box";
+import { asRows } from "@/lib/postgrest";
+import type { BusinessRow, ReviewRow } from "@/lib/db-types";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
 import { BusinessEventTracker } from "./business-event-tracker";
+import type { Brand } from "@/lib/brands";
 
 /**
  * Social profiles a business publishes on its own website, collected by
@@ -38,10 +41,19 @@ function socialUrl(platform: string, handle: string): string {
   }
 }
 
+/**
+ * A socials entry as written by `scripts/enrich-socials.py`: either a bare URL or an
+ * object carrying a confidence score. NOTE: no migration in this repo adds a `socials`
+ * column to `businesses`, so this is read from a `select=*` in case the live database
+ * has one. If it does not, the list is simply empty and the block does not render.
+ */
+type SocialValue = string | { handle?: string; confidence?: string } | null | undefined;
+type SocialMap = Record<string, SocialValue>;
+
 function socialLinksOf(socials: unknown): { platform: string; label: string; url: string }[] {
   if (!socials || typeof socials !== "object") return [];
   const out: { platform: string; label: string; url: string }[] = [];
-  for (const [platform, v] of Object.entries(socials as Record<string, any>)) {
+  for (const [platform, v] of Object.entries(socials as SocialMap)) {
     const handle = typeof v === "string" ? v : v?.handle;
     const confidence = typeof v === "string" ? "high" : v?.confidence;
     const label = SOCIAL_LABELS[platform];
@@ -61,8 +73,7 @@ async function getBusiness(id: number) {
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;
-    const rows = await res.json();
-    return rows[0] ?? null;
+    return (await asRows<BusinessRow & { socials?: SocialMap }>(res))[0] ?? null;
   } catch {
     return null;
   }
@@ -82,7 +93,7 @@ async function getRelated(category: string | null, excludeId: number) {
         `&id=neq.${excludeId}&order=rating.desc.nullslast&limit=6`,
       { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: 1800 } },
     );
-    return res.ok ? await res.json() : [];
+    return res.ok ? await asRows<BusinessCardData>(res) : [];
   } catch {
     return [];
   }
@@ -99,7 +110,7 @@ async function getBusinessReviews(id: number) {
       { headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "count=exact" }, next: { revalidate: 120 } },
     );
     if (!res.ok) return { reviews: [], avg: null, count: 0 };
-    const rows = (await res.json()) as any[];
+    const rows = await asRows<ReviewRow>(res);
     const reviews = rows.map((r) => ({
       id: r.id,
       author_name: r.reviewer_name,
@@ -115,7 +126,7 @@ async function getBusinessReviews(id: number) {
   }
 }
 
-export async function BusinessDetailPage({ brand, businessId }: { brand: any; businessId: number }) {
+export async function BusinessDetailPage({ brand, businessId }: { brand: Brand; businessId: number }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
   const secondary = t.secondary ?? "#8b5cf6";
@@ -146,7 +157,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
 
   const related = await getRelated(biz.category, biz.id);
   const { reviews, avg, count: reviewCount } = await getBusinessReviews(biz.id);
-  const socialLinks = socialLinksOf((biz as any).socials);
+  const socialLinks = socialLinksOf((biz as { socials?: SocialMap }).socials);
   // A review count of 444,080 on an Indore listing is a parser artefact, not a
   // fact (the source writes "44408.0" and the importer used to strip the dot).
   // Beyond this ceiling the number is withheld instead of displayed.
@@ -452,7 +463,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: any; bu
               More {biz.category ? titleize(biz.category) : "businesses"} in {CITY_LABEL}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {related.map((r: any) => (
+              {related.map((r) => (
                 <BusinessCard key={r.id} b={r} primary={primary} secondary={secondary} />
               ))}
             </div>

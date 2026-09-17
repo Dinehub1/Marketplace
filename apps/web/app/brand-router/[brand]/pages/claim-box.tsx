@@ -16,7 +16,7 @@ type Props = {
  * dashboard/login: verify the WhatsApp number, then claim. Ownership is proven
  * by matching the verified phone to the listing's stored phone.
  */
-export function ClaimBox({ businessId, businessName, businessPhone, primary, secondary, accent }: Props) {
+export function ClaimBox({ businessId, businessName, businessPhone }: Props) {
   const [step, setStep] = useState<"phone" | "otp" | "done">("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");

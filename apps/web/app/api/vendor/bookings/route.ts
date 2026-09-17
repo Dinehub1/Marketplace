@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { loadOwnedBusinesses } from "@/lib/booking";
+import {asRows } from "@/lib/postgrest";
+import type { BookingRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -13,7 +15,6 @@ const noStore = { "Cache-Control": "no-store" };
  * 100, with the service name and business name embedded via FKs.
  */
 export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
   const phone = toIndiaPhone(req.headers.get("x-phone") ?? "");
   const token = req.headers.get("x-phone-token") ?? "";
   if (!phone || !checkPhoneToken(phone, token)) {
@@ -36,6 +37,6 @@ export async function GET(req: NextRequest) {
       `&select=id,business_id,status,slot_start,customer_name,customer_phone,vehicle,notes,amount,vendor_payout,commission_amount,payment_status,payment_mode,created_at` +
       `,vendor_services(name),businesses(name,area,phone)`,
   );
-  const bookings = res.ok ? ((await res.json()) as any[]) ?? [] : [];
+  const bookings = res.ok ? (await asRows<BookingRow>(res)) ?? [] : [];
   return NextResponse.json({ ok: true, businesses, bookings }, { headers: noStore });
 }

@@ -25,9 +25,35 @@ export type Settings = {
   weeklyGoal: number;
   /** The phrase a person breathes or counts with. Empty means none. */
   phrase: string;
+  /**
+   * The two sound layers, each its own switch.
+   *
+   * Why two and not one: they are different promises. A cue is *information* — it tells you the
+   * breath turned over while your eyes are shut. The bed is *atmosphere*, and it is the layer most
+   * likely to be heard through headphones in bed next to somebody asleep. One switch for both would
+   * mean turning off the thing you want because of the thing you do not.
+   *
+   * Both default to on except the bed: a session that is silent until you find a settings page is a
+   * session that looks broken, while a drone that starts unasked is a drone somebody has to go and
+   * find the switch for.
+   *
+   * There was a third — `voiceOn` — for the synthesized spoken cues. It is gone with the voice, which
+   * was removed for sounding robotic and unclear on a real phone; the reasoning is in
+   * `scripts/make-wellness-sounds.mjs`. The key is simply dropped rather than left as a dead `false`,
+   * because a stored `true` under a key nothing reads would be a switch that exists only in
+   * somebody's backup.
+   */
+  cuesOn: boolean;
+  droneOn: boolean;
 };
 
-export const DEFAULT_SETTINGS: Settings = { waterGoal: 8, weeklyGoal: 5, phrase: "" };
+export const DEFAULT_SETTINGS: Settings = {
+  waterGoal: 8,
+  weeklyGoal: 5,
+  phrase: "",
+  cuesOn: true,
+  droneOn: false,
+};
 
 let settings: Settings = DEFAULT_SETTINGS;
 const listeners = new Set<() => void>();

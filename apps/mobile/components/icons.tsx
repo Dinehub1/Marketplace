@@ -23,6 +23,14 @@ const PATHS = {
   system: <><Rect x={2.5} y={4} width={19} height={13} rx={2} /><Path d="M8.5 20.5h7" /></>,
   chart: <Path d="M4 20V10M10 20V4M16 20v-8M22 20H2" />,
   inbox: <><Path d="M3 13h5l2 3h4l2-3h5" /><Path d="M5.5 5h13l2.5 8v5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2v-5z" /></>,
+  /**
+   * A person, for the Profile action on every wellness header.
+   *
+   * Distinct from `account` (which is the marketplace's filled tab mark) because this one is
+   * drawn as an outline at header weight — a filled glyph at 20pt beside a 13pt caption reads
+   * heavier than the title it sits next to.
+   */
+  person: <><Circle cx={12} cy={8} r={3.6} /><Path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>,
 } as const;
 
 export type IconName = keyof typeof PATHS;

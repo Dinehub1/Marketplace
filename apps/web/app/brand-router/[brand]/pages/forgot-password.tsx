@@ -1,6 +1,7 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
-export function ForgotPassword({ brand }: { brand: any }) {
+export function ForgotPassword({ brand }: { brand: Brand }) {
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -14,7 +15,7 @@ export function ForgotPassword({ brand }: { brand: any }) {
                 🔑
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold mb-2" style={{ color: "var(--brand-secondary)" }}>Reset Password</h1>
-              <p className="text-sm opacity-60">Enter your WhatsApp number and we'll send you a reset link</p>
+              <p className="text-sm opacity-60">Enter your WhatsApp number and we&apos;ll send you a reset link</p>
             </div>
 
             <div className="rounded-3xl border bg-surface p-8 shadow-lg animate-scale-in" style={{ borderColor: "var(--hairline)", animationDelay: "0.1s" }}>

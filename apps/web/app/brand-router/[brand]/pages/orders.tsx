@@ -1,4 +1,5 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 const ORDERS = [
   { id: "#1234", item: "Pro Subscription", amount: "₹1,179", status: "Confirmed", date: "2026-06-28", timeline: [true, true, false, false] },
@@ -7,7 +8,7 @@ const ORDERS = [
 ];
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, any> = {
+  const colors: Record<string, { bg: string; text: string }> = {
     Confirmed: { bg: "#dcfce7", text: "#166534" },
     Completed: { bg: "#dbeafe", text: "#1e40af" },
     Pending: { bg: "#fef3c7", text: "#92400e" },
@@ -17,7 +18,7 @@ function StatusBadge({ status }: { status: string }) {
   return <span className="text-xs px-2.5 py-1 rounded-full font-bold" style={{ backgroundColor: c.bg, color: c.text }}>{status}</span>;
 }
 
-export function Orders({ brand }: { brand: any }) {
+export function Orders({ brand }: { brand: Brand }) {
 
   return (
     <div className="min-h-screen flex flex-col">

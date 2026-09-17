@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { ByBrandSlug, ServiceItem } from "@/lib/brand-content";
 
-const BRAND_SERVICES: Record<string, Array<{ icon: string; title: string; desc: string }>> = {
+const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
   sarkarconnect: [
     { icon: "🔗", title: "B2B Connect", desc: "Connect with suppliers, buyers, and distributors — in the largest network of your industry." },
     { icon: "💼", title: "Digital Card", desc: "Your business's professional digital card — share via QR code, connect instantly." },
@@ -222,7 +224,7 @@ const BRAND_SERVICES: Record<string, Array<{ icon: string; title: string; desc: 
   ],
 };
 
-const DEFAULT_SERVICES = [
+const DEFAULT_SERVICES: ServiceItem[] = [
   { icon: "⭐", title: "Premium Quality", desc: "Only the best for our customers. We never compromise on quality." },
   { icon: "🚀", title: "Fast Delivery", desc: "Quick and reliable service that respects your time." },
   { icon: "💬", title: "24/7 Support", desc: "Our team is always here to help you, any time of day." },
@@ -231,11 +233,11 @@ const DEFAULT_SERVICES = [
   { icon: "🤝", title: "Trusted by Thousands", desc: "Join our community of satisfied customers across India." },
 ];
 
-export function ServicesPage({ brand }: { brand: any }) {
+export function ServicesPage({ brand }: { brand: Brand }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
   const secondary = t.secondary ?? "#8b5cf6";
-  const services = BRAND_SERVICES[brand.slug] ?? (brand.services_json ?? DEFAULT_SERVICES) as any[];
+  const services = BRAND_SERVICES[brand.slug] ?? (brand.services_json ?? DEFAULT_SERVICES);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -255,7 +257,7 @@ export function ServicesPage({ brand }: { brand: any }) {
       <section className="section">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s: any, i: number) => (
+            {services.map((s, i: number) => (
               <div key={i} className="card-lift rounded-2xl border bg-surface p-6 h-full" style={{ borderColor: "var(--hairline)" }}>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4" style={{ background: `linear-gradient(135deg, ${primary}15, ${secondary}10)` }}>{s.icon ?? "✦"}</div>
                 <h3 className="font-bold text-lg mb-2" style={{ color: "var(--brand-secondary)" }}>{s.title}</h3>
@@ -297,7 +299,7 @@ export function ServicesPage({ brand }: { brand: any }) {
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
               <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Ready to get started?</h2>
-              <p className="text-white/80 mb-8">Create your family's health profile today — first consultation free!</p>
+              <p className="text-white/80 mb-8">Create your family&apos;s health profile today — first consultation free!</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a href={`/contact`} className="bg-surface px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: "var(--brand-secondary)" }}>Contact Us →</a>
                 <a href={`/pricing`} className="border-2 border-white/30 text-white px-8 py-3.5 rounded-xl font-bold text-sm hover:bg-surface/10 transition-colors">View Pricing</a>

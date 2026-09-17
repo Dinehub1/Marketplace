@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
-import { ReviewsBox } from "./reviews-box";
+import { ReviewsBox, type Review } from "./reviews-box";
+import type { Brand } from "@/lib/brands";
+import type { ReviewRow } from "@/lib/db-types";
+import { asRows } from "@/lib/postgrest";
 
 type Lead = { id: string; business_id: number; name: string; phone: string; message: string; status: string; created_at: string };
 type Biz = { id: number; name: string; category: string | null; rating: number | null; address: string | null };
-type EditFields = { name: string; description: string; address: string; area: string; city: string; business_phone: string; category: string };
+
+/** Bodies of the two routes this screen calls, so the JSON is not implicitly `any`. */
+type OtpVerifyResponse = { error?: string; phone?: string; token?: string };
+type LeadsResponse = { error?: string; businesses?: Biz[]; leads?: Lead[] };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -15,7 +21,7 @@ function timeAgo(iso: string): string {
   return `${Math.floor(s / 86400)}d ago`;
 }
 
-export function BusinessDashboard({ brand }: { brand: any }) {
+export function BusinessDashboard({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
@@ -29,9 +35,11 @@ export function BusinessDashboard({ brand }: { brand: any }) {
   const [info, setInfo] = useState("");
   const [businesses, setBusinesses] = useState<Biz[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
+  /** When `leads` were fetched, for the "last 7 days" count. See loadLeads(). */
+  const [leadsAt, setLeadsAt] = useState(0);
   const [verifiedPhone, setVerifiedPhone] = useState("");
   const [verifiedToken, setVerifiedToken] = useState("");
-  const [reviewsById, setReviewsById] = useState<Record<number, any[]>>({});
+  const [reviewsById, setReviewsById] = useState<Record<number, Review[]>>({});
   const [stats, setStats] = useState<Record<string, Record<string, number>>>({});
   const [totals, setTotals] = useState<Record<string, number>>({});
 
@@ -54,20 +62,28 @@ export function BusinessDashboard({ brand }: { brand: any }) {
     setBusy(true);
     try {
       const vres = await fetch("/api/otp/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone, code }) });
-      const vj = await vres.json();
+      const vj = (await vres.json()) as OtpVerifyResponse;
       if (!vres.ok) { setError(vj.error ?? "Galat code"); return; }
-      const lres = await fetch(`/api/leads?phone=${encodeURIComponent(vj.phone)}`, {
-        headers: { "x-phone": vj.phone, "x-phone-token": vj.token },
+      // A 200 without a phone/token would have been sent as `undefined` in the headers
+      // below and come back as a confusing 401. Fail here, where the cause is visible.
+      const { phone: verified, token: vtoken } = vj;
+      if (!verified || !vtoken) { setError("Server ne session nahi diya"); return; }
+      const lres = await fetch(`/api/leads?phone=${encodeURIComponent(verified)}`, {
+        headers: { "x-phone": verified, "x-phone-token": vtoken },
       });
-      const lj = await lres.json();
+      const lj = (await lres.json()) as LeadsResponse;
       if (!lres.ok) { setError(lj.error ?? "Leads load nahi hue"); return; }
       setBusinesses(lj.businesses ?? []);
       setLeads(lj.leads ?? []);
-      setVerifiedPhone(vj.phone ?? "");
-      setVerifiedToken(vj.token ?? "");
-      const ids = (lj.businesses ?? []).map((b: any) => b.id).filter(Boolean);
+      // Stamped when the leads land, not during render: `Date.now()` in a render body
+      // is impure and made the "last 7 days" window depend on when React happened to
+      // re-render rather than on when the data was fetched.
+      setLeadsAt(Date.now());
+      setVerifiedPhone(verified);
+      setVerifiedToken(vtoken);
+      const ids = (lj.businesses ?? []).map((b) => b.id).filter(Boolean);
       if (ids.length) loadReviewsFor(ids);
-      loadStats(vj.phone, vj.token);
+      loadStats(verified, vtoken);
       setStep("dash");
     } finally { setBusy(false); }
   }
@@ -75,18 +91,7 @@ export function BusinessDashboard({ brand }: { brand: any }) {
   const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supaKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-  async function loadBiz(id: number): Promise<EditFields | null> {
-    if (!supaUrl || !supaKey) return null;
-    const res = await fetch(`${supaUrl}/rest/v1/businesses?id=eq.${id}&select=name,description,address,area,city,phone,category`, {
-      headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` },
-    });
-    if (!res.ok) return null;
-    const rows = (await res.json()) as any[];
-    const b = rows[0];
-    return b ? { name: b.name ?? "", description: b.description ?? "", address: b.address ?? "", area: b.area ?? "", city: b.city ?? "", business_phone: b.phone ?? "", category: b.category ?? "" } : null;
-  }
-
-  async function loadBizReviews(id: number): Promise<any[]> {
+  async function loadBizReviews(id: number): Promise<Review[]> {
     if (!supaUrl || !supaKey) return [];
     const res = await fetch(
       `${supaUrl}/rest/v1/reviews?business_id=eq.${id}&is_approved=eq.true` +
@@ -94,7 +99,7 @@ export function BusinessDashboard({ brand }: { brand: any }) {
       { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } },
     );
     if (!res.ok) return [];
-    const rows = (await res.json()) as any[];
+    const rows = await asRows<ReviewRow>(res);
     return rows.map((r) => ({
       id: r.id,
       author_name: r.reviewer_name,
@@ -124,43 +129,6 @@ export function BusinessDashboard({ brand }: { brand: any }) {
     } catch {
       /* stats are best-effort; the leads list must still render */
     }
-  }
-
-  // Edit-listing state (keyed by business id so each card manages its own form).
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editFields, setEditFields] = useState<EditFields | null>(null);
-  const [editBusy, setEditBusy] = useState(false);
-  const [editError, setEditError] = useState("");
-  const [editInfo, setEditInfo] = useState("");
-
-  async function startEdit(id: number) {
-    setEditError(""); setEditInfo("");
-    const f = await loadBiz(id);
-    if (!f) { setEditError("Listing load nahi hui"); return; }
-    setEditFields(f);
-    setEditingId(id);
-  }
-
-  function setField(k: keyof EditFields, v: string) {
-    setEditFields((f) => (f ? { ...f, [k]: v } : f));
-  }
-
-  async function saveEdit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!editFields || editingId == null) return;
-    setEditError(""); setEditBusy(true);
-    try {
-      const res = await fetch(`/api/businesses/${editingId}`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...editFields, phone: verifiedPhone, token: verifiedToken }),
-      });
-      const j = await res.json();
-      if (!res.ok) { setEditError(j.error ?? "Listing update nahi hui"); return; }
-      setEditInfo("Listing update ho gayi ✓");
-      setEditingId(null);
-      setEditFields(null);
-    } finally { setEditBusy(false); }
   }
 
   const [boostId, setBoostId] = useState<number | null>(null);
@@ -224,7 +192,9 @@ export function BusinessDashboard({ brand }: { brand: any }) {
   }
 
   const newLeads = leads.filter((l) => l.status === "new");
-  const weekLeads = leads.filter((l) => Date.now() - new Date(l.created_at).getTime() < 7 * 86400e3);
+  const weekLeads = leadsAt
+    ? leads.filter((l) => leadsAt - new Date(l.created_at).getTime() < 7 * 86400e3)
+    : [];
   const totalViews = totals["view"] ?? 0;
   const totalCalls = totals["call_click"] ?? 0;
 
@@ -315,10 +285,6 @@ export function BusinessDashboard({ brand }: { brand: any }) {
                     </a>
 
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <button onClick={() => startEdit(b.id)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-white shadow"
-                              style={{ background: "var(--brand-gradient)" }}>
-                        ✏️ Edit listing
-                      </button>
                       <button onClick={() => boostListing(b.id)} disabled={boostBusy && boostId === b.id} className="rounded-lg border px-3 py-1.5 text-xs font-semibold disabled:opacity-50"
                               style={{ borderColor: "var(--hairline)", color: "var(--brand-secondary)" }}>
                         {boostBusy && boostId === b.id ? "..." : "🚀 Boost listing"}

@@ -1,7 +1,7 @@
-import { existsSync } from "fs";
-import path from "path";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import type { Brand } from "@/lib/brands";
 import { getBrand } from "@/lib/brands";
 import { titleize } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
@@ -173,7 +173,7 @@ export async function generateMetadata(
   };
 }
 
-function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
+function ComingSoon({ brand, pageName }: { brand: Brand; pageName: string }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const bg = theme.bg ?? "#faf5ff";
   const emoji = brand.emoji ?? "🗂️";
@@ -194,8 +194,8 @@ function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
             list your own business free.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <a href="/" className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow"
-               style={{ background: "var(--brand-primary)" }}>← Browse {brand.name}</a>
+            <Link href="/" className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow"
+               style={{ background: "var(--brand-primary)" }}>← Browse {brand.name}</Link>
             <a href="https://wa.me/916263461179" target="_blank" rel="noopener noreferrer"
                className="inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold border"
                style={{ borderColor: "var(--brand-primary)", color: "var(--brand-secondary)" }}>
@@ -208,7 +208,7 @@ function ComingSoon({ brand, pageName }: { brand: any; pageName: string }) {
   );
 }
 
-function isEnabled(brand: any, key: string): boolean {
+function isEnabled(brand: Brand, key: string): boolean {
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
   if (flags[key] === false) return false;
   return true;
@@ -247,7 +247,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     }
   }
 
-  if (subPath === "/galaxy") { const { GalaxyPage } = await import("./pages/galaxy"); return <GalaxyPage brand={brand} />; }
+  if (subPath === "/galaxy") { const { GalaxyPage } = await import("./pages/galaxy"); return <GalaxyPage />; }
   if (subPath === "/login") { const { WhatsAppLogin } = await import("./whatsapp-login"); return <WhatsAppLogin brand={brand} />; }
   if (subPath === "/register" || subPath === "/signup") { const { BrandRegister } = await import("./pages/register"); return <BrandRegister brand={brand} />; }
   if (subPath === "/forgot-password" || subPath === "/reset-password") { const { ForgotPassword } = await import("./pages/forgot-password"); return <ForgotPassword brand={brand} />; }

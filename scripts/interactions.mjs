@@ -423,6 +423,192 @@ async function collageShapePick(page) {
   };
 }
 
+/**
+ * merge-tiles: start a round and slide a direction.
+ *
+ * The observable change is the HUD's own move counter, and it is the right one here
+ * because of a rule in the game: a slide against a wall is deliberately **not** a move. So
+ * "the button was pressed" and "the board changed" are different claims, and this checks
+ * the second. All four arrows are pressed in turn, because which of them can move depends
+ * on where the two opening tiles landed.
+ *
+ * The arrows are probed rather than the swipe, and both go through the same `onSlide`, so
+ * this covers the board's response either way. The swipe's own maths (`swipeDir`: the
+ * diagonal, the tie, the threshold) is asserted in `scripts/check-merge-tiles.mjs`, because
+ * a synthetic drag through this harness is exactly the kind of thing that fails for reasons
+ * that have nothing to do with the game.
+ */
+function mergeHud(page) {
+  return page.evaluate(() => {
+    const body = document.body.innerText;
+    const num = (label) => {
+      const m = body.match(new RegExp(`${label}\\s*\\n\\s*(-?\\d+)`, 'i'));
+      return m ? Number(m[1]) : null;
+    };
+    return { score: num('Score'), moves: num('Moves'), best: num('Best tile') };
+  });
+}
+
+async function mergeTilesSlide(page) {
+  await page.locator('text=Start the round').first().click();
+  await page.waitForTimeout(400);
+
+  const arrows = page.locator('[aria-label^="Slide "]');
+  const arrowCount = await arrows.count();
+  if (arrowCount !== 4)
+    throw new Error(`the round started with ${arrowCount} direction buttons on the page, not 4`);
+
+  const before = await mergeHud(page);
+  if (before.moves === null) throw new Error('the round started with no move counter on the page');
+  if (before.moves !== 0) throw new Error(`a fresh round already reports ${before.moves} moves`);
+  await sabotage('[aria-label^="Slide "]', page);
+
+  let lastWhy = 'no direction button was ever on the page';
+  for (let i = 0; i < arrowCount; i++) {
+    const arrow = arrows.nth(i);
+    // Scrolled into view through the DOM rather than through locator.click(): the tap
+    // below is a raw coordinate press — so a sabotaged arrow cannot swallow it behind an
+    // actionability check — and a raw press at an off-screen coordinate would miss for a
+    // reason that has nothing to do with the game.
+    await arrow.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    const box = await arrow.boundingBox();
+    if (!box) continue;
+    const label = (await arrow.getAttribute('aria-label')) || `direction ${i + 1}`;
+    // Pressed at the arrow's own centre rather than through locator.click(): a sabotaged
+    // arrow (pointer-events: none) never receives the event, and locator.click() would
+    // spend its whole timeout on an actionability check instead of letting the probe say
+    // what did not happen.
+    await press(page, Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2));
+    await page.waitForTimeout(350);
+    const after = await mergeHud(page);
+    if (after.moves !== null && after.moves > before.moves) {
+      return {
+        detail:
+          `started a round and pressed "${label}" — moves ${before.moves} → ${after.moves}, ` +
+          `score ${before.score} → ${after.score}, best tile ${before.best} → ${after.best}`,
+      };
+    }
+    lastWhy = `pressing "${label}" did not change the board (moves still ${after.moves})`;
+  }
+  throw new Error(`not one of the four arrows reached the board: ${lastWhy}`);
+}
+
+/**
+ * stretch: press "Start routine" and reach the guided class.
+ *
+ * This probe exists because of a real crash. Pressing Start on the Stretch screen brought the app
+ * down, and no `--expect` marker could have caught it: the setup screen rendered perfectly, with all
+ * its copy on the page, and the failure was in the *transition*. A capture of the setup state is a
+ * picture of the app working.
+ *
+ * So the observable change is the class itself: the guided state names a movement ("MOVE 1 OF 8"),
+ * offers Pause/Skip, and offers Finish. Any of those is proof the transition completed. The probe
+ * also fails loudly on the two ways this screen can die silently — an error boundary's copy, and a
+ * blank page — because "the button was pressed" is not "the class started".
+ */
+async function stretchStart(page) {
+  const before = await page.evaluate(() => document.body.innerText);
+  if (/Something went wrong|Application error|Unhandled/i.test(before)) {
+    throw new Error(`the Stretch setup screen was already showing an error: ${before.slice(0, 200)}`);
+  }
+
+  // Found by an XPath over the button's whole text, for the same reason the Breathe probe is:
+  // `text=` matches on a substring, and RN Web puts the label in a nested div where neither the
+  // accessible name nor `hasText` sees it.
+  const start = page.locator("xpath=//button[normalize-space(.)='Start routine']").first();
+  await start.waitFor({ state: 'visible', timeout: 15000 });
+  await start.click();
+
+  // Wait for the class rather than for a fixed delay: the transition is a state change plus an
+  // arrival animation, and pinning a duration here would make the probe a flake generator.
+  try {
+    await page.getByText(/MOVE \d+ OF \d+/).first().waitFor({ state: 'visible', timeout: 8000 });
+  } catch {
+    const body = await page.evaluate(() => document.body.innerText.slice(0, 220));
+    throw new Error(`Start did not reach the class within 8s; the page reads: ${body}`);
+  }
+
+  const after = await page.evaluate(() => document.body.innerText);
+  if (/Something went wrong|Application error|Unhandled/i.test(after)) {
+    throw new Error(`the app crashed on Start — the page now reads: ${after.slice(0, 200)}`);
+  }
+  if (!after.trim()) throw new Error('the page is blank after Start, which is a crash, not a class');
+
+  const reached =
+    /MOVE \d+ OF \d+/i.test(after) ||
+    /NEXT|LAST MOVEMENT/i.test(after) ||
+    (await page.locator('text=Finish').count()) > 0;
+  if (!reached) {
+    throw new Error(`Start did not reach the class; the page still reads: ${after.slice(0, 200)}`);
+  }
+
+  // The clock has to actually run, or "the class started" is a still picture.
+  const clock = () => page.evaluate(() => (document.body.innerText.match(/\b\d+:\d\d\b/) || [])[0] ?? null);
+  const t0 = await clock();
+  await page.waitForTimeout(1500);
+  const t1 = await clock();
+  if (t0 === null) throw new Error('the class started with no clock on the page');
+  if (t0 === t1) throw new Error(`the class started but its clock is frozen at ${t0}`);
+
+  return { detail: `the class started, showed movement 1, and its clock ran ${t0} → ${t1}` };
+}
+
+/**
+ * breathe: press Begin and reach a running session.
+ *
+ * The same class of check as `stretch-start` — the transition is the thing that can break, and the
+ * idle screen no `--expect` marker can see past. "TAP TO PAUSE" is the running state's own copy, so
+ * the probe is reading the screen rather than reading a variable.
+ */
+async function breatheStart(page) {
+  /*
+   * The primary action, found as an *interactive element* whose text is exactly "Begin".
+   *
+   * The obvious `text=Begin` matches on a substring, and the first match on this screen is the
+   * circle's hint copy "TAP TO BEGIN" — a `<div>` inside the Pressable, not the control. Clicking
+   * that usually works by bubbling and sometimes does nothing at all, which is exactly the
+   * intermittent a capture gate exists to catch: the probe passed when run by hand and failed inside
+   * the pipeline, where the page has had less time to settle.
+   *
+   * The two forms that look right against this markup do not work either: `getByRole('button', {
+   * name })` finds nothing because RN Web renders the label into a nested `<div>` and the accessible
+   * name comes out empty, and `filter({ hasText })` compares against each *text node* rather than the
+   * element's text. `normalize-space(.)` in an XPath is what reads the element's whole text.
+   */
+  const begin = page.locator("xpath=//button[normalize-space(.)='Begin']").first();
+  await begin.waitFor({ state: 'visible', timeout: 15000 });
+  await begin.click();
+
+  // Wait for the running state rather than for a fixed delay: the transition is a state change plus
+  // a pacer re-arm, and how long that takes is not this probe's business.
+  const running = page.getByText('TAP TO PAUSE');
+  try {
+    await running.first().waitFor({ state: 'visible', timeout: 8000 });
+  } catch {
+    const body = await page.evaluate(() => document.body.innerText.slice(0, 200));
+    throw new Error(`Begin did not start a session within 8s; the page reads: ${body}`);
+  }
+
+  const body = await page.evaluate(() => document.body.innerText);
+  if (/Something went wrong|Application error|Unhandled/i.test(body)) {
+    throw new Error(`the app crashed on Begin — the page now reads: ${body.slice(0, 200)}`);
+  }
+
+  // A running session has to be counting its phases down, not just showing the copy.
+  const phaseSeconds = () =>
+    page.evaluate(() => {
+      const m = document.body.innerText.match(/\n(\d+)s\n/);
+      return m ? Number(m[1]) : null;
+    });
+  const a = await phaseSeconds();
+  await page.waitForTimeout(1600);
+  const b = await phaseSeconds();
+  if (a === null) throw new Error('the session started with no phase countdown on the page');
+  if (a === b) throw new Error(`the session started but its countdown is frozen at ${a}s`);
+
+  return { detail: `the session started and its phase countdown ran ${a}s → ${b}s` };
+}
+
 export const INTERACTIONS = {
   'pdf-rotate-pick': {
     screen: 'pdf-tools',
@@ -453,6 +639,21 @@ export const INTERACTIONS = {
     screen: 'block-clear',
     what: 'pick a tray piece and press an outlined square; the board has to change',
     run: blockClearPlace,
+  },
+  'merge-tiles-slide': {
+    screen: 'merge-tiles',
+    what: 'start a round and press an arrow; the move counter has to move',
+    run: mergeTilesSlide,
+  },
+  'stretch-start': {
+    screen: 'stretch',
+    what: 'press "Start routine" and reach the class; the guided state and a running clock have to appear',
+    run: stretchStart,
+  },
+  'breathe-start': {
+    screen: 'breathe',
+    what: 'press "Begin" and reach a running session; the pause state and a counting phase have to appear',
+    run: breatheStart,
   },
 };
 

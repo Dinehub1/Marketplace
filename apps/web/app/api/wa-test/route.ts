@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { errorMessage } from "@/lib/errors";
 
 // Diagnostic endpoint for the WhatsApp OTP test page. Fires a real Nextel
 // "auth" template send and reports the raw response so we can confirm the API
@@ -45,7 +46,9 @@ export async function POST(req: NextRequest) {
   const to = toIndia(phone);
   const fields: string[] = auto ? CANDIDATE_FIELDS : [recipientField || "to"];
 
-  const attempts: any[] = [];
+  /** One delivery probe, kept so the caller can see every field name tried. */
+  type WaAttempt = { recipientField: string; status?: number; ok?: boolean; response?: string; error?: string };
+  const attempts: WaAttempt[] = [];
   for (const field of fields) {
     const body: Record<string, unknown> = {
       type: "buttonTemplate",
@@ -66,8 +69,8 @@ export async function POST(req: NextRequest) {
       attempts.push({ recipientField: field, status: res.status, ok: res.ok, response: text.slice(0, 1000) });
       // Stop at first clearly-successful send to avoid duplicate messages.
       if (res.ok) break;
-    } catch (e: any) {
-      attempts.push({ recipientField: field, error: String(e?.message ?? e) });
+    } catch (e) {
+      attempts.push({ recipientField: field, error: errorMessage(e, "unknown") });
     }
   }
 

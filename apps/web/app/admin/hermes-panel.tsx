@@ -1,42 +1,35 @@
-"use client";
+import type { GatewayStatus } from "@/lib/hermes";
 
-import { useState } from "react";
-
-type Status = {
-  running: boolean;
-  activeAgents: number;
-  platforms: { name: string; state: string }[];
-  updatedAt: string | null;
-};
-
-export function HermesPanel({ status }: { status: Status }) {
-  const [msg, setMsg] = useState("");
-  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [err, setErr] = useState("");
-
-  async function send(e: React.FormEvent) {
-    e.preventDefault();
-    if (!msg.trim()) return;
-    setState("sending");
-    setErr("");
-    const r = await fetch("/admin/api/hermes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: msg }),
-    });
-    if (r.ok) {
-      setState("sent");
-      setMsg("");
-    } else {
-      const j = await r.json().catch(() => ({}));
-      setErr(j.error ?? "Send failed");
-      setState("error");
-    }
-  }
+/**
+ * Hermes gateway status.
+ *
+ * This panel used to render a "Message Hermes…" textarea and a "Send to Hermes"
+ * button. That whole form was dead three times over:
+ *
+ *   1. it POSTed to `/admin/api/hermes`, and no such route handler has ever existed
+ *      (`apps/web/app/admin/` has no `api/` directory) — the request 404s;
+ *   2. the button was `type="button"`, so it did not submit the form even when
+ *      clicked;
+ *   3. the only field was a `<textarea>`, where Enter inserts a newline rather than
+ *      submitting, so there was no way to trigger `onSubmit` from the keyboard either.
+ *
+ * The gateway has no HTTP chat surface to implement it against — it is driven over
+ * Discord and the `hermes chat` CLI (see docs/hermes-architecture-audit.md) — so the
+ * honest fix is to delete the form rather than invent an endpoint behind it. What
+ * remains is the half that really worked: reading `gateway_state.json` off disk.
+ *
+ * A server component on purpose: nothing here is interactive.
+ */
+export function HermesPanel({ status }: { status: GatewayStatus }) {
+  const updated = status.updatedAt ? new Date(status.updatedAt) : null;
+  const updatedLabel =
+    updated && !Number.isNaN(updated.getTime())
+      ? updated.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })
+      : null;
 
   return (
     <div className="rounded-xl border border-hairline bg-surface p-5">
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span
           className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${
             status.running
@@ -61,31 +54,14 @@ export function HermesPanel({ status }: { status: Status }) {
         <span className="rounded-full border border-hairline bg-surface-sunken px-2.5 py-0.5 text-xs text-ink-3">
           {status.activeAgents} active agent{status.activeAgents === 1 ? "" : "s"}
         </span>
+        {updatedLabel && (
+          <span className="text-xs text-ink-3">as of {updatedLabel}</span>
+        )}
       </div>
 
-      <form onSubmit={send} className="space-y-2">
-        <textarea
-          value={msg}
-          onChange={(e) => setMsg(e.target.value)}
-          rows={2}
-          placeholder="Message Hermes… (delivered to Discord; it replies there)"
-          className="w-full rounded-lg border border-hairline px-3 py-2 text-sm outline-none focus:border-[var(--brand-secondary)]"
-        />
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            disabled={state === "sending"}
-            className="rounded-lg bg-[var(--brand-primary)] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-60"
-          >
-            {state === "sending" ? "Sending…" : "Send to Hermes"}
-          </button>
-          {state === "sent" && <span className="text-sm tone-positive">✓ Sent — check Discord for the reply</span>}
-          {state === "error" && <span className="text-sm tone-critical">{err}</span>}
-        </div>
-      </form>
-
       <p className="mt-3 text-xs text-ink-3">
-        Also reachable via Discord (connected) or <code className="rounded bg-surface-sunken px-1">ssh exness-vm</code> →{" "}
+        Read from <code className="rounded bg-surface-sunken px-1">gateway_state.json</code> on the VM. To
+        drive the agent, use Discord or <code className="rounded bg-surface-sunken px-1">ssh exness-vm</code> →{" "}
         <code className="rounded bg-surface-sunken px-1">hermes chat</code>.
       </p>
     </div>

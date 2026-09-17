@@ -1,4 +1,5 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 const SECTIONS = [
   { id: "1", title: "Use of Platform", num: "1" },
@@ -11,7 +12,7 @@ const SECTIONS = [
   { id: "8", title: "Contact", num: "8" },
 ];
 
-export function TermsPage({ brand }: { brand: any }) {
+export function TermsPage({ brand }: { brand: Brand }) {
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -46,7 +47,7 @@ export function TermsPage({ brand }: { brand: any }) {
           {/* Content */}
           <div className="md:col-span-3">
             <div className="rounded-3xl border bg-surface p-8 md:p-10 shadow-sm" style={{ borderColor: "var(--hairline)" }}>
-              <p className="text-sm opacity-70 mb-6">By accessing and using {brand.name} ("the Platform"), you agree to be bound by these Terms and Conditions.</p>
+              <p className="text-sm opacity-70 mb-6">By accessing and using {brand.name} (&quot;the Platform&quot;), you agree to be bound by these Terms and Conditions.</p>
               <div className="space-y-8">
                 <section id="section-1">
                   <h2 className="text-xl font-bold mb-3 flex items-center gap-2" style={{ color: "var(--brand-secondary)" }}>

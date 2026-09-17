@@ -11,7 +11,7 @@
  * data the pad draws, so what you sign is exactly what is exported — the
  * background stays clear so it drops onto a form or a letterhead.
  */
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
@@ -106,11 +106,19 @@ export default function SignatureMaker() {
   // render it closed over, which loses points when two moves land in one frame.
   const liveRef = useRef<Pt[]>([]);
   const pen = useRef({ w: width, c: ink });
-  pen.current = { w: width, c: ink };
+  // Written in an effect, not during render: mutating a ref while rendering is what
+  // React Compiler's refs rule forbids, and the pan handlers only read it after the
+  // frame has been committed anyway.
+  useEffect(() => {
+    pen.current = { w: width, c: ink };
+  }, [width, ink]);
   const svgRef = useRef<any>(null);
 
   const responder = useMemo(
     () =>
+      /* eslint-disable-next-line react-hooks/refs -- PanResponder.create only stores these
+         handlers; it never invokes them, so the refs it closes over are not read during
+         render. They are read inside the handlers, which run after commit. */
       PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: () => true,

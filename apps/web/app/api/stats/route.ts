@@ -1,6 +1,5 @@
-import { NextRequest } from 'next/server';
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const apiKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   const res = await fetch(`${supabaseUrl}/rest/v1/businesses?select=id&limit=1`, {

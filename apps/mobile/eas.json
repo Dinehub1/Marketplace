@@ -57,6 +57,13 @@
         "APP_TARGET": "japa"
       }
     },
+    "merge-tiles": {
+      "extends": "production",
+      "channel": "merge-tiles",
+      "env": {
+        "APP_TARGET": "merge-tiles"
+      }
+    },
     "passport-photo": {
       "extends": "production",
       "channel": "passport-photo",

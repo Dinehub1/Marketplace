@@ -4,6 +4,8 @@ import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { publicUrlFor } from "@/lib/r2";
 import { verifyPaymentSignature } from "@/lib/razorpay";
 import { paidOrderFor, paymentsConfigured } from "@/lib/product-orders";
+import { asRow} from "@/lib/postgrest";
+import type { OrderRow, ProductJobRow } from "@/lib/db-types";
 
 /**
  * POST /api/orders/verify — confirm a Checkout payment and release the clean file.
@@ -46,14 +48,14 @@ export async function POST(req: NextRequest) {
     `orders?razorpay_order_id=eq.${encodeURIComponent(orderId)}&phone=eq.${encodeURIComponent(phone)}` +
       `&select=id,job_id,product,status,amount_paise&limit=1`,
   );
-  const order = ((await res.json()) as any[])[0];
+  const order = await asRow<OrderRow>(res);
   if (!order) {
     return NextResponse.json({ error: "Order not found" }, { status: 404, headers: noStore });
   }
 
   const jobId = Number(order.job_id);
   const jobRes = jobId ? await db(`product_jobs?id=eq.${jobId}&select=output_key,status`) : null;
-  const job = jobRes ? ((await jobRes.json()) as any[])[0] : null;
+  const job = jobRes ? await asRow<ProductJobRow>(jobRes) : null;
   const outputUrl = job?.output_key ? publicUrlFor(job.output_key) : null;
 
   if (order.status === "paid") {

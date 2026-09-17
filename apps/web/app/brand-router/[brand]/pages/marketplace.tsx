@@ -2,10 +2,10 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 import { categoriesForBrand } from "@/lib/brand-categories";
 import { categoryPath, CITY_LABEL, getAreaIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
-import { CategoryCover } from "@/components/category-cover";
-import { BusinessCard } from "@/components/directory/BusinessCard";
+import { BusinessCard, type BusinessCardData } from "@/components/directory/BusinessCard";
 import { CategoryCard } from "@/components/directory/CategoryCard";
 import { SectionHeading } from "@/components/directory/SectionHeading";
+import type { Brand } from "@/lib/brands";
 
 const PAGE_SIZE = 24;
 // Yelp carries 1,500+ categories and surfaces 22 on its homepage. This page was
@@ -55,7 +55,7 @@ async function fetchDirectory(
     },
     cache: "no-store",
   });
-  const rows = res.ok ? await res.json() : [];
+  const rows: BusinessCardData[] = res.ok ? await res.json() : [];
   const total = Number((res.headers.get("content-range") ?? "").split("/")[1] ?? 0) || 0;
   return { rows, total };
 }
@@ -85,7 +85,7 @@ async function fetchCategories(): Promise<{ category: string; count: number }[]>
   } catch { return []; }
 }
 
-export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Record<string, any> }) {
+export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: Record<string, string | string[] | undefined> }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
@@ -294,7 +294,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: any; sp?: Rec
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {rows.map((b: any) => (
+                {rows.map((b) => (
                   <BusinessCard key={b.id} b={b} primary={primary} secondary={secondary} />
                 ))}
               </div>

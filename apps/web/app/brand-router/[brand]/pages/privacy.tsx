@@ -1,4 +1,5 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 const SECTIONS = [
   { id: "1", title: "Information We Collect", num: "1" },
@@ -10,7 +11,7 @@ const SECTIONS = [
   { id: "7", title: "Contact Us", num: "7" },
 ];
 
-export function PrivacyPage({ brand }: { brand: any }) {
+export function PrivacyPage({ brand }: { brand: Brand }) {
 
   return (
     <div className="min-h-screen flex flex-col">

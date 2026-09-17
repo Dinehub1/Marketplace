@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { ByBrandSlug, Testimonial } from "@/lib/brand-content";
 
-const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rating: number; role?: string }>> = {
+const BRAND_TESTIMONIALS: ByBrandSlug<Testimonial> = {
   sarkarhealth: [
     { name: "Sunita Sharma", text: "So simple! I consulted a doctor right from home, and the medicine was delivered to my doorstep. I've never had such a facility in Indore.", rating: 5, role: "Housewife, Rajwada" },
     { name: "Ramesh Patel", text: "My father's ECG was done at home, and the report came online too. It saved us a lot of hassle — thank you SarkarHealth!", rating: 5, role: "Son of patient, Palasia" },
@@ -144,7 +146,7 @@ const BRAND_TESTIMONIALS: Record<string, Array<{ name: string; text: string; rat
   ],
 };
 
-const DEFAULT_TESTIMONIALS = [
+const DEFAULT_TESTIMONIALS: Testimonial[] = [
   { name: "Rahul S.", text: "Amazing service! Highly recommended to everyone.", rating: 5 },
   { name: "Priya M.", text: "Best experience ever. Will definitely come back.", rating: 5 },
   { name: "Amit K.", text: "Great quality and fast delivery. Very satisfied.", rating: 4 },
@@ -153,8 +155,8 @@ const DEFAULT_TESTIMONIALS = [
   { name: "Neha T.", text: "Outstanding support and service quality.", rating: 4 },
 ];
 
-export function TestimonialsPage({ brand }: { brand: any }) {
-  const testimonials = BRAND_TESTIMONIALS[brand.slug] ?? (brand.testimonials_json ?? DEFAULT_TESTIMONIALS) as any[];
+export function TestimonialsPage({ brand }: { brand: Brand }) {
+  const testimonials = BRAND_TESTIMONIALS[brand.slug] ?? (brand.testimonials_json ?? DEFAULT_TESTIMONIALS);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -171,10 +173,10 @@ export function TestimonialsPage({ brand }: { brand: any }) {
       <section className="section">
         <div className="mx-auto max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((item: any, i: number) => (
+            {testimonials.map((item, i: number) => (
               <div key={i} className="card-lift rounded-2xl border bg-surface p-6 h-full flex flex-col" style={{ borderColor: "var(--hairline)" }}>
                 <div className="flex items-center gap-1 mb-4">{[1,2,3,4,5].map((s) => <span key={s} className={s <= (item.rating ?? 5) ? "tone-gold" : "text-ink-4"}>★</span>)}</div>
-                <p className="text-sm opacity-70 italic leading-relaxed flex-1">"{item.text}"</p>
+                <p className="text-sm opacity-70 italic leading-relaxed flex-1">&quot;{item.text}&quot;</p>
                 <div className="flex items-center gap-3 mt-4 pt-4 border-t" style={{ borderColor: "var(--hairline)" }}>
                   <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style={{ background: "var(--brand-gradient)" }}>{item.name?.charAt(0) ?? "?"}</div>
                   <div><p className="font-semibold text-sm">{item.name}</p>{item.role && <p className="text-xs opacity-50">{item.role}</p>}</div>

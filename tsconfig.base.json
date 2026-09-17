@@ -12,7 +12,14 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+
+    /* @hermes/core ships raw TypeScript and is loaded two ways: bundled by Next and
+     * Metro, and type-stripped by plain `node --test` for its own suite. Node's
+     * stripper does not do extension resolution, so every relative import inside the
+     * package must name its file (`./brand-scope.ts`). This flag is what lets tsc
+     * accept those specifiers; it requires noEmit, which every workspace sets. */
+    "allowImportingTsExtensions": true
   },
   "exclude": ["node_modules", "dist", ".next"]
 }

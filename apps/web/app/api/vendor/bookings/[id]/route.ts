@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { STATUS_TRANSITIONS, loadOwnedBusinesses } from "@/lib/booking";
+import { asRow} from "@/lib/postgrest";
+import type { BookingRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -39,7 +41,7 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
   const res = await db(
     `bookings?id=eq.${id}&business_id=in.(${ownedIds.join(",")})&select=id,status,payment_mode,payment_status`,
   );
-  const booking = ((await res.json()) as any[])[0];
+  const booking = await asRow<BookingRow>(res);
   if (!booking) return NextResponse.json({ error: "Booking not found" }, { status: 404, headers: noStore });
 
   const allowed = STATUS_TRANSITIONS[booking.status] ?? [];
@@ -61,6 +63,6 @@ export async function PATCH(req: NextRequest, ctx: Ctx) {
     body: JSON.stringify(patch),
   });
   if (!upd.ok) return NextResponse.json({ error: "Update save nahi hua" }, { status: 500, headers: noStore });
-  const updated = ((await upd.json()) as any[])[0];
+  const updated = await asRow<BookingRow>(upd);
   return NextResponse.json({ ok: true, booking: updated }, { headers: noStore });
 }

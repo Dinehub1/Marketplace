@@ -15,6 +15,7 @@ import { safeJsonLd } from "@/lib/json-ld";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { CategoryCard } from "@/components/directory/CategoryCard";
 import { SectionHeading } from "@/components/directory/SectionHeading";
+import type { Brand } from "@/lib/brands";
 
 const PAGE_SIZE = 30;
 const RELATED = 10;
@@ -25,7 +26,7 @@ export async function CategoryAreaPage({
   area,
   page,
 }: {
-  brand: any;
+  brand: Brand;
   category: CategoryStat;
   area: string;
   page: number;

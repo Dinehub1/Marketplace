@@ -1,7 +1,7 @@
 # @hermes/mobile
 
 Native iOS and Android apps, built with Expo (SDK 57, New Architecture, Expo Router).
-**One codebase, nineteen store listings** — see "Nineteen apps from one codebase" below.
+**One codebase, twenty store listings** — see "Twenty apps from one codebase" below.
 
 The marketplace build has two modes:
 
@@ -27,7 +27,7 @@ in the root `package.json` and no `App.tsx` beside it, and fail with:
 Unable to resolve "../../App" from "node_modules/expo/AppEntry.js"
 ```
 
-Use `npm run app -- <id>` (see "Nineteen apps from one codebase") or `npm run mobile`,
+Use `npm run app -- <id>` (see "Twenty apps from one codebase") or `npm run mobile`,
 which both start Expo with `apps/mobile` as the working directory. The tell-tale sign of
 the mistake is a `.expo/` directory appearing in the repo root.
 
@@ -47,10 +47,10 @@ rendering an empty directory that looks like a data problem.
 In development `EXPO_PUBLIC_WEB_BASE_URL` must be a LAN address
 (`http://192.168.x.x:3001`) — on a phone or simulator, `localhost` is the device.
 
-## Nineteen apps from one codebase
+## Twenty apps from one codebase
 
-This app is not one app. `targets.mjs` defines nineteen store listings — six wellness
-apps, seven product apps, three directory apps and three games — and `APP_TARGET` decides
+This app is not one app. `targets.mjs` defines twenty store listings — six wellness
+apps, seven product apps, three directory apps and four games — and `APP_TARGET` decides
 which one a build is:
 
 ```bash
@@ -87,7 +87,7 @@ node -e "import('./apps/mobile/lib/products.ts')"   # or just read the file
 ### Store art
 
 ```bash
-npm run icons -w @hermes/mobile        # regenerate 19 icon sets from targets.mjs
+npm run icons -w @hermes/mobile        # regenerate 20 icon sets from targets.mjs
 ```
 
 These are generated monograms — distinct, shippable placeholders. Replace them with
@@ -114,28 +114,62 @@ Adding a target: add it to `targets.mjs`, add its `FIRST_ROUTE`, add a `MARK` en
 Adding a **game** target is that list plus two, because a game screen is the whole app:
 register a probe in `scripts/interactions.mjs` and a capture in `scripts/app-shots.mjs` (a
 PNG of a game that cannot score looks exactly like one that can), and keep the rules in a
-`lib/*.ts` module with no renderer in it — `lib/block-clear.ts` is the pattern, and
-`npm run check:game` asserts it in plain Node.
+`lib/*.ts` module with no renderer in it — `lib/block-clear.ts` and `lib/merge-tiles.ts`
+are the pattern, and `npm run check:games` asserts both in plain Node.
 
-Two gates run against the fleet — before every store build, and on demand:
+A game that animates needs one more thing, and it is not optional: **the mapping from one
+board to the next**. Merge's engine returns a trace (`steps`, `merges`, `spawnedAt`) beside
+the new board, because a renderer cannot recover "which 4 moved where" from two boards that
+happen to share a value — and guessing gives you a jump cut instead of a slide. The same
+trace is what lets the Node check assert the merge rule, so the animation and the rule are
+the same fact rather than two implementations of it.
+
+### Game sound
+
+Merge has sound and haptics; neither is a rule, so both are optional and both fail silently
+on a device that cannot do them.
+
+```bash
+npm run sounds        # regenerate the four WAVs from the recipe in scripts/make-game-sounds.mjs
+```
+
+The files in `assets/sounds/` are synthesized from arithmetic (an envelope, a waveform, a
+handful of notes) rather than downloaded, so they are ours outright and a few kilobytes
+each. The generator refuses to write a silent file — an empty WAV is a valid WAV, plays
+fine, and is indistinguishable from the game being muted, which is exactly what the first
+version of that script shipped.
+
+Playback is `expo-audio`, which is a native module: adding it means the next run needs a
+native build (`npm run mobile:ios` / `expo run:ios`) rather than a reload, and a store build
+needs a fresh `eas build`. It is the only native dependency the games add beyond the ones
+the rest of the app already uses.
+
+Two gates decide whether the fleet can be built — they run before every store build, and on
+demand — and one more checks the games' own rules:
 
 ```bash
 npm run check:targets -w @hermes/mobile              # are two listings too alike to pass review?
 npm run check:fleet   -w @hermes/mobile              # does each one resolve to a real app?
 npm run check:fleet   -w @hermes/mobile -- --require-ready   # exit 1 unless every app is publishable
-npm run check:game                                   # do the game's rules still hold?
+npm run check:games                                  # do the games' rules still hold?
 ```
 
 `check:targets` is the spam/4.3 gate. `check:fleet` resolves the real `app.config.ts` for
-all nineteen and asserts a unique name, slug and bundle id, art on disk, and a first
+all twenty and asserts a unique name, slug and bundle id, art on disk, and a first
 screen that exists — then reports how much of each listing is actually built. It exits 0
 while apps are still owed a screen, so it can be run daily; `--require-ready` is the
-release form that refuses.
+release form that refuses. Both run as `check:release` before a build, which is why a
+listing that would be rejected fails here instead of in review.
 
-`check:game` (root, `scripts/check-block-clear.mjs`) loads the Block Clear engine directly
-and asserts placement, line clearing, the combo rule, the end condition and the rewarded
-tray's promise. It needs no browser on purpose: the probes in `scripts/interactions.mjs`
-prove the screen *responds*, but they only run where Playwright and a preview exist.
+`check:games` (root, `scripts/check-block-clear.mjs` and `scripts/check-merge-tiles.mjs`)
+loads each game engine directly and asserts its rules. Block Clear's check covers
+placement, line clearing, the combo rule, the end condition and the rewarded tray's
+promise; Merge's covers the merge rule (`2·2·4` makes `4·4`, never `8`), scoring, the end
+condition and the rewarded undo. It is deliberately not part of `check:release` — the
+release gate is about the listing, and this is about the game — but it runs in the same
+second and needs no device. Neither needs a browser on purpose: the probes in
+`scripts/interactions.mjs` prove the screens *respond*, but they only run where Playwright
+and a preview exist.
 
 ### Where the product list lives
 
@@ -213,6 +247,39 @@ hand-maintained palettes drift within a week.
 Everything else in `@hermes/tokens` (type scale, spacing, radii, springs,
 elevation) is hand-written, because React Native has no `clamp()`, no `em`, no
 cascade, and a per-platform shadow model.
+
+### Reduce Motion is a rule, not a nice-to-have
+
+The OS setting is read by `lib/motion.ts` and every piece of motion in the app
+answers to it. Reduce Motion does **not** mean no feedback — a control that does not
+react to being touched reads as broken. It means no *movement*:
+
+| | Full motion | Reduce Motion |
+|---|---|---|
+| `Press` (every button, chip, card) | scales on `press.scale` | cross-fades by `pressFade`, over `press.durationMs` |
+| Pushed screen | slides from the right | cross-fades |
+| Breathing circle | scales 1 → 1.34 → 0.78 | holds its size, brightens and dims at the same phase timing |
+
+The back-swipe gesture is deliberately **kept** in both settings: the user is driving
+it with their own finger, so there is no motion imposed on them.
+
+**Adding motion?** Either build it on `Press`/`Stack`, or read `useReduceMotion()` and
+say in a comment what the gentler equivalent is. Unconditional `withTiming`/`withSpring`
+on something that travels, scales or loops is the thing this rule exists to stop. Note
+`prefers-reduced-transparency` and `prefers-contrast` have no counterpart here yet
+because the app has no translucent surfaces — that arrives with a materials pass.
+
+To see the reduced path on the web export, `scripts/screenshot.mjs` takes
+`--reduced-motion`, which emulates the setting through the browser and into React Native
+Web's `AccessibilityInfo`:
+
+```bash
+node scripts/screenshot.mjs http://127.0.0.1:8091/breathe /tmp/breathe-reduced.png \
+  --viewport mobile --reduced-motion
+```
+
+Wiring it into the `npm run shots` sweep as a third view beside light and dark is still
+open — that changes the gallery's file naming and `app-map.mjs`, so it is its own change.
 
 ### Deliberate divergences from web
 

@@ -7,9 +7,9 @@ import { TARGET } from "@/lib/target";
 import { unbuiltProductsFor } from "@/lib/products";
 
 /**
- * The first frame of all eighteen apps.
+ * The first frame of all twenty apps.
  *
- * This route exists because "eighteen separate apps" has to mean something the user can
+ * This route exists because "twenty separate apps" has to mean something the user can
  * see, and the first thing they see is this. Each target sends its build straight to the
  * screen its store listing promises: Breathe opens on the breathing circle, Tap Sprint on
  * the game, the directory apps on the listing feed.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore, useState } from "react";
 
 export type ThemeChoice = "light" | "dark" | "system";
 
@@ -54,22 +54,47 @@ const OPTIONS: { value: ThemeChoice; label: string; d: string }[] = [
  * OS preference the first time they touch it, and gives them no way back —
  * "system" has to be reachable, and it is the default.
  */
-export function ThemeToggle() {
-  const [choice, setChoice] = useState<ThemeChoice>("system");
-  const [mounted, setMounted] = useState(false);
+const noopSubscribe = () => () => {};
 
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === "dark" || stored === "light") setChoice(stored);
-    } catch {
-      /* ignore */
-    }
-  }, []);
+/** True on the client, false through SSR and hydration — the hydration-safe "mounted". */
+function useMounted(): boolean {
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
+}
+
+/**
+ * The theme saved in this browser, read as an *external store*.
+ *
+ * This is the documented way to read `localStorage` without a setState-in-effect: the
+ * server snapshot is `null`, so the markup React hydrates matches what the server sent,
+ * and any later change (another tab) re-renders through the `storage` event.
+ */
+function useStoredTheme(): string | null {
+  return useSyncExternalStore(
+    (onChange) => {
+      window.addEventListener("storage", onChange);
+      return () => window.removeEventListener("storage", onChange);
+    },
+    () => {
+      try {
+        return localStorage.getItem(STORAGE_KEY);
+      } catch {
+        return null;
+      }
+    },
+    () => null,
+  );
+}
+
+export function ThemeToggle() {
+  const mounted = useMounted();
+  const stored = useStoredTheme();
+  // What the user picked in this tab, or null to fall back to what is stored.
+  const [picked, setPicked] = useState<ThemeChoice | null>(null);
+  const choice: ThemeChoice =
+    picked ?? (stored === "dark" || stored === "light" ? stored : "system");
 
   function pick(next: ThemeChoice) {
-    setChoice(next);
+    setPicked(next);
     apply(next);
   }
 
@@ -90,7 +115,6 @@ export function ThemeToggle() {
           type="button"
           role="radio"
           aria-checked={mounted && choice === o.value}
-          aria-selected={mounted && choice === o.value}
           aria-label={o.label}
           title={o.label}
           onClick={() => pick(o.value)}

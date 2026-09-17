@@ -1,6 +1,27 @@
 import { createClient } from "./supabase/server";
 import { headers } from "next/headers";
+import type {
+  BlogPost,
+  FaqItem,
+  FeatureItem,
+  GalleryItem,
+  JobOpening,
+  PricingPlan,
+  ReviewCard,
+  ServiceItem,
+  TeamMember,
+  Testimonial,
+} from "./brand-content";
 
+/**
+ * A row of the `brands` table — the single thing that makes 28 websites out of one
+ * Next app. Routing, theming, SEO and the marketing copy all hang off this shape.
+ *
+ * The nine `*_json` arrays are `jsonb` in Postgres, so they are typed by hand here
+ * (see `lib/brand-content.ts`) rather than inferred. `reviews_json` is the one
+ * exception: nothing reads it — live reviews come from the `reviews` table — so it is
+ * typed as an opaque array rather than given a shape nobody uses.
+ */
 export type Brand = {
   id: string;
   slug: string;
@@ -12,7 +33,14 @@ export type Brand = {
   tagline: string | null;
   description: string | null;
   theme: Record<string, string>;
-  features: { leads?: boolean; payments?: boolean; listings?: boolean; events?: boolean };
+  features: {
+    leads?: boolean;
+    payments?: boolean;
+    listings?: boolean;
+    events?: boolean;
+    /** Booking commission in basis points (1500 = 15%). Defaults to 1500 when unset. */
+    commission_bps?: number;
+  };
   seo_title: string | null;
   seo_description: string | null;
   logo_url: string | null;
@@ -23,19 +51,20 @@ export type Brand = {
   uptime: number;
   sort_order: number;
   page_flags: Record<string, boolean>;
-  page_content: Record<string, any>;
+  page_content: Record<string, unknown>;
   about_text: string | null;
   mission_text: string | null;
-  team_json: any[];
-  testimonials_json: any[];
-  reviews_json: any[];
-  faq_json: any[];
-  blog_json: any[];
-  careers_json: any[];
-  gallery_json: any[];
-  services_json: any[];
-  pricing_json: any[];
-  features_json: any[];
+  team_json: TeamMember[];
+  testimonials_json: Testimonial[];
+  /** The brand's own curated quotes. Live customer reviews come from `reviews`. */
+  reviews_json: ReviewCard[];
+  faq_json: FaqItem[];
+  blog_json: BlogPost[];
+  careers_json: JobOpening[];
+  gallery_json: GalleryItem[];
+  services_json: ServiceItem[];
+  pricing_json: PricingPlan[];
+  features_json: FeatureItem[];
   booking_enabled: boolean;
   quote_enabled: boolean;
   checkout_enabled: boolean;

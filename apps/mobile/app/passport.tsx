@@ -165,8 +165,12 @@ export default function PassportPhoto() {
       {preview ? (
         <View style={s.previewBox}>
           <Text style={s.label}>Your sheet</Text>
-          {/* eslint-disable-next-line jsx-a11y/alt-text */}
-          <Image source={{ uri: preview }} style={s.previewImage} resizeMode="contain" />
+          <Image
+            source={{ uri: preview }}
+            style={s.previewImage}
+            resizeMode="contain"
+            alt="Your passport photo sheet"
+          />
           {sheet?.count ? (
             <Text style={s.sheetMeta}>
               {sheet.count} {sheet.count === 1 ? "photo" : "photos"} on a 4×6 in sheet

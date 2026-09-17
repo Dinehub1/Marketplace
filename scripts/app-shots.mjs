@@ -16,8 +16,9 @@
  *   node scripts/app-shots.mjs --themes dark       one scheme
  *   node scripts/app-shots.mjs --budget-kb 4000    fail if the JS bundle exceeds this
  *
- * Env: APP_BASE (default https://expo.dropby.co.in), SHOTS_DIR (default
- *      C:/Users/Administrator/shots), MOBILE_APP (dir holding apps/mobile).
+ * Env: APP_BASE (default https://expo.dropby.co.in), SHOTS_DIR (default `shots/` in the
+ *      repo root on every platform except the Windows capture VM, which keeps its own folder),
+ *      MOBILE_APP (dir holding apps/mobile).
  *
  * Exit: 0 all screens captured and asserted, 1 a capture failed, 2 the export failed.
  */
@@ -29,7 +30,21 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '..');
 const APP_DIR = process.env.MOBILE_APP || path.join(REPO, 'apps', 'mobile');
-const SHOTS_DIR = process.env.SHOTS_DIR || 'C:/Users/Administrator/shots';
+/*
+ * Where the pictures go.
+ *
+ * The capture VM has its own folder outside the checkout and keeps it by setting SHOTS_DIR; every
+ * other machine gets `shots/` in the repo root, which is gitignored and has a double-clickable
+ * `index.html` in it. The default used to be the VM's path on every platform, so running this on a
+ * Mac tried to write to `C:/Users/Administrator/shots` — a directory that does not exist and cannot
+ * be created — and the run failed at the first capture for a reason that had nothing to do with the
+ * app.
+ */
+const SHOTS_DIR =
+  process.env.SHOTS_DIR ||
+  (process.platform === 'win32'
+    ? 'C:/Users/Administrator/shots'
+    : path.join(REPO, 'shots'));
 const APP_BASE = (process.env.APP_BASE || 'https://expo.dropby.co.in').replace(/\/$/, '');
 const WEB_BASE = (process.env.WEB_BASE || 'https://sarkarmarketplace.dropby.co.in').replace(/\/$/, '');
 const HARNESS = path.join(HERE, 'screenshot.mjs');
@@ -61,7 +76,10 @@ const SCREENS = [
   // screen, never the network — so its markers are about the screen's own copy.
   // The wellness family: five screens on one native tab bar, every one of them offline.
   // Their markers are the copy that only that screen says.
-  { name: 'stretch', route: '/stretch', expect: ['Desk mobility', 'Start the routine'] },
+  // Stretch and Breathe carry probes because their *transition* is the part that breaks: the setup
+  // screen renders perfectly whether or not pressing Start survives, so a marker cannot see it. The
+  // Stretch probe exists because that transition once crashed the app.
+  { name: 'stretch', route: '/stretch', expect: ['Desk mobility', 'Start routine'], interact: 'stretch-start' },
   { name: 'walk', route: '/walk', expect: ['Fast for a minute', 'Start walking'] },
   { name: 'habits', route: '/habits', expect: ['GLASSES', 'BEADS'] },
   // The two pages that make this more than a one-pager: the charts, and the settings that
@@ -71,7 +89,7 @@ const SCREENS = [
   { name: 'water', route: '/water', expect: ['Add a glass', 'What this is not'] },
   { name: 'japa', route: '/japa', expect: ['Tap anywhere to count', 'bead'] },
   { name: 'sleep', route: '/sleep', expect: ['4 IN · 7 HOLD · 8 OUT', 'Start the rounds'] },
-  { name: 'breathe', route: '/breathe', expect: ['breaths a minute', 'What this is not'] },
+  { name: 'breathe', route: '/breathe', expect: ['breaths a minute', 'What this is not'], interact: 'breathe-start' },
   // `interact` (see scripts/interactions.mjs) is the difference between "the game
   // rendered" and "the game works": tap-sprint's field was inert for a day of
   // captures (item 21) and every PNG passed the marker check, because a screenshot
@@ -95,6 +113,9 @@ const SCREENS = [
   // /owner redirects here while signed out, so the dashboard's own picture waits for a
   // signed-in capture; this is the screen a person actually sees.
   { name: 'owner-sign-in', route: '/owner/sign-in', expect: ['one-time code'] },
+  // The number game. Its picture is taken after a slide for the same reason: an arrow
+  // that reaches the board and one that does nothing look identical in a still.
+  { name: 'merge-tiles', route: '/merge-tiles', expect: ['Slide the tiles, double the numbers', 'Four by four'], interact: 'merge-tiles-slide' },
   // The paywall is a web page, not an app screen, but it is where the money is
   // taken — so it belongs in the same gallery.
   { name: 'paywall', url: `${WEB_BASE}/unlock/33`, expect: ['Verify your', '₹'] },

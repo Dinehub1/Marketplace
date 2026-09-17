@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 const NOTIFICATIONS = [
   { title: "Welcome!", msg: "Thanks for joining our platform", time: "Just now", read: false, icon: "👋" },
@@ -11,7 +12,7 @@ const NOTIFICATIONS = [
   { title: "Review requested", msg: "How was your experience? Leave a review", time: "2 weeks ago", read: true, icon: "⭐" },
 ];
 
-export function Notifications({ brand }: { brand: any }) {
+export function Notifications({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const accent = theme.accent ?? "#c4b5fd";
   const [filter, setFilter] = useState("all");

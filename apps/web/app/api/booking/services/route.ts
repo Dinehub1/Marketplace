@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/nextel";
 import { DEFAULT_HOURS, loadVendorHours } from "@/lib/booking";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { BusinessRow, VendorServiceRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -24,13 +26,13 @@ export async function GET(req: NextRequest) {
   const bizRes = await db(
     `businesses?id=eq.${businessId}&status=eq.active&select=id,name,category,area,address,phone,rating,reviews_count,image_url`,
   );
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "Vendor not found" }, { status: 404, headers: noStore });
 
   const svcRes = await db(
     `vendor_services?business_id=eq.${businessId}&is_active=eq.true&select=id,name,description,price_inr,duration_minutes&order=sort_order.asc,name.asc`,
   );
-  const services = svcRes.ok ? ((await svcRes.json()) as any[]) ?? [] : [];
+  const services = svcRes.ok ? (await asRows<VendorServiceRow>(svcRes)) ?? [] : [];
 
   const hoursMap = await loadVendorHours(businessId);
   const configured = hoursMap.size > 0;

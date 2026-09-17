@@ -1,8 +1,10 @@
 "use client";
 import { useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { ByBrandSlug, FaqItem } from "@/lib/brand-content";
 
-const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
+const BRAND_FAQ: ByBrandSlug<FaqItem> = {
   sarkarhealth: [
       { q: "How do I book a video consultation?", a: "Go to the app or website, choose a doctor, pick a time slot, and pay via UPI. You'll receive a link — click it to start your consultation." },
       { q: "Are the medicines genuine?", a: "100%! We source only from licensed chemists and authorized distributors. You can verify the batch number and expiry of every medicine." },
@@ -154,7 +156,7 @@ const BRAND_FAQ: Record<string, Array<{ q: string; a: string }>> = {
   ],
 };
 
-const DEFAULT_FAQ = [
+const DEFAULT_FAQ: FaqItem[] = [
   { q: "How do I get started?", a: "Simply sign up and you can start using our services immediately. The process takes less than 2 minutes." },
   { q: "Is there a free plan?", a: "Yes! We offer a free tier with basic features. You can upgrade anytime for more advanced capabilities." },
   { q: "How do I contact support?", a: "You can reach us via email, WhatsApp, or the contact form. Our team responds within 24 hours." },
@@ -163,11 +165,11 @@ const DEFAULT_FAQ = [
   { q: "Do you offer custom solutions?", a: "Yes! For enterprise customers, we offer custom integrations and dedicated support. Contact us to learn more." },
 ];
 
-export function FAQPage({ brand }: { brand: any }) {
+export function FAQPage({ brand }: { brand: Brand }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
   const accent = t.accent ?? "#c4b5fd";
-  const faqs = BRAND_FAQ[brand.slug] ?? (brand.faq_json ?? DEFAULT_FAQ) as any[];
+  const faqs = BRAND_FAQ[brand.slug] ?? (brand.faq_json ?? DEFAULT_FAQ);
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -185,7 +187,7 @@ export function FAQPage({ brand }: { brand: any }) {
 
       <section className="section">
         <div className="mx-auto max-w-3xl space-y-3">
-          {faqs.map((faq: any, i: number) => (
+          {faqs.map((faq, i: number) => (
             <div key={i} className="rounded-xl border overflow-hidden transition-all duration-300" style={{ borderColor: open === i ? primary : `${accent}30`, boxShadow: open === i ? `0 4px 20px -5px ${primary}20` : "none" }}>
               <button onClick={() => setOpen(open === i ? null : i)} className="w-full text-left px-5 py-4 flex items-center justify-between font-semibold text-sm" style={{ color: "var(--brand-secondary)" }}>
                 {faq.q}

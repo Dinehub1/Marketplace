@@ -65,3 +65,10 @@ __pycache__/
 # safety copies taken before a risky edit; ad-hoc, never source
 *.bak-*
 *.bak
+
+# ── app screenshots taken locally ─────────────────────────────────────────
+# `npm run shots` writes one PNG and one text file per screen per theme here (or to
+# $SHOTS_DIR if you set it). They are a *reading aid* — a way to look at the app without a
+# simulator — and they are regenerated on every run, so they are never source. The folder is
+# ignored whole; the gallery page inside it is generated too.
+shots/

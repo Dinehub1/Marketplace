@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/nextel";
+import {asRows } from "@/lib/postgrest";
+import type { ReviewRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
     `reviews?select=id,reviewer_name,rating,comment,is_approved,created_at,business_id,businesses(name)&order=created_at.desc&limit=200`,
   );
   if (!res.ok) return NextResponse.json({ error: "Could not load reviews" }, { status: 500, headers: noStore });
-  return NextResponse.json({ reviews: (await res.json()) as any[] }, { headers: noStore });
+  return NextResponse.json({ reviews: await asRows<ReviewRow>(res) }, { headers: noStore });
 }
 
 export async function PATCH(req: NextRequest) {

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * run-app.mjs — start the dev server for one of the nineteen apps.
+ * run-app.mjs — start the dev server for one of the twenty apps.
  *
  * Why this exists: the raw command is three things to remember and two to get wrong.
  *
@@ -52,7 +52,7 @@ const id = positional[0];
 const openOn = (t) => (FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen');
 
 if (!id) {
-  console.log('\nNineteen apps, one codebase. Pick one:\n');
+  console.log('\nTwenty apps, one codebase. Pick one:\n');
   const w = [16, 10, 32, 22];
   const line = (a) => a.map((c, i) => String(c).padEnd(w[i])).join(' ');
   console.log(line(['id', 'family', 'app name', 'opens on']));

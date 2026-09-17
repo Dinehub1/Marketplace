@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { ByBrandSlug, PricingPlan } from "@/lib/brand-content";
 
-const BRAND_PLANS: Record<string, Array<{ name: string; price: string; period: string; features: string[]; highlighted: boolean; tagline?: string }>> = {
+const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
   sarkarconnect: [
     {
       name: "Starter",
@@ -243,14 +245,14 @@ const BRAND_PLANS: Record<string, Array<{ name: string; price: string; period: s
   ],
 };
 
-const DEFAULT_PLANS = [
+const DEFAULT_PLANS: PricingPlan[] = [
   { name: "Starter", price: "Free", period: "", features: ["Basic listing", "Community support", "1 project", "Email notifications"], highlighted: false },
   { name: "Pro", price: "₹999", period: "/mo", features: ["Everything in Starter", "Priority support", "10 projects", "Analytics dashboard", "Custom domain", "API access"], highlighted: true },
   { name: "Enterprise", price: "₹4,999", period: "/mo", features: ["Everything in Pro", "Dedicated manager", "Unlimited projects", "Advanced analytics", "SLA guarantee", "White-label"], highlighted: false },
 ];
 
-export function PricingPage({ brand }: { brand: any }) {
-  const plans = BRAND_PLANS[brand.slug] ?? (brand.pricing_json ?? DEFAULT_PLANS) as any[];
+export function PricingPage({ brand }: { brand: Brand }) {
+  const plans = BRAND_PLANS[brand.slug] ?? (brand.pricing_json ?? DEFAULT_PLANS);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -270,7 +272,7 @@ export function PricingPage({ brand }: { brand: any }) {
       <section className="section">
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            {plans.map((plan: any, i: number) => {
+            {plans.map((plan, i: number) => {
               // The badge and the tagline both said "⭐ Most popular", so the
               // highlighted card announced itself twice and the two lines
               // collided. The badge owns that claim; the tagline keeps only the

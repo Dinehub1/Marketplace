@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 /**
  * The vendor cockpit: today's jobs, the service catalogue and weekly timings.
@@ -21,6 +22,17 @@ type Service = { id: string; name: string; price_inr: number; duration_minutes: 
 type Biz = { id: number; name: string };
 type DayHours = { day_of_week: number; day: string; closed: boolean; open_time: string; close_time: string; slot_minutes: number; capacity: number };
 
+/** A day as `/api/booking/services` returns it — looser than `DayHours`, which is the
+ *  edited form, because the endpoint may omit times a vendor has not set. */
+type ApiDayHours = {
+  day_of_week: number;
+  day: string;
+  closed?: boolean;
+  open_time?: string | null;
+  close_time?: string | null;
+};
+type HoursPayload = { hours?: ApiDayHours[]; hours_is_default?: boolean };
+
 const inr = (n: number) => `₹${Number(n ?? 0).toLocaleString("en-IN")}`;
 const STATUS_LABEL: Record<string, string> = {
   requested: "Nayi request", confirmed: "Confirm", in_progress: "Chal rahi hai",
@@ -36,7 +48,7 @@ function defaultWeek(): DayHours[] {
   }));
 }
 
-export function VendorBookingsPage({ brand }: { brand: any }) {
+export function VendorBookingsPage({ brand }: { brand: Brand }) {
   const [step, setStep] = useState<"phone" | "otp" | "ready">("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
@@ -51,14 +63,20 @@ export function VendorBookingsPage({ brand }: { brand: any }) {
   const [week, setWeek] = useState<DayHours[]>(defaultWeek);
   const [hoursBizId, setHoursBizId] = useState<number | null>(null);
 
-  // Token lives outside React state so the fetch helpers below stay stable.
-  const tokenStore = useMemo(() => {
-    let t = "";
-    return {
-      get: () => t,
-      set: (v: string) => { t = v; },
-    };
-  }, []);
+  // Token lives in a ref, not React state, so the fetch helpers below stay stable:
+  // a value that must be readable without re-rendering is exactly what a ref is for.
+  // This was a `useMemo` closing over a local that its setter reassigned, which React
+  // Compiler correctly flags as mutating a value after render has completed.
+  const tokenRef = useRef("");
+  const tokenStore = useMemo(
+    () => ({
+      get: () => tokenRef.current,
+      set: (v: string) => {
+        tokenRef.current = v;
+      },
+    }),
+    [],
+  );
 
   const authHeaders = useCallback((): Record<string, string> => ({ "x-phone": phone, "x-phone-token": tokenStore.get() }), [phone, tokenStore]);
 
@@ -98,18 +116,17 @@ export function VendorBookingsPage({ brand }: { brand: any }) {
     setBookings(bj.bookings ?? []);
     setServices(sj.services ?? []);
     if ((bj.businesses ?? []).length > 0 && hoursBizId === null) {
-      loadHours(bj.businesses[0].id, h);
+      loadHours(bj.businesses[0].id);
     }
   }
 
-  const loadHours = async (businessId: number, h?: Record<string, string>) => {
-    const headers = h ?? authHeaders();
+  const loadHours = async (businessId: number) => {
     const res = await fetch(`/api/booking/services?business_id=${businessId}`);
-    const j = await res.json().catch(() => ({}));
+    const j = (await res.json().catch(() => ({}))) as HoursPayload;
     setHoursBizId(businessId);
-    const incoming: any[] = j.hours ?? [];
+    const incoming: ApiDayHours[] = j.hours ?? [];
     if (incoming.length === 7 && !j.hours_is_default) {
-      setWeek(incoming.map((row: any) => ({
+      setWeek(incoming.map((row) => ({
         day_of_week: row.day_of_week, day: row.day,
         closed: Boolean(row.closed),
         open_time: row.open_time ?? "09:00", close_time: row.close_time ?? "19:00",

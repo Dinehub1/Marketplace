@@ -2,9 +2,26 @@ import { BrandHeader, BrandFooter } from "./brand-header";
 import { getBrand } from "@/lib/brands";
 
 /**
- * Serves the existing static site/{folder} inside a brand shell.
- * The static HTML is loaded via an iframe so existing JS/CSS keeps working
- * while we add a consistent brand navigation bar on top.
+ * Serves a prebuilt static site from `public/sites/<folder>` inside a brand shell.
+ *
+ * ── INTENTIONALLY UNREFERENCED. NOT DEAD. ───────────────────────────────────────
+ * Nothing imports this component, and that is a decision, not an oversight.
+ *
+ * These prebuilt sites were the original 28 brand landing pages. They were retired
+ * from the router because they were marketing mockups with dead `#` links and no
+ * live data — worse, they hijacked brand-semantic routes: `/doctors` on sarkarhealth
+ * resolved to `/sites/sarkarhealth/doctors`, a file that does not exist, so the route
+ * answered 404 no matter what the app defined. `proxy.ts` no longer routes to them;
+ * the brand router serves real pages from live data instead.
+ *
+ * The mechanism is kept whole — the component, `lib/site-folders.ts`, the
+ * `gen-site-folders.mjs` prebuild step and the 4.3 MB of HTML in `public/sites` — so a
+ * landing page can be revived by adding one branch to `brand-router/[brand]/page.tsx`,
+ * with no archaeology in git history. Requests under `/sites/` are still served
+ * directly today (see BYPASS_PREFIXES in `proxy.ts`), so nothing that links there breaks.
+ *
+ * If you are here to delete something: this is the one place in the repo where an
+ * unreferenced file is deliberate. See docs/architecture-connections.md.
  */
 export async function BrandStaticSite({ brand }: { brand: Awaited<ReturnType<typeof getBrand>> }) {
   if (!brand) return null;

@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { ByBrandSlug, FeatureItem } from "@/lib/brand-content";
 
-const BRAND_FEATURES: Record<string, Array<{ icon: string; title: string; desc: string }>> = {
+const BRAND_FEATURES: ByBrandSlug<FeatureItem> = {
   sarkardost: [
     { icon: "📍", title: "Local Search", desc: "Shops, services and experts from every Indore neighborhood — all in one place, easy and fast." },
     { icon: "⭐", title: "Verified Reviews", desc: "Ratings and reviews from real customers — choose the right service with confidence." },
@@ -225,7 +227,7 @@ const BRAND_FEATURES: Record<string, Array<{ icon: string; title: string; desc: 
   ],
 };
 
-const DEFAULT_FEATURES = [
+const DEFAULT_FEATURES: FeatureItem[] = [
   { icon: "⚡", title: "Lightning Fast", desc: "Optimized for speed and performance. Every interaction feels instant." },
   { icon: "📱", title: "Mobile First", desc: "Designed for the way you work — flawless on every device." },
   { icon: "🔒", title: "Secure by Default", desc: "Enterprise-grade security protecting your data 24/7." },
@@ -236,11 +238,11 @@ const DEFAULT_FEATURES = [
   { icon: "💳", title: "Easy Payments", desc: "UPI, cards, net banking — pay however you prefer." },
 ];
 
-export function FeaturesPage({ brand }: { brand: any }) {
+export function FeaturesPage({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
-  const features = BRAND_FEATURES[brand.slug] ?? (brand.features_json ?? DEFAULT_FEATURES) as any[];
+  const features = BRAND_FEATURES[brand.slug] ?? (brand.features_json ?? DEFAULT_FEATURES);
 
   // Brand-specific stats for the stats bar
     const brandStatsBar: Record<string, Array<{ v: string; l: string }>> = {
@@ -297,7 +299,7 @@ export function FeaturesPage({ brand }: { brand: any }) {
       {/* BENTO GRID */}
       <section className="mx-auto max-w-6xl px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map((f: any, i: number) => (
+          {features.map((f, i: number) => (
             <div
               key={i}
               className={`card-lift group rounded-2xl border bg-surface p-6 shadow-sm ${i === 0 || i === 4 ? 'sm:col-span-2 lg:col-span-2' : ''}`}
@@ -361,7 +363,7 @@ export function FeaturesPage({ brand }: { brand: any }) {
                 Join {brand.name} today
               </h2>
               <p className="text-white/80 mb-8 max-w-lg mx-auto">
-                Thousands of Indore's patients are already connected — when will you join?
+                Thousands of Indore&apos;s patients are already connected — when will you join?
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <a href={`/register`} className="bg-surface px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: "var(--brand-secondary)" }}>

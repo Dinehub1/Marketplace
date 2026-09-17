@@ -1,4 +1,5 @@
 import { createClient as createSupabase } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { loadKey } from "./keyLoader";
 
 // The admin console reads ops tables (leads, payments, dev_tasks, agents) that
@@ -49,7 +50,10 @@ export type PlatformStats = {
   events30d: number;
 };
 
-async function count(table: string, filter?: (q: any) => any): Promise<number> {
+/** The builder `.select()` returns, so `filter` can call `.eq()`/`.in()`/`.gte()`. */
+type CountBuilder = ReturnType<ReturnType<SupabaseClient["from"]>["select"]>;
+
+async function count(table: string, filter?: (q: CountBuilder) => CountBuilder): Promise<number> {
   const supabase = admin();
   let q = supabase.from(table).select("*", { count: "exact", head: true });
   if (filter) q = filter(q);

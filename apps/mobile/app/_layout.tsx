@@ -10,9 +10,11 @@ import { useEffect } from "react";
 import { ThemeProvider, useTheme } from "@/lib/theme";
 import { SavedProvider } from "@/lib/saved";
 import { OwnerProvider } from "@/lib/owner";
+import { useReduceMotion } from "@/lib/motion";
 
 function Root() {
   const { c, brand, scheme } = useTheme();
+  const reduceMotion = useReduceMotion();
 
   useEffect(() => {
     // Paints the window behind the React tree. Without it the OS background
@@ -45,7 +47,12 @@ function Root() {
           contentStyle: { backgroundColor: c.canvas },
           // Spatial consistency: a screen pushed from the right dismisses to the
           // right. The gesture and the animation share one path.
-          animation: "slide_from_right",
+          //
+          // Under Reduce Motion the push cross-fades instead of travelling across the
+          // screen. The back *gesture* is deliberately kept: the user is driving it
+          // with their own finger, so there is no motion imposed on them to be made
+          // uncomfortable by — and taking away the way out would be a worse trade.
+          animation: reduceMotion ? "fade" : "slide_from_right",
           gestureEnabled: true,
         }}
       >
@@ -53,7 +60,7 @@ function Root() {
         <Stack.Screen name="owner" />
         <Stack.Screen
           name="business/[id]"
-          options={{ animation: "slide_from_right", presentation: "card" }}
+          options={{ animation: reduceMotion ? "fade" : "slide_from_right", presentation: "card" }}
         />
       </Stack>
     </NavThemeProvider>

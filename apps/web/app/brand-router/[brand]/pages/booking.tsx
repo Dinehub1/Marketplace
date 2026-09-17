@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { BRAND_CATEGORY_KEYWORDS } from "@/lib/brand-categories";
+import type { Brand } from "@/lib/brands";
 
 /**
  * The car-service booking flow: vendor -> service -> date -> slot -> contact.
@@ -34,12 +35,11 @@ function dayMeta(dateStr: string): { dow: string; day: string; month: string } {
   };
 }
 
-export function BookingPage({ brand, initialVendorId }: { brand: any; initialVendorId?: number | null }) {
+export function BookingPage({ brand, initialVendorId }: { brand: Brand; initialVendorId?: number | null }) {
   // ── Selection state ────────────────────────────────────────────────────────
   const [vendorId, setVendorId] = useState<number | null>(initialVendorId ?? null);
   const [vendors, setVendors] = useState<Vendor[] | null>(null);
   const [services, setServices] = useState<Service[]>([]);
-  const [hours, setHours] = useState<{ day: string; open_time: string | null; close_time: string | null; closed: boolean }[]>([]);
   const [serviceId, setServiceId] = useState<string | null>(null);
 
   // ── Availability state ────────────────────────────────────────────────────
@@ -65,6 +65,22 @@ export function BookingPage({ brand, initialVendorId }: { brand: any; initialVen
   const selectedVendor = vendors?.find((v) => v.id === vendorId) ?? null;
   const selectedService = services.find((s) => s.id === serviceId) ?? null;
 
+  /**
+   * Clear the slot list when the vendor or the day changes.
+   *
+   * This is React's documented "adjust state when a prop changes" pattern rather than
+   * an effect: an effect runs *after* paint, so the previous day's slots (and the slot
+   * the customer had already picked, which is no longer a real time on the new day)
+   * would be on screen for a frame before being cleared.
+   */
+  const slotKey = vendorId ? `${vendorId}|${dateStr}` : null;
+  const [slotsFor, setSlotsFor] = useState<string | null>(null);
+  if (slotKey !== slotsFor) {
+    setSlotsFor(slotKey);
+    setSlots(null);
+    setSlotStart(null);
+  }
+
   // ── Data loading ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (!vendorId || services.length > 0) return;
@@ -73,14 +89,13 @@ export function BookingPage({ brand, initialVendorId }: { brand: any; initialVen
         const res = await fetch(`/api/booking/services?business_id=${vendorId}`);
         const j = await res.json();
         setServices(j.services ?? []);
-        setHours(j.hours ?? []);
       } catch { setError("Services load nahi hue"); }
     })();
   }, [vendorId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!vendorId) return;
-    setSlots(null); setSlotStart(null);
+    // The reset above already happened during render; this only fetches.
     (async () => {
       try {
         const res = await fetch(`/api/booking/slots?business_id=${vendorId}&date=${dateStr}`);
@@ -90,24 +105,33 @@ export function BookingPage({ brand, initialVendorId }: { brand: any; initialVen
     })();
   }, [vendorId, dateStr]);
 
-  const loadVendors = useCallback(async () => {
-    const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supaKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-    if (!supaUrl || !supaKey) { setVendors([]); return; }
-    // Same keyword ownership as lib/brand-categories.ts — the vertical's own
-    // categories, matched as substrings against Google Maps' classifications.
-    const kws = BRAND_CATEGORY_KEYWORDS["sarkarcars"] ?? [];
-    const or = kws.map((k) => `category.ilike.*${encodeURIComponent(k)}*`).join(",");
-    try {
-      const res = await fetch(
-        `${supaUrl}/rest/v1/businesses?select=id,name,area,rating,reviews_count&status=eq.active&or=(${or})&order=rating.desc.nullslast&limit=60`,
-        { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } },
-      );
-      setVendors(res.ok ? ((await res.json()) as Vendor[]) ?? [] : []);
-    } catch { setVendors([]); }
+  // The vendor picker's list. Inline rather than a `useCallback` invoked from the
+  // effect: the effect should own its async work, so the single state write is
+  // unambiguously behind an await and gets a proper cancel on unmount.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supaKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+      const creds = supaUrl && supaKey ? { url: supaUrl, key: supaKey } : null;
+      // Same keyword ownership as lib/brand-categories.ts — the vertical's own
+      // categories, matched as substrings against Google Maps' classifications.
+      const kws = BRAND_CATEGORY_KEYWORDS["sarkarcars"] ?? [];
+      const or = kws.map((k) => `category.ilike.*${encodeURIComponent(k)}*`).join(",");
+      const rows = await (creds
+        ? fetch(
+            `${creds.url}/rest/v1/businesses?select=id,name,area,rating,reviews_count&status=eq.active&or=(${or})&order=rating.desc.nullslast&limit=60`,
+            { headers: { apikey: creds.key, Authorization: `Bearer ${creds.key}` } },
+          )
+            .then((res) => (res.ok ? res.json() : []))
+            .catch(() => [])
+        : Promise.resolve([])) as Vendor[];
+      if (!cancelled) setVendors(rows);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
-
-  useEffect(() => { loadVendors(); }, [loadVendors]);
 
   // ── OTP + submit ──────────────────────────────────────────────────────────
   async function sendOtp() {

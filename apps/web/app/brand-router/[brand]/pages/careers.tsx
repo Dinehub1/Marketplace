@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { JobOpening } from "@/lib/brand-content";
 
-const DEFAULT_JOBS = [
+const DEFAULT_JOBS: JobOpening[] = [
   { title: "Customer Support Executive", type: "Full-time", location: "Indore", desc: "Help customers and resolve queries promptly with excellent communication skills.", remote: false },
   { title: "Sales Associate", type: "Full-time", location: "Remote", desc: "Drive growth through customer acquisition and relationship building.", remote: true },
   { title: "Social Media Manager", type: "Part-time", location: "Remote", desc: "Manage our social media presence and create engaging content.", remote: true },
@@ -16,11 +18,11 @@ const BENEFITS = [
   { icon: "🎯", title: "Impact Driven", desc: "Your work directly shapes our product" },
 ];
 
-export function CareersPage({ brand }: { brand: any }) {
+export function CareersPage({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
-  const jobs = (brand.careers_json ?? DEFAULT_JOBS) as any[];
+  const jobs = (brand.careers_json ?? DEFAULT_JOBS);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -37,7 +39,7 @@ export function CareersPage({ brand }: { brand: any }) {
           <h1 className="heading-xl mb-4">
             Build your career at <span className="gradient-text">{brand.name}</span>
           </h1>
-          <p className="text-lg md:text-xl opacity-60 max-w-2xl mx-auto">We're building something looking for passionate people to join us</p>
+          <p className="text-lg md:text-xl opacity-60 max-w-2xl mx-auto">We&apos;re building something looking for passionate people to join us</p>
         </div>
       </section>
 
@@ -83,7 +85,7 @@ export function CareersPage({ brand }: { brand: any }) {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {jobs.map((job: any, i: number) => (
+              {jobs.map((job, i: number) => (
                 <div key={i} className="card-lift group rounded-2xl border bg-surface p-6 shadow-sm" style={{ borderColor: "var(--hairline)" }}>
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
@@ -113,8 +115,8 @@ export function CareersPage({ brand }: { brand: any }) {
           <div className="rounded-3xl p-10 md:p-14 text-center relative overflow-hidden" style={{ background: "var(--brand-gradient)" }}>
             <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
             <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Didn't find your role?</h2>
-              <p className="text-white/80 mb-8 max-w-lg mx-auto">We're always looking for talented people. Send us your resume and we'll keep you in mind.</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-3">Didn&apos;t find your role?</h2>
+              <p className="text-white/80 mb-8 max-w-lg mx-auto">We&apos;re always looking for talented people. Send us your resume and we&apos;ll keep you in mind.</p>
               <a href={`mailto:${brand.contact_email || brand.slug + ".cashcard.live"}`} className="bg-surface px-8 py-3.5 rounded-xl font-bold text-sm hover:translate-y-[-2px] transition-transform shadow-lg inline-block" style={{ color: "var(--brand-secondary)" }}>
                 Send Your Resume →
               </a>

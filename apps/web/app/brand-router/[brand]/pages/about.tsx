@@ -1,4 +1,5 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
 const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: string; values: Array<{ icon: string; title: string; desc: string }>; whyChoose?: Array<{ title: string; desc: string }>; stats?: Array<{ label: string; value: string }> }> = {
   sarkarconnect: {
@@ -290,11 +291,11 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
   },
 };
 
-export function AboutPage({ brand }: { brand: any }) {
+export function AboutPage({ brand }: { brand: Brand }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
   const secondary = t.secondary ?? "#8b5cf6";
-  const team = (brand.team_json ?? []) as any[];
+  const team = brand.team_json;
   const about = BRAND_ABOUT[brand.slug];
 
   return (
@@ -346,7 +347,7 @@ export function AboutPage({ brand }: { brand: any }) {
                   <div className="text-center">
                     <div className="text-8xl mb-4">{brand.emoji ?? "🤝"}</div>
                     <p className="text-2xl font-bold" style={{ color: "var(--brand-secondary)" }}>{brand.name}</p>
-                    <p className="text-sm opacity-50 mt-1">Indore's Community Network</p>
+                    <p className="text-sm opacity-50 mt-1">Indore&apos;s Community Network</p>
                   </div>
                 </div>
               </div>
@@ -407,7 +408,7 @@ export function AboutPage({ brand }: { brand: any }) {
               <h2 className="heading-md mb-4" style={{ color: "var(--brand-secondary)" }}>Meet Our Team</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-              {team.map((m: any, i: number) => (
+              {team.map((m, i) => (
                 <div key={i} className="card-lift rounded-2xl border bg-surface p-6 text-center" style={{ borderColor: "var(--hairline)" }}>
                   {m.photo ? <img src={m.photo} alt={m.name} className="w-20 h-20 rounded-full mx-auto mb-4 object-cover shadow-md" /> : <div className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold shadow-md" style={{ background: "var(--brand-gradient)" }}>{m.name?.charAt(0) ?? "?"}</div>}
                   <p className="font-bold">{m.name}</p>

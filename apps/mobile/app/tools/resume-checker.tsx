@@ -289,7 +289,7 @@ export default function DocumentCheck() {
               showed it. */}
           <Text style={s.cardFine}>
             The phone check looks for a 10-digit Indian mobile number, optionally written
-            +91. A number in another country's format will not be found.
+            +91. A number in another country&apos;s format will not be found.
           </Text>
 
           <Text style={[s.cardTitle, s.cardSpaced]}>Keywords</Text>

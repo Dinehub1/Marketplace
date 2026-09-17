@@ -1,6 +1,7 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { CITY_LABEL, categoryPath, getCategoryIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
+import type { Brand } from "@/lib/brands";
 
 /**
  * The full category index.
@@ -11,7 +12,7 @@ import { CategoryIcon } from "@/lib/icons";
  * and it doubles as the internal-link hub that makes every category page
  * reachable in two clicks from the homepage.
  */
-export async function CategoriesPage({ brand }: { brand: any }) {
+export async function CategoriesPage({ brand }: { brand: Brand }) {
   const origin = ``;
 
   const index = await getCategoryIndex();

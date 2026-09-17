@@ -3,7 +3,7 @@
  * check-targets.mjs — the gate `targets.mjs` has been promising and never had.
  *
  * Apple's guideline 4.3 rejects "multiple Bundle IDs of the same app", and Play rejects
- * "Spam and Minimum Functionality". With nineteen identities built from one codebase, the
+ * "Spam and Minimum Functionality". With twenty identities built from one codebase, the
  * defence cannot be a different icon: it has to be a different job, name, store description,
  * keywords and permission set — and something has to *check* that, before a build, not after
  * a rejection email.

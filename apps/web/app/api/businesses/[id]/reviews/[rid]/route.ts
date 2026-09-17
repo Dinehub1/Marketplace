@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { asRow} from "@/lib/postgrest";
+import type { ReviewRow, BusinessRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -31,11 +33,11 @@ export async function PATCH(
   }
 
   const revRes = await db(`reviews?id=eq.${rid}&business_id=eq.${businessId}&select=id,business_id`);
-  const rev = ((await revRes.json()) as any[])[0];
+  const rev = await asRow<ReviewRow>(revRes);
   if (!rev) return NextResponse.json({ error: "Review not found" }, { status: 404, headers: noStore });
 
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,phone`);
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore });
 
   const bizPhone = toIndiaPhone(biz.phone ?? "");

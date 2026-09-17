@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { loadOwnedBusinesses } from "@/lib/booking";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { VendorServiceRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -30,7 +32,7 @@ export async function GET(req: NextRequest) {
   const res = await db(
     `vendor_services?business_id=in.(${ids})&select=id,business_id,name,description,price_inr,duration_minutes,is_active,sort_order&order=sort_order.asc,name.asc`,
   );
-  return NextResponse.json({ ok: true, businesses: owned, services: res.ok ? ((await res.json()) as any[]) ?? [] : [] }, { headers: noStore });
+  return NextResponse.json({ ok: true, businesses: owned, services: res.ok ? (await asRows<VendorServiceRow>(res)) ?? [] : [] }, { headers: noStore });
 }
 
 export async function POST(req: NextRequest) {
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
     }),
   });
   if (!ins.ok) return NextResponse.json({ error: "Service save nahi hui" }, { status: 500, headers: noStore });
-  return NextResponse.json({ ok: true, service: ((await ins.json()) as any[])[0] }, { headers: noStore });
+  return NextResponse.json({ ok: true, service: await asRow<VendorServiceRow>(ins) }, { headers: noStore });
 }
 
 export async function PATCH(req: NextRequest) {
@@ -97,7 +99,7 @@ export async function PATCH(req: NextRequest) {
     body: JSON.stringify(patch),
   });
   if (!upd.ok) return NextResponse.json({ error: "Update save nahi hua" }, { status: 500, headers: noStore });
-  const rows = (await upd.json()) as any[];
+  const rows = await asRows<VendorServiceRow>(upd);
   if (rows.length === 0) return NextResponse.json({ error: "Service not found" }, { status: 404, headers: noStore });
   return NextResponse.json({ ok: true, service: rows[0] }, { headers: noStore });
 }
@@ -118,7 +120,7 @@ export async function DELETE(req: NextRequest) {
     body: JSON.stringify({ is_active: false, updated_at: new Date().toISOString() }),
   });
   if (!upd.ok) return NextResponse.json({ error: "Deactivate nahi hua" }, { status: 500, headers: noStore });
-  const rows = (await upd.json()) as any[];
+  const rows = await asRows<VendorServiceRow>(upd);
   if (rows.length === 0) return NextResponse.json({ error: "Service not found" }, { status: 404, headers: noStore });
   return NextResponse.json({ ok: true }, { headers: noStore });
 }

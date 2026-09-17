@@ -1,5 +1,5 @@
 import { getCategoryIndex, type CategoryStat } from "./categories";
-import type { BrandRoute } from "./brand-sitemap";
+import type {} from "./brand-sitemap";
 
 /**
  * Resolve a `kind: "category"` sitemap route against the live category index.

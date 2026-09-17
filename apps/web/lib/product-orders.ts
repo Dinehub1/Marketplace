@@ -4,6 +4,8 @@
 // ONLY thing that releases a clean file. Nothing here is decided on the client,
 // and no route returns the clean key because a caller asked nicely.
 import { db } from "@/lib/nextel";
+import { asRow } from "@/lib/postgrest";
+import type { ProductRow } from "@/lib/db-types";
 
 export type PaidOrder = {
   id: number;
@@ -20,7 +22,7 @@ export async function paidOrderFor(jobId: number, phone: string): Promise<PaidOr
       `&select=id,amount_paise,razorpay_order_id,razorpay_payment_id,created_at&order=created_at.desc&limit=1`,
   );
   if (!res.ok) return null;
-  return ((await res.json()) as PaidOrder[])[0] ?? null;
+  return asRow<PaidOrder>(res);
 }
 
 /** Price from the `products` row — one source of truth for the app and the order. */
@@ -29,7 +31,7 @@ const PRICE_FALLBACK: Record<string, number> = { "passport-photo": 4900, "bg-rem
 export async function productPrice(slug: string): Promise<number> {
   try {
     const res = await db(`products?slug=eq.${encodeURIComponent(slug)}&select=price_paise`);
-    const row = ((await res.json()) as any[])[0];
+    const row = await asRow<ProductRow>(res);
     if (row?.price_paise) return Number(row.price_paise);
   } catch {
     // fall through

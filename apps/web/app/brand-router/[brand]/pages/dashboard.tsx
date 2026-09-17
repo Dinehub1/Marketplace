@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { createClient } from "@/lib/supabase/client";
+import type { Brand } from "@/lib/brands";
 
 type Lead = {
   id: string;
@@ -42,8 +43,7 @@ function readStored(key: string): string | null {
   }
 }
 
-export function UserDashboard({ brand }: { brand: any }) {
-  const theme = (brand.theme ?? {}) as Record<string, string>;
+export function UserDashboard({ brand }: { brand: Brand }) {
   const supabase = createClient();
 
   const [loading, setLoading] = useState(true);
@@ -53,10 +53,14 @@ export function UserDashboard({ brand }: { brand: any }) {
   const [biz, setBiz] = useState<Biz[]>([]);
 
   useEffect(() => {
+    // `cancelled` guards five setState calls below, so something has to set it —
+    // otherwise every guard is dead code and a fetch that outlives the screen writes
+    // state onto an unmounted component. The cleanup that flips it was missing; the
+    // `let` here is the flag's whole point, not a `prefer-const` violation.
     let cancelled = false;
     (async () => {
       let userPhone: string | null = readStored("hermes_customer_phone");
-      let token: string | null = readStored("hermes_otp_token");
+      const token: string | null = readStored("hermes_otp_token");
       let bearer: string | null = null;
 
       const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));
@@ -90,6 +94,9 @@ export function UserDashboard({ brand }: { brand: any }) {
         if (!cancelled) setLoading(false);
       }
     })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const phoneDisplay = phone ? (phone.startsWith("91") ? phone.slice(2) : phone) : "";

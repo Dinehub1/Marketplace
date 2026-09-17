@@ -1,6 +1,8 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { BlogPost } from "@/lib/brand-content";
 
-const DEFAULT_POSTS = [
+const DEFAULT_POSTS: BlogPost[] = [
   { title: "Welcome to our blog", excerpt: "Latest news and updates from our team. Discover what's happening and how we're growing every day.", date: "2026-06-28", tag: "News", featured: true },
   { title: "Tips for getting started", excerpt: "Everything you need to know to make the most of our platform and services.", date: "2026-06-20", tag: "Guide", featured: false },
   { title: "Customer success story", excerpt: "See how our customers are achieving great results with our solutions.", date: "2026-06-15", tag: "Story", featured: false },
@@ -9,11 +11,11 @@ const DEFAULT_POSTS = [
   { title: "Product updates", excerpt: "New features and improvements we've shipped recently.", date: "2026-06-01", tag: "Product", featured: false },
 ];
 
-export function BlogPage({ brand }: { brand: any }) {
+export function BlogPage({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
-  const posts = (brand.blog_json ?? DEFAULT_POSTS) as any[];
+  const posts = (brand.blog_json ?? DEFAULT_POSTS);
   const tags = [...new Set(posts.map(p => p.tag).filter(Boolean))];
   const featured = posts.find(p => p.featured) ?? posts[0];
   const rest = posts.filter(p => p !== featured);
@@ -86,7 +88,7 @@ export function BlogPage({ brand }: { brand: any }) {
           <span className="text-sm opacity-40">{rest.length} articles</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rest.map((post: any, i: number) => (
+          {rest.map((post, i: number) => (
             <article key={i} className="card-lift group rounded-2xl border bg-surface overflow-hidden shadow-sm" style={{ borderColor: "var(--hairline)" }}>
               <div className="h-40 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${primary}10, ${secondary}05)` }}>
                 <div className="absolute inset-0 flex items-center justify-center">

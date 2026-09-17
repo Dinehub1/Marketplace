@@ -16,13 +16,44 @@
  *    travels in headers, never in the URL.
  */
 import { useCallback, useEffect, useState } from "react";
+import { errorMessage } from "@/lib/errors";
+
+/**
+ * The parts of the Razorpay Checkout handshake this panel actually uses.
+ *
+ * Razorpay ships no types here (the SDK is a script injected at runtime), so these are
+ * written from the options this file passes and the response it reads back. They are
+ * deliberately narrow: a field this panel never sends or reads should not be typed as
+ * available, or the next edit will assume it is.
+ */
+type RazorpaySuccess = {
+  razorpay_payment_id?: string;
+  razorpay_order_id?: string;
+  razorpay_signature?: string;
+};
+type RazorpayOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  order_id: string;
+  name: string;
+  description: string;
+  prefill: { contact: string };
+  theme: { color: string };
+  handler: (resp: RazorpaySuccess) => void | Promise<void>;
+  modal: { ondismiss: () => void };
+};
+type RazorpayInstance = { open: () => void };
+type RazorpayConstructor = new (options: RazorpayOptions) => RazorpayInstance;
+/** `window` with the SDK attached once the script has loaded. */
+type RazorpayWindow = Window & { Razorpay?: RazorpayConstructor };
 
 type Props = { jobId: number; pricePaise: number; previewUrl: string | null };
 
 /** Razorpay Checkout, injected once on demand so the panel works with JS alone. */
-function loadCheckout(): Promise<any> {
+function loadCheckout(): Promise<RazorpayConstructor> {
   return new Promise((resolve, reject) => {
-    const w = window as any;
+    const w = window as RazorpayWindow;
     if (w.Razorpay) return resolve(w.Razorpay);
     const s = document.createElement("script");
     s.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -47,12 +78,22 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
 
   // A stored token from elsewhere on the site is reused rather than asking again.
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem("hermes_otp_token") : null;
-    const storedPhone = typeof window !== "undefined" ? localStorage.getItem("hermes_phone") : null;
-    if (stored && storedPhone) {
-      setToken(stored);
-      setPhone(storedPhone);
-    }
+    let cancelled = false;
+    (async () => {
+      // localStorage is synchronous, but the state writes must not be: writing during
+      // the effect's commit pass forces a second render before the browser paints.
+      await Promise.resolve();
+      if (cancelled) return;
+      const stored = localStorage.getItem("hermes_otp_token");
+      const storedPhone = localStorage.getItem("hermes_phone");
+      if (stored && storedPhone) {
+        setToken(stored);
+        setPhone(storedPhone);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const refresh = useCallback(
@@ -68,7 +109,15 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
   );
 
   useEffect(() => {
-    if (token && phone) void refresh(token, phone);
+    if (!token || !phone) return;
+    let cancelled = false;
+    (async () => {
+      await Promise.resolve();
+      if (!cancelled) await refresh(token, phone);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [token, phone, refresh]);
 
   async function sendCode() {
@@ -86,8 +135,8 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
         setNote("WhatsApp delivery is not working right now — check the server log for the code.");
       }
       setStage("code");
-    } catch (e: any) {
-      setError(e?.message || "Could not send the code");
+    } catch (e) {
+      setError(errorMessage(e) || "Could not send the code");
     } finally {
       setBusy(false);
     }
@@ -109,8 +158,8 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
       setToken(j.token);
       // The order route also claims the job for this phone.
       await pay(j.token, j.phone);
-    } catch (e: any) {
-      setError(e?.message || "Could not verify the code");
+    } catch (e) {
+      setError(errorMessage(e) || "Could not verify the code");
     } finally {
       setBusy(false);
     }
@@ -150,7 +199,7 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
       description: `Clean file for job ${jobId}`,
       prefill: { contact: ph.replace(/^91/, "") },
       theme: { color: "#1d4ed8" },
-      handler: async (resp: any) => {
+      handler: async (resp) => {
         const vr = await fetch("/api/orders/verify", {
           method: "POST",
           headers: { "content-type": "application/json" },

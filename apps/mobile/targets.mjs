@@ -1,5 +1,5 @@
 /**
- * Standalone app targets — one codebase, nineteen genuinely different apps.
+ * Standalone app targets — one codebase, twenty genuinely different apps.
  *
  * Play Store rejects "Spam and Minimum Functionality" and Apple rejects guideline
  * 4.3 duplicate apps. The defence is not a different icon: it is a different
@@ -192,20 +192,13 @@ export const TARGETS = [
     permissions: ["LOCATION"],
     products: [],
     directory: "sarkarhealth",
-    /**
-     * What this directory is allowed to show.
-     *
-     * Without a scope all three directory apps opened the same 24,048-row feed — three
-     * listings that are one app, which is what `check-targets.mjs` exists to catch and
-     * what both stores reject. The terms are substrings of real `category` values (453
-     * distinct names, read from the live table), matched case-insensitively.
-     *
-     * `legal aid clinic` is excluded on purpose: it contains "clinic" and is not health.
-     */
-    scope: {
-      include: ["doctor", "clinic", "hospital", "pharmacy", "pharma", "medical", "physio", "dental", "dentist", "ortho", "patholog", "diagnos", "nursing", "ayurved", "pediatric", "gynec", "homeopath", "veterinar", "psycholog", "fertility", "surgery", "surg", "diabetes"],
-      exclude: ["legal aid clinic"],
-    },
+    // No `scope` here. Which categories this app may show is NOT retyped per target:
+    // it is read at runtime from the shared ownership table in `@hermes/core`
+    // (`scopeForBrand`, see lib/target.ts). That table is the same one the brand
+    // websites use to decide who publishes /<category>-in-indore, so the app and the
+    // site cannot disagree about who owns a category. It is also what keeps the three
+    // directory apps from opening the same 24,048-row feed — three listings that are
+    // one app, which is what `check-targets.mjs` exists to catch.
     firstScreen: "directory",
   },
   {
@@ -232,15 +225,11 @@ export const TARGETS = [
     permissions: ["LOCATION"],
     products: [],
     directory: "sarkarcars",
-    /**
-     * Car and bike service only. The terms are phrases rather than stems because "car"
-     * on its own also matches cardiologist, carpenter, carpet store, daycare centre and
-     * cargo service — verified against the real category list, not assumed.
-     */
-    scope: {
-      include: ["car ", "auto repair", "auto body", "auto parts", "automobile", "garage", "denting", "tyre", "bike ", "two wheeler", "vehicle", "lubricant"],
-      exclude: [],
-    },
+    // Scope comes from the shared ownership table in `@hermes/core`, not from here —
+    // see the note on sarkarhealth above. The table is deliberately tight for this
+    // brand (bare "dealer", "showroom" and "garage" stay unowned, because a parking
+    // garage is not a car service), and that decision now governs the app and the
+    // website alike instead of being written twice with two different answers.
     firstScreen: "directory",
   },
   {
@@ -289,6 +278,25 @@ export const TARGETS = [
     firstScreen: "game",
     ads: { rewarded: "fresh tray", interstitial: "between rounds" },
   },
+  {
+    id: "merge-tiles",
+    name: "Merge: Number Tiles",
+    bundleId: "co.dropby.mergetiles",
+    tagline: "Slide the tiles, double the numbers",
+    storeCategory: "Games",
+    aso: ["number merge", "merge puzzle", "math puzzle", "tile puzzle"],
+    color: "#ea580c",
+    permissions: [],
+    products: [],
+    // The fourth game, and the first one about numbers. Tap Sprint measures a reaction,
+    // Word Duel measures vocabulary and Block Clear asks you to fit shapes; this one is
+    // arithmetic — two tiles with the same number become one tile worth double. It shares
+    // Block Clear's lack of a clock and nothing else: there is no tray, no line to fill,
+    // and every move changes all sixteen squares rather than four.
+    game: "merge-tiles",
+    firstScreen: "game",
+    ads: { rewarded: "undo the last move", interstitial: "between rounds" },
+  },
 ];
 
 export const byId = (id) => TARGETS.find((t) => t.id === id);
@@ -336,6 +344,7 @@ export const FIRST_ROUTE = {
   "tap-sprint": "/tap-sprint",
   "word-duel": "/word-duel",
   "block-clear": "/block-clear",
+  "merge-tiles": "/merge-tiles",
 };
 
 /** The route a target opens on, or null when that screen is not built yet. */

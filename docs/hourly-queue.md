@@ -1822,6 +1822,101 @@ page's per-job line can now actually read a provider out of the row — item 15'
 (141-143) are the first rows that carry a provider and a cost in `meta` (`engines`, `neurons`),
 because the engine records them itself.
 
+### 53. A fourth game, and the one identity axis the fleet had not used — DONE 2026-09-18
+`targets.mjs` listed three games (reflex, vocabulary, shape-fitting) and every one of them was
+either timed or spatial. The gap was **arithmetic**, so the fleet is now twenty listings and the
+fourth game is `merge-tiles` — "Merge: Number Tiles", `co.dropby.mergetiles`, accent `#ea580c`,
+rewarded video = undo the last move.
+
+Built the way the README says a game target has to be built, not as a screen and a prayer:
+- `apps/mobile/lib/merge-tiles.ts` — the rules with no renderer in them. The merge rule is stated
+  once, on one line of copy and one line of code: a slide packs each line, joins equal neighbours
+  from the wall outwards, and a tile produced by a join cannot join again in the same move. So
+  `2·2·2·2` makes two 4s (8 points), never an 8.
+- `apps/mobile/app/merge-tiles.tsx` — the screen: a 4×4 board, a 3×3 arrow pad, the device score
+  record, and the rewarded undo offered once per round when the board fills up.
+- `scripts/check-merge-tiles.mjs` (`npm run check:merge`, or `check:games` for both engines) —
+  loads the engine in plain Node and asserts the merge rule on hand-written lines, the four
+  directions as mirrors, the 10%-fours spawn rate over 20,000 draws, the end condition, that a
+  no-op slide does **not** consume the rewarded undo, that the undo rewinds exactly one move, and
+  that it cannot take a reached-2048 back off the board. 19 rules, all `ok`.
+- `scripts/interactions.mjs` gained `merge-tiles-slide` and `scripts/app-shots.mjs` its capture,
+  so the picture is taken after a real slide — the move counter is the observable, because a slide
+  against a wall is deliberately not a move. **Not yet run:** Playwright is not installed on this
+  box, so the probe's first real execution is the capture VM (`npm run shots`), same as the other
+  three.
+- `scripts/make-app-icons.mjs` gained `MG`, and `npm run icons` wrote
+  `assets/targets/merge-tiles/{icon,adaptive-icon,splash-icon}.png`; `npm run eas:profiles -w
+  @hermes/mobile` added the `merge-tiles` build profile (23 profiles).
+
+Evidence, all run from the repo root:
+- `node scripts/check-targets.mjs` → **PASSED — 20 targets, 190 pairs compared, 0 too similar,
+  0 incomplete.** The new listing shares 6% of its name/subtitle/keyword words with Word Duel and
+  Block Clear and shows 4 visible differences, so the 4.3 / spam gate is not close to tripping.
+- `node scripts/check-fleet.mjs` → **20 targets resolve: unique name, slug and bundle id; art on
+  disk; every declared route exists**, with `merge-tiles → co.dropby.mergetiles → /merge-tiles`
+  reading `ok`. 16/20 publishable; the 4 still owed a first screen are unchanged.
+- `npm run typecheck -w @hermes/mobile` → clean.
+- `npx expo export --platform web` → exit 0, 2.7 MB bundle, and the new screen's own copy
+  ("Slide the tiles, double the numbers", "Tile row ", "Watch ad to take the move back") is in the
+  emitted JS, which is what proves Metro resolved `@/lib/merge-tiles` rather than silently
+  dropping the route.
+
+### 54. Merge, made real: full screen, vintage, animation, sound — DONE 2026-09-18
+Item 53 shipped the game; the first screenshot of it on the simulator (iPhone 16e, iOS 26.2)
+said the rest in one look: a thin strip of board with half the screen empty underneath, a
+settings-page feel, and no feedback at all on the one moment the game is about — two tiles
+becoming one. Four changes, and none of them touch the rules:
+
+- **The board is the screen.** The playing layout measures the space left after the header,
+  the notice and the pad and gives all of it to the sixteen squares, so the board is 356 pt
+  wide on a 390 pt phone instead of the old fixed 320 with a paper margin under it.
+- **Vintage, not themed.** Warm parchment, letterpress tiles whose fill walks a ten-step
+  ladder from cream to burnt umber, a serif numeral (the platform's own Georgia/serif — no
+  bundled font, no licence), and a warm cast shadow. Two complete palettes, light and dark,
+  because paper and lamplight are different materials. The tenant brand ramp is deliberately
+  unused on the board: a game has to look like the game.
+- **Animation, from the rules.** `lib/merge-tiles.ts` now returns a **trace** with each move —
+  `steps` (which cell each surviving tile left and reached), `merges` (the cells where two
+  joined) and `spawnedAt` — plus `swipeDir()` for the gesture. The screen keys every tile by a
+  stable id and animates it with Reanimated translate/scale in two beats: the tiles travel
+  (115 ms), then the joins resolve and the new tile pops. Doing it in one pass would show the
+  doubled value before the tiles met, which is the detail that makes this genre feel physical.
+  Under Reduce Motion the tiles do not travel at all — they appear in their new cell — and the
+  only feedback left is a light flash, which is opacity rather than movement.
+- **Sound and haptics, chosen by what happened rather than which control was used.** A swipe
+  and an arrow that both join two 8s feel identical: a light impact and a blip for a join, a
+  medium impact and a brighter blip at 128 and up, a success notification and a four-note
+  arpeggio at 2048, and a selection tick for a slide that joins nothing. Sound is off the
+  ringer switch (`playsInSilentMode: false`), mixes with other audio, and has a `♪ on/off`
+  toggle kept on the device. The four WAVs are **synthesized** by `npm run sounds`
+  (`scripts/make-game-sounds.mjs`: envelope + waveform + notes, 5–27 KB each), so they are ours
+  outright; `expo-audio` is the one new native dependency.
+
+Evidence, all from the repo root:
+- `npm run check:games` → **✓ every Merge rule holds**, now 21 rules. The new ones: every merge
+  carries the source cells it came from (a renderer cannot guess them), the trace's `merges` and
+  `spawnedAt` match the board, a snapshot comes back with nothing to animate, and the swipe
+  maths — threshold, diagonal, exact tie, tremor.
+- `npm run typecheck -w @hermes/mobile` → clean; `npx eslint app/merge-tiles.tsx lib/merge-tiles.ts`
+  → clean. That lint caught a real one: the first swipe used a gesture-handler worklet built in
+  `useMemo`, which the React Compiler hook rules reject as reading refs during render. The board
+  now uses React Native's own responder (`onResponderGrant`/`onResponderRelease`) — plain event
+  handlers, and the direction maths lives in the engine where it is asserted.
+- `npx expo export --platform web` → exit 0, 2.71 MB. All four WAVs are emitted as hashed assets
+  (`slide.*.wav`, `merge.*.wav`, `merge-big.*.wav`, `win.*.wav`), which is what proves the
+  `require("../assets/sounds/…")` paths resolved rather than silently dropping audio.
+- The first run of the sound generator wrote four 30 ms files of **silence** — a valid WAV is a
+  valid WAV. It now refuses to write a file that is too short or peaks below 0.05, which is the
+  check that would have caught it.
+
+**Still not run here:** the four probes (Playwright is not installed on this box), so the gallery
+PNGs for all four games remain the capture VM's job. `npm run shots -- --only merge-tiles`.
+
+**Needs a native rebuild, once:** `expo-audio` is a native module. `npm run mobile:ios` (or
+`expo run:ios`) for a dev build, a fresh `eas build` before a store build; Expo Go picks it up on
+reload.
+
 ### 41. Document Translation: give the live product a screen and a tile (new, 2026-09-17, from item 15)
 The engine and the route serve it (jobs 141/142/143, 200) but nothing in the app can reach
 it: `READY_TOOLS` in `apps/mobile/app/tools/index.tsx` has eight tiles and none is

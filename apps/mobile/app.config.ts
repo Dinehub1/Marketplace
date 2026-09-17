@@ -8,7 +8,7 @@ import { TARGETS, byId, familyOf, firstRouteFor } from "./targets.mjs";
  * environment instead of being committed, and so the *identity* below can be resolved
  * from `targets.mjs` rather than retyped. `app.json` cannot read `process.env`.
  *
- * One codebase builds nineteen store apps. Which one is decided here, by `APP_TARGET`:
+ * One codebase builds twenty store apps. Which one is decided here, by `APP_TARGET`:
  *
  *   APP_TARGET=breathe npx expo start
  *   APP_TARGET=toolbox eas build --profile preview
@@ -52,19 +52,11 @@ const BRAND_SLUG = process.env.BRAND_SLUG ?? target.id;
 const BRAND_NAME = process.env.BRAND_NAME ?? target.name;
 /**
  * Permission names as declared in targets.mjs. Annotated because the manifest is a plain
- * `.mjs` file, so TypeScript infers a union of the nineteen object shapes and a bare
+ * `.mjs` file, so TypeScript infers a union of the twenty object shapes and a bare
  * `.includes("MICROPHONE")` on that union narrows to `never`.
  */
 const PERMISSIONS: string[] = [...target.permissions];
 
-/**
- * What a directory app is allowed to list. Absent for the marketplace, which is
- * deliberately everything; absent too for every non-directory target.
- *
- * Cast because `targets.mjs` is a plain JavaScript file, so TypeScript infers a union of
- * the nineteen object shapes and only three of them carry this key.
- */
-const SCOPE = (target as { scope?: { include: string[]; exclude: string[] } }).scope;
 /**
  * The marketplace is already configured in App Store Connect under the legacy id, so
  * changing it here would orphan the existing listing. Every other target takes its id
@@ -266,7 +258,9 @@ const config: ExpoConfig = {
       ...(firstRouteFor(target) ? { firstRoute: firstRouteFor(target) } : {}),
       products: target.products,
       permissions: PERMISSIONS,
-      ...(SCOPE ? { scope: SCOPE } : {}),
+      // No `scope` key: which categories a directory app may show is resolved at
+      // runtime from `@hermes/core`'s ownership table (lib/target.ts), so a binary
+      // can never carry a stale copy of who owns which category.
       ...(target.ads ? { ads: target.ads } : {}),
     },
     eas: { projectId: process.env.EAS_PROJECT_ID ?? "" },

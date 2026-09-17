@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { createClient as createSb } from "@supabase/supabase-js";
+import {asRows } from "@/lib/postgrest";
+import type { LeadRow, BusinessRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -61,8 +63,8 @@ export async function GET(req: NextRequest) {
     db(`businesses?phone=like.*${last10}&select=id,name,category,status,city`),
   ]);
 
-  const leads = ((await leadsRes.json().catch(() => [])) as any[]) ?? [];
-  const businesses = ((await bizRes.json().catch(() => [])) as any[]) ?? [];
+  const leads = (await asRows<LeadRow>(leadsRes)) ?? [];
+  const businesses = (await asRows<BusinessRow>(bizRes)) ?? [];
 
   // The owner side. This has to wait on `businesses` — ownership is what scopes
   // it, and it is the only thing that does: without the id filter this query
@@ -70,12 +72,12 @@ export async function GET(req: NextRequest) {
   // through Number() means a non-numeric value cannot smuggle anything into the
   // in.() filter, and a phone that owns nothing costs no round trip at all.
   const ownedIds = businesses.map((b) => Number(b?.id)).filter((id) => Number.isSafeInteger(id));
-  let ownerLeads: any[] = [];
+  let ownerLeads: LeadRow[] = [];
   if (ownedIds.length) {
     const res = await db(
       `leads?business_id=in.(${ownedIds.join(",")})&order=created_at.desc&limit=100&select=${LEAD_SELECT}`,
     );
-    ownerLeads = ((await res.json().catch(() => [])) as any[]) ?? [];
+    ownerLeads = (await asRows<LeadRow>(res)) ?? [];
   }
 
   return NextResponse.json({ ok: true, leads, businesses, ownerLeads }, { headers: noStore });

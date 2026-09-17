@@ -16,14 +16,39 @@
 export const BRAND_BASE_DOMAINS: readonly string[] = ["dropby.co.in", "cashcard.live"];
 export const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
 
-/** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/admin/www hosts. */
+/**
+ * Subdomains that are a *role*, never a brand.
+ *
+ * `hermes` is here because `proxy.ts` reverse-proxies it to the Hermes dashboard;
+ * `www`, `dashboard` and `admin` never carry a brand either. Any of these reaching
+ * the brand router would serve a brand page at an infrastructure URL.
+ */
+export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes"];
+
+/**
+ * Role hosts, derived from BRAND_BASE_DOMAINS rather than retyped per domain.
+ *
+ * When a third base domain joins, every role has to exist on it in the same shape.
+ * A hand-written list is how `admin.cashcard.live` gets remembered while
+ * `admin.dropby.co.in` does not.
+ */
+export const ADMIN_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.flatMap((base) =>
+  ["dashboard", "admin"].map((role) => `${role}.${base}`),
+);
+
+/** Hosts reverse-proxied to the Hermes dashboard (see `proxy.ts`). */
+export const HERMES_DASHBOARD_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
+  (base) => `hermes.${base}`,
+);
+
+/** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/reserved hosts. */
 export function brandSlugFromHost(hostname: string): string | null {
   const h = (hostname ?? "").split(":")[0].toLowerCase();
   for (const base of BRAND_BASE_DOMAINS) {
     if (h === base) return null;
     if (h.endsWith(`.${base}`)) {
       const sub = h.slice(0, h.length - base.length - 1);
-      if (!sub || sub === "www" || sub === "dashboard" || sub === "admin") return null;
+      if (!sub || RESERVED_SUBDOMAINS.includes(sub)) return null;
       return sub;
     }
   }

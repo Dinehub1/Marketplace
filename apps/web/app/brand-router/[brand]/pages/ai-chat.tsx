@@ -1,8 +1,9 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
-export function AIChatPage({ brand }: { brand: any }) {
+export function AIChatPage({ brand }: { brand: Brand }) {
 
   const [messages, setMessages] = useState([
     { role: "ai", text: `Hi! I'm the ${brand.name} AI assistant. I can help you with product info, pricing, bookings, and more. What can I help you with?` }

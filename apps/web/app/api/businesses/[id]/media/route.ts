@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { BusinessRow, BusinessMediaRow } from "@/lib/db-types";
 import {
   ALLOWED_IMAGE_TYPES, MAX_UPLOAD_BYTES, deleteObject, listingKey,
   publicUrlFor, putObject, r2Configured,
@@ -24,7 +26,7 @@ async function authorize(businessId: number, phone: string, token: string) {
     return { error: NextResponse.json({ error: "Phone not verified" }, { status: 401, headers: noStore }) };
   }
   const res = await db(`businesses?id=eq.${businessId}&select=id,name,phone,verified`);
-  const biz = ((await res.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(res);
   if (!biz) return { error: NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore }) };
   const bizPhone = toIndiaPhone(biz.phone ?? "");
   if (!bizPhone || bizPhone.slice(-10) !== phone.slice(-10)) {
@@ -90,7 +92,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await deleteObject(key);
     return NextResponse.json({ error: "Could not save the photo record" }, { status: 500, headers: noStore });
   }
-  const [row] = (await insert.json()) as any[];
+  const [row] = await asRows<BusinessMediaRow>(insert);
   return NextResponse.json({ ok: true, id: row?.id, url }, { headers: noStore });
 }
 
@@ -108,7 +110,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   if (!mediaId) return NextResponse.json({ error: "mediaId required" }, { status: 400, headers: noStore });
 
   const res = await db(`business_media?id=eq.${mediaId}&business_id=eq.${businessId}&select=id,object_key`);
-  const row = ((await res.json()) as any[])[0];
+  const row = await asRow<BusinessMediaRow>(res);
   if (!row) return NextResponse.json({ error: "Photo not found" }, { status: 404, headers: noStore });
 
   await deleteObject(row.object_key);

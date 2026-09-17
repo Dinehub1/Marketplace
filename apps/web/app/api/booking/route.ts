@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, sendTemplate, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { ACTIVE_STATUSES, DEFAULT_HOURS, bookingRef, commissionSplit, computeSlots, istDayOfWeek, loadTakenSlots, loadVendorHours } from "@/lib/booking";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { BusinessRow, VendorServiceRow, BookingRow } from "@/lib/db-types";
+import type { Brand } from "@/lib/brands";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -46,13 +49,13 @@ export async function POST(req: NextRequest) {
 
   // ── Vendor + service must exist, match each other, be bookable ────────────
   const bizRes = await db(`businesses?id=eq.${businessId}&status=eq.active&select=id,name,phone,brand_id`);
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "Vendor not found" }, { status: 404, headers: noStore });
 
   const svcRes = await db(
     `vendor_services?id=eq.${serviceId}&business_id=eq.${businessId}&is_active=eq.true&select=id,name,price_inr,duration_minutes`,
   );
-  const service = ((await svcRes.json()) as any[])[0];
+  const service = await asRow<VendorServiceRow>(svcRes);
   if (!service) return NextResponse.json({ error: "Service not available" }, { status: 404, headers: noStore });
 
   // ── Availability, recomputed from source ──────────────────────────────────
@@ -80,7 +83,7 @@ export async function POST(req: NextRequest) {
     `bookings?business_id=eq.${businessId}&customer_phone=eq.${encodeURIComponent(phone)}` +
       `&slot_start=eq.${when.toISOString()}&status=in.(${ACTIVE_STATUSES.join(",")})&select=id&limit=1`,
   );
-  if (dupRes.ok && ((await dupRes.json()) as any[]).length > 0) {
+  if (dupRes.ok && (await asRows<BookingRow>(dupRes)).length > 0) {
     return NextResponse.json({ ok: true, already: true, message: "Yeh slot pehle se book hai" }, { headers: noStore });
   }
 
@@ -88,7 +91,7 @@ export async function POST(req: NextRequest) {
   let bps = 1500; // safe default if the brand row is missing its knob
   if (biz.brand_id) {
     const brandRes = await db(`brands?id=eq.${biz.brand_id}&select=features`);
-    const brand = ((await brandRes.json()) as any[])[0];
+    const brand = await asRow<Brand>(brandRes);
     const configuredBps = Number(brand?.features?.commission_bps);
     if (Number.isFinite(configuredBps) && configuredBps > 0) bps = Math.round(configuredBps);
   }
@@ -118,7 +121,10 @@ export async function POST(req: NextRequest) {
     }),
   });
   if (!ins.ok) return NextResponse.json({ error: "Booking save nahi ho saka" }, { status: 500, headers: noStore });
-  const created = ((await ins.json()) as any[])[0];
+  // `Prefer: return=representation` normally yields the row; an empty body would have
+  // thrown on `created.id` below, so answer with the same 500 instead of a stack trace.
+  const created = await asRow<BookingRow>(ins);
+  if (!created) return NextResponse.json({ error: "Booking save nahi ho saka" }, { status: 500, headers: noStore });
 
   // Measurement + vendor alert: best-effort, never fails the booking.
   await db("business_events", {

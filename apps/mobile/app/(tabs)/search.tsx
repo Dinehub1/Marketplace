@@ -22,13 +22,29 @@ export default function SearchScreen() {
 
   useEffect(() => {
     const term = q.trim();
-    if (term.length < 2) {
-      setState("idle");
-      setRows([]);
-      return;
+    const wantsResults = term.length >= 2;
+    let cancelled = false;
+
+    // The leading transition is deferred by a microtask: writing during the effect's
+    // commit pass forces a second render before the browser paints. The debounce
+    // below is unaffected — it is asynchronous already.
+    void (async () => {
+      await Promise.resolve();
+      if (cancelled) return;
+      if (!wantsResults) {
+        setState("idle");
+        setRows([]);
+        return;
+      }
+      setState("loading");
+    })();
+
+    if (!wantsResults) {
+      return () => {
+        cancelled = true;
+      };
     }
 
-    setState("loading");
     // 220ms is short enough to feel like the list is tracking the keystrokes
     // and long enough that a fast typist fires one request, not eight.
     const timer = setTimeout(async () => {
@@ -46,7 +62,10 @@ export default function SearchScreen() {
       }
     }, 220);
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, [q]);
 
   return (

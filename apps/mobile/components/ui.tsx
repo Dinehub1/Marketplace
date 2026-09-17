@@ -1,4 +1,4 @@
-import { forwardRef, type ReactNode } from "react";
+import { forwardRef, useState, type ReactNode } from "react";
 import {
   Pressable,
   Text as RNText,
@@ -13,11 +13,13 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { type PaletteKey, type TypeKey, press, radius, space, spring, type as typeScale, minTouchTarget } from "@hermes/tokens";
+import { type PaletteKey, type TypeKey, press, pressFade, radius, space, spring, type as typeScale, minTouchTarget } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
+import { useReduceMotion } from "@/lib/motion";
 
 /* ── Text ──────────────────────────────────────────────────────────────────
    One component owns the type scale, so a screen cannot invent a 15.5pt
@@ -78,17 +80,44 @@ export const Press = forwardRef<View, PressableProps & {
   haptic?: "light" | "medium" | "success" | null;
   style?: StyleProp<ViewStyle>;
 }>(function Press({ children, large, haptic = null, style, onPress, ...rest }, ref) {
-  const scale = useSharedValue(1);
-  const animated = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  const reduceMotion = useReduceMotion();
+  /**
+   * How far the press has been carried, 0 at rest and 1 held.
+   *
+   * One shared value drives whichever property the motion setting allows, so the two
+   * paths cannot drift apart: whichever one is live, it is the same gesture, the same
+   * timing and the same release.
+   */
+  const held = useSharedValue(0);
+  const scaleTo = large ? press.scaleLarge : press.scale;
+
+  const animated = useAnimatedStyle(
+    () => ({
+      // Reduce Motion: the press still answers instantly, it just does not move. A
+      // surface that stayed perfectly still while being touched would read as broken,
+      // which is why this is a fade and not nothing.
+      opacity: reduceMotion ? 1 - held.value * pressFade : 1,
+      // The unused axis is pinned to its rest value rather than omitted, so a setting
+      // that flips mid-press cannot leave a stale transform on the element.
+      transform: [{ scale: reduceMotion ? 1 : 1 - held.value * (1 - scaleTo) }],
+    }),
+    [reduceMotion, scaleTo],
+  );
 
   return (
     <AnimatedPressable
       ref={ref}
       onPressIn={() => {
-        scale.value = withSpring(large ? press.scaleLarge : press.scale, spring.snappy);
+        // A spring can absorb the finger reversing mid-press; a duration cannot, so the
+        // reduced path is a short timing curve and the full path stays a spring.
+        held.value = reduceMotion
+          ? withTiming(1, { duration: press.durationMs })
+          : withSpring(1, spring.snappy);
       }}
       onPressOut={() => {
-        scale.value = withSpring(1, spring.settle);
+        held.value = reduceMotion
+          ? withTiming(0, { duration: press.durationMs })
+          : withSpring(0, spring.settle);
       }}
       onPress={(e) => {
         if (haptic) {
@@ -229,17 +258,29 @@ export function Chip({
   active,
   onPress,
   icon,
+  accessibilityLabel,
 }: {
   label: string;
   active?: boolean;
   onPress?: () => void;
   icon?: ReactNode;
+  /**
+   * What a screen reader announces, when the visible label is not the whole story.
+   *
+   * The chip's visible text is deliberately short — "5 min", "Coherent" — because a row of chips
+   * has to fit on a phone. On Breathe a tap on one of those *ends the session in progress and starts
+   * a new one*, and "5 min, selected" gives a screen-reader user no way to know that before they
+   * commit to the tap. The call site supplies the sentence; the chip falls back to its own label,
+   * which is the right answer at every other use.
+   */
+  accessibilityLabel?: string;
 }) {
   const { c, brand } = useTheme();
   return (
     <Press
       accessibilityRole="button"
       accessibilityState={{ selected: !!active }}
+      accessibilityLabel={accessibilityLabel ?? label}
       onPress={onPress}
       style={{
         flexDirection: "row",
@@ -343,6 +384,67 @@ export function EmptyState({
       )}
       {/* Wayfinding: never leave someone at a dead end. */}
       {action ? <View style={{ marginTop: space.md }}>{action}</View> : null}
+    </View>
+  );
+}
+
+/* ── Disclosure ─────────────────────────────────────────────────────────────
+   A section that starts closed.
+
+   Why this is in the design system rather than written once on the Profile page:
+   the alternative that gets written instead is a wall of prose, because collapsed
+   content is usually added by simply *not* collapsing it. The small print on a
+   privacy page is the exact case the pattern exists for — it has to be available and
+   it must not be the first thing anyone reads.
+
+   The whole header row is the target, at 44pt, not the chevron. A disclosure whose
+   only tappable part is an 11pt glyph is a disclosure nobody opens. */
+
+export function Disclosure({
+  title,
+  subtitle,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  /** The one-line summary shown while the section is closed. */
+  subtitle?: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const { c } = useTheme();
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <View>
+      <Press
+        onPress={() => setOpen((v) => !v)}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={subtitle ? `${title}. ${subtitle}` : title}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: space.sm,
+          minHeight: minTouchTarget,
+          paddingVertical: 4,
+        }}
+      >
+        <View style={{ flex: 1, gap: 1 }}>
+          <Text variant="callout">{title}</Text>
+          {subtitle && !open ? (
+            <Text variant="meta" tone="ink3" numberOfLines={1}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+        {/* The chevron rotates rather than swapping glyphs: a swap is a layout change,
+            and a rotating one reads as the same control opening. */}
+        <Text variant="callout" tone="ink3" style={{ transform: [{ rotate: open ? "90deg" : "0deg" }] }}>
+          ›
+        </Text>
+      </Press>
+      {open ? <View style={{ paddingTop: space.xs, gap: space.xs, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.hairline }}>{children}</View> : null}
     </View>
   );
 }

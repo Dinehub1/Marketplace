@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { asRow} from "@/lib/postgrest";
+import type { BusinessRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,verified`);
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore });
 
   const bizPhone = toIndiaPhone(biz.phone ?? "");

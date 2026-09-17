@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-type Review = { id: string; author_name: string; rating: number; body: string; created_at: string; owner_reply?: string | null };
+/** The shape this box renders. Mapped from a `reviews` row by the caller, so the
+ *  UI contract does not move when a column is renamed. */
+export type Review = { id: number; author_name: string; rating: number; body: string; created_at: string; owner_reply?: string | null };
 
 function timeAgo(iso: string): string {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -27,7 +29,7 @@ type Props = {
   replyToken?: string;
 };
 
-export function ReviewsBox({ businessId, initialReviews, avg, count, primary, secondary, accent, brandName, canReply, replyPhone, replyToken }: Props) {
+export function ReviewsBox({ businessId, initialReviews, avg, count, brandName, canReply, replyPhone, replyToken }: Props) {
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [step, setStep] = useState<"view" | "input" | "otp" | "done">("view");
   const [name, setName] = useState("");
@@ -39,7 +41,9 @@ export function ReviewsBox({ businessId, initialReviews, avg, count, primary, se
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
 
-  const [replyTo, setReplyTo] = useState<string | null>(null);
+  // `reviews.id` is bigserial, so this is a number — it was typed string, which the
+  // component's own `any`-free props never had to prove until now.
+  const [replyTo, setReplyTo] = useState<number | null>(null);
   const [replyText, setReplyText] = useState("");
   const [replyBusy, setReplyBusy] = useState(false);
   const [replyError, setReplyError] = useState("");

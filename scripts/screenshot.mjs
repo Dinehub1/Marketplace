@@ -18,6 +18,11 @@
  *       --no-fullpage                    capture only the viewport, not the full scroll height
  *       --mobile-ua                      also send an iPhone user-agent
  *       --dark                           colorScheme: dark
+ *       --reduced-motion                 emulate the OS "Reduce Motion" setting, so a
+ *                                        capture shows what the app does for someone who
+ *                                        has asked for it. React Native Web maps this to
+ *                                        AccessibilityInfo.isReduceMotionEnabled(), which
+ *                                        is the same source lib/motion.ts reads.
  *       --expect <text>                  fail (exit 3) unless this text is on the page;
  *                                        repeatable, so a screen can be pinned by several
  *                                        markers. A miss reloads once and re-reads before it
@@ -80,6 +85,7 @@ const opts = {
   fullPage: true,
   mobileUA: false,
   dark: false,
+  reducedMotion: false,
   json: false,
   expect: [],
   interact: null,
@@ -101,6 +107,7 @@ for (let i = 0; i < argv.length; i++) {
   else if (a === '--no-fullpage') opts.fullPage = false;
   else if (a === '--mobile-ua') opts.mobileUA = true;
   else if (a === '--dark') opts.dark = true;
+  else if (a === '--reduced-motion') opts.reducedMotion = true;
   else if (a === '--json') opts.json = true;
   else if (a === '-h' || a === '--help') usage();
   else if (a.startsWith('-')) usage(`unknown option ${a}`);
@@ -189,6 +196,11 @@ try {
     isMobile: vp.isMobile,
     hasTouch: vp.hasTouch,
     colorScheme: opts.dark ? 'dark' : 'light',
+    // Drives prefers-reduced-motion in the browser, which is what React Native Web's
+    // AccessibilityInfo.isReduceMotionEnabled() reports — the same setting the app's
+    // lib/motion.ts reads. Without this the reduced-motion path had no way to be seen
+    // at all: it was implemented and unverifiable.
+    reducedMotion: opts.reducedMotion ? 'reduce' : 'no-preference',
     userAgent: opts.mobileUA || vp.isMobile ? IPHONE_UA : undefined,
   });
 

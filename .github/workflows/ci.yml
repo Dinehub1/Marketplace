@@ -48,7 +48,7 @@ jobs:
         run: npm test
 
       # The duplicate-listing gate. Play rejects "Spam and Minimum Functionality" and
-      # Apple rejects guideline 4.3; this is the check that two of the eighteen apps have
+      # Apple rejects guideline 4.3; this is the check that two of the twenty apps have
       # not drifted into being one app wearing two icons.
       - name: Store targets are distinct
         run: npm run check:targets
@@ -106,7 +106,7 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Resolves the real app.config.ts for all eighteen targets and asserts a unique
+      # Resolves the real app.config.ts for all twenty targets and asserts a unique
       # name, slug and bundle id, art on disk, and a first screen that exists. Runs on
       # every push because a target whose config stopped resolving is otherwise found on
       # submission day, one failed build at a time.
@@ -118,7 +118,7 @@ jobs:
       # transform. All three typecheck fine and only fail here, so an actual
       # export is the only check worth running.
       #
-      # One target per family rather than all eighteen: the JS bundle is identical
+      # One target per family rather than all twenty: the JS bundle is identical
       # across targets (the target lives in the native config, not the JS), so these
       # four exercise the entry redirect, the wellness tabs, the product hub and the
       # games for every shape of app this repo builds.

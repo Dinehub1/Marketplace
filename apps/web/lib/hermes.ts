@@ -17,9 +17,9 @@ export function getGatewayStatus(): GatewayStatus {
     return {
       running: j.gateway_state === "running",
       activeAgents: j.active_agents ?? 0,
-      platforms: Object.entries(j.platforms ?? {}).map(([name, v]: [string, any]) => ({
+      platforms: Object.entries(j.platforms ?? {}).map(([name, v]) => ({
         name,
-        state: v?.state ?? "unknown",
+        state: (v as { state?: string } | null)?.state ?? "unknown",
       })),
       updatedAt: j.updated_at ?? null,
     };

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * check-fleet.mjs — the publish-readiness gate for all nineteen apps.
+ * check-fleet.mjs — the publish-readiness gate for all twenty apps.
  *
  * `check-targets.mjs` answers "are two of these listings too alike to survive review?".
  * This answers the other half: "does each one actually resolve to a real, buildable app?"
@@ -175,9 +175,21 @@ console.log(
 );
 
 if (owed.length) {
-  console.log(`\n⚠ ${owed.length} cannot be published yet — the first screen is not built:`);
-  for (const r of owed) console.log(`    ${r[0]}`);
-  console.log(`\n  ${publishable}/${rows.length} publishable today. Re-run with --require-ready to make this exit 1.`);
+  const bar = '━'.repeat(w.reduce((a, b) => a + b, 0));
+  console.log(`\n${bar}`);
+  console.log(`⚠  ${owed.length} OF ${rows.length} LISTINGS CANNOT BE SUBMITTED TO A STORE`);
+  console.log(bar);
+  for (const r of owed) {
+    console.log(`    ${String(r[0]).padEnd(18)} opens on nothing — first screen is not built`);
+  }
+  console.log(
+    `\n  ${publishable}/${rows.length} publishable today. These are kept as a roadmap on purpose,` +
+      `\n  but "cannot be submitted" has to be impossible to miss rather than a footnote.` +
+      `\n\n  A store build refuses to run while any of them is unbuilt: every prebuild:* hook in` +
+      `\n  apps/mobile/package.json runs check-fleet.mjs --require-ready.` +
+      `\n  This report-only run exits 0 so the fleet can still be worked on incrementally.`,
+  );
+  console.log(bar);
 }
 
 if (failures.length) {

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, sendTemplate, toIndiaPhone } from "@/lib/nextel";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { OtpCodeRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -11,7 +13,7 @@ export async function POST(req: NextRequest) {
   // Rate limit: max 3 codes per phone per 10 minutes.
   const since = new Date(Date.now() - 10 * 60 * 1000).toISOString();
   const recent = await db(`otp_codes?phone=eq.${phone}&created_at=gte.${since}&select=id`);
-  if (((await recent.json()) as any[]).length >= 3) {
+  if ((await asRows<OtpCodeRow>(recent)).length >= 3) {
     return NextResponse.json({ error: "Too many codes requested. Try again in 10 minutes." }, { status: 429, headers: noStore });
   }
 
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({ phone, code, expires_at: expires }),
     headers: { Prefer: "return=representation" },
   });
-  const insRow = ins.ok ? ((await ins.json()) as any[])[0] : null;
+  const insRow = ins.ok ? await asRow<OtpCodeRow>(ins) : null;
   if (!insRow) return NextResponse.json({ error: "Could not create code" }, { status: 500, headers: noStore });
 
   const sent = await sendTemplate(phone, "auth", [code]);

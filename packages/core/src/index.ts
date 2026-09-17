@@ -13,6 +13,22 @@
  * the strategy for a phone on a 3G connection. Each app owns its own transport.
  */
 
+/**
+ * Brand → category ownership. Re-exported here so both apps reach it through the
+ * package entry point rather than a deep path.
+ *
+ * It is the one table that must never disagree between web and native: it decides
+ * both which /<category>-in-indore pages a brand site publishes AND which slice of
+ * the directory an app shows. See the module for why it is keyword-based.
+ *
+ * The `.ts` extension is load-bearing, not a typo. This package ships raw TypeScript
+ * and `src/index.test.mjs` is run by plain `node --test`, which strips types rather
+ * than bundling — so every relative import here must name the file exactly. The test
+ * already imports `./index.ts` for the same reason; see `allowImportingTsExtensions`
+ * in tsconfig.base.json.
+ */
+export * from "./brand-scope.ts";
+
 export type CategoryStat = {
   category: string; // the real value as stored, e.g. "Furniture Store"
   slug: string; // "furniture-store"

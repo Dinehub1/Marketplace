@@ -35,14 +35,19 @@ SarkarHealth · SarkarMarketplace · SarkarCars — same app shell, city-directo
 
 ## Games: traffic engines, not products
 
-Three small games, built with the same Expo codebase (React Native + Skia/Reanimated — no
+Four small games, built with the same Expo codebase (React Native + Skia/Reanimated — no
 separate engine needed), each with a rewarded-ad loop:
 
 1. **Tap Sprint** — a 30-second reaction/reflex game. Rewarded video = extra lives.
 2. **Word Duel** — 60-second word puzzle. Rewarded video = hint pack.
 3. **Block Clear** — an untimed 8×8 block puzzle. Rewarded video = a fresh tray that
-   fits the board. The only one of the three with no clock, so it is the one a player
+   fits the board. The first of the games with no clock, so it is one a player
    can put down mid-round; that is also its listing.
+4. **Merge** — a four-by-four number-tile game: every arrow slides the whole board, two
+   equal tiles join into one worth double, and the round is reaching 2048. Rewarded video
+   = undo the last move. The first one about arithmetic rather than reflexes, vocabulary
+   or shapes, and the reason a fourth game was worth adding: it shares a store category
+   with the other three and almost nothing else.
 
 **Why games are worth building here (and what they are NOT):** they are not the business.
 Hyper-casual ad revenue is thin and needs volume. Their job is to **buy installs cheaply via

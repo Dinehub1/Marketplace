@@ -2,8 +2,9 @@ import { BrandHeader, BrandFooter } from "./brand-header";
 import { createClient } from "@/lib/supabase/server";
 import { db, toIndiaPhone } from "@/lib/nextel";
 import { redirect } from "next/navigation";
+import type { Brand } from "@/lib/brands";
 
-export async function BrandSettings({ brand }: { brand: any }) {
+export async function BrandSettings({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const bg = theme.bg ?? "#f9fafb";
 

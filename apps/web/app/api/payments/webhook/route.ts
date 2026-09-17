@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, sendTemplate } from "@/lib/nextel";
 import { verifyWebhookSignature } from "@/lib/razorpay";
+import { asRow } from "@/lib/postgrest";
+import type { PaymentRow, OrderRow, BusinessRow } from "@/lib/db-types";
+
+/**
+ * The slice of Razorpay's webhook envelope this route reads. Razorpay sends a much
+ * larger body; naming the part we depend on is what keeps the rest of the route typed.
+ */
+type RazorpayWebhookEvent = {
+  event?: string;
+  payload?: {
+    payment?: {
+      entity?: { order_id?: string; id?: string; amount?: number; status?: string };
+    };
+  };
+};
 
 // Razorpay posts raw JSON here. We must read the BODY AS-IS (not parsed) to
 // verify the HMAC signature, then parse it.
@@ -17,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid signature" }, { status: 400 });
   }
 
-  let event: any;
+  let event: RazorpayWebhookEvent;
   try {
     event = JSON.parse(raw);
   } catch {
@@ -36,7 +51,7 @@ export async function POST(req: NextRequest) {
   // Idempotency: find the pending payment for this gateway order. If already
   // paid, acknowledge without re-flipping the listing (Razorpay retries).
   const payRes = await db(`payments?gateway_order_id=eq.${encodeURIComponent(orderId)}&select=id,business_id,status,amount&limit=1`);
-  const pay = ((await payRes.json()) as any[])[0];
+  const pay = await asRow<PaymentRow>(payRes);
 
   if (!pay) {
     // Not a listing boost — check the product orders (per-job paywall). Both
@@ -45,7 +60,7 @@ export async function POST(req: NextRequest) {
     const ordRes = await db(
       `orders?razorpay_order_id=eq.${encodeURIComponent(orderId)}&select=id,job_id,product,phone,status&limit=1`,
     );
-    const ord = ((await ordRes.json()) as any[])[0];
+    const ord = await asRow<OrderRow>(ordRes);
     if (!ord) return NextResponse.json({ ok: true, ignored: "unknown order" }, { status: 200 });
     if (ord.status === "paid") return NextResponse.json({ ok: true, already: true }, { status: 200 });
 
@@ -68,7 +83,7 @@ export async function POST(req: NextRequest) {
 
   // Flip the listing: featured = true, priority bumped so it floats up.
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,featured,priority`);
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "business not found" }, { status: 422 });
 
   const priority = (Number(biz.priority) || 0) + 10;

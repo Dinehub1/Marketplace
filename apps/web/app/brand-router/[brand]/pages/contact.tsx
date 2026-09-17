@@ -1,6 +1,7 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
-export function ContactPage({ brand }: { brand: any }) {
+export function ContactPage({ brand }: { brand: Brand }) {
   const t = (brand.theme ?? {}) as Record<string, string>;
   const primary = t.primary ?? "#6d28d9";
   const secondary = t.secondary ?? "#8b5cf6";

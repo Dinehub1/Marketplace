@@ -1,43 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  CANONICAL_BASE,
+  HERMES_DASHBOARD_HOSTS,
+  brandSlugFromHost,
+} from "@/lib/base-domains";
 
 /**
- * Base domains the brand router answers on.
+ * The brand router's front door.
  *
- * dropby.co.in is the domain this platform is moving to; cashcard.live is kept
- * resolving during the migration so existing links, sitemaps already submitted
- * to Google and the SEO built on it do not go dark overnight. The app derives
- * the brand from whichever of these the request arrived on, so no other code
- * change is needed when the old domain is finally retired.
+ * Every base domain this platform answers on is declared once, in
+ * `lib/base-domains.ts`. This file used to keep its own copy of the domain list,
+ * the admin hosts and the Hermes hosts — which is exactly how `sarkar.<domain>`
+ * and the role subdomains drift apart between the two files. It now imports them.
+ *
+ * `dropby.co.in` is the domain the platform is moving to; `cashcard.live` is kept
+ * resolving during the migration so existing links, sitemaps already submitted to
+ * Google and the SEO built on it do not go dark overnight.
  */
-const BRAND_BASE_DOMAINS = ["dropby.co.in", "cashcard.live"];
-const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
 
-const ADMIN_HOSTS = [
-  `dashboard.${CANONICAL_BASE}`, `admin.${CANONICAL_BASE}`,
-  "dashboard.cashcard.live", "admin.cashcard.live",
-];
-
-// Hosts that should be proxied to the Hermes Dashboard (port 9300)
-const HERMES_DASHBOARD_HOSTS = [`hermes.${CANONICAL_BASE}`, "hermes.cashcard.live"];
-
-// All dynamic app routes that should be handled by the brand router.
-// Everything else on a brand subdomain falls through to the static site.
-const APP_PATHS = [
-  "/login", "/register", "/signup", "/forgot-password", "/reset-password",
-  "/dashboard", "/profile", "/settings",
-  "/notifications", "/orders", "/bookings",
-  "/business-dashboard", "/vendor-bookings",
-  "/about", "/services", "/products", "/pricing", "/features",
-  "/marketplace", "/listings", "/business", "/categories",
-  "/blog", "/news", "/careers", "/jobs",
-  "/contact", "/faq", "/faqs", "/testimonials", "/reviews",
-  "/gallery", "/portfolio",
-  "/galaxy",
-  "/book", "/booking", "/schedule",
-  "/quote", "/request-quote",
-  "/checkout", "/pay",
-  "/support", "/help", "/chat", "/ai-assistant",
-  "/privacy", "/privacy-policy", "/terms", "/terms-conditions",
+/** Paths that are infrastructure, not brand content, and never reach the brand router. */
+const BYPASS_PREFIXES = [
+  "/_next",
+  "/api",
+  // /unlock/<job_id> is the standalone product paywall (passport photo and
+  // friends). It is not brand content, it has nothing to do with the directory
+  // brands, and /pay is already taken by the brand checkout — so it bypasses the
+  // brand router entirely.
+  "/unlock",
+  "/favicon.ico",
+  // Retired prebuilt sites, kept on disk and served directly rather than routed.
+  "/sites/",
 ];
 
 export async function proxy(request: NextRequest) {
@@ -45,7 +37,7 @@ export async function proxy(request: NextRequest) {
   const hostname = host.split(":")[0].toLowerCase();
   const pathname = request.nextUrl.pathname;
 
-  // Proxy Hermes Dashboard requests to port 9300
+  // Proxy Hermes Dashboard requests to port 9300.
   if (HERMES_DASHBOARD_HOSTS.includes(hostname)) {
     const targetUrl = `http://localhost:9300${pathname}${request.nextUrl.search}`;
     try {
@@ -63,53 +55,31 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/api") ||
-    // /unlock/<job_id> is the standalone product paywall (passport photo and
-    // friends). It is not brand content, it has nothing to do with the 28
-    // directory brands, and /pay is already taken by the brand checkout — so it
-    // bypasses the brand router entirely.
-    pathname.startsWith("/unlock") ||
-    pathname.startsWith("/favicon.ico") ||
-    pathname.startsWith("/sites/")
-  ) {
+  if (BYPASS_PREFIXES.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
   }
 
-  let brandSlug: string | null = null;
-
   // Local development: localhost has no brand subdomain, so default to
-  // sarkarmarketplace (override with DEFAULT_BRAND in .env).
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    brandSlug = (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase();
-  }
-
-  // Derive the brand from the subdomain, on any of the base domains this
-  // platform answers on. Earlier this hardcoded `root === "cashcard" && tld ===
-  // "live"`, which silently matched nothing on any other domain - so every
-  // request to the new domain fell through to the dashboard instead of the
-  // directory.
-  for (const base of BRAND_BASE_DOMAINS) {
-    if (hostname === base || hostname.endsWith(`.${base}`)) {
-      const sub = hostname.slice(0, hostname.length - base.length).replace(/\.$/, "");
-      if (sub && sub !== "www" && sub !== "dashboard" && !ADMIN_HOSTS.includes(hostname)) {
-        brandSlug = sub.toLowerCase();
-      }
-      break;
-    }
-  }
+  // sarkarmarketplace (override with DEFAULT_BRAND in .env). Every other host
+  // derives its brand from the subdomain — one helper, shared with the server
+  // components and the Supabase client that need the same answer.
+  const brandSlug =
+    hostname === "localhost" || hostname === "127.0.0.1"
+      ? (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase()
+      : brandSlugFromHost(hostname);
 
   if (!brandSlug) return NextResponse.next();
 
   // Legacy alias: sarkar.<base> (old standalone marketplace) -> sarkarmarketplace
   if (brandSlug === "sarkar") {
-    return NextResponse.redirect(`https://sarkarmarketplace.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`, 308);
+    return NextResponse.redirect(
+      `https://sarkarmarketplace.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
+      308,
+    );
   }
 
-  // Crawler entry points. Every brand has a static folder, so without these two
-  // the requests would be rewritten to /sites/<brand>/sitemap.xml and 404 —
-  // leaving 320 category pages with no way for Google to discover them.
+  // Crawler entry points. Every brand has its own sitemap, and robots.txt has to
+  // point at it, or 320 category pages have no way for Google to discover them.
   if (pathname === "/sitemap.xml") {
     const url = request.nextUrl.clone();
     url.pathname = "/api/sitemap";
@@ -125,11 +95,11 @@ export async function proxy(request: NextRequest) {
 
   // Every path on a brand host is served by the app.
   //
-  // The prebuilt pages in public/sites are retired. They were landing pages with
-  // dead # links and no live data, and worse, they hijacked brand-semantic routes:
-  // /doctors on sarkarhealth was rewritten to /sites/sarkarhealth/doctors, a file
-  // that does not exist, so the route answered 404 no matter what the app defined.
-  // Requests under /sites/ itself still pass straight through (guarded above).
+  // The prebuilt pages in public/sites are retired: they were landing pages with
+  // dead # links and no live data, and worse, they hijacked brand-semantic routes
+  // (/doctors on sarkarhealth resolved to /sites/sarkarhealth/doctors, a file that
+  // does not exist, so the route answered 404 no matter what the app defined).
+  // Requests under /sites/ itself still pass straight through (see BYPASS_PREFIXES).
   const url = request.nextUrl.clone();
   url.searchParams.set("__brand_path", pathname);
   url.pathname = `/brand-router/${brandSlug}`;

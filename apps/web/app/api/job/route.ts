@@ -5,6 +5,9 @@ import { metaFor, runChain, type Capability } from "@/lib/ai";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { ALLOWED_IMAGE_TYPES, R2_PREFIX, deleteObject, productPreviewKey, publicUrlFor, putObject, r2Configured } from "@/lib/r2";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { ProductRow, ProductJobRow } from "@/lib/db-types";
+import { errorMessage } from "@/lib/errors";
 
 /**
  * POST /api/job — the one door between the apps and the product engine.
@@ -303,7 +306,7 @@ async function callWorker(product: string, blobs: { bytes: Buffer; type: string 
   const url = `${WORKER_URL}/job/${product}${qs ? `?${qs}` : ""}`;
 
   const single = blobs.length === 1;
-  const body: any = single ? new Uint8Array(blobs[0].bytes) : JSON.stringify({
+  const body: BodyInit = single ? new Uint8Array(blobs[0].bytes) : JSON.stringify({
     files: blobs.map((b, i) => ({ name: `input-${i}`, data: b.bytes.toString("base64") })),
   });
 
@@ -396,7 +399,7 @@ export async function POST(req: NextRequest) {
   // (a foreign-key failure, 500) into an honest 404, and it means the price the
   // app shows is the price the engine charged for.
   const rowRes = await db(`products?slug=eq.${encodeURIComponent(product)}&select=slug,name,price_paise,plan,enabled`);
-  const productRow = ((await rowRes.json()) as any[])[0];
+  const productRow = await asRow<ProductRow>(rowRes);
   if (!productRow || productRow.enabled === false) {
     return NextResponse.json({ error: "This product is not switched on yet" }, { status: 404, headers: noStore });
   }
@@ -632,13 +635,13 @@ export async function POST(req: NextRequest) {
       out = Buffer.from(await res.arrayBuffer());
       if (out.length === 0) throw new Error("worker returned an empty file");
     }
-  } catch (e: any) {
+  } catch (e) {
     const durationMs = Date.now() - started;
     if (e instanceof CallerError) {
       await recordFailure(product, phone, inputKey, `bad request: ${e.message}`, durationMs);
       return NextResponse.json({ error: e.message }, { status: 400, headers: noStore });
     }
-    await recordFailure(product, phone, inputKey, e?.message ?? "worker unreachable", durationMs);
+    await recordFailure(product, phone, inputKey, errorMessage(e, "worker unreachable"), durationMs);
     return NextResponse.json({ error: "Could not finish the job. Please try again." }, { status: 502, headers: noStore });
   }
   const durationMs = Date.now() - started;
@@ -670,10 +673,10 @@ export async function POST(req: NextRequest) {
       previewType = (wm.headers.get("content-type") ?? "image/jpeg").split(";")[0].trim();
       preview = Buffer.from(await wm.arrayBuffer());
       if (preview.length === 0) throw new Error("watermark returned an empty file");
-    } catch (e: any) {
+    } catch (e) {
       // Failing closed: returning the clean file as a "preview" would hand the
       // paid product away at the free step.
-      await recordFailure(product, phone, inputKey, `preview: ${e?.message ?? "watermark failed"}`, durationMs);
+      await recordFailure(product, phone, inputKey, `preview: ${errorMessage(e, "watermark failed")}`, durationMs);
       return NextResponse.json({ error: "Could not finish the job. Please try again." }, { status: 502, headers: noStore });
     }
     // Its own random id: see productPreviewKey(). The free URL must not be a
@@ -734,7 +737,7 @@ export async function POST(req: NextRequest) {
     // that was not measured must not report success silently.
     return NextResponse.json({ error: "Could not record the job" }, { status: 500, headers: noStore });
   }
-  const [row] = (await insert.json()) as any[];
+  const [row] = await asRows<ProductJobRow>(insert);
 
   // The bill's own fields are echoed back so the app can show what it asked for,
   // minus the payload: that is the customer's data, and it can be long.
@@ -793,7 +796,7 @@ export async function GET() {
       },
       { headers: noStore },
     );
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, worker: "unreachable", detail: e?.message ?? "" }, { status: 503, headers: noStore });
+  } catch (e) {
+    return NextResponse.json({ ok: false, worker: "unreachable", detail: errorMessage(e) }, { status: 503, headers: noStore });
   }
 }

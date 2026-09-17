@@ -1,6 +1,7 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
 
-export function BrandRegister({ brand }: { brand: any }) {
+export function BrandRegister({ brand }: { brand: Brand }) {
 
   return (
     <div className="min-h-screen flex flex-col">

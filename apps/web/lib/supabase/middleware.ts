@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 /** Refresh the Supabase session and gate /admin behind a logged-in user. */
 export async function updateSession(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const response = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

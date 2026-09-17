@@ -1,9 +1,11 @@
 "use client";
+import Link from "next/link";
 import { brandPublishesDirectory } from "@/lib/brand-categories";
 import { routesFor } from "@/lib/brand-sitemap";
 import { useState } from "react";
 import { BrandTheme } from "@/components/brand-theme";
 import { ThemeToggle } from "@/components/theme-toggle";
+import type { Brand } from "@/lib/brands";
 
 /* Stroked SVG marks rather than emoji. The emoji set rendered as tofu boxes
    wherever the font lacked the glyph, and it carried its own colour, which
@@ -26,7 +28,7 @@ const NAV = [
 /** Wordmark + logo lockup. Shared by the header and the footer so the brand
  *  identity is expressed identically in both places — a thing that looks the
  *  same must behave the same and be built from the same code. */
-function Lockup({ brand, size = "md" }: { brand: any; size?: "sm" | "md" }) {
+function Lockup({ brand, size = "md" }: { brand: Brand; size?: "sm" | "md" }) {
   const box = size === "md" ? "h-9 w-9 text-sm" : "h-8 w-8 text-xs";
   return (
     <>
@@ -51,7 +53,7 @@ function Lockup({ brand, size = "md" }: { brand: any; size?: "sm" | "md" }) {
   );
 }
 
-export function BrandHeader({ brand }: { brand: any }) {
+export function BrandHeader({ brand }: { brand: Brand }) {
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
   // Must match the router's rule exactly: it 404s /marketplace unless the brand
   // really publishes a directory, so a weaker flag here advertises a dead link.
@@ -81,10 +83,11 @@ export function BrandHeader({ brand }: { brand: any }) {
           derives from the brand row instead of being re-interpolated inline. */}
       <BrandTheme brand={brand} />
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2.5 md:px-6 md:py-3">
-        {/* Logo */}
-        <a href="/" className="press flex items-center gap-2.5 rounded-xl py-1 pr-2">
+        {/* Logo. `<Link>` not `<a>`: the brand home is a client-side route, and a
+            bare anchor made every click a full document reload. */}
+        <Link href="/" className="press flex items-center gap-2.5 rounded-xl py-1 pr-2">
           <Lockup brand={brand} />
-        </a>
+        </Link>
 
         {/* Desktop nav. The hover state is a tinted pill rather than an opacity
             change: a colour shift on a translucent material is unreliable,
@@ -237,7 +240,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   );
 }
 
-export function BrandFooter({ brand }: { brand: any }) {
+export function BrandFooter({ brand }: { brand: Brand }) {
   const social = (brand.social ?? {}) as Record<string, string>;
   const flags = (brand.page_flags ?? {}) as Record<string, boolean>;
   // Must match the router's rule exactly: it 404s /marketplace unless the brand
@@ -247,7 +250,7 @@ export function BrandFooter({ brand }: { brand: any }) {
   // Brand-driven call to action. Labels are direct and specific rather than
   // generic ("Get started with X", not "Learn more") — a specific label lets
   // someone predict what happens before they tap it.
-  const ctaOverride = ((brand.page_content ?? {}) as Record<string, any>).cta ?? {};
+  const ctaOverride = ((brand.page_content ?? {}) as { cta?: Record<string, string> }).cta ?? {};
   const cta = isCustomerSite
     ? {
         title: ctaOverride.title ?? `Find trusted businesses on ${brand.name}`,

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, sendTemplate, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { BusinessRow, LeadRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
   }
 
   const bizRes = await db(`businesses?id=eq.${businessId}&select=id,name,phone,category,brand_id`);
-  const biz = ((await bizRes.json()) as any[])[0];
+  const biz = await asRow<BusinessRow>(bizRes);
   if (!biz) return NextResponse.json({ error: "Business not found" }, { status: 404, headers: noStore });
 
   // Idempotency: the same phone already flagged an intent for this business
@@ -104,13 +106,13 @@ export async function GET(req: NextRequest) {
   // Businesses whose stored phone ends with the owner's 10-digit number.
   const last10 = phone.slice(-10);
   const bizRes = await db(`businesses?phone=like.*${last10}&select=id,name,category,rating,address`);
-  const businesses = ((await bizRes.json()) as any[]) ?? [];
+  const businesses = (await asRows<BusinessRow>(bizRes)) ?? [];
   if (businesses.length === 0) {
     return NextResponse.json({ ok: true, businesses: [], leads: [] }, { headers: noStore });
   }
 
   const ids = businesses.map((b) => b.id).join(",");
   const leadsRes = await db(`leads?business_id=in.(${ids})&order=created_at.desc&limit=100&select=id,business_id,name,phone,message,status,created_at`);
-  const leads = ((await leadsRes.json()) as any[]) ?? [];
+  const leads = (await asRows<LeadRow>(leadsRes)) ?? [];
   return NextResponse.json({ ok: true, businesses, leads }, { headers: noStore });
 }

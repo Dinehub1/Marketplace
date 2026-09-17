@@ -10,13 +10,12 @@ type Props = {
   accent: string;
 };
 
-export function LeadForm({ businessId, businessName, primary, secondary, accent }: Props) {
+export function LeadForm({ businessId, businessName }: Props) {
   const [step, setStep] = useState<"form" | "otp" | "done">("form");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [code, setCode] = useState("");
-  const [token, setToken] = useState("");
   const [waLink, setWaLink] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -45,7 +44,6 @@ export function LeadForm({ businessId, businessName, primary, secondary, accent 
       const vres = await fetch("/api/otp/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ phone, code }) });
       const vj = await vres.json();
       if (!vres.ok) { setError(vj.error ?? "Code galat hai"); return; }
-      setToken(vj.token);
       const lres = await fetch("/api/leads", {
         method: "POST",
         headers: { "content-type": "application/json" },

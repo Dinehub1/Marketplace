@@ -30,8 +30,6 @@ export {
 export type { CategoryStat, Listing } from "@hermes/core";
 
 import {
-  CITY_SLUG,
-  CITY_LABEL,
   slugifyCategory,
   cleanArea,
   type CategoryStat,

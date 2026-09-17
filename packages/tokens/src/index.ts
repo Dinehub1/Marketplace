@@ -149,6 +149,16 @@ export const spring = {
 /** Press feedback happens on pressIn, never on release. This is the budget. */
 export const press = { scale: 0.965, scaleLarge: 0.985, durationMs: 90 } as const;
 
+/**
+ * What a press does when the OS asks for reduced motion, over `press.durationMs`.
+ *
+ * Reduce Motion is not "no feedback": a control still has to answer the instant it is
+ * touched, or the app reads as broken. What the setting removes is *movement* — so the
+ * scale is replaced by this much opacity, which carries the same "I heard you" without
+ * anything travelling across the screen.
+ */
+export const pressFade = 0.28;
+
 /* ── Elevation ─────────────────────────────────────────────────────────────
    iOS reads shadows, Android reads elevation, and the two do not interchange.
    Each level ships both so a card looks the same on either platform. */

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { asRow, asRows } from "@/lib/postgrest";
+import type { ReviewRow } from "@/lib/db-types";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -20,7 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     { headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: "count=exact" }, next: { revalidate: 120 } },
   );
   if (!res.ok) return NextResponse.json({ reviews: [], avg: null, count: 0 }, { headers: noStore });
-  const rows = (await res.json()) as any[];
+  const rows = await asRows<ReviewRow>(res);
   const reviews = rows.map((r) => ({
     id: r.id,
     author_name: r.reviewer_name,
@@ -64,7 +66,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     body: JSON.stringify({ business_id: businessId, reviewer_name: name, rating, comment: text }),
   });
   if (!ins.ok) return NextResponse.json({ error: "Review save nahi ho saki" }, { status: 500, headers: noStore });
-  const row = ((await ins.json()) as any[])[0];
+  const row = await asRow<ReviewRow>(ins);
+  if (!row) return NextResponse.json({ error: "Review save nahi ho saki" }, { status: 500, headers: noStore });
   const review = { id: row.id, author_name: row.reviewer_name, body: row.comment, rating: row.rating, created_at: row.created_at };
   return NextResponse.json({ ok: true, review }, { headers: noStore });
 }

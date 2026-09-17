@@ -20,17 +20,32 @@ export default function AdminReviews() {
   const headers = () => ({ "content-type": "application/json", ...(token ? { "x-admin-token": token } : {}) });
 
   async function load() {
-    setErr("");
+    // No setState before the first `await`: this is called from an effect, and a
+    // synchronous write there costs an extra render pass. `setErr("")` is folded into
+    // the success path instead, which is the only case that needs it cleared.
     const r = await fetch("/api/admin/reviews", { headers: headers() });
     const j = await r.json();
     if (!r.ok) {
       setErr(j.error ?? "Unauthorized");
       return;
     }
+    setErr("");
     setReviews(j.reviews ?? []);
   }
   useEffect(() => {
-    load();
+    let cancelled = false;
+    (async () => {
+      // Deferred by a microtask so `load`'s state writes are never on the effect's
+      // synchronous path. `load` is shared with the Reload button, so it is not
+      // inlined the way a single-use loader would be.
+      await Promise.resolve();
+      if (!cancelled) await load();
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Runs once on mount: `headers` closes over `token`, and re-running on every
+    // keystroke would fetch once per character.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

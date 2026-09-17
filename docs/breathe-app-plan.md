@@ -69,5 +69,33 @@ medically is one that cannot be reported and can be listed on both stores.
 1. Own store listing, or a screen inside the toolbar app? (Own listing is one line, but
    it also adds a 13th app to submit under the 4.3 duplicate-app risk.)
 2. Default phrase for India: "So / Hum", a Sanskrit counting pair, or leave it blank?
-3. Sound: a soft tone at each phase change, or silent with haptics only? (Sound file =
-   one more asset; haptics already work.)
+3. ~~Sound: a soft tone at each phase change, or silent with haptics only?~~ **Answered, and
+   built.** There is a rising tone on the inhale, a falling one on the exhale, a flat one on a
+   hold, and a three-note chime at the end — plus a synthesized voice saying "breathe in" and
+   "breathe out", and an optional ambient bed. All of it is generated inside this repository
+   rather than downloaded or recorded, so it works in aeroplane mode, needs no permission and
+   carries no licence. Three separate switches (cues, voice, backdrop) because they are three
+   different things to want. The one limit, which the Profile page states: the voice is a
+   formant synthesizer, so it speaks a fixed set of phrases and **cannot read the words you
+   type** — the screen shows "So / Hum", the voice still says "breathe in". The whole design,
+   the cue table and the reasoning are in `docs/wellness-sound.md`.
+
+## What the screen does now (sound, voice, motion)
+
+Built on top of the plan below, in the same spirit — nothing claims anything it cannot do.
+
+- **Cues** — a rising open fifth (G3→C4) on the inhale with a breath of filtered noise under it,
+  the exact mirror falling on the exhale, a flat quiet note on a hold, and three notes up a major
+  triad when the session ends. The rule that shapes them: nothing rises at a hold and nothing
+  falls at a start, because that is the direction the circle already animates in.
+- **Voice** — a source–filter formant synthesizer (a glottal pulse shaped by three resonant
+  filters, with a word as a glide between two vowels). It is not a recording and not the
+  platform's text-to-speech: no permission, no network, and the recipe is readable in
+  `scripts/lib/voice.mjs`.
+- **Motion** — three layers, each with one job: idle ripples that say the screen is alive, the
+  pacer disc driven from the engine's own timestamps, and a hairline arc that fills over the
+  current breath so "how much of this breath is left" is readable without reading. All three
+  respect the OS Reduce Motion setting.
+- **Sound control in the header** — a master mute that silences every layer, because a speaker
+  icon that leaves the voice talking is worse than no control at all.
+

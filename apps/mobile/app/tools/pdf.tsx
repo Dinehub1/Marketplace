@@ -288,7 +288,7 @@ export default function PdfToolkit() {
             autoCorrect={false}
           />
           <Text style={s.help}>
-            {"{n}"} is the page and {"{total}"} the page count, so "Page 3 of 12" works; the
+            {"{n}"} is the page and {"{total}"} the page count, so &quot;Page 3 of 12&quot; works; the
             engine takes %p and %P too. Blank uses {DEFAULT_NUMBER_TEXT}.
           </Text>
         </>

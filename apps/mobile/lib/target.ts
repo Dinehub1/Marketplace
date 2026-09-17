@@ -1,16 +1,21 @@
 import Constants from "expo-constants";
+import { scopeForBrand, type BrandScope } from "@hermes/core";
 
 /**
- * Which of the 19 store apps this binary is.
+ * Which of the 20 store apps this binary is.
  *
  * `app.config.ts` resolves the target at *build* time (from `APP_TARGET`, defaulting to the
  * marketplace) and drops the answer into `expo.extra`. This module reads it back at
  * runtime. There is deliberately no target picker anywhere in the UI: a person who
- * installed "Breathe" wants a breathing app, not a launcher for seventeen other products.
+ * installed "Breathe" wants a breathing app, not a launcher for nineteen other products.
  *
  * Everything here is derived from `targets.mjs` — the same file `check-targets.mjs`
  * rejects duplicate builds against and the screenshot harness groups by. One source of
  * truth, so a renamed app cannot mean two different things in two places.
+ *
+ * The ONE thing not read from `extra` is `scope` (below): which slice of the directory
+ * this app may show is derived at runtime from `@hermes/core`'s ownership table, so the
+ * app and the brand websites cannot disagree about who owns a category.
  */
 export type TargetFamily = "directory" | "wellness" | "product" | "game";
 
@@ -28,10 +33,12 @@ export type Target = {
   /** Store permissions this target declares, so a build cannot ask for more. */
   permissions: string[];
   /**
-   * What a directory app may list: substrings of the `category` column. Null for the
+   * What a directory app may list: the `category` terms it owns. Null for the
    * marketplace (which is everything) and for every non-directory target.
+   *
+   * Derived from `scopeForBrand()` in `@hermes/core` — never hand-written per target.
    */
-  scope: { include: string[]; exclude: string[] } | null;
+  scope: BrandScope | null;
   ads: { rewarded: string; interstitial: string } | null;
 };
 
@@ -49,7 +56,7 @@ const FALLBACK: Target = {
   firstRoute: "/browse",
   products: [],
   permissions: ["LOCATION"],
-  scope: null,
+  scope: scopeForBrand("sarkarmarketplace"),
   ads: null,
 };
 
@@ -66,12 +73,6 @@ function readTarget(): Target {
       ? (t.ads as Target["ads"])
       : null;
   const firstRoute = typeof t.firstRoute === "string" && t.firstRoute ? t.firstRoute : null;
-  // Same `{}`-for-null problem as ads: a target with no scope must read as "no scope",
-  // not as an empty object that a truthiness test would accept.
-  const scope =
-    t.scope && Array.isArray((t.scope as { include?: unknown }).include)
-      ? (t.scope as NonNullable<Target["scope"]>)
-      : null;
   return {
     id: t.id,
     name: t.name ?? FALLBACK.name,
@@ -81,7 +82,9 @@ function readTarget(): Target {
     firstRoute,
     products: t.products ?? [],
     permissions: t.permissions ?? [],
-    scope,
+    // Not from `extra` on purpose: one ownership table, read at runtime, so a build
+    // cannot carry a stale copy of who owns which category.
+    scope: scopeForBrand(t.id),
     ads,
   };
 }

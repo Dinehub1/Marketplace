@@ -3,11 +3,12 @@
  *
  * Two jobs live here, and they used to be one.
  *
- * `usePhases` is the clock. Breathe, Stretch, Walk and Sleep are the same machine with
- * different tables: a list of timed phases, a ticker that advances through them, a haptic at
- * each turn. Written once so a fix lands in all of them — the bug that made Breathe's circle
- * snap and its cycle counter lie was one effect re-running on every tick, and copying that
- * mistake five more times is not a plan.
+ * The clock is `lib/timer.ts`. It moved out because it needed pausing, resuming,
+ * backgrounding and exactly-once completion, and none of those are properties of the
+ * *record* this file also owns — a timer that knows about AsyncStorage is a timer that
+ * cannot be reused or tested on its own. Breathe, Stretch, Walk and Sleep all call
+ * `useSequence` from there directly; there is no second implementation of a ticker left in
+ * this file, which is the point.
  *
  * `useWellnessStore` is the record: sessions and daily counts, read by six screens. It is now
  * one store for the whole app rather than one per screen per mount, for two reasons that were
@@ -24,10 +25,9 @@
  * the goals and phrase in lib/settings.ts — stays on the device; everything a person would
  * miss if they lost the phone is in the database.
  */
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Haptics from "expo-haptics";
 import {
   MAX_SESSIONS,
   deleteRemote,
@@ -49,7 +49,7 @@ import {
 
 export type { CountMap, CountsByScreen, SessionRecord } from "./wellness-db";
 
-export type Phase = { key: string; label: string; seconds: number };
+export type { Phase } from "./timer";
 
 const CACHE_KEY = "dropby-wellness";
 /** The local-only build's per-screen keys, cleared by "Delete my data". */
@@ -63,107 +63,6 @@ export function todayKeyOf(now = new Date()): string {
   const m = String(now.getMonth() + 1).padStart(2, "0");
   const d = String(now.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
-}
-
-const TICK_MS = 100;
-
-function buzz() {
-  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-}
-
-/* ══ The clock ══════════════════════════════════════════════════════════════════════════ */
-
-/** One second-resolution clock for any list of phases. */
-export function usePhases(phases: Phase[], opts?: { onComplete?: () => void }) {
-  const [running, setRunning] = useState(false);
-  const [elapsedMs, setElapsedMs] = useState(0);
-  const [index, setIndex] = useState(0);
-  const [phaseMs, setPhaseMs] = useState(0);
-  const [units, setUnits] = useState(0);
-  const startedAt = useRef<number | null>(null);
-
-  const total = useMemo(() => phases.reduce((n, p) => n + p.seconds, 0), [phases]);
-
-  /**
-   * The completion callback is held in a ref, not a dependency.
-   *
-   * Callers pass an inline `{ onComplete }`, which is a new object on every render — and the
-   * callback itself calls setState, so depending on it meant the ticker effect tore down and
-   * re-armed its interval on every render for the whole session. Keeping the ref current in
-   * its own effect makes `done` stable, which is what the effect below needs.
-   */
-  const onComplete = useRef(opts?.onComplete);
-  useEffect(() => {
-    onComplete.current = opts?.onComplete;
-  });
-
-  const done = useCallback(() => {
-    setRunning(false);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    onComplete.current?.();
-  }, []);
-
-  useEffect(() => {
-    if (!running) return;
-    if (startedAt.current == null) startedAt.current = Date.now();
-    const id = setInterval(() => {
-      const ms = Date.now() - (startedAt.current as number);
-      setElapsedMs(ms);
-      const secs = ms / 1000;
-      if (secs >= total) {
-        setIndex(phases.length - 1);
-        setPhaseMs(phases[phases.length - 1].seconds * 1000);
-        setUnits((u) => u + 1);
-        clearInterval(id);
-        done();
-        return;
-      }
-      let acc = 0;
-      let idx = 0;
-      for (let i = 0; i < phases.length; i++) {
-        if (secs < acc + phases[i].seconds) {
-          idx = i;
-          break;
-        }
-        acc += phases[i].seconds;
-        idx = i;
-      }
-      setPhaseMs((secs - acc) * 1000);
-      setIndex((prev) => {
-        if (prev !== idx) buzz();
-        return idx;
-      });
-    }, TICK_MS);
-    return () => clearInterval(id);
-    // NOTE: elapsedMs is still deliberately absent from this list. It is the value this
-    // effect writes; depending on it re-created the interval every tick and produced "3
-    // cycles in 10 seconds" on an 11-second cycle. It is no longer read here, so the list
-    // below is complete rather than suppressed.
-  }, [running, phases, total, done]);
-
-  const controls = useMemo(
-    () => ({
-      start() {
-        startedAt.current = Date.now();
-        setElapsedMs(0);
-        setIndex(0);
-        setPhaseMs(0);
-        setUnits(0);
-        setRunning(true);
-      },
-      stop() {
-        setRunning(false);
-      },
-    }),
-    [],
-  );
-
-  const phase = phases[Math.min(index, phases.length - 1)];
-  const secondsLeft = phase ? Math.max(0, Math.ceil((phase.seconds * 1000 - phaseMs) / 1000)) : 0;
-  const progress = total > 0 ? Math.min(1, elapsedMs / (total * 1000)) : 0;
-  const clock = `${Math.floor(elapsedMs / 60_000)}:${String(Math.floor((elapsedMs % 60_000) / 1000)).padStart(2, "0")}`;
-
-  return { running, phase, secondsLeft, progress, clock, units, elapsedMs, ...controls };
 }
 
 /* ══ The record ═════════════════════════════════════════════════════════════════════════ */

@@ -23,7 +23,7 @@ import type { SessionRecord } from "./session";
 export type DayBucket = { day: string; count: number; minutes: number };
 
 /** `YYYY-MM-DD` in the device's own timezone — the key every counter and chart shares. */
-function dayKeyOf(ms: number): string {
+export function dayKeyOf(ms: number): string {
   const d = new Date(ms);
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");

@@ -1,17 +1,19 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
+import type { Brand } from "@/lib/brands";
+import type { GalleryItem } from "@/lib/brand-content";
 
-const DEFAULT_GALLERY = [
+const DEFAULT_GALLERY: GalleryItem[] = [
   { title: "Project Alpha", emoji: "🏗️" }, { title: "Workspace", emoji: "🏢" },
   { title: "Team Event", emoji: "🎉" }, { title: "Product Launch", emoji: "🚀" },
   { title: "Client Meet", emoji: "🤝" }, { title: "Office Tour", emoji: "🏛️" },
   { title: "Award Ceremony", emoji: "🏆" }, { title: "Innovation Lab", emoji: "🔬" },
 ];
 
-export function GalleryPage({ brand }: { brand: any }) {
+export function GalleryPage({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
-  const gallery = (brand.gallery_json ?? DEFAULT_GALLERY) as any[];
+  const gallery = (brand.gallery_json ?? DEFAULT_GALLERY);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -35,7 +37,7 @@ export function GalleryPage({ brand }: { brand: any }) {
       {/* MASONRY GRID */}
       <section className="mx-auto max-w-6xl px-6 py-8">
         <div className="columns-2 md:columns-3 gap-4 space-y-4">
-          {gallery.map((item: any, i: number) => {
+          {gallery.map((item, i: number) => {
             const isLarge = i % 5 === 0;
             return (
               <div

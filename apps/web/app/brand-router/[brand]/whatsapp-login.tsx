@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import type { Brand } from "@/lib/brands";
 
 /**
  * WhatsApp OTP login — one "Sarkar ID" across every brand.
@@ -11,7 +12,7 @@ import { createClient } from "@/lib/supabase/client";
  * On success the Supabase session cookie is scoped to .cashcard.live, so the
  * user is logged in on every brand subdomain at once.
  */
-export function WhatsAppLogin({ brand }: { brand: any }) {
+export function WhatsAppLogin({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const bg = theme.bg ?? "#f9fafb";
   const supabase = createClient();

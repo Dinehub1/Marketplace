@@ -1,6 +1,8 @@
 import { db } from "@/lib/nextel";
 import { productPrice } from "@/lib/product-orders";
 import { publicUrlFor } from "@/lib/r2";
+import { asRow } from "@/lib/postgrest";
+import type { ProductJobRow } from "@/lib/db-types";
 import PayPanel from "./pay-panel";
 
 /**
@@ -21,10 +23,10 @@ export default async function UnlockPage({ params }: { params: Promise<{ id: str
   const { id } = await params;
   const jobId = Number(id);
 
-  let job: any = null;
+  let job: ProductJobRow | null = null;
   if (Number.isFinite(jobId) && jobId > 0) {
     const res = await db(`product_jobs?id=eq.${jobId}&select=id,product,status,preview_key,output_key`);
-    job = ((await res.json()) as any[])[0] ?? null;
+    job = await asRow<ProductJobRow>(res);
   }
 
   if (!job || job.status !== "done") {

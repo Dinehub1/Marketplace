@@ -35,7 +35,16 @@ export default function BrowseScreen() {
   }, []);
 
   useEffect(() => {
-    void load(1, true);
+    let cancelled = false;
+    (async () => {
+      // Deferred by a microtask so the loader's state writes are not on the effect's
+      // synchronous path; `load` is shared with pull-to-refresh and paging.
+      await Promise.resolve();
+      if (!cancelled) await load(1, true);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [load]);
 
   const onEndReached = () => {

@@ -12,12 +12,25 @@ import { CategoryCover } from "@/components/category-cover";
  * ring, and a brand-tinted elevation on lift. The props are still accepted so
  * the ~8 call sites keep compiling, and are forwarded to the cover art.
  */
+/** The fields this card reads. Narrower than a `businesses` row on purpose: the
+ *  card is a presentation contract, not a mirror of the table. */
+export type BusinessCardData = {
+  id: number;
+  name: string;
+  category?: string | null;
+  address?: string | null;
+  phone?: string | null;
+  rating?: number | null;
+  reviews_count?: number | null;
+  website?: string | null;
+};
+
 export function BusinessCard({
   b,
   primary,
   secondary,
 }: {
-  b: any;
+  b: BusinessCardData;
   primary: string;
   secondary: string;
 }) {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { publicUrlFor } from "@/lib/r2";
 import { paidOrderFor, productPrice } from "@/lib/product-orders";
+import { asRow} from "@/lib/postgrest";
+import type { ProductJobRow } from "@/lib/db-types";
 
 /**
  * GET /api/job/<id> — what state is this job in, and may this caller have the
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 
   const res = await db(`product_jobs?id=eq.${jobId}&select=id,product,phone,output_key,preview_key,status,error,created_at`);
-  const job = ((await res.json()) as any[])[0];
+  const job = await asRow<ProductJobRow>(res);
   if (!job || !job.phone || job.phone !== phone) {
     return NextResponse.json({ error: "Job not found" }, { status: 404, headers: noStore });
   }

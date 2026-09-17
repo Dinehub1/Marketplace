@@ -152,17 +152,22 @@ export default function InvoiceMaker() {
 
   useEffect(() => {
     let live = true;
-    setBillNote(null);
-    if (!shopKey) {
-      setCounter(null);
-      return;
-    }
-    void loadCounter(shopKey).then((c) => {
+    void (async () => {
+      // Deferred by a microtask so neither write lands on the effect's synchronous
+      // path, which would cost an extra render before the first paint.
+      await Promise.resolve();
+      if (!live) return;
+      setBillNote(null);
+      if (!shopKey) {
+        setCounter(null);
+        return;
+      }
+      const c = await loadCounter(shopKey);
       if (!live) return;
       setCounter(c);
       // Offer the next number only while the field is the app's, not the user's.
       if (!billTyped.current) setBillNo(nextBillNo(c));
-    });
+    })();
     return () => {
       live = false;
     };

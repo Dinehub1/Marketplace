@@ -1,8 +1,9 @@
 import { BrandHeader, BrandFooter } from "./brand-header";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import type { Brand } from "@/lib/brands";
 
-export async function BrandProfile({ brand }: { brand: any }) {
+export async function BrandProfile({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const bg = theme.bg ?? "#f9fafb";
 

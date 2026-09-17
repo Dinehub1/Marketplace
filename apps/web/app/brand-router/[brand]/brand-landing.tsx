@@ -1,10 +1,11 @@
 import { brandPublishesDirectory } from "@/lib/brand-categories";
 import { BrandHeader, BrandFooter } from "./brand-header";
+import type { Brand } from "@/lib/brands";
 import { getBrandBusinesses } from "@/lib/brands";
 import { BusinessCard } from "@/components/directory/BusinessCard";
 import { SectionHeading } from "@/components/directory/SectionHeading";
 
-export async function BrandLanding({ brand }: { brand: any }) {
+export async function BrandLanding({ brand }: { brand: Brand }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
@@ -416,7 +417,7 @@ export async function BrandLanding({ brand }: { brand: any }) {
               viewAllLabel="Browse all"
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {rows.map((b: any) => (
+              {rows.map((b) => (
                 <BusinessCard key={b.id} b={b} primary={primary} secondary={secondary} />
               ))}
             </div>

@@ -1,6 +1,7 @@
 // Server-side WhatsApp sending via Nextel + shared phone/token helpers.
 import { createHmac } from "crypto";
 import { loadKey } from "./keyLoader";
+import { errorMessage } from "@/lib/errors";
 
 const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY ?? "";
 const NEXTEL_ENDPOINT =
@@ -81,8 +82,8 @@ export async function sendTemplate(
       const text = await res.text();
       lastDetail = `${field}: ${res.status} ${text.slice(0, 200)}`;
       if (res.ok && !/error|invalid|fail/i.test(text)) return { ok: true, detail: lastDetail };
-    } catch (e: any) {
-      lastDetail = `${field}: ${e?.message ?? "network error"}`;
+    } catch (e) {
+      lastDetail = `${field}: ${errorMessage(e, "network error")}`;
     }
   }
   return { ok: false, detail: lastDetail };
