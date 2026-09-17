@@ -113,6 +113,9 @@ const SCREENS = [
   // /owner redirects here while signed out, so the dashboard's own picture waits for a
   // signed-in capture; this is the screen a person actually sees.
   { name: 'owner-sign-in', route: '/owner/sign-in', expect: ['one-time code'] },
+  // The Shop Toolkit's own first screen. It is not the toolbox hub on purpose — a shop's
+  // front door is one action, not a grid — so its marker is copy only this screen owns.
+  { name: 'shop-dashboard', route: '/shop', expect: ['Your shop', 'Make a bill'] },
   // The number game. Its picture is taken after a slide for the same reason: an arrow
   // that reaches the board and one that does nothing look identical in a still.
   { name: 'merge-tiles', route: '/merge-tiles', expect: ['Slide the tiles, double the numbers', 'Four by four'], interact: 'merge-tiles-slide' },

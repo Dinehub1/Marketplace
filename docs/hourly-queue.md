@@ -2089,3 +2089,33 @@ box. The engine runs only on the VM, a dev checkout has none of its dependencies
 loopback-only — so the layout and the JSON handoff are verified here and the PDF is not. The call
 shape is the invoice's, which is live, and the first résumé job id on the VM is what closes it. If
 pdfcpu rejects the spec the job answers 502 rather than half-rendering a CV.
+
+### 56. The Shop Toolkit's dashboard — DONE 2026-09-18 (fleet 12/15 → 13/15)
+`shop-toolkit` was owed a first screen (`firstScreen: "dashboard"`, and `dashboard` mapped to
+nothing in `app-map.mjs`). It now opens on `/shop`.
+
+- `apps/mobile/app/shop/index.tsx` — deliberately **not** the toolbox hub. Two listings whose
+  first screen is the same screen is the 4.3 problem this fleet keeps running into, and a
+  shopkeeper's phone wants a different shape anyway: the daily job is a bill, so one job is the
+  screen (a full-width action card) and the other six are an honest list under it. It renders
+  `TARGET.products` through `lib/products.ts`, so the "1 of 7 jobs live" line is a measurement,
+  and the hero card follows the registry rather than a hardcoded route.
+- `lib/invoice-counter.ts` — `countersOnThisPhone()`, one question, one number: how many shops
+  have a bill series on this device. Summing the counters would have been the tempting version
+  and it would be wrong (each shop's `last` is its own series), so the dashboard says "bill
+  numbers kept on this phone: N shops" instead of inventing a bill count.
+- `targets.mjs` (`FIRST_ROUTE`, `/shop`), `scripts/app-map.mjs` (`dashboard → shop-dashboard`)
+  and `scripts/app-shots.mjs` (its own capture, marker copy only this screen owns) follow.
+
+Evidence, from the repo root: `npm run typecheck` → clean in all three workspaces;
+`npx expo export --platform web` → exit 0, 2.8 MB, and the bundle carries the dashboard's own
+copy ("Your shop", "Make a bill", "Promised by this listing", "jobs live"); `node
+scripts/check-fleet.mjs` → `shop-toolkit co.dropby.shoptoolkit /shop 1/7 ok`, **13/15
+publishable, 2 owed** (room-redesign, subtitles-voice).
+
+**Honest caveat, and it is the listing's, not the gate's:** this makes the first screen real, not
+the app finished. One of the seven jobs the listing promises is built (the GST bill); the other
+six are labelled COMING SOON, and the app says so on its own front door. `check-fleet` measures
+whether a listing *could* be submitted, not whether its copy is still true — so either the
+listing's name and screenshots narrow to what exists, or the six get built, before this one goes
+to a store. Written here so the number 13/15 is not mistaken for "ready to submit".

@@ -39,7 +39,7 @@ const SCREEN_FOR_FIRST = {
   grid: 'tools-hub',
   wellness: 'habits',
   form: 'resume-builder', // the CV form is the Résumé Builder's first screen
-  dashboard: null, // the shop dashboard is not built yet
+  dashboard: 'shop-dashboard', // the Shop Toolkit's front door, not the toolbox grid
   directory: 'home',
   camera: null, // the camera capture screen is the product screen itself
 };

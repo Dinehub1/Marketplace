@@ -15,10 +15,10 @@ node scripts/check-targets.mjs                 # Apple 4.3 / Play spam gate
 | family | listings | ready | owed a first screen |
 |---|---|---|---|
 | Wellness | 1 | 1 | — |
-| Product apps | 7 | 4 | room-redesign, subtitles-voice, shop-toolkit |
+| Product apps | 7 | 5 | room-redesign, subtitles-voice |
 | Directory | 3 | 3 | — |
 | Games | 4 | 4 | — |
-| **Total** | **15** | **12** | **3** |
+| **Total** | **15** | **13** | **2** |
 
 ### The wellness regroup (2026-09-18)
 
@@ -39,7 +39,7 @@ screen and dropping the shared hub, and add a target back to `targets.mjs`.
 ### Gates green on the last measured run
 
 - `check-fleet.mjs` — 15 targets resolve: unique name, slug and bundle id; art on disk;
-  every declared route exists. 12/15 publishable, 3 owed (listed above).
+  every declared route exists. 13/15 publishable, 2 owed (listed above).
 - `check-targets.mjs` — 15 targets, 105 pairs compared, 0 too similar.
 - `check:games` — Block Clear and Merge rules hold (21 Merge rules).
 - `check:resume` — 37 résumé layout rules hold, with no PDF library installed.
@@ -61,12 +61,17 @@ repo's own rules forbid. So the four divide by what the engine can actually do:
 | app | what it needs | engine today | verdict |
 |---|---|---|---|
 | ~~Resume Builder~~ | ~~`resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker`~~ | **DONE 2026-09-18** — `resume-builder` + `resume-checker` live (2/3); `application-writer` still `route: null` and shows honestly as coming soon | shipped |
-| Shop Toolkit | dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker | `invoice-maker` exists; the rest are data-only forms and tables | **Local work.** Buildable, largest of the three left. |
+| ~~Shop Toolkit~~ | ~~dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker~~ | **DONE 2026-09-18** — dashboard first screen at `/shop`; 1 of 7 jobs live (the GST bill), the other six labelled coming soon on the app's own front door | first screen shipped, app thin |
 | Subtitles & Voice-over | `subtitles` (STT), `voiceover` (TTS) | neither exists — `whisper.cpp` and `Piper` are named in the worker's docstring but **not implemented** | Needs hosted Workers AI STT/TTS. Real engine work. |
 | Room Redesign | image-to-image restyle of a photo | no img2img; the worker only has text-to-image (`flux-1-schnell`) | Needs an img2img model that has not been measured. |
 
-Order: **Shop Toolkit → Subtitles & Voice-over → Room Redesign**, so the work that needs no
-hosted AI is finished and shipped first.
+Order: **Subtitles & Voice-over → Room Redesign**, the two that need hosted models.
+
+**`13/15 publishable` is a structural number, not a shipping decision.** `check-fleet` asks
+whether a listing *could* be submitted — does it resolve, is its first screen real. Shop
+Toolkit passes it with one job of seven built, and Resume Builder with two of three. Neither
+should reach a store until its listing copy matches what the build actually does, or the
+missing jobs are built.
 
 Resume Builder landed as engine work plus a screen, not a screen: the page rules live in
 `services/tools/resume_layout.py` (a module that imports nothing, so `npm run check:resume`
@@ -81,7 +86,7 @@ a new engine product can be written and typechecked here but its 200 can only be
 the VM. Every engine change therefore lands with that gap named, and the job id that proves
 it is recorded on the VM rather than claimed from here.
 
-5. Then submit the twelve that are ready.
+5. Then submit the thirteen that are ready — after the listing-copy check above.
 
 ### P1 — advertising is the money path (decided 2026-09-18)
 

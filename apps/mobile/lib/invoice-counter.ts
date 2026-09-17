@@ -109,3 +109,15 @@ export async function recordBillNo(
 export async function clearCounters(): Promise<void> {
   await AsyncStorage.removeItem(KEY).catch(() => {});
 }
+
+/**
+ * How many shops have a bill series on **this phone**.
+ *
+ * The dashboard asks this one question and gets one number, so the counters map stays
+ * internal. Summing the counters would be the tempting version and it would be wrong: each
+ * shop's `last` is its own series, so the sum is not "bills made", and a dashboard that
+ * printed it would be inventing a figure the shop would then trust.
+ */
+export async function countersOnThisPhone(): Promise<number> {
+  return Object.keys(await loadAll()).length;
+}
