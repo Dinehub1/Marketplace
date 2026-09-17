@@ -1579,7 +1579,7 @@ So: either he accepts the licence in the dashboard (a minute, then re-run
 honest (`tesseract` is the declared local slot and is not installed). Do not add a vision
 provider that has not answered 200 with a real image.
 
-### 36. Wire the router into a product — it is engine-side only today (new, 2026-09-17, from item 17)
+### 36. Wire the router into a product — DONE 2026-09-17 (the listing writer is live and the page renders it)
 `apps/web/lib/ai.ts` is built and tested but **nothing imports it**, so no user can reach it.
 The first real use is the cheapest one and it is already proven end to end: the ₹0 `rules`
 path wrote a real listing description from a real `businesses` row, and the directory has
@@ -1594,6 +1594,48 @@ worker's token; under pm2 the web app has no AI key, so it would fall to Gemini/
 no free key either, to the template). Keep the labels honest: a template-written description
 must not read as if a model wrote it.
 
+**Result (2026-09-17): the router serves its first product, and the provider is a column now.**
+`listing-description` is a live product, and the cheapest possible one to build: **no DDL was
+needed** because `businesses.description` already exists and every one of the ~24k rows is NULL
+(measured: `?description=not.is.null` → count `*/0`). The route loads that row, hands
+`name`/`category`/`area`/`phone`/`rating` to `runChain("text", …)` as **facts** — the template may
+quote nothing else, so a listing cannot acquire a claim its row does not contain — writes the
+paragraph into `businesses.description` (one column, additive; no row or other column touched),
+stores the same text as `.md` in R2 like any other product, and merges `metaFor(record)` into the
+`product_jobs` row (item 37's half).
+The branch lives in the **route** (`spec.router`), not the engine, because the router is
+TypeScript and must run under pm2 — where `apps/web/.env` holds **none** of
+`CLOUDFLARE_AI_TOKEN` / `CLOUDFLARE_API_TOKEN` / GEMINI / GROQ (measured by listing the key names),
+so the chain falls through to `rules` by itself.
+Evidence: job **154** through `https://expo.dropby.co.in/api/job` (browser User-Agent) = HTTP
+**200** in 3.7 s — `meta.ai_provider "rules"`,
+`ai_tries ["workers-ai-text:unhealthy","gemini:skipped","groq:skipped","rules:ok"]`,
+`ai_cost "₹0 — a template over facts we already have; no model runs"`, `chars 83` — and job **155**
+the same through `localhost:8080`. Row 154 in `product_jobs` carries `ai_provider`, `ai_capability`,
+`ai_ms`, `ai_cost`, `ai_tries`, so "which provider served this, and what did it cost" is now
+answerable from the database. The R2 output re-downloaded is the paragraph itself ("Moti Mahal
+Delux Indore is a biryani restaurant in Pipliyahana. Phone: 08962410485."), the `businesses` row
+119465 now reads exactly that, and the **live service page**
+(`https://sarkarmarketplace.dropby.co.in/business/119465` → 200) renders it in an "About" card with
+the sentence "Written from this business’s own details — … a fixed sentence shape filled from those
+facts, not a model’s account", plus the same text as JSON-LD `description`. A listing with no
+description renders **nothing** (business 110779: 0 occurrences of the sentence, no empty card).
+Honest edges, all **400 with the sentence**: no `business_id` and `business_id=abc` →
+"business_id is required — the id of a business in this directory, e.g. 119465" (checked before the
+job row exists), and an id that is not a business → "there is no business with id 999999999 in the
+directory" (a `CallerError`, so a caller mistake stays a 400 and does not read as a broken server).
+Regression: `exif-strip` on the same route = job **157**, still 200, so the engine path is
+untouched.
+Catalogue row inserted for `listing-description` (`price_paise 0`, `plan free`, `cost_model
+free_local`, sort 40) — without it the route's own check answers 404 "This product is not switched
+on yet". `npm run typecheck -w @hermes/web` exit 0, then the gated
+`npm run build && pm2 restart hermes-web`; localhost:8080, /galaxy, sarkarmarketplace.dropby.co.in,
+expo.dropby.co.in/tools and shots.dropby.co.in/log all 200 afterwards. **No engine restart** — no
+Python file changed (one listener on :8099, `health.pid 8164 == pm2 pid`).
+Still open from this item, and it is deliberate: there is **no tile and no screen** — this is the
+directory's own writer, not a customer product, and the route's `GET` does list it; and nothing has
+generated the other ~24k paragraphs yet (new candidate 49).
+
 ### 37. `product_jobs` has no place for the provider that answered (new, 2026-09-17, from item 17)
 `metaFor(record)` returns `ai_provider` / `ai_try` / `ai_ms` / `ai_cost`, and the job route
 already stores `meta` on every row — but nothing writes these yet, so "which provider served
@@ -1603,6 +1645,13 @@ the router when item 36 lands, and add the provider to the `/log` page's per-job
 The column this needs now exists and the route writes the engine's own meta into it — item 40,
 done 2026-09-17 (`product_jobs.meta jsonb`). What is still missing is only the `metaFor` half,
 which cannot run before item 36 puts the router behind a product.
+**2026-09-17 (from item 36): the `metaFor` half is live.** `listing-description` is the first
+router-served product, and its row (job **154**) carries `ai_provider "rules"`, `ai_capability
+"text"`, `ai_ms 232`, `ai_cost "₹0 — a template over facts we already have; no model runs"` and
+`ai_tries ["workers-ai-text:unhealthy","gemini:skipped","groq:skipped","rules:ok"]` — the same
+`meta` merge every other product uses. What is left of this item is only the **`/log` page's
+per-job provider line** (the same page item 42 wants a per-product panel on), so it is no longer
+blocked on anything.
 
 ### 38. The theme audit, in one pass over every screen (new, 2026-09-17, from item 19)
 Item 19 was written as "invoice, pdf, signature" because those three were the ones with
@@ -1785,3 +1834,13 @@ under it describes the toolbox. Two honest options, neither of them this hour's 
 per-target export (item 46) and re-capture, or take the two files out of the gallery and let the
 tile read "nothing yet" with the reason — a wrong picture is worse than no picture. Nothing was
 deleted: they are not this run's files.
+
+### 49. Fill the directory's descriptions in batches (new, 2026-09-17, from item 36)
+The writer is live and costs ₹0 a run (the `rules` path, ~0.2 s, no key), and it is the only prose
+the ~24k listings will get: `businesses.description` is NULL on every row and the service page now
+renders that column when it is set. A script (`scripts/describe-listings.mjs`) should walk
+`businesses?description=is.null&status=eq.active` in pages, call the same product through the route
+(or import the same `runChain` call), and report how many rows it wrote and how many it skipped.
+Two rules for this box: a cap per run (it serves the live site), and no claim that a model wrote the
+text — the template's own sentence is on the page for that reason. Do not run it against a live
+page render (the route writes the row; the page only reads it).
