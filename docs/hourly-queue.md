@@ -1405,7 +1405,7 @@ fallback leg counts its own loop, not the transport calls the shared helper now 
 field can read 1 when 2 calls went out. Cosmetic and rare (only on a retried call), and deliberately
 not fixed in the same hour as the behaviour it describes — new item 47.
 
-### 30. The rate chips at 320 px have 1.3 px of slack — check them on a real phone (new, 2026-09-16, from item 16)
+### 30. The rate chips at 320 px have 1.3 px of slack — check them on a real phone (new, 2026-09-16, from item 16) — SKIPPED 2026-09-17: the dependency it names (a real phone) is not on this box, so item 36 was taken instead
 Item 16 measured the invoice item line at 320 px and nothing wraps or clips, but the margin is
 thin in exactly one place: the five rate chips are **30 px** wide at 320 px and their widest
 labels ("12%", "18%") measure **26.7 px** — 28 px of chip, so **1.3 px** of slack, single line.
@@ -1422,7 +1422,7 @@ field can give up 8 px), or item 16's own suggestion — one chip that opens the
 Evidence to require: a phone-sized photo or screenshot of the chip row at 320 px, plus the same
 row after the change.
 
-### 31. Ship the on-device cut: vendor the library, measure a real phone, add the fallback (new, 2026-09-16, from item 10)
+### 31. Ship the on-device cut: vendor the library, measure a real phone, add the fallback (new, 2026-09-16, from item 10) — SKIPPED 2026-09-17: its done-when needs a real phone; part 1 (vendoring + a pinned integrity hash) is doable without one, part 2 is not
 Item 10 proved the browser can do the matting (12 MB first run, ~6 s a cut, a real matte on
 `Xenova/modnet`) and left it behind a flag. Three things stand between that and a shipped
 feature, in this order:
@@ -1442,7 +1442,7 @@ feature, in this order:
 Also honest to fix while in there: the model is a **portrait** matter (person, shoulders,
 hair) — the tile and the copy must not promise a product shot.
 
-### 32. The on-device cut is free and unwatermarked, the server cut sells for ₹99 (new, 2026-09-16, from item 10 — needs his decision)
+### 32. The on-device cut is free and unwatermarked, the server cut sells for ₹99 (new, 2026-09-16, from item 10 — needs his decision) — SKIPPED 2026-09-17: three offers, one of them must be picked by him; nothing was changed
 With the prototype flag on, the screen produces a full-resolution PNG with no watermark and
 no paywall, because the work happens on the user's own device and costs us nothing; with the
 flag off, the same photo gets a watermarked preview and a ₹99 unlock. Both cannot be the
@@ -1562,7 +1562,7 @@ before changed shape. The harness, the probes and the fixtures are all outside t
 runs a job. They prove the control reaches the screen's own state; a `/api/job` path that broke
 would still pass every capture in the gallery.
 
-### 35. Vision needs one dashboard click, and its alternative is not reachable (new, 2026-09-17, from item 17)
+### 35. Vision needs one dashboard click, and its alternative is not reachable (new, 2026-09-17, from item 17) — SKIPPED 2026-09-17: blocked on his one-time licence acceptance in the Cloudflare dashboard (Workers AI → the model → agree); no code change can unblock it
 The router's `vision` chain cannot be served today, and both reasons are measured rather than
 assumed (item 17):
 - `@cf/meta/llama-3.2-11b-vision-instruct` answers **403 `Model Agreement: Prior to using this
