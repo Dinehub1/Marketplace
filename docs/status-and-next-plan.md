@@ -53,10 +53,27 @@ plus the three data brands (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
 
 ### P0 — get to 15/15 (engineering; no permission needed)
 
-1. **Room Redesign** — a first screen that opens on its own product.
-2. **Subtitles & Voice-over** — needs the Whisper route first (see P1).
-3. **Resume Builder** — the form screen plus `resume-builder`, `resume-checker`, `application-writer`.
-4. **Shop Toolkit** — the dashboard plus the seven shop products.
+Readiness on `check-fleet` needs a **first screen**, but an honest first screen needs the
+product behind it — a screen that opens on a product the engine cannot run is the thing the
+repo's own rules forbid. So the four divide by what the engine can actually do:
+
+| app | what it needs | engine today | verdict |
+|---|---|---|---|
+| Resume Builder | `resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker` | `resume-checker` exists (screen + engine); the other two do not | **Local work, no AI.** Buildable now. |
+| Shop Toolkit | dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker | `invoice-maker` exists; the rest are data-only forms and tables | **Local work.** Buildable, largest of the four. |
+| Subtitles & Voice-over | `subtitles` (STT), `voiceover` (TTS) | neither exists — `whisper.cpp` and `Piper` are named in the worker's docstring but **not implemented** | Needs hosted Workers AI STT/TTS. Real engine work. |
+| Room Redesign | image-to-image restyle of a photo | no img2img; the worker only has text-to-image (`flux-1-schnell`) | Needs an img2img model that has not been measured. |
+
+Order: **Resume Builder → Shop Toolkit → Subtitles & Voice-over → Room Redesign**, so the
+two that need no hosted AI are finished and shipped first.
+
+**The verification constraint, stated plainly.** The product engine (`services/tools/worker.py`,
+`127.0.0.1:8099`) runs **only on the Windows VM**. This Mac has none of its dependencies —
+no `reportlab`, no `Pillow`, no `markitdown`, no `pdfcpu` — and the port is loopback-only, so
+a new engine product can be written and typechecked here but its 200 can only be produced on
+the VM. Every engine change therefore lands with that gap named, and the job id that proves
+it is recorded on the VM rather than claimed from here.
+
 5. Then submit the eleven that are ready.
 
 ### P1 — advertising is the money path (decided 2026-09-18)
