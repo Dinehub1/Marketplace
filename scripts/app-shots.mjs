@@ -81,6 +81,20 @@ const SCREENS = [
   // The untimed one. Its picture is taken with a piece already on the board, which is
   // the only version of this screen that proves the two-tap placement works.
   { name: 'block-clear', route: '/block-clear', expect: ['Fit the blocks, clear the lines', 'Eight by eight'], interact: 'block-clear-place' },
+  // The four directory tabs and the two shop-owner screens had **no** light/dark pair at
+  // all until the theme audit (item 38): the gallery only ever held the screens somebody
+  // remembered to capture, so half the app could not be checked for dark mode. Each
+  // marker is copy that screen owns.
+  { name: 'browse', route: '/browse', expect: ['businesses you can call straight away'] },
+  { name: 'search', route: '/search', expect: ['POPULAR SEARCHES'] },
+  { name: 'saved', route: '/saved', expect: ['Nothing saved yet'] },
+  { name: 'account', route: '/account', expect: ['Own a business?'] },
+  // One real listing — the row the listing writer filled in — because a directory app's
+  // second screen is a business page.
+  { name: 'business', route: '/business/119465', expect: ['Business details'] },
+  // /owner redirects here while signed out, so the dashboard's own picture waits for a
+  // signed-in capture; this is the screen a person actually sees.
+  { name: 'owner-sign-in', route: '/owner/sign-in', expect: ['one-time code'] },
   // The paywall is a web page, not an app screen, but it is where the money is
   // taken — so it belongs in the same gallery.
   { name: 'paywall', url: `${WEB_BASE}/unlock/33`, expect: ['Verify your', '₹'] },

@@ -57,6 +57,9 @@ const SCREEN_FOR_FIRST = {
  */
 const EXTRA_SCREENS = {
   toolbox: ['exif-strip', 'photos-to-pdf', 'collage', 'resume-checker'],
+  // The shop dashboard's sign-in is the only shop-toolkit screen that exists today (the
+  // dashboard itself is `firstScreen: dashboard`, still unbuilt). Item 38 photographed it.
+  'shop-toolkit': ['owner-sign-in'],
   // Every wellness app carries the same two extra pages — the charts, and the settings that
   // move the numbers on them — so all six claim them. The hub is claimed by the two screens
   // that open from it.
@@ -75,7 +78,10 @@ function screensFor(t) {
   if (t.game) out.add(t.game);
   if (t.directory) {
     out.add('home');
-    out.add('business');
+    // The tab set every directory app ships, plus a listing page. Until item 38 the
+    // gallery held only `home`, so Browse / Search / Saved / Account had no picture at
+    // all — which is also why no one had checked them for dark mode.
+    for (const s of ['business', 'browse', 'search', 'saved', 'account']) out.add(s);
   }
   const first = SCREEN_FOR_FIRST[t.firstScreen];
   if (first) out.add(first);

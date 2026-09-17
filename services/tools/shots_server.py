@@ -60,7 +60,8 @@ GROUP_LABELS = {
 
 # The order a person walks the product in, not the alphabet.
 SCREEN_ORDER = [
-    "home", "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
+    "home", "browse", "search", "saved", "account", "business", "owner-sign-in",
+    "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
     "pdf-tools-rotate", "pdf-tools-numbers",
     "exif-strip", "photos-to-pdf", "collage", "resume-checker", "ai-image",
     "invoice", "tap-sprint", "word-duel", "paywall",
@@ -232,6 +233,46 @@ SCREEN_INFO = {
                 "(24,028 active rows) with their category, area and rating, searchable. These are "
                 "real database rows, not sample copy.",
         "asserts": None,
+    },
+    # The five screens below had no picture at all until the item-38 theme audit measured
+    # every screen file: the gallery only held the ones somebody remembered to capture.
+    "browse": {
+        "title": "Directory — Browse tab",
+        "what": "The listing feed: real directory rows with category, area, rating and a call "
+                "button, a page at a time, with pull-to-refresh. A fresh browser has no saved "
+                "listings and no session, which is why the captures below show the plain feed.",
+        "asserts": ["businesses you can call straight away"],
+    },
+    "search": {
+        "title": "Directory — Search tab",
+        "what": "Type two characters and the list follows the keystrokes (one request per pause, "
+                "220 ms). The capture is the idle state, so what it shows is the suggestion chips "
+                "— the six categories the directory's own data is fullest in.",
+        "asserts": ["POPULAR SEARCHES"],
+    },
+    "saved": {
+        "title": "Saved listings (kept on this device)",
+        "what": "The bookmarks a person taps on any listing. They live in this device's storage, "
+                "not on a server, so the capture of a fresh browser is the empty state — and the "
+                "screen says where the list lives rather than implying an account.",
+        "asserts": ["Nothing saved yet"],
+    },
+    "account": {
+        "title": "Account tab — the owner door",
+        "what": "The app is one binary with two modes: everyone browses, and a shop owner signs "
+                "in here for the leads dashboard. The light/dark switch also lives on this screen, "
+                "which is what makes it the place to check that the theme really moves.",
+        "asserts": ["Own a business?"],
+    },
+    # `business` already has an entry further down (it predates this audit) — a second key
+    # here would silently shadow it, which is how this entry was found to be dead code.
+    "owner-sign-in": {
+        "title": "Shop owner sign-in (WhatsApp code)",
+        "what": "A phone number, then a one-time code over WhatsApp; browsing the directory never "
+                "needs an account. /owner redirects here while signed out, so this is what the "
+                "dashboard route shows today — the dashboard's own picture waits for a signed-in "
+                "capture.",
+        "asserts": ["one-time code"],
     },
     "tools-hub": {
         "title": "Everyday Tools hub",
@@ -417,8 +458,10 @@ SCREEN_INFO = {
     "business": {
         "title": "Single business page",
         "what": "One listing in full: phone, WhatsApp, directions, hours and the services list — the page "
-                "a searcher lands on from Google.",
-        "asserts": None,
+                "a searcher lands on from Google. The capture is business 119465 (Moti Mahal Delux "
+                "Indore), the row the listing-description product wrote a paragraph for from the "
+                "row's own facts, which is what its About card shows.",
+        "asserts": ["Business details"],
     },
     "doctors": {
         "title": "SarkarHealth doctors",
