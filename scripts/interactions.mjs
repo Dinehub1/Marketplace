@@ -21,9 +21,65 @@
  * PROBE_SABOTAGE=1 is for testing this gate itself: it makes the probe's own target
  * refuse pointer events, i.e. it reproduces "the screen stopped responding" without
  * touching the app. It is never set by a normal capture run.
+ *
+ * Three of the probes need a file (a PDF, three photos): no job is ever sent, the
+ * pickers are the thing under test. The fixtures are written to the temp dir at
+ * probe time — a 1-page PDF made by hand and three 1x1 PNGs — so nothing in the repo
+ * has to carry test data.
  */
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 const SABOTAGE = process.env.PROBE_SABOTAGE === '1';
+
+// ------------------------------------------------------------------- fixtures
+
+/** The pickers only need the file to have the right kind (`accept` on the input),
+ *  and no job is run, so this is a real but deliberately trivial one-page PDF. */
+const MINIMAL_PDF = Buffer.from(
+  '%PDF-1.4\n' +
+    '1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n' +
+    '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n' +
+    '3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 595 842]>>endobj\n' +
+    'trailer<</Root 1 0 R>>\n%%EOF\n',
+  'utf8',
+);
+
+/** A 1x1 PNG — the collage only shows thumbnails of what it was given. */
+const ONE_PX_PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+  'base64',
+);
+
+let fixtureDir = null;
+
+function fixture(name, contents) {
+  if (!fixtureDir) {
+    fixtureDir = path.join(os.tmpdir(), 'dropby-probe-fixtures');
+    fs.mkdirSync(fixtureDir, { recursive: true });
+  }
+  const p = path.join(fixtureDir, name);
+  // Rewritten every run: a fixture that survived from a previous hour is exactly the
+  // stale-input mistake this repo has made before.
+  fs.writeFileSync(p, contents);
+  return p;
+}
+
+/**
+ * Answer the file picker the screen opens.
+ *
+ * Every web picker in the app builds an `<input type="file">` on the press, clicks it
+ * and removes it when it settles (`lib/tools.ts` → `pickOnWeb`), so the files have to
+ * be handed over while the chooser is open: Playwright hands the chooser to us and
+ * `setFiles` is what a person's file dialog would do.
+ */
+async function chooseFiles(page, open, files) {
+  const opening = page.waitForEvent('filechooser', { timeout: 15000 });
+  await open();
+  const chooser = await opening;
+  await chooser.setFiles(files);
+}
 
 /** tap-sprint's accent in each scheme: the dot, the lives and the start button all
  *  wear it, so the dot is found by its colour + its squareness, never by a class. */
@@ -192,7 +248,197 @@ async function blockClearPlace(page) {
   };
 }
 
+/**
+ * The invoice's own version of "the control stopped responding": the field still takes
+ * the keystroke, the screen never hears about it. (Pointer events are no use here —
+ * `fill()` would time out on the actionability check instead of letting the probe say
+ * what did not happen. Blocking the DOM `input` event in the capture phase stops it
+ * before React's root listener sees it, which is the real fault being simulated.)
+ */
+async function deafen(selector, page) {
+  if (!SABOTAGE) return;
+  await page.evaluate((sel) => {
+    for (const el of document.querySelectorAll(sel)) {
+      el.addEventListener('input', (e) => e.stopPropagation(), true);
+    }
+  }, selector);
+}
+
+/** The sentence on a tool screen's primary button — what the press is about to do. */
+function jobLabel(page) {
+  return page.evaluate(() => {
+    const shape = /^(Merge|Split pages|Compress|Rotate|Number pages at|Choose a PDF|Choose a different PDF|Add at least|Make the collage|Add \d+ more)/;
+    const btns = [...document.querySelectorAll('[role="button"]')].filter((el) =>
+      shape.test((el.innerText || '').trim()),
+    );
+    // The primary button is the one whose `disabled` prop reaches the DOM as
+    // aria-disabled; the picker button above it never has one — and both can read
+    // "Choose a PDF", which is how this read the wrong button the first time it ran.
+    const withState = btns.filter((el) => el.hasAttribute('aria-disabled'));
+    const btn = (withState.length ? withState : btns).pop();
+    return btn ? btn.innerText.trim().split('\n')[0] : null;
+  });
+}
+
+/**
+ * The PDF screen's turn picker: press a `90 / 180 / 270` chip and require the primary
+ * button to name the job it will run. The screen computes that sentence from the chip
+ * (`Rotate ${angleLabel}`), so a chip that never lands leaves the sentence saying the
+ * old angle — the same shape as tap-sprint's deaf field: the screen looks right.
+ *
+ * One PDF has to be attached first: with no file the button reads "Choose a PDF" and
+ * the angle is not on it at all.
+ */
+async function pdfRotatePick(page) {
+  const card = page.locator('[role="radio"]').filter({ hasText: 'Rotate' }).first();
+  if (!(await card.count())) throw new Error('the PDF screen is missing its Rotate job card');
+  await card.click();
+  await page.waitForTimeout(250);
+
+  await chooseFiles(page, () => page.locator('text=Choose a PDF').first().click(), [
+    fixture('probe-rotate.pdf', MINIMAL_PDF),
+  ]);
+  await page.waitForTimeout(600);
+
+  const before = await jobLabel(page);
+  if (!/^Rotate /.test(before || ''))
+    throw new Error(
+      `the PDF never reached the screen, so the button still reads ${JSON.stringify(before)} instead of naming the rotate job`,
+    );
+
+  await sabotage('[aria-label^="Rotate "]', page);
+  const chip = page.locator('[aria-label="Rotate a half turn — the page upside down"]').first();
+  const box = await chip.boundingBox();
+  if (!box) throw new Error('the 180° chip has no box on the page');
+  await press(page, Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2));
+  await page.waitForTimeout(350);
+
+  const after = await jobLabel(page);
+  if (after !== 'Rotate 180°')
+    throw new Error(
+      `pressing the 180° chip did not change the job the screen would run (the button still reads ${JSON.stringify(after)}, it read ${JSON.stringify(before)} before)`,
+    );
+  return { detail: `attached a PDF, pressed the 180° chip — the button went "${before}" → "${after}"` };
+}
+
+/**
+ * The invoice's UPI field: what matters is not that the text lands in the input but
+ * that the **bill preview** carries it, and that a malformed id is refused in words
+ * rather than printed onto the sheet.
+ */
+async function invoiceUpiPreview(page) {
+  const sel = 'input[placeholder="yourname@bank"]';
+  const field = page.locator(sel).first();
+  if (!(await field.count())) throw new Error('the invoice screen has no UPI id field');
+  if (await page.evaluate(() => document.body.innerText.includes('Pay by UPI')))
+    throw new Error('the bill already carried a UPI line before anything was typed');
+
+  const readPaper = () =>
+    page.evaluate(() => {
+      const m = document.body.innerText.match(/Pay by UPI · (\S+)/);
+      return m ? m[1] : null;
+    });
+
+  await deafen(sel, page);
+  await field.fill('sharmaelectricals@okhdfcbank');
+  await page.waitForTimeout(350);
+  const printed = await readPaper();
+  if (printed !== 'sharmaelectricals@okhdfcbank')
+    throw new Error(
+      `typing a UPI id into the field did not reach the bill preview (the paper says ${printed ? JSON.stringify(printed) : 'nothing about UPI'})`,
+    );
+
+  // The other half of the claim: a bad id is refused, and the sheet loses the line.
+  await field.fill('not-a-upi');
+  await page.waitForTimeout(350);
+  const after = await page.evaluate(() => ({
+    paper: document.body.innerText.includes('Pay by UPI'),
+    refused: document.body.innerText.includes('That is not a UPI id'),
+  }));
+  if (after.paper || !after.refused)
+    throw new Error(
+      `a malformed UPI id was not refused: the bill still carries a UPI line = ${after.paper}, and the refusal sentence is on the page = ${after.refused}`,
+    );
+  return {
+    detail: `typed sharmaelectricals@okhdfcbank — the paper went from no UPI line to "Pay by UPI · sharmaelectricals@okhdfcbank"; "not-a-upi" dropped the line and was refused in words`,
+  };
+}
+
+/**
+ * The collage's shape chips: three photos in, press "3 across", and require the note
+ * under the chips to become that shape's note. Then the control the item names — a chip
+ * that cannot hold three photos is **dimmed**, and a press on it must change nothing.
+ * Neither check reads a label the probe itself could have set.
+ */
+async function collageShapePick(page) {
+  await chooseFiles(page, () => page.locator('text=Add photos').first().click(), [
+    fixture('probe-1.png', ONE_PX_PNG),
+    fixture('probe-2.png', ONE_PX_PNG),
+    fixture('probe-3.png', ONE_PX_PNG),
+  ]);
+  await page.waitForTimeout(700);
+
+  const button = await jobLabel(page);
+  if (!/^Make the collage · 3 photos$/.test(button || ''))
+    throw new Error(
+      `the three photos never reached the screen (the button reads ${JSON.stringify(button)} instead of "Make the collage · 3 photos")`,
+    );
+
+  const NOTE = /(we pick the shape that fits|two side by side|two stacked|a square of four|a strip of three)/;
+  const note = () =>
+    page.evaluate((src) => {
+      const m = document.body.innerText.match(new RegExp(src));
+      return m ? m[1] : null;
+    }, NOTE.source);
+  const before = await note();
+
+  await sabotage('[role="button"]', page);
+  const pressChip = async (name) => {
+    const chip = page.getByRole('button', { name, exact: true }).first();
+    const b = await chip.boundingBox();
+    if (!b) throw new Error(`the "${name}" chip has no box on the page`);
+    await press(page, Math.round(b.x + b.width / 2), Math.round(b.y + b.height / 2));
+    await page.waitForTimeout(350);
+  };
+
+  await pressChip('3 across');
+  const after = await note();
+  if (after !== 'a strip of three')
+    throw new Error(
+      `pressing "3 across" did not change the shape the screen would use (the note under the chips still reads ${JSON.stringify(after)}, it read ${JSON.stringify(before)} before)`,
+    );
+
+  // Three photos cannot fit a two-cell sheet, so that chip is dimmed with the reason on
+  // it. A press there has to do nothing — a chip that is dimmed but still live is the
+  // silent-wrong-job case (the engine would answer 400).
+  await pressChip('2 across');
+  const held = await note();
+  if (held !== 'a strip of three')
+    throw new Error(
+      `the dimmed "2 across" chip changed the shape to ${JSON.stringify(held)} even though it cannot hold the three photos on the screen`,
+    );
+
+  return {
+    detail: `added 3 photos and pressed "3 across" — the shape note went "${before}" → "${after}", and the dimmed "2 across" (holds 2 of 3) left it alone`,
+  };
+}
+
 export const INTERACTIONS = {
+  'pdf-rotate-pick': {
+    screen: 'pdf-tools',
+    what: 'press a turn chip; the primary button has to name the job it will run',
+    run: pdfRotatePick,
+  },
+  'invoice-upi-preview': {
+    screen: 'invoice',
+    what: 'type a UPI id; the bill preview has to carry it, and refuse a malformed one',
+    run: invoiceUpiPreview,
+  },
+  'collage-shape-pick': {
+    screen: 'collage',
+    what: 'press a shape chip; the note has to change and a dimmed chip must stay inert',
+    run: collageShapePick,
+  },
   'tap-sprint-hit': {
     screen: 'tap-sprint',
     what: 'start a round and hit the dot; the score has to move',

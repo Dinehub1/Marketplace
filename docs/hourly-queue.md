@@ -1338,7 +1338,7 @@ precisely because the broken render looks healthy). Evidence to require: a full 
 transient failures no longer change any gallery PNG's MD5, plus one deliberately broken
 marker still failing with exit 3.
 
-### 34. Probes for the other three primary interactions (new, 2026-09-16, from item 22)
+### 34. Probes for the other three primary interactions — DONE 2026-09-17
 Only the two games have a probe. The three named in item 22 are the next ones worth one, each
 with an observable change that is not the screen's own copy:
 - **PDF rotate picker** (`/tools/pdf`): press a `90 / 180 / 270` chip and require the primary
@@ -1351,6 +1351,51 @@ with an observable change that is not the screen's own copy:
   change to the job that will run; the dimmed "cannot hold the photos" chips are the control.
 Each probe must run at capture time like the games' do (exit 3, no gallery write) so a screen
 whose control stops responding cannot pass the gallery gate again.
+
+**Result (2026-09-17): all three exist, all three pass, and all three have been *seen* to
+fail.** `scripts/interactions.mjs` gained `pdf-rotate-pick`, `invoice-upi-preview` and
+`collage-shape-pick`, and the three screens carry `interact:` in `app-shots.mjs`, so they run
+at capture time exactly as the games' do. Two things the item did not anticipate and the
+measurements settled:
+- **The screens' own primary button is not reachable without a file.** With nothing attached
+  the PDF button reads "Choose a PDF", so an angle is not on it at all — and the invoice's
+  paper preview only carries the UPI line once the id is real. So the probes now *attach
+  files through the app's own web picker*, which is the first time the harness has done that:
+  `chooseFiles()` answers the `<input type="file">` that `lib/tools.ts` → `pickOnWeb` builds,
+  clicks and removes, with fixtures written at probe time into the temp dir (a 193-byte
+  one-page PDF made by hand, three 68-byte 1x1 PNGs — no test data is carried in the repo and
+  **no job is ever sent**, so a capture run costs the box nothing).
+- **The first version of the probe read the wrong button.** `jobLabel()` matched
+  "Choose a PDF" on the *secondary* picker button and reported "the PDF never reached the
+  screen" — a probe failure that was the probe's own fault, found because it failed on the
+  first run rather than passing. The primary button is now identified by the `aria-disabled`
+  attribute its `disabled` prop produces, which the secondary picker never has.
+The collage probe carries the item's negative control too: with three photos, "2 across" is
+dimmed (it holds 2 of 3) and a press on it must leave the shape alone — a dimmed-but-live chip
+would send the engine a 400.
+Evidence — every probe observed a change it did not put on the page, through
+`https://expo.dropby.co.in` at 390x844, both schemes, **6/6 captures ok**:
+`pdf-tools` light+dark `probe: attached a PDF, pressed the 180° chip — the button went
+"Rotate 90°" → "Rotate 180°"`; `invoice` light+dark `probe: typed sharmaelectricals@okhdfcbank
+— the paper went from no UPI line to "Pay by UPI · sharmaelectricals@okhdfcbank"; "not-a-upi"
+dropped the line and was refused in words`; `collage` light+dark `probe: added 3 photos and
+pressed "3 across" — the shape note went "we pick the shape that fits" → "a strip of three",
+and the dimmed "2 across" (holds 2 of 3) left it alone`. **The gate was shown to fail**, which
+is the only thing that makes it a gate: `PROBE_SABOTAGE=1` (the harness's own test switch — for
+the invoice it blocks the DOM `input` event in the capture phase, because `pointer-events: none`
+would have made `fill()` time out on an actionability check instead of letting the probe say
+what did not happen) gives **exit 3** on all three with the sentences above, and the three
+gallery PNGs' MD5s are **byte-identical before and after** the sabotaged runs (`md5sum -c`:
+`app__pdf-tools__mobile-light.png: OK`, `app__invoice__…: OK`, `app__collage__…: OK`) — the
+probe-failure path still leaves the last known-good shot alone, as item 22 intended. The two
+games' probes still pass in the same hour (`tap-sprint` light: `probe: started a round, tapped
+the dot at 158,371 — score 0 → 10`), so the shared module still loads and nothing that worked
+before changed shape. The harness, the probes and the fixtures are all outside the app: **no
+`npm run build`, no repo-app change, no engine restart** — one listener on :8099 (pid 8168,
+`health.pid == pm2 pid`), one on :8080, one on :8091 and one on :8092, no browser left behind.
+**Still open, and now the obvious next gap (item 43):** none of these probes — nor the games' —
+runs a job. They prove the control reaches the screen's own state; a `/api/job` path that broke
+would still pass every capture in the gallery.
 
 ### 35. Vision needs one dashboard click, and its alternative is not reachable (new, 2026-09-17, from item 17)
 The router's `vision` chain cannot be served today, and both reasons are measured rather than
@@ -1492,3 +1537,25 @@ read "no measured run", not a zero. Cheapest shape: have `scripts/build-log.py` 
 server, which already re-reads its folder per request) shell out to the same script and cache the
 result for a minute, rather than recomputing Supabase on every page view — this box serves the
 live site too.
+
+### 43. Every probe stops before the upload (new, 2026-09-17, from item 34)
+There are now six interaction probes (three games, three tool controls) and **not one of them
+runs a job**: each proves the press reaches the screen's own state. So a `/api/job` path that
+broke — a renamed field, a 502 from a bad enum, a route entry deleted — would still pass all
+six and every marker check in the gallery, which is the same class of blind spot item 21 found
+in the games. The probes now have the hard part already built (`chooseFiles()` attaches files
+through the app's own picker), and the cheapest honest job to run at capture time is
+`exif-strip`: it is free, local, ~1 s, takes one photo and its result card prints a number the
+probe did not put on the page (the tags the file arrived with vs the tags it now carries). The
+cost has to be said out loud: a capture run would then send one real job per scheme per screen,
+so it belongs on ONE screen as a canary rather than on all of them, and the probe must assert
+`http=200` plus the job's own meta, not merely that a card appeared.
+
+### 44. Bad-input probes for the two fields that guard (new, 2026-09-17, from item 34)
+The invoice's UPI field is now probed in both directions (a valid id reaches the paper, a
+malformed one is refused in words), which was the pattern worth copying — the same "type it
+wrong and require the screen to say so before it uploads" check is missing on the two other
+fields that carry a grammar: the **PDF page-range field** (`/tools/pdf`, item 25's fix — a
+range pdfcpu would refuse must mark the field bad with the sentence, not fail at the engine)
+and the **document check's keyword box** (`/tools/resume-checker`, capped at 30 — the refusal
+is client-side and has never been captured). Both are one probe each with no new plumbing.

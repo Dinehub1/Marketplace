@@ -47,12 +47,12 @@ const SCREENS = [
   { name: 'passport', route: '/passport', expect: ['Passport photo', 'Choose the size', 'Take or choose a photo'] },
   { name: 'bg-remove', route: '/tools/bg-remove', expect: ['Remove the'] },
   { name: 'signature', route: '/tools/signature', expect: ['Sign it with', 'Sign here'] },
-  { name: 'pdf-tools', route: '/tools/pdf', expect: ['Pick a job,'] },
+  { name: 'pdf-tools', route: '/tools/pdf', expect: ['Pick a job,'], interact: 'pdf-rotate-pick' },
   { name: 'exif-strip', route: '/tools/exif-strip', expect: ['Choose a photo', 'no location, no camera name'] },
   { name: 'photos-to-pdf', route: '/tools/photos-to-pdf', expect: ['Photos into', 'Page size'] },
-  { name: 'collage', route: '/tools/collage', expect: ['A few photos,', 'Shape'] },
+  { name: 'collage', route: '/tools/collage', expect: ['A few photos,', 'Shape'], interact: 'collage-shape-pick' },
   { name: 'resume-checker', route: '/tools/resume-checker', expect: ['DOCUMENT CHECK', 'document says', 'not counted inside', 'no text layer'] },
-  { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'] },
+  { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'], interact: 'invoice-upi-preview' },
   // The only screen with no server behind it: if this one fails, the fault is the
   // screen, never the network — so its markers are about the screen's own copy.
   // The wellness family: five screens on one native tab bar, every one of them offline.
