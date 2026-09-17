@@ -25,6 +25,8 @@
     "test": "npm run test --workspaces --if-present",
     "ai:report": "node scripts/ai-router-report.mjs",
     "cost:report": "node scripts/cost-report.mjs",
+    "_comment_theme_audit": "The item-19 dark-mode test, applied to every screen file at once: each route is opened in both colorSchemes and the screen's own colours must move. Writes PNGs to %TEMP%/theme-audit and exits 1 on a screen that did not.",
+    "theme:audit": "node scripts/theme-audit.mjs",
     "shots": "node scripts/app-shots.mjs",
     "shots:fast": "node scripts/app-shots.mjs --no-export",
     "check:targets": "node scripts/check-targets.mjs",
