@@ -1636,7 +1636,7 @@ Still open from this item, and it is deliberate: there is **no tile and no scree
 directory's own writer, not a customer product, and the route's `GET` does list it; and nothing has
 generated the other ~24k paragraphs yet (new candidate 49).
 
-### 37. `product_jobs` has no place for the provider that answered (new, 2026-09-17, from item 17)
+### 37. `product_jobs` has no place for the provider that answered (new, 2026-09-17, from item 17) — DONE 2026-09-17
 `metaFor(record)` returns `ai_provider` / `ai_try` / `ai_ms` / `ai_cost`, and the job route
 already stores `meta` on every row — but nothing writes these yet, so "which provider served
 this, and at what cost" cannot be answered from the database (item 16 needs exactly that to
@@ -1652,6 +1652,40 @@ router-served product, and its row (job **154**) carries `ai_provider "rules"`, 
 `meta` merge every other product uses. What is left of this item is only the **`/log` page's
 per-job provider line** (the same page item 42 wants a per-product panel on), so it is no longer
 blocked on anything.
+
+**Done 2026-09-17 — and the reason it was still open is that the per-job line did not exist.**
+`/log` rendered only the build-log entries, so the provider had nowhere to go. It now opens with
+a **Recent jobs** panel (`services/tools/shots_server.py`): one line per `product_jobs` row,
+newest first — `#id · product · status · duration · the provider that answered · what the row
+measured` — and those numbers are the row's own (`ai_cost`, `neurons billed`, `attempts`, `op`,
+`bytes out`); a router-served job also prints the chain that ran (`tried:
+workers-ai-text:unhealthy → gemini:skipped → groq:skipped → rules:ok`) and a failed row prints its
+own error in red. Three measured facts shaped the read:
+- **The publishable key cannot see these rows.** `GET /rest/v1/product_jobs` with the anon key
+  answers **200 with `[]`** while the service key returns all of them (RLS), so a panel built on
+  the anon key would have said "no jobs" while 157 exist. The read uses the service-role key
+  **server-side only** — checked, that key string does not appear in the served HTML.
+- The read is **cached in-process for 60 s** and shared by every request, because the page is
+  opened from a phone at an arbitrary minute and this box serves the live site: measured
+  **1.45 s** for the first request after a restart (fetch + render) and **0.012 s / 0.009 s** for
+  the next two. The legend prints the age of the read ("read 12 s ago") rather than passing a
+  cached read off as live.
+- A row with no meta prints **"no meta recorded"** — not a blank, not a zero. That is what made
+  the next gap visible: `recordFailure()` in the route writes no meta at all, so a *failed* job's
+  provider and usage are lost (candidate 50).
+Evidence: `GET https://shots.dropby.co.in/log` → **200** (43,996 B) carrying **12 job lines** and
+its 35 build-log cards, including `#154 listing-description done 1.5 s by rules ₹0 — a template
+over facts we already have; no model runs`, `#152 translate-doc done 12.5 s by
+@cf/qwen/qwen3-30b-a3b-fp8 22 neurons billed`, `#151 ai-image done 2.8 s by
+@cf/black-forest-labs/flux-1-schnell 1 upstream attempt · 537872 B out`, `#157 exif-strip done
+33 ms local — no model`, and `#156 listing-description failed … bad request: there is no business
+with id 999999999`. **Negative control, because a fallback nobody has watched fail is a guess:** a
+second copy of the server on :8095 with `SUPABASE_URL=https://127.0.0.1:9` and a junk key answers
+**200** (40,229 B) with the panel's own reason in the legend ("the job table could not be read
+just now (URLError)"), the empty state, and every build-log card intact — the panel degrades, the
+page does not. `/shots`, `/` and `/perf` are all still **200**. No app change, no `npm run build`,
+no engine restart: one Python file plus `pm2 restart shots-gallery` (one listener on :8092, pid
+2092 == `pm2 pid`); the test instance on :8095 was killed and the port is free again.
 
 ### 38. The theme audit, in one pass over every screen (new, 2026-09-17, from item 19)
 Item 19 was written as "invoice, pdf, signature" because those three were the ones with
@@ -1844,3 +1878,20 @@ renders that column when it is set. A script (`scripts/describe-listings.mjs`) s
 Two rules for this box: a cap per run (it serves the live site), and no claim that a model wrote the
 text — the template's own sentence is on the page for that reason. Do not run it against a live
 page render (the route writes the row; the page only reads it).
+
+### 50. A failed job keeps its error but loses its provider and usage (new, 2026-09-17, from item 37)
+Found by putting the provider on the page: `/log`'s new Recent jobs panel prints **"no meta
+recorded"** for jobs **147** (translate-doc, "that document is 9799 characters…") and **156**
+(listing-description, "there is no business with id 999999999"), and it is not a rendering gap —
+`recordFailure()` in `apps/web/app/api/job/route.ts` posts `{product, phone, input_key,
+output_key, status, error, duration_ms}` and **no `meta`**, while the `done` branch stores
+`rowMeta` (item 40). So the one case where knowing what was spent matters most — a hosted call
+that failed after retrying — has no record of it: a failed `translate-doc` cannot say how many
+neurons it burned or which model was tried, and `metaFor(record)`'s reason list (item 17) is
+dropped on exactly the jobs whose reasons a person would want to read. The fix is small and
+already has a seam: pass the same meta object into `recordFailure` (the engine's `x-job-meta` is
+read before the status is decided, or can be), keep the 16 KB cap and the empty-object-is-NULL
+rule from item 40, and put a case in `scripts/cost-report.mjs`'s data — a failed hosted job with
+a billed figure must not be counted as a `Rs 0` run. Evidence to require: a deliberately failing
+hosted job whose row carries `meta.attempts` / `meta.model`, and the panel's line for it showing
+the provider instead of "no meta recorded".
