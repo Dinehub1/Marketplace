@@ -43,6 +43,30 @@ const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingm
 const DOC_ACCEPTS = ["application/pdf", DOCX_MIME, "text/plain"];
 
 /**
+ * What the transcriber accepts. Deliberately **not** video: the model reads an audio track,
+ * an mp4 would have to be demuxed first, and ffmpeg is not installed on the box — so offering
+ * "drop your reel here" would be offering a job that cannot run. The screen says which export
+ * button to press instead, which is a sentence, not a 400.
+ *
+ * Declared here rather than beside the other accepts lists because `ENGINE` below references
+ * it, and a `const` used before its declaration is a module-load failure, not a warning.
+ */
+const AUDIO_ACCEPTS = [
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/mp4",
+  "audio/m4a",
+  "audio/x-m4a",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/wave",
+  "audio/webm",
+  "audio/ogg",
+  "audio/flac",
+  "audio/x-flac",
+];
+
+/**
  * Catalogue slug -> what the engine actually runs.
  *
  * The engine has a handful of real capabilities (rembg, Pillow recipes, pdfcpu).
@@ -120,6 +144,35 @@ const ENGINE: Record<string, {
     free: true,
   },
 
+  // Subtitles: an audio file in, one SRT out, from `@cf/openai/whisper-large-v3-turbo` on
+  // Workers AI. The model supplies the timings; `services/tools/captions.py` turns them into
+  // a file (format, numbering, tag stripping) and `scripts/check-captions.py` asserts that
+  // half on a machine that holds no token, which is what makes this product's *format* a
+  // tested claim rather than a hope about a model.
+  //
+  // `accepts` is audio only — see AUDIO_ACCEPTS. And the product plan calls this "captions
+  // burnt into a short video": burning them in needs ffmpeg, which is not on this box, so
+  // what ships is the caption file an editor imports. The screen says that in words instead
+  // of implying a rendered video.
+  "subtitles": {
+    engine: "subtitles",
+    fields: ["language"],
+    accepts: AUDIO_ACCEPTS,
+    free: true,
+  },
+
+  // Voice-over: a script in, one MP3 out, from `@cf/myshell-ai/melotts`. The script rides in
+  // `payload` because it runs to 4,000 characters and the shared field cap is 120 — the same
+  // shape the invoice and the résumé builder already use. English only for now: the model is
+  // multilingual, but no other language has been listened to here, and a synthetic voice that
+  // mispronounces Hindi is worse than an honest English-only build.
+  "voiceover": {
+    engine: "voiceover",
+    dataOnly: true,
+    fields: ["payload"],
+    free: true,
+  },
+
   // Text to image: the one product whose picture is drawn by a hosted model
   // (@cf/black-forest-labs/flux-1-schnell on Workers AI, with the token already on
   // this box). The engine has run it for hours; with no entry here the app answered
@@ -191,6 +244,20 @@ const TYPE_LABEL: Record<string, string> = {
   [DOCX_MIME]: "DOCX",
   "text/plain": "TXT",
   "text/markdown": "Markdown",
+  // Audio, so a wrong file gets "this tool expects MP3 or M4A or WAV", not a list of mime
+  // subtypes ("X-WAV", "X-M4A") that reads like a bug rather than an instruction.
+  "audio/mpeg": "MP3",
+  "audio/mp3": "MP3",
+  "audio/mp4": "M4A",
+  "audio/m4a": "M4A",
+  "audio/x-m4a": "M4A",
+  "audio/wav": "WAV",
+  "audio/x-wav": "WAV",
+  "audio/wave": "WAV",
+  "audio/webm": "WebM",
+  "audio/ogg": "OGG",
+  "audio/flac": "FLAC",
+  "audio/x-flac": "FLAC",
 };
 
 function typeLabel(type: string): string {
@@ -202,6 +269,20 @@ const DOC_INPUT_EXT: Record<string, string> = {
   "application/pdf": "pdf",
   [DOCX_MIME]: "docx",
   "text/plain": "txt",
+  // Audio, for the transcriber. Without these an uploaded voice note is stored as
+  // `…/input.bin`, and "what did the shop actually send" stops being answerable from the key.
+  "audio/mpeg": "mp3",
+  "audio/mp3": "mp3",
+  "audio/mp4": "m4a",
+  "audio/m4a": "m4a",
+  "audio/x-m4a": "m4a",
+  "audio/wav": "wav",
+  "audio/x-wav": "wav",
+  "audio/wave": "wav",
+  "audio/webm": "webm",
+  "audio/ogg": "ogg",
+  "audio/flac": "flac",
+  "audio/x-flac": "flac",
 };
 
 /**
@@ -287,6 +368,11 @@ const EXT_FOR_TYPE: Record<string, string> = {
   // The document reading (markitdown) hands back Markdown, not a JPEG. Without
   // this line its output lands in the bucket as `.bin`.
   "text/markdown": "md",
+  // The transcriber answers SRT, the voice-over answers MP3. Both would otherwise land in
+  // the bucket as `.bin`, which is a file nobody can open from a phone.
+  "application/x-subrip": "srt",
+  "text/vtt": "vtt",
+  "audio/mpeg": "mp3",
 };
 
 /**

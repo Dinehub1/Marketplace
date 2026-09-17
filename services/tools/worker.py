@@ -35,6 +35,11 @@ from PIL import Image, ImageOps
 # file's directory on `sys.path` when it runs the script.
 import resume_layout
 
+# The subtitle rules — WebVTT in, SRT out, tags stripped, cues numbered — are pure string
+# arithmetic with no model and no token in them, so `scripts/check-captions.py` asserts them
+# on any machine. The hosted transcription is the part that cannot be checked here.
+import captions
+
 
 class UserError(RuntimeError):
     """A job that cannot be done because the *request* is wrong, not the server.
@@ -2036,9 +2041,198 @@ def resume_builder(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Subtitles and voice-over (queue item 57)
+#
+# Both are hosted Workers AI calls, and they are the first products here whose core is a
+# model rather than a local engine. The division of labour is deliberate: everything that
+# can be wrong *without* the model — the caption file's format, its numbering, the tags a
+# player would print as noise — is in `captions.py`, which imports nothing and is asserted
+# by `scripts/check-captions.py`. What is left here is the call and the bookkeeping.
+# ---------------------------------------------------------------------------
+SUBTITLES_MODEL = os.environ.get("CF_AI_WHISPER_MODEL", "@cf/openai/whisper-large-v3-turbo")
+TTS_MODEL = os.environ.get("CF_AI_TTS_MODEL", "@cf/myshell-ai/melotts")
+
+# Cloudflare's published list prices, USD per audio minute, so a job row carries the rate it
+# was billed at instead of a figure someone remembered.
+CF_AI_AUDIO_USD_PER_MIN = {
+    "@cf/openai/whisper-large-v3-turbo": 0.000513,
+    "@cf/myshell-ai/melotts": 0.000205,
+}
+
+# The route's own body cap is 25 MB; this leaves the JSON envelope room. A two-minute reel's
+# audio is a couple of megabytes, so the limit is generous rather than tight.
+MAX_AUDIO_BYTES = 24 * 1024 * 1024
+
+# A voice-over is read aloud: past a few thousand characters the wait stops being a wait, and
+# the free tier's per-request budget is what actually runs out first.
+MAX_TTS_CHARS = 4000
+
+# The model is multilingual; only English is offered, because nothing else has been measured
+# on this box — and for this market that matters. A synthetic voice that mispronounces Hindi
+# is worse than an honest "English only in this build", so the list stays at one until a
+# language has been listened to. (`lang` is also validated here rather than passed through:
+# an unsupported code is a 400 from the model, which would read as our outage.)
+TTS_LANGS = ("en",)
+
+
+def _http_detail(exc: urllib.error.HTTPError) -> str:
+    """The service's own sentence about a refusal, short enough to put on a screen."""
+    try:
+        detail = exc.read()[:160].decode("utf-8", "replace").strip()
+    except Exception:  # noqa: BLE001 — a body that cannot be read is not the point
+        return ""
+    return f": {detail}" if detail else ""
+
+
+def subtitles(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
+    """Audio in, one SRT out. The model supplies the timings; `captions.py` supplies the file.
+
+    SRT rather than a burned-in video, and the screen says so: burning captions into a video
+    needs ffmpeg, which is not installed on this box, and a caption file is what a reel editor
+    (CapCut, InShot, Premiere) actually imports. Returning an MP4 that silently kept its old
+    audio would be the dishonest version of this feature.
+    """
+    if not inputs or not inputs[0]:
+        raise UserError("an audio file is required")
+    audio = inputs[0]
+    if len(audio) > MAX_AUDIO_BYTES:
+        raise UserError(
+            f"the audio is {len(audio) // (1024 * 1024)} MB; the limit is "
+            f"{MAX_AUDIO_BYTES // (1024 * 1024)} MB — trim it or send a lower bitrate"
+        )
+
+    token = _cf_ai_token()
+    if not token:
+        raise RuntimeError("CLOUDFLARE_API_TOKEN missing (worker env or Hermes .env)")
+
+    language = (params.get("language") or "").strip().lower()
+    payload: dict = {"audio": base64.b64encode(audio).decode(), "task": "transcribe"}
+    if language:
+        payload["language"] = language
+
+    t0 = time.time()
+    try:
+        result = _cf_ai_json(SUBTITLES_MODEL, payload, token).get("result") or {}
+    except urllib.error.HTTPError as exc:
+        # `_cf_ai_json` re-raises the HTTP error on purpose (the translate chain reads the
+        # status). A 4xx here means the service refused *this audio* or this language code —
+        # the caller's file, answered 400 with the service's own words, so an unreadable
+        # voice note does not look like our outage. 5xx stays a 500.
+        if 400 <= exc.code < 500:
+            raise UserError(f"the transcriber refused this audio (HTTP {exc.code}"
+                            f"{_http_detail(exc)})")
+        raise
+    try:
+        cues, transcript = captions.subtitles_from_answer(result)
+    except captions.CaptionError as exc:
+        # The audio was unusable (no speech, or it could not be decoded) — that is the
+        # caller's file, so 400 with the sentence, not a 502 that reads as our fault.
+        raise UserError(str(exc))
+
+    srt = captions.to_srt(cues)
+    span_min = captions.span_minutes(cues)
+    rate = CF_AI_AUDIO_USD_PER_MIN.get(SUBTITLES_MODEL, 0.0)
+    return srt.encode("utf-8"), captions.describe(cues, {
+        "doc": "subtitles",
+        "model": SUBTITLES_MODEL,
+        "format": "srt",
+        "content_type": "application/x-subrip",
+        "lang": language or "auto",
+        "bytes": len(srt.encode("utf-8")),
+        # The transcript itself, so the screen can show what was heard without a second job.
+        # A preview, not the whole thing, and named as one: a long reel's transcript would
+        # otherwise ride in this meta and be dropped by the row's own 16 KB cap, which reads
+        # as "the engine said nothing".
+        "text_preview": transcript[:1200],
+        "text_chars": len(transcript),
+        # `transcribed_minutes`, never `audio_minutes`: the model reports timings, not the
+        # audio's length, and the two are not the same number (silence at the head, music at
+        # the tail). What is billed is the audio, so this figure is a floor, and saying so in
+        # the name is cheaper than being wrong in the row.
+        "transcribed_minutes": round(span_min, 3),
+        "usd_floor": round(rate * span_min, 6),
+        "seconds": round(time.time() - t0, 1),
+    })
+
+
+def voiceover(params: dict) -> tuple[bytes, dict]:
+    """A script in, one MP3 out, via Workers AI's MeloTTS.
+
+    The script rides in `payload` rather than in a plain field: it is up to `MAX_TTS_CHARS`
+    long, and the route's shared 120-character field cap is there to stop a stray parameter
+    from being an essay. The invoice and the résumé builder already take a JSON payload, so
+    this is the same shape rather than a fourth convention.
+    """
+    try:
+        payload = json.loads(params.get("payload") or "{}")
+    except ValueError as exc:
+        raise UserError(f"payload is not valid JSON: {exc}")
+    if not isinstance(payload, dict):
+        raise UserError("payload must be a JSON object")
+
+    text = str(payload.get("text") or "").strip()
+    if not text:
+        raise UserError("the script is required")
+    if len(text) > MAX_TTS_CHARS:
+        raise UserError(
+            f"the script is {len(text)} characters; the limit is {MAX_TTS_CHARS} for one clip"
+        )
+    lang = str(payload.get("lang") or "en").strip().lower()
+    if lang not in TTS_LANGS:
+        raise UserError(
+            f"'{lang}' is not offered in this build; it reads {', '.join(TTS_LANGS)} — the "
+            "model knows other languages, but none of them has been listened to here yet"
+        )
+
+    token = _cf_ai_token()
+    if not token:
+        raise RuntimeError("CLOUDFLARE_API_TOKEN missing (worker env or Hermes .env)")
+
+    t0 = time.time()
+    try:
+        # `keep_http_error` so a 4xx can be told from an outage: the voice model refuses a
+        # script it cannot read (an unsupported language, a body over its limit), which is the
+        # caller's input and answers 400 — not the 502 that "Could not finish the job" implies.
+        body, ctype, attempts = _cf_ai_run(TTS_MODEL, {"prompt": text, "lang": lang}, token,
+                                           timeout=180, keep_http_error=True)
+    except urllib.error.HTTPError as exc:
+        if 400 <= exc.code < 500:
+            raise UserError(f"the voice model refused this script (HTTP {exc.code}"
+                            f"{_http_detail(exc)})")
+        raise
+    if ctype.startswith("application/json"):
+        # The model answers either a JSON envelope with base64 audio or the MP3 itself,
+        # depending on the endpoint; both shapes are handled because both were documented.
+        b64 = (json.loads(body).get("result") or {}).get("audio")
+        if not b64:
+            raise RuntimeError("Workers AI returned no audio")
+        audio = base64.b64decode(b64)
+    else:
+        audio = body
+    if not audio:
+        raise RuntimeError("Workers AI returned an empty clip")
+
+    return audio, {
+        "doc": "voiceover",
+        "model": TTS_MODEL,
+        "content_type": "audio/mpeg",
+        "lang": lang,
+        "bytes": len(audio),
+        "chars": len(text),
+        "words": len(text.split()),
+        "attempts": attempts,
+        "seconds": round(time.time() - t0, 1),
+        # No duration and therefore no cost figure: the model does not return the clip's
+        # length, and the only way to invent one is to guess words-per-minute. `cost-report`
+        # adds the per-minute rate when it has a length; a guess in a job row is worse than a
+        # gap, because someone eventually prices a product from it.
+    }
+
+
 PRODUCTS = ["passport-photo", "bg-remove", "watermark", "pdf-tools", "image-toolkit",
             "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage",
-            "resume-checker", "resume-builder", "translate-doc"]
+            "resume-checker", "resume-builder", "translate-doc", "subtitles", "voiceover"]
 
 
 def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
@@ -2073,6 +2267,10 @@ def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dic
         return resume_check(inputs, params)
     if product == "translate-doc":
         return translate_doc(inputs, params)
+    if product == "subtitles":
+        return subtitles(inputs, params)
+    if product == "voiceover":
+        return voiceover(params)
     raise KeyError(product)
 
 

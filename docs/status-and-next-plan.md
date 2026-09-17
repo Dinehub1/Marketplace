@@ -93,26 +93,52 @@ it is recorded on the VM rather than claimed from here.
 The sourced research is filed under `docs/ad-monetisation/`: the main report, the 2026 eCPM
 benchmarks (every figure labelled independent or vendor), the rejection/ban research, the
 per-network onboarding sheets, the India network list, the consent/privacy declarations, and
-the Indian tax framework for foreign ad revenue. It corrected three things this plan had
+the Indian tax framework for foreign ad revenue. It corrected four things this plan had
 wrong — Meta Audience Network is alive and bidding-only, India is paid by **USD wire, not
-INR**, and app-ads.txt is mandatory for new AdMob apps and cannot be completed pre-launch.
+INR**, app-ads.txt is mandatory for new AdMob apps and cannot be completed pre-launch, and
+**Pangle is out entirely** (no individual developers, and India is not in its supported
+regions).
 
-6. **AdMob first, mediated.** AdMob is the only network a brand-new publisher can start
-   with; connect AppLovin / Meta / InMobi as demand through mediation (bidding), because
-   eCPM is an auction outcome, not a price list you choose from.
+**The shortlist that survives, for a solo developer with no company and no live app:**
+**AdMob + InMobi + AppLovin MAX**, with AdMob as the mediation layer. InMobi is the only
+genuine India-native publisher network and has the lowest floor ($50 for India). Ruled out
+for structural reasons, not performance: Pangle (above), Chartboost (needs 250 DAU sustained
+7–14 days with the SDK already live), Amazon APS (invitation-only), BidMachine and Mintegral
+($1,000 floors), Affle/Glance (no publisher side at all), Adgebra (web-only).
+
+6. **AdMob first, mediated.** It is the only one with open self-serve signup and no published
+   traffic minimum; connect InMobi and AppLovin MAX as demand through bidding, because eCPM
+   is an auction outcome, not a price list you choose from. **One exception to the AppLovin
+   recommendation:** AppLovin left Play's Families Self-Certified Ads SDK program, so it
+   cannot be used in any child-directed app — exclude it from that app's mediation if any
+   wellness app targets children.
 7. **`ad_events` table + the Networks section** — one table per network to *onboard*
    (formats, integration type, min payout, payout method/currency, requirements, whether it
    needs a live published app) and one measured view (impressions, eCPM, fill, revenue per
    network / format / country). The apps keep touching only `components/ad-slot.tsx`. Show
-   first-party measured eCPM as the only "earns most" signal and keep vendor rates in a
-   separate, clearly labelled unverified column.
-8. **Keep the paywall code, unconfigured** — Razorpay stays in the tree, keys stay empty.
-   The rewarded ad is the free credit path that converts to a cash customer. One IAP at
-   ~$3 is worth roughly a thousand India-tier rewarded impressions, so the paywall is not
-   the thing to delete.
+   first-party measured eCPM as the only "earns most" signal, keep vendor rates in a separate
+   labelled unverified column, and give every network an `eligibility_status` +
+   `deferred_reason` — most are closed for structural reasons, and documenting *why* is more
+   useful than their claimed eCPM.
+8. **Keep the paywall code, unconfigured** — Razorpay stays in the tree, keys stay empty. The
+   rewarded ad is the free credit path that converts to a cash customer. One IAP at ~$3 is
+   worth roughly a thousand India-tier rewarded impressions, so the paywall is not the thing
+   to delete.
 9. Prerequisites before real fill: app live in a store, `app-ads.txt` on dropby.co.in, a
-   privacy-policy URL, iOS ATT + Google consent SDK, Data Safety form, ad-SDK disclosure,
-   and the payment threshold + identity verification.
+   privacy-policy URL, iOS ATT + Google consent SDK, Data Safety form, ad-SDK disclosure, and
+   the payment threshold + identity verification.
+10. **Two dated compliance traps, both silent rather than loud:** IAB **TCF v2.3**'s deadline
+    has passed (Google, 1 Mar 2026) and missing it defaults ad requests to Limited Ads — a
+    revenue loss with nothing in the logs — so the GMA SDK must be ≥19.0.0 Android /
+    ≥7.60.0 iOS. And **TFCD/TFUA are deprecated in favour of TFAT**
+    (`setAgeRestrictedTreatment`), which is the **Next-Gen** SDK API while AdMob's own docs
+    still cite the legacy `setTagForChildDirectedTreatment` — resolve which lineage the RN
+    wrapper uses before writing tagging code, because misuse can terminate the account.
+11. **Before the first payout:** Indian tax specifics now sourced — RBI purpose code **P1007**,
+    FEMA realisation window 9 months, AdMob income treated as business income (not a royalty),
+    a sole proprietor signs **W-8BEN** (not W-8BEN-E) with the no-PE representation on line 10,
+    and no foreign network withholds Indian TDS so the whole liability is self-paid via advance
+    tax. The unresolved decision needs a CA: **44AD versus 44ADA**.
 
 Honest expectation: with ~zero installs, ads pay ~₹0, and every network's floor is $100 of
 accumulated earnings before anything is paid out — at India-tier rewarded rates that is on

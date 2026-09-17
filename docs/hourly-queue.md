@@ -2119,3 +2119,46 @@ six are labelled COMING SOON, and the app says so on its own front door. `check-
 whether a listing *could* be submitted, not whether its copy is still true — so either the
 listing's name and screenshots narrow to what exists, or the six get built, before this one goes
 to a store. Written here so the number 13/15 is not mistaken for "ready to submit".
+
+### 57. Subtitles and voice-over: the engine half — 2026-09-18 (fleet still 13/15)
+`subtitles-voice` is one of the two listings still owed a first screen. Its two products need
+hosted models, and the models were checked against Cloudflare's own docs before a line was
+written, rather than guessed: **`@cf/openai/whisper-large-v3-turbo`** ($0.000513/audio minute,
+answers with `text` + a rendered `vtt` + `segments`) and **`@cf/myshell-ai/melotts`**
+($0.000205/audio minute, `prompt` + `lang`, answers MP3). This hour is the engine; the screens
+are the next.
+
+- `services/tools/captions.py` — the subtitle rules with no model in them: VTT → cues, an
+  `MM:SS.mmm` short form padded to SRT's `HH:MM:SS,mmm`, cue settings dropped, `<v Speaker>` and
+  karaoke tags stripped, cues numbered from 1, a cue whose body is only markup dropped rather
+  than left blank, and a fallback to `segments` when the model answers without a `vtt`. It
+  imports nothing, so **`npm run check:captions` asserts 47 of these rules on a machine with no
+  token** — which is deliberate: the hosted call is the part that cannot be tested here, and the
+  file format is the part that quietly goes wrong.
+- `worker.py` — `subtitles()` (audio in, one SRT out) and `voiceover()` (script in, one MP3
+  out), both routed through the existing `_cf_ai_json`/`_cf_ai_run` retry. A **4xx from a model
+  is answered 400 with the service's own words**, not a 502 (items 18/19's rule, applied to the
+  hosted path): an unreadable voice note is the caller's file, not our outage.
+- Two honest scope decisions, in the code and not only here: **captions are an SRT, not a video
+  with burnt-in text** — ffmpeg is not on this box, and the product plan's "burnt into a short
+  video" would be a promise the engine cannot keep; and **the voice-over is English only**,
+  because MeloTTS is multilingual but no other language has been listened to here.
+- `apps/web/app/api/job/route.ts` — the two specs (`subtitles` takes audio via a new
+  `AUDIO_ACCEPTS`, which is deliberately **not** video; `voiceover` takes a JSON `payload` like
+  the invoice), plus `EXT_FOR_TYPE` for `.srt` / `.vtt` / `.mp3`, audio entries in `TYPE_LABEL`
+  and `DOC_INPUT_EXT` so an uploaded voice note is not stored as `input.bin`.
+- `scripts/py-check.mjs` replaces the one-off `check-resume.mjs` wrapper, so both Python gates
+  reach the right interpreter on a Mac (`python3`) and on the VM (`python` / `PYTHON311`).
+
+Evidence, all from the repo root: `npm run check:captions` → **47 ok, 0 failed**;
+`npm run check:resume` → 37 ok, 0 failed; `python3 -m py_compile services/tools/worker.py` →
+clean; `npm run typecheck` → clean (and it caught a real one: `AUDIO_ACCEPTS` was declared
+below `ENGINE`, which uses it — a `const` used before its declaration is a module-load
+failure, not a warning).
+
+**Not proven, and it is the whole hosted half:** neither model has been called from this box.
+The token lives in the worker's environment on the VM and there is no local checkout of the
+worker's Python 3.11 with its dependencies, so the caption *format* is verified here and the
+transcription is not. The two model ids and their prices are from Cloudflare's model docs, not
+from a 200. The first `subtitles` and `voiceover` job ids on the VM close it; if a model id is
+wrong the job answers 502 and the meta names the model it tried.
