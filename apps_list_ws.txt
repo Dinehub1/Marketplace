@@ -1,0 +1,46 @@
+PWD:/Users/mac/Documents/Devlopments/Marketplace/Marketplace
+
+=== APPS DIRS ===
+drive-check.mjs
+mobile
+shot-check.mjs
+web
+
+=== MOBILE/APP ROUTES ===
+_layout.tsx
+(tabs)
+(wellness)
+block-clear.tsx
+business
+index.tsx
+japa.tsx
+merge-tiles.tsx
+owner
+passport.tsx
+shop
+sleep.tsx
+subtitles
+tap-sprint.tsx
+tools
+walk.tsx
+water.tsx
+word-duel.tsx
+
+=== SHOTS (deploy dirs) ===
+app__breathe__mobile-dark.png
+app__breathe__mobile-light.png
+app__habits__mobile-dark.png
+app__habits__mobile-light.png
+app__japa__mobile-dark.png
+app__japa__mobile-light.png
+app__profile__mobile-dark.png
+app__profile__mobile-light.png
+app__sleep__mobile-dark.png
+app__sleep__mobile-light.png
+app__stretch__mobile-dark.png
+app__stretch__mobile-light.png
+app__walk__mobile-dark.png
+app__walk__mobile-light.png
+app__water__mobile-dark.png
+app__water__mobile-light.png
+index.html

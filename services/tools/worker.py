@@ -40,6 +40,11 @@ import resume_layout
 # on any machine. The hosted transcription is the part that cannot be checked here.
 import captions
 
+# The form body the FLUX.2 image models take (they do not accept JSON, even for a prompt).
+# Building it is bytes arithmetic with no network in it, so `scripts/check-multipart.py` parses
+# the result back and asserts every part on any machine.
+import multipart
+
 
 class UserError(RuntimeError):
     """A job that cannot be done because the *request* is wrong, not the server.
@@ -1388,7 +1393,8 @@ def _cf_ai_token() -> str:
 
 
 def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
-               keep_http_error: bool = False) -> tuple[bytes, str, int]:
+               keep_http_error: bool = False, *, raw_body: bytes | None = None,
+               raw_type: str | None = None) -> tuple[bytes, str, int]:
     """One Workers AI call, retried once. Returns (body, content_type, attempts_made).
 
     A failure that survives the retry is a real fault (500 through the route), but the
@@ -1400,6 +1406,11 @@ def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
     HTTPError is re-raised rather than wrapped, so a generic RuntimeError cannot turn a 400
     into a 502.
 
+    `raw_body`/`raw_type` are for the models that do not take JSON: FLUX.2's own changelog says
+    it "uses multipart form data inputs, even if you just have a prompt", so the image products
+    pass a body built by `multipart.encode()` here. The retry, the deadline and the error
+    reporting stay in one place rather than being copied for the second content type.
+
     The deadline bounds the whole call, retries included — and it is what is handed to
     urlopen, so a single attempt cannot outlive it either (bar the socket's own last read).
     """
@@ -1407,6 +1418,10 @@ def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
     deadline = time.monotonic() + timeout
     reasons: list[str] = []
     last_http: urllib.error.HTTPError | None = None
+    # Encoded once, outside the loop: a retry must send the same bytes, including the same
+    # multipart boundary, or the two attempts are different requests.
+    body = raw_body if raw_body is not None else json.dumps(payload).encode()
+    content_type = raw_type or "application/json"
 
     for attempt in range(1, CF_AI_ATTEMPTS + 1):
         budget = deadline - time.monotonic()
@@ -1417,8 +1432,8 @@ def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
             break
         req = urllib.request.Request(   # fresh per attempt: urlopen owns what it is given
             url,
-            data=json.dumps(payload).encode(),
-            headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+            data=body,
+            headers={"Authorization": "Bearer " + token, "Content-Type": content_type},
         )
         try:
             with urllib.request.urlopen(req, timeout=max(budget, 1.0)) as resp:
@@ -1429,6 +1444,13 @@ def _cf_ai_run(model: str, payload: dict, token: str, timeout: int = 180,
             try:
                 detail = exc.read()[:160].decode("utf-8", "replace").strip()
             except Exception:  # noqa: BLE001 — a body that cannot be read is not the point
+                pass
+            # The stream is spent now. When the caller asked for the error itself
+            # (`keep_http_error`), this is the only copy of the service's sentence left, so it
+            # rides on the exception for `_http_detail()` to read.
+            try:
+                exc.dropby_detail = detail
+            except Exception:  # noqa: BLE001 — an exception that refuses attributes is fine
                 pass
             reasons.append(f"HTTP {exc.code}" + (f" {detail}" if detail else ""))
             if exc.code not in CF_AI_RETRY_STATUS:
@@ -2077,7 +2099,16 @@ TTS_LANGS = ("en",)
 
 
 def _http_detail(exc: urllib.error.HTTPError) -> str:
-    """The service's own sentence about a refusal, short enough to put on a screen."""
+    """The service's own sentence about a refusal, short enough to put on a screen.
+
+    `_cf_ai_run` reads the error body once, to put it in its own message, and a stream cannot
+    be read twice — so it leaves the text on the exception and this reads that first. Without
+    it the caller's sentence comes back empty and a 400 reads as a bare status code, which is
+    exactly what the retry work (item 29) exists to avoid.
+    """
+    carried = getattr(exc, "dropby_detail", "")
+    if carried:
+        return f": {carried}"
     try:
         detail = exc.read()[:160].decode("utf-8", "replace").strip()
     except Exception:  # noqa: BLE001 — a body that cannot be read is not the point
@@ -2230,9 +2261,132 @@ def voiceover(params: dict) -> tuple[bytes, dict]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Room redesign (queue item 59)
+#
+# The product was parked for a round because every image-to-image model had gone: the whole
+# Workers AI catalogue has none, and `stable-diffusion-v1-5-img2img`'s docs page 404s. What
+# replaced it is FLUX.2 [klein], which "unifies image generation and editing" and takes up to
+# four reference images — the shape that makes "restyle *this* room" possible at all. Its
+# request is not JSON (see `multipart.py`), and its documented input limit is the reason this
+# function resizes before it sends.
+# ---------------------------------------------------------------------------
+FLUX2_MODEL = os.environ.get("CF_AI_ROOM_MODEL", "@cf/black-forest-labs/flux-2-klein-4b")
+
+# From the model's own docs: "All input images must be smaller than 512x512". Sent larger, the
+# call is refused — so the fit happens here rather than by asking the caller to resize a photo
+# they just took.
+ROOM_INPUT_MAX = 512
+
+# The five looks, as prompt fragments rather than a style id the model has never heard of.
+# Each names the materials and the light, because those are what actually change a room.
+ROOM_LOOKS = {
+    "warm": ("warm, cosy Indian-contemporary living room: teak and cane furniture, terracotta "
+             "and mustard textiles, brass accents, soft warm lamplight"),
+    "minimal": ("calm minimal room: plain off-white walls, one low pale-wood sofa, almost no "
+                "clutter, large window light, a single plant"),
+    "modern": ("modern urban room: charcoal and walnut, a low-profile sofa, a geometric rug, "
+               "muted green accents, even daylight"),
+    "classic": ("classic Indian home: carved dark wood, a patterned dhurrie, deep maroon and "
+                "gold textiles, a brass lamp and warm pools of light"),
+    "bright": ("bright, airy room: white walls and light oak, linen upholstery, yellow and teal "
+               "cushions, several plants, strong natural light"),
+}
+
+# Said in every prompt, because it is the promise the listing makes. A restyle that moves the
+# window is not this room any more, it is a different room — which is a different (and useless)
+# product for someone standing in theirs.
+ROOM_KEEP = ("Keep this exact room: the same walls, the same window and door positions, the same "
+             "floor and the same camera angle. Change only the furniture, the materials, the "
+             "colours and the lighting.")
+
+
+def room_redesign(inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
+    """A photo of a room in, a restyled photo out, with FLUX.2 [klein] as the editor."""
+    if not inputs or not inputs[0]:
+        raise UserError("a photo of the room is required")
+    look = (params.get("style") or "warm").strip().lower()
+    if look not in ROOM_LOOKS:
+        raise UserError(
+            f"'{look}' is not one of the looks this build offers ({', '.join(ROOM_LOOKS)})"
+        )
+
+    token = _cf_ai_token()
+    if not token:
+        raise RuntimeError("CLOUDFLARE_API_TOKEN missing (worker env or Hermes .env)")
+
+    t0 = time.time()
+    try:
+        img = Image.open(io.BytesIO(inputs[0]))
+        # A phone photo carries its rotation in EXIF; ignoring it sends the model a room on its
+        # side and gets a restyled room back on its side.
+        img = ImageOps.exif_transpose(img)
+        img = img.convert("RGB")
+    except Exception as exc:  # noqa: BLE001 — any decode failure is the caller's file
+        raise UserError(f"that file could not be read as a photo: {str(exc)[:120]}")
+
+    original_w, original_h = img.size
+    scale = min(1.0, ROOM_INPUT_MAX / max(original_w, original_h))
+    if scale < 1.0:
+        # LANCZOS rather than the default: the model is being asked about materials and
+        # colours, and a nearest-neighbour downscale throws exactly that information away.
+        img = img.resize(
+            (max(1, round(original_w * scale)), max(1, round(original_h * scale))),
+            Image.LANCZOS,
+        )
+    buf = io.BytesIO()
+    img.save(buf, "PNG")
+
+    prompt = f"Redesign this room as a {ROOM_LOOKS[look]}. {ROOM_KEEP}"
+    body, ctype = multipart.encode(
+        {"prompt": prompt, "width": "1024", "height": "1024"},
+        [("input_image_0", "room.png", buf.getvalue(), "image/png")],
+    )
+
+    try:
+        raw, resp_type, attempts = _cf_ai_run(
+            FLUX2_MODEL, {}, token, timeout=180, keep_http_error=True,
+            raw_body=body, raw_type=ctype,
+        )
+    except urllib.error.HTTPError as exc:
+        detail = _http_detail(exc)
+        if exc.code in (401, 403):
+            # On a Partner model this is the *account*, not the file: BFL's terms are accepted
+            # in the Cloudflare dashboard with one click, the same class of blocker the vision
+            # model hit. Answered as a server fault so it cannot be mistaken for a bad photo,
+            # with the service's own words kept for whoever fixes it.
+            raise RuntimeError(f"the image model refused this account (HTTP {exc.code}{detail})")
+        raise UserError(f"the image model refused this request (HTTP {exc.code}{detail})")
+
+    if resp_type.startswith("application/json"):
+        blob = (json.loads(raw).get("result") or {}).get("image")
+        if not blob:
+            raise RuntimeError("Workers AI returned no image")
+        out = base64.b64decode(blob)
+    else:
+        out = raw
+    if not out:
+        raise RuntimeError("Workers AI returned an empty image")
+
+    return out, {
+        "doc": "room-redesign",
+        "model": FLUX2_MODEL,
+        "look": look,
+        # Both sizes, because the input limit is a documented constraint and a job row that
+        # says `sent 512x384` is how anyone later proves the fit happened rather than guessing.
+        "input_px": f"{original_w}x{original_h}",
+        "sent_px": f"{img.width}x{img.height}",
+        "content_type": "image/jpeg",
+        "bytes": len(out),
+        "attempts": attempts,
+        "seconds": round(time.time() - t0, 1),
+    }
+
+
 PRODUCTS = ["passport-photo", "bg-remove", "watermark", "pdf-tools", "image-toolkit",
             "invoice-maker", "pdf-stamp", "ai-image", "photos-to-pdf", "collage",
-            "resume-checker", "resume-builder", "translate-doc", "subtitles", "voiceover"]
+            "resume-checker", "resume-builder", "translate-doc", "subtitles", "voiceover",
+            "room-redesign"]
 
 
 def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dict]:
@@ -2271,6 +2425,8 @@ def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dic
         return subtitles(inputs, params)
     if product == "voiceover":
         return voiceover(params)
+    if product == "room-redesign":
+        return room_redesign(inputs, params)
     raise KeyError(product)
 
 

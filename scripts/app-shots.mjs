@@ -121,6 +121,8 @@ const SCREENS = [
   { name: 'subtitles-chooser', route: '/subtitles', expect: ['Captions and voice', 'What these do, exactly'] },
   { name: 'subtitles', route: '/tools/subtitles', expect: ['Captions, timed', 'The audio'] },
   { name: 'voiceover', route: '/tools/voiceover', expect: ['read aloud', 'The script'] },
+  // Room Redesign's first screen, whose marker is the promise about what stays and changes.
+  { name: 'room-redesign', route: '/tools/room-redesign', expect: ['Your room', 'The look'] },
   // The number game. Its picture is taken after a slide for the same reason: an arrow
   // that reaches the board and one that does nothing look identical in a still.
   { name: 'merge-tiles', route: '/merge-tiles', expect: ['Slide the tiles, double the numbers', 'Four by four'], interact: 'merge-tiles-slide' },

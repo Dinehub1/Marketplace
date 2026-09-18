@@ -41,6 +41,8 @@
     "_comment_py_checks": "Two rule sets here are Python because the engine is Python: services/tools/resume_layout.py (what fits on a résumé page) and services/tools/captions.py (what a subtitle file must look like). Each imports nothing — no PDF library, no Pillow, no token — so its check runs anywhere. py-check.mjs finds the interpreter: python3 on a Mac, python / PYTHON311 on the VM.",
     "check:resume": "node scripts/py-check.mjs scripts/check-resume.py",
     "check:captions": "node scripts/py-check.mjs scripts/check-captions.py",
+    "_comment_check_multipart": "The FLUX.2 image models take multipart form data rather than JSON, and Python's standard library has no encoder for it, so services/tools/multipart.py builds the body by hand. scripts/check-multipart.py parses it back and asserts every part — boundary, headers, binary safety, part order — with no token and no network.",
+    "check:multipart": "node scripts/py-check.mjs scripts/check-multipart.py",
     "icons": "node scripts/make-app-icons.mjs",
     "_comment_sounds": "Merge's four sounds are synthesized here rather than downloaded, so they are ours outright and the recipe is readable. It refuses to write a file that is silent, which is the bug the first version of this script shipped.",
     "sounds": "node scripts/make-game-sounds.mjs",

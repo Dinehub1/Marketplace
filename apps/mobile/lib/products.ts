@@ -287,7 +287,7 @@ export const PRODUCTS: Record<string, Product> = {
     label: "Room redesign",
     blurb: "Your room, restyled in five looks.",
     price: "₹49/room",
-    route: null,
+    route: "/tools/room-redesign",
     icon: "map",
   },
 };

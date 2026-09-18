@@ -173,6 +173,25 @@ const ENGINE: Record<string, {
     free: true,
   },
 
+  // Room redesign: a photo of a room in, a restyled photo out. Every image-to-image model
+  // Workers AI used to host is gone (the catalogue has none, and `stable-diffusion-v1-5-img2img`
+  // 404s), so this runs on `@cf/black-forest-labs/flux-2-klein-4b`, which unifies generation
+  // and editing and takes up to four reference images by index.
+  //
+  // Two things about that model are load-bearing here. It takes **multipart form data**, not
+  // JSON — even for a bare prompt — which is why the worker carries its own encoder
+  // (`services/tools/multipart.py`, asserted by `scripts/check-multipart.py`). And its input
+  // images must be **under 512x512**, so the worker fits the photo before sending it rather
+  // than asking someone to resize the picture they just took.
+  //
+  // It is also a Partner model: if BFL's terms are not accepted in the Cloudflare dashboard the
+  // call answers 403, which the worker reports as a server fault instead of blaming the photo.
+  "room-redesign": {
+    engine: "room-redesign",
+    fields: ["style"],
+    free: true,
+  },
+
   // Text to image: the one product whose picture is drawn by a hosted model
   // (@cf/black-forest-labs/flux-1-schnell on Workers AI, with the token already on
   // this box). The engine has run it for hours; with no entry here the app answered

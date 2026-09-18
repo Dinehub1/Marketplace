@@ -1,0 +1,43 @@
+PWD:/Users/mac/Documents/Devlopments/Marketplace/Marketplace
+
+=== top-level apps ===
+drive-check.mjs
+mobile
+shot-check.mjs
+web
+
+=== apps/mobile/app (routes) ===
+_layout.tsx
+(tabs)
+(wellness)
+block-clear.tsx
+business
+index.tsx
+japa.tsx
+merge-tiles.tsx
+owner
+passport.tsx
+shop
+sleep.tsx
+subtitles
+tap-sprint.tsx
+tools
+walk.tsx
+water.tsx
+word-duel.tsx
+
+=== apps/web (top) ===
+app
+components
+eslint.config.mjs
+lib
+next-env.d.ts
+next.config.ts
+node_modules
+package.json
+postcss.config.mjs
+proxy.ts
+public
+scripts
+tsconfig.json
+tsconfig.tsbuildinfo

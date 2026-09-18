@@ -280,7 +280,7 @@ export const FIRST_ROUTE = {
   "passport-photo": "/passport",
   "pdf-tools": "/tools/pdf",
   toolbox: "/tools",
-  "room-redesign": null, // screen not built
+  "room-redesign": "/tools/room-redesign",
   "subtitles-voice": "/subtitles",
   "resume-builder": "/tools/resume-builder",
   "shop-toolkit": "/shop",

@@ -32,6 +32,10 @@ const SCREEN_FOR_PRODUCT = {
   'bg-remove': ['bg-remove'],
   'signature-maker': ['signature'],
   'ai-image': ['ai-image'],
+  'room-redesign': ['room-redesign'],
+  // The two jobs of the Subtitles & Voice-over listing, which are screens of their own.
+  subtitles: ['subtitles'],
+  voiceover: ['voiceover'],
 };
 
 /** first-screen names in targets.mjs -> the screen slug that implements them. */
