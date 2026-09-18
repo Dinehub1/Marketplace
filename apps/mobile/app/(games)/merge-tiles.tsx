@@ -34,6 +34,7 @@ import {
   Platform,
   StyleSheet,
   View,
+  Text as RNText,
   useWindowDimensions,
   type GestureResponderEvent,
 } from "react-native";
@@ -44,7 +45,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -52,8 +52,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { setAudioModeAsync, useAudioPlayer, type AudioPlayer } from "expo-audio";
 import { alpha, radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
-import { Badge, Card, Press, Text } from "@/components/ui";
-import { AdSlot } from "@/components/ad-slot";
+import { Press, Text } from "@/components/ui";
 import { useReduceMotion } from "@/lib/motion";
 import {
   EMPTY_RECORD,
@@ -63,6 +62,7 @@ import {
 } from "@/lib/game-scores";
 import {
   at,
+  bestTile,
   canSlide,
   canUndo,
   CELLS,
@@ -95,85 +95,89 @@ type Skin = {
   fills: readonly string[];
   tileInk: string;
   tileInkHigh: string;
-  /** The value at which numerals flip from ink to cream. */
+  /** The value at which numerals flip from ink to cream/white. */
   flip: number;
   accent: string;
+  scoreBox: string;
+  button: string;
 };
 
 const SKIN: Record<"light" | "dark", Skin> = {
   light: {
-    paper: ["#f9f2e2", "#ebdec2"],
-    board: "#e1d1b1",
-    boardEdge: "#c2a97f",
-    boardShadow: "#7c6541",
-    empty: "#d6c4a2",
-    ink: "#3d2f1e",
-    inkSoft: "#6d5b41",
-    tileEdge: "rgba(61,47,30,0.16)",
+    paper: ["#faf8ef", "#faf8ef"],
+    board: "#bbada0",
+    boardEdge: "#bbada0",
+    boardShadow: "rgba(0,0,0,0.12)",
+    empty: "#cdc1b4",
+    ink: "#776e65",
+    inkSoft: "#8f7a66",
+    tileEdge: "transparent",
     fills: [
-      "#faf4e7",
-      "#f5e9d0",
-      "#f0d9ab",
-      "#ecc489",
-      "#e6a862",
-      "#dd8a3f",
-      "#cf6d27",
-      "#b95418",
-      "#9d3f10",
-      "#7e2f0b",
-      "#5f2107",
+      "#eee4da", // 2
+      "#ede0c8", // 4
+      "#f2b179", // 8
+      "#f59563", // 16
+      "#f67c5f", // 32
+      "#f65e3b", // 64
+      "#edcf72", // 128
+      "#edcc61", // 256
+      "#edc850", // 512
+      "#edc53f", // 1024
+      "#edc22e", // 2048
+      "#3c3a32", // >2048
     ],
-    tileInk: "#43331f",
-    tileInkHigh: "#fff7e8",
-    flip: 128,
-    accent: "#b8430f",
+    tileInk: "#776e65",
+    tileInkHigh: "#f9f6f2",
+    flip: 8,
+    accent: "#edc22e",
+    scoreBox: "#bbada0",
+    button: "#e99450",
   },
   dark: {
-    paper: ["#241d14", "#100e0a"],
-    board: "#2c2418",
-    boardEdge: "#4c3d27",
+    paper: ["#1e1b18", "#12100e"],
+    board: "#3a342e",
+    boardEdge: "#3a342e",
     boardShadow: "#000000",
-    empty: "#352b1d",
-    ink: "#f3e7d1",
-    inkSoft: "#c5b394",
-    tileEdge: "rgba(0,0,0,0.5)",
+    empty: "#4a423b",
+    ink: "#f2ece4",
+    inkSoft: "#baa896",
+    tileEdge: "transparent",
     fills: [
-      "#3b3020",
-      "#4a3b22",
-      "#5d4623",
-      "#77531f",
-      "#92631a",
-      "#ab741a",
-      "#c38621",
-      "#d69c2d",
-      "#e3b241",
-      "#edc45e",
-      "#f4d47c",
+      "#4a3d30",
+      "#5a4938",
+      "#b86835",
+      "#c75628",
+      "#cf4b2d",
+      "#d93e1f",
+      "#c4a63f",
+      "#caa030",
+      "#d49f25",
+      "#dc9b1c",
+      "#edc22e",
+      "#262521",
     ],
-    tileInk: "#f7edd9",
-    tileInkHigh: "#2a1c06",
-    flip: 512,
-    accent: "#f59e0b",
+    tileInk: "#f2ece4",
+    tileInkHigh: "#ffffff",
+    flip: 8,
+    accent: "#edc22e",
+    scoreBox: "#3a342e",
+    button: "#d97736",
   },
 };
 
-/** The numeral face. A serif on the tiles is the one piece of type in this app that is not
- *  the shared scale, and it is the piece that makes the board read as a board game rather
- *  than a spreadsheet. Platform serif faces are used rather than a bundled font: no
- *  download, no licence, and both platforms ship a good one. */
-const SERIF = Platform.select({
-  ios: "Georgia",
-  android: "serif",
-  default: "Georgia, 'Times New Roman', serif",
+/** Classic clean sans-serif numeral font matching the original 2048 game. */
+const FONT = Platform.select({
+  ios: "System",
+  android: "sans-serif",
+  default: "sans-serif",
 });
 
-/** Slide time. Short enough that a fast player never waits on it, long enough to read as
- *  movement rather than a jump cut. */
+/** Slide time. */
 const MOVE_MS = 115;
 /** Where the sound preference lives on the device. */
 const SOUND_KEY = "hermes-merge-sound";
 /** Board geometry, in points. */
-const GAP = 8;
+const GAP = 12;
 /** The direction pad. */
 const ARROW = 58;
 /** Key this game's round records live under in the device score store. */
@@ -200,16 +204,8 @@ type Tile = {
   joined: boolean;
 };
 
-type Summary = {
-  score: number;
-  best: number;
-  moves: number;
-  won: boolean;
-  /** Set from the stored record, the only thing that knows if this round won. */
-  isNewBest: boolean;
-};
-
-/** The fill for a tile value: one step per doubling, clamped at the top of the ladder. */
+/**
+ * The fill for a tile value: one step per doubling, clamped at the top of the ladder. */
 function fillFor(skin: Skin, value: number): string {
   const step = Math.round(Math.log2(Math.max(2, value))) - 1;
   return skin.fills[Math.min(skin.fills.length - 1, Math.max(0, step))];
@@ -235,21 +231,18 @@ function tilesFromBoard(board: number[], nextId: { current: number }): Tile[] {
 }
 
 export default function MergeTiles() {
-  const { scheme, elevation } = useTheme();
+  const { scheme } = useTheme();
   const skin = SKIN[scheme === "dark" ? "dark" : "light"];
   const reduceMotion = useReduceMotion();
   const insets = useSafeAreaInsets();
-  const router = useRouter();
   const win = useWindowDimensions();
 
-  const [phase, setPhase] = useState<Phase>("ready");
+  const [phase, setPhase] = useState<Phase>("playing");
   const [game, setGame] = useState<State | null>(null);
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [notice, setNotice] = useState("");
   const [rewardUsed, setRewardUsed] = useState(false);
   const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
-  const [recordRead, setRecordRead] = useState(false);
-  const [summary, setSummary] = useState<Summary | null>(null);
   const [soundOn, setSoundOn] = useState(true);
   /** The measured area the board gets. Null on the first frame, which falls back to a
    *  window estimate so the opening board is already the right size. */
@@ -264,21 +257,22 @@ export default function MergeTiles() {
   const pending = useRef<{ trace: MoveTrace; board: number[] } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const soundOnRef = useRef(true);
+  /** Whether this round's end has already been written to the device record. */
+  const written = useRef(false);
 
   const slideSound = useAudioPlayer(require("../../assets/sounds/slide.wav"));
   const mergeSound = useAudioPlayer(require("../../assets/sounds/merge.wav"));
   const bigSound = useAudioPlayer(require("../../assets/sounds/merge-big.wav"));
   const winSound = useAudioPlayer(require("../../assets/sounds/win.wav"));
 
-  // The board is the screen, so its size follows the space that is actually left after the
-  // header, the notice and the pad — measured rather than guessed from the window, because
-  // "everything that is left" is a layout fact and this screen is all layout.
+  // The board size fills width with padding
   const boardPx = useMemo(() => {
-    const fallback = Math.min(win.width - space.base * 2, win.height * 0.52);
+    const fallback = Math.min(win.width - space.base * 2, 480);
     const avail = area ? Math.min(area.w, area.h) : fallback;
-    const cell = Math.max(44, Math.floor((avail - GAP * (N + 1)) / N));
+    const maxSquare = Math.min(avail, win.width - space.base * 2, 480);
+    const cell = Math.max(44, Math.floor((maxSquare - GAP * (N + 1)) / N));
     return cell * N + GAP * (N + 1);
-  }, [area, win.width, win.height]);
+  }, [area, win.width]);
   const cell = Math.floor((boardPx - GAP * (N + 1)) / N);
 
   function commit(list: Tile[]) {
@@ -288,10 +282,6 @@ export default function MergeTiles() {
 
   /**
    * Finish an in-flight slide at once: apply the joins and drop the new tile in.
-   *
-   * Called by the timer that would have done it anyway, and by the next move — a player who
-   * swipes twice inside 115 ms should get two moves, not a dropped input. It is safe to
-   * call when nothing is pending.
    */
   function settle() {
     if (timer.current) {
@@ -314,9 +304,6 @@ export default function MergeTiles() {
     const settled: Tile[] = [];
     for (const [index, group] of groups) {
       if (trace.merges.includes(index) && group.length > 1) {
-        // The first tile to arrive keeps its identity and takes the joined value; the other
-        // is absorbed. Giving the survivor a new identity would animate a merge as a death
-        // and a birth, which is not what happened.
         settled.push({
           ...group[0],
           value: board[index],
@@ -344,25 +331,22 @@ export default function MergeTiles() {
   function playSound(player: AudioPlayer) {
     if (!soundOnRef.current) return;
     try {
-      // Rewound before playing so two joins in quick succession are two blips rather than
-      // one blip that never restarts.
       void player.seekTo(0).catch(() => {});
       player.play();
     } catch {
-      // No audio on this device, or the platform refused it. The game is fully playable;
-      // sound is feedback, not a rule.
+      // No audio on this device
     }
   }
 
-  // The device record and the sound preference are read once, on mount.
+  // The device record and sound preference are read on mount, and the round starts immediately
   useEffect(() => {
     let live = true;
     loadGameScores()
       .then((scores) => {
         if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
       })
-      .finally(() => {
-        if (live) setRecordRead(true);
+      .catch(() => {
+        /* No stored scores yet is the first run, not a failure: the header shows 0. */
       });
     AsyncStorage.getItem(SOUND_KEY)
       .then((value) => {
@@ -372,6 +356,9 @@ export default function MergeTiles() {
         setSoundOn(on);
       })
       .catch(() => {});
+
+    startRound();
+
     return () => {
       live = false;
     };
@@ -405,13 +392,13 @@ export default function MergeTiles() {
     const fresh = newGame();
     nextId.current = 1;
     pending.current = null;
+    written.current = false;
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     setGame(fresh);
     commit(tilesFromBoard(fresh.board, nextId));
     setNotice("");
     setRewardUsed(false);
-    setSummary(null);
     setPhase("playing");
   }
 
@@ -498,29 +485,26 @@ export default function MergeTiles() {
   }
 
   /**
-   * Ends the round and writes the record. Called from the stuck panel — the only way a
-   * round finishes, because nothing here runs out of time.
+   * The record, written the moment the board runs out of moves.
+   *
+   * There is no clock here, so `over` is the only ending this screen has: the engine
+   * reports it as soon as no slide can do anything, and the overlay offers the two ways
+   * out. It is written once per round — the board can be looked at many times in that
+   * state, and a record written per render would count one round as dozens — and the undo
+   * clears the flag, because a round rescued from the end can still end later.
    */
-  function finishRound() {
-    settle();
-    const g = game;
-    if (!g) return;
-    setPhase("over");
-    setSummary({
-      score: g.score,
-      best: g.reached,
-      moves: g.moves,
-      won: g.won,
-      isNewBest: false,
-    });
+  useEffect(() => {
+    if (!game?.over || written.current) return;
+    written.current = true;
     const line =
-      `${g.moves} ${g.moves === 1 ? "move" : "moves"} · best tile ${g.reached}` +
-      (g.won ? ` · ${WIN_TILE} reached` : "");
-    recordRound(GAME, g.score, line).then(({ record: next, isNewBest }) => {
-      setRecord(next);
-      setSummary((prev) => (prev ? { ...prev, isNewBest } : prev));
-    });
-  }
+      `${game.moves} ${game.moves === 1 ? "move" : "moves"} · best tile ${game.reached}` +
+      (game.won ? ` · ${WIN_TILE} reached` : "");
+    recordRound(GAME, game.score, line)
+      .then(({ record: next }) => setRecord(next))
+      .catch(() => {
+        /* A device that will not store a score still plays the game. */
+      });
+  }, [game]);
 
   /**
    * The rewarded ad, kept: the board and the score go back exactly one move, which puts at
@@ -534,6 +518,8 @@ export default function MergeTiles() {
     timer.current = null;
     const back = undo(game);
     setRewardUsed(true);
+    // The round has moves again, so it can end a second time and be written again.
+    written.current = false;
     setGame(back);
     // The board jumps; it does not slide backwards. The ad undoes a move, it does not
     // replay one.
@@ -568,8 +554,6 @@ export default function MergeTiles() {
     if (dir) onSlide(dir);
   }
 
-  const playing = phase === "playing" && game !== null;
-
   return (
     <View style={s.root}>
       <LinearGradient colors={skin.paper} style={StyleSheet.absoluteFill} />
@@ -577,328 +561,182 @@ export default function MergeTiles() {
       <View
         style={[
           s.column,
-          { paddingTop: insets.top + space.sm, paddingBottom: insets.bottom + space.sm },
+          { paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.md },
         ]}
       >
-        {phase === "ready" ? (
-          <View style={s.page}>
-            <View style={s.topRow}>
-              <Text variant="caption" style={{ color: skin.inkSoft }}>
-                Four by four · no clock
-              </Text>
-              <View style={[s.chip, { borderColor: alpha(skin.accent, 0.45) }]}>
-                <Text variant="caption" style={{ color: skin.accent }}>
-                  Free
-                </Text>
-              </View>
+        {/* ── 2048 Header: Title & Scoreboard ── */}
+        <View style={s.header}>
+          <View style={[s.logoCard, { backgroundColor: skin.accent }]}>
+            <RNText style={s.logoText}>2048</RNText>
+          </View>
+
+          <View style={s.scoresRow}>
+            <View style={[s.scoreBox, { backgroundColor: skin.scoreBox }]}>
+              <RNText style={s.scoreLabel}>SCORE</RNText>
+              <RNText style={s.scoreVal}>{game?.score ?? 0}</RNText>
             </View>
-
-            <Text style={[s.title, { color: skin.ink }]}>MERGE</Text>
-            <Text variant="lede" style={{ color: skin.inkSoft }}>
-              Slide the tiles, double the numbers
-            </Text>
-
-            <View style={s.steps}>
-              {[
-                "Swipe the board, or press an arrow — everything slides that way",
-                "Two equal tiles join into one worth double: 2 and 2 make 4, and 4 points",
-                "Fill the board and the round is over. Reaching 2048 is the win",
-              ].map((step, i) => (
-                <View key={step} style={s.step}>
-                  <View style={[s.stepDot, { borderColor: alpha(skin.accent, 0.5) }]}>
-                    <Text variant="caption" style={{ color: skin.accent }}>
-                      {i + 1}
-                    </Text>
-                  </View>
-                  <Text variant="meta" style={[s.stepText, { color: skin.inkSoft }]}>
-                    {step}
-                  </Text>
-                </View>
-              ))}
+            <View style={[s.scoreBox, { backgroundColor: skin.scoreBox }]}>
+              <RNText style={s.scoreLabel}>BEST</RNText>
+              <RNText style={s.scoreVal}>{Math.max(record.best, game?.score ?? 0)}</RNText>
             </View>
+          </View>
+        </View>
 
-            {/* The ladder, printed rather than explained: this is what the tiles go
-                through, and it is also the clearest way to say "old paper". */}
-            <View style={[s.ladder, { borderColor: skin.boardEdge, backgroundColor: skin.board }]}>
-              {[2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048].map((value) => (
-                <View
-                  key={value}
-                  style={[
-                    s.ladderTile,
-                    {
-                      backgroundColor: fillFor(skin, value),
-                      borderColor: skin.tileEdge,
-                      width: value < 100 ? 34 : value < 1000 ? 42 : 50,
-                    },
-                  ]}
+        {/* The screen's two sentences: what the game is, and its shape. They were the ready
+            panel's headline before this screen lost its three states, and they belong here
+            rather than in a panel in front of the board. */}
+        <View style={s.tagline}>
+          <RNText style={[s.taglineTitle, { color: skin.ink }]}>
+            Slide the tiles, double the numbers
+          </RNText>
+          <RNText style={[s.taglineMeta, { color: skin.inkSoft }]}>Four by four · no clock</RNText>
+        </View>
+
+        {/* ── Board Container ── */}
+        <View
+          style={s.boardArea}
+          onLayout={(e) => {
+            const { width, height } = e.nativeEvent.layout;
+            setArea((prev) =>
+              prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1
+                ? prev
+                : { w: width, h: height },
+            );
+          }}
+        >
+          <View
+            accessibilityLabel={`Board. ${N} by ${N}. Swipe to slide the tiles.`}
+            onStartShouldSetResponder={() => !game?.over}
+            onResponderGrant={onBoardGrant}
+            onResponderRelease={onBoardRelease}
+            onResponderTerminationRequest={() => false}
+            style={[
+              s.board,
+              {
+                width: boardPx,
+                height: boardPx,
+                backgroundColor: skin.board,
+              },
+            ]}
+          >
+            {Array.from({ length: CELLS }).map((_, index) => (
+              <View
+                key={`cell-${index}`}
+                style={[
+                  s.empty,
+                  {
+                    left: GAP + (index % N) * (cell + GAP),
+                    top: GAP + Math.floor(index / N) * (cell + GAP),
+                    width: cell,
+                    height: cell,
+                    backgroundColor: skin.empty,
+                  },
+                ]}
+              />
+            ))}
+            {tiles.map((tile) => (
+              <TileView
+                key={tile.id}
+                tile={tile}
+                cell={cell}
+                skin={skin}
+                reduceMotion={reduceMotion}
+              />
+            ))}
+
+            {/* Game Over / Win Overlay right on the board */}
+            {game?.over ? (
+              <View style={s.boardOverlay}>
+                <RNText style={s.overlayTitle}>{game.won ? "You Win!" : "Game Over!"}</RNText>
+                <RNText style={s.overlaySubtitle}>Final Score: {game.score}</RNText>
+                <Press
+                  accessibilityRole="button"
+                  accessibilityLabel="Try again"
+                  onPress={startRound}
+                  style={[s.overlayBtn, { backgroundColor: skin.button }]}
                 >
-                  <Text
-                    style={[
-                      s.ladderInk,
-                      {
-                        color: value >= skin.flip ? skin.tileInkHigh : skin.tileInk,
-                        fontSize: value < 100 ? 13 : value < 1000 ? 11 : 10,
-                      },
-                    ]}
+                  <RNText style={s.overlayBtnText}>Try again</RNText>
+                </Press>
+                {!rewardUsed && canUndo(game) ? (
+                  <Press
+                    accessibilityRole="button"
+                    accessibilityLabel="Undo last move"
+                    onPress={takeUndo}
+                    style={[s.overlayBtn, { backgroundColor: skin.button, marginTop: 10 }]}
                   >
-                    {value}
-                  </Text>
-                </View>
-              ))}
-            </View>
+                    <RNText style={s.overlayBtnText}>Undo move</RNText>
+                  </Press>
+                ) : null}
+              </View>
+            ) : null}
+          </View>
+        </View>
 
-            <Card style={[s.rules, { borderColor: skin.boardEdge, backgroundColor: skin.paper[0] }]}>
-              <Rule skin={skin} label="Every join" value="Scores the tile it produced" />
-              <Rule skin={skin} label="A pair joins once per slide" value="2·2·2·2 makes two 4s, not an 8" />
-              <Rule skin={skin} label="A new tile" value="A 2, or a 4 one time in ten" />
-              <Rule skin={skin} label="The board fills up" value="One rewarded undo, then the end" />
-            </Card>
+        {/* Where the last move stands, in the screen's own words: a slide that joined
+            nothing says so, so "the board changed" and "why it changed" are one message
+            instead of a board that moves in silence. */}
+        <RNText style={[s.notice, { color: skin.inkSoft }]} numberOfLines={1}>
+          {notice || "Swipe the board, or use the arrows"}
+        </RNText>
 
-            <Press
-              accessibilityRole="button"
-              accessibilityLabel="Start the round"
-              haptic="medium"
-              onPress={startRound}
-              style={[s.play, { backgroundColor: skin.accent }, elevation(3)]}
-            >
-              <Text style={[s.playLabel, { color: skin.tileInkHigh }]}>PLAY</Text>
-            </Press>
-
-            <Text variant="meta" style={[s.centre, { color: skin.inkSoft }]}>
-              {!recordRead
-                ? "Reading this device's scores…"
-                : record.rounds
-                  ? `Best on this device: ${record.best} · ${record.rounds} ${
-                      record.rounds === 1 ? "round" : "rounds"
-                    } played`
-                  : "No rounds recorded on this device yet"}
-            </Text>
+        {/* The pad. A thumb swipe is how this genre is played on a phone, and the arrows stay
+            because they are the accessible control: they need no gesture, they sit in the
+            thumb zone, and they are the one interaction a capture harness can press
+            deterministically (`scripts/interactions.mjs`, merge-tiles-slide). One row rather
+            than the usual cross — the squares get the height a cross would have cost. */}
+        {game ? (
+          <View style={s.pad}>
+            {(["left", "up", "down", "right"] as const).map((dir) => (
+              <Arrow key={dir} dir={dir} game={game} phase={phase} skin={skin} onSlide={onSlide} />
+            ))}
           </View>
         ) : null}
 
-        {playing && game ? (
-          <>
-            <View style={s.hud}>
-              <Stat skin={skin} label="Score" value={String(game.score)} />
-              <Stat
-                skin={skin}
-                label="Best tile"
-                value={String(game.reached)}
-                highlight={game.won}
-              />
-              <Stat skin={skin} label="Moves" value={String(game.moves)} />
-              <Stat skin={skin} label="Best" value={recordRead ? String(record.best) : "—"} />
-            </View>
+        {/* ─ Bottom Controls & Stats Bar (Thumb Zone) ── */}
+        <View style={s.bottomSection}>
+          <View style={s.actionsRow}>
+            <Press
+              accessibilityRole="button"
+              accessibilityLabel="New game"
+              onPress={startRound}
+              style={[s.actionBtn, { backgroundColor: skin.button }]}
+            >
+              <RNText style={s.actionBtnText}>NEW GAME</RNText>
+            </Press>
 
-            <View style={s.noticeRow}>
-              <Text variant="meta" style={[s.noticeText, { color: skin.inkSoft }]} numberOfLines={1}>
-                {notice || "Swipe the board, or use the arrows"}
-              </Text>
+            {Boolean(game && canUndo(game)) && !rewardUsed ? (
+              <Press
+                accessibilityRole="button"
+                accessibilityLabel="Undo last move"
+                onPress={takeUndo}
+                style={[s.actionBtn, { backgroundColor: skin.button }]}
+              >
+                <RNText style={s.actionBtnText}>UNDO</RNText>
+              </Press>
+            ) : (
               <Press
                 accessibilityRole="button"
                 accessibilityLabel={soundOn ? "Sound on" : "Sound off"}
-                accessibilityState={{ selected: soundOn }}
                 onPress={toggleSound}
-                style={[s.sound, { borderColor: skin.boardEdge }]}
+                style={[s.actionBtn, { backgroundColor: skin.scoreBox }]}
               >
-                <Text variant="caption" style={{ color: soundOn ? skin.accent : skin.inkSoft }}>
-                  {soundOn ? "♪ on" : "♪ off"}
-                </Text>
+                <RNText style={s.actionBtnText}>{soundOn ? "SOUND: ON" : "SOUND: OFF"}</RNText>
               </Press>
-            </View>
-
-            {/* The board gets everything left over after the header, the notice and the
-                pad. Measuring the space rather than deriving it from the window is what
-                makes it fill the phone instead of leaving a strip of paper at the bottom. */}
-            <View
-              style={s.boardArea}
-              onLayout={(e) => {
-                const { width, height } = e.nativeEvent.layout;
-                setArea((prev) =>
-                  prev && Math.abs(prev.w - width) < 1 && Math.abs(prev.h - height) < 1
-                    ? prev
-                    : { w: width, h: height },
-                );
-              }}
-            >
-              <View
-                accessibilityLabel={`Board. ${N} by ${N}. Swipe to slide the tiles.`}
-                onStartShouldSetResponder={() => phase === "playing" && !game.over}
-                onResponderGrant={onBoardGrant}
-                onResponderRelease={onBoardRelease}
-                onResponderTerminationRequest={() => false}
-                style={[
-                  s.board,
-                  // The elevation token first, so the board's own warm shadow colour and
-                  // softer falloff win on iOS while Android still gets its elevation.
-                  elevation(2),
-                  {
-                    width: boardPx,
-                    height: boardPx,
-                    backgroundColor: skin.board,
-                    borderColor: skin.boardEdge,
-                    shadowColor: skin.boardShadow,
-                    shadowOpacity: 0.22,
-                    shadowRadius: 14,
-                    shadowOffset: { width: 0, height: 8 },
-                  },
-                ]}
-              >
-                {Array.from({ length: CELLS }).map((_, index) => (
-                  <View
-                    key={`cell-${index}`}
-                    style={[
-                      s.empty,
-                      {
-                        left: GAP + (index % N) * (cell + GAP),
-                        top: GAP + Math.floor(index / N) * (cell + GAP),
-                        width: cell,
-                        height: cell,
-                        backgroundColor: skin.empty,
-                      },
-                    ]}
-                  />
-                ))}
-                {tiles.map((tile) => (
-                  <TileView
-                    key={tile.id}
-                    tile={tile}
-                    cell={cell}
-                    skin={skin}
-                    reduceMotion={reduceMotion}
-                  />
-                ))}
-              </View>
-            </View>
-
-            <View style={s.pad}>
-              {/* A 3×3 cross: the pad this genre is played with on a keyboard, kept here
-                  because it is the accessible control and the one a probe can press. */}
-              <View style={s.padRow}>
-                <View style={s.padSpacer} />
-                <Arrow dir="up" game={game} phase={phase} skin={skin} onSlide={onSlide} />
-                <View style={s.padSpacer} />
-              </View>
-              <View style={s.padRow}>
-                <Arrow dir="left" game={game} phase={phase} skin={skin} onSlide={onSlide} />
-                <View style={s.padCentre}>
-                  <Text variant="caption" style={{ color: skin.inkSoft }}>
-                    {WIN_TILE}
-                  </Text>
-                </View>
-                <Arrow dir="right" game={game} phase={phase} skin={skin} onSlide={onSlide} />
-              </View>
-              <View style={s.padRow}>
-                <View style={s.padSpacer} />
-                <Arrow dir="down" game={game} phase={phase} skin={skin} onSlide={onSlide} />
-                <View style={s.padSpacer} />
-              </View>
-            </View>
-
-            {game.over ? (
-              <View style={[s.over, { borderColor: skin.boardEdge, backgroundColor: skin.paper[0] }]}>
-                <Text variant="title2" style={{ color: skin.ink }}>
-                  No moves left
-                </Text>
-                <Text variant="body" style={{ color: skin.inkSoft }}>
-                  Every square is full and no two neighbours are equal. Score {game.score}, best
-                  tile {game.reached} after {game.moves} {game.moves === 1 ? "move" : "moves"}.
-                </Text>
-                {rewardUsed || !canUndo(game) ? (
-                  <Press
-                    accessibilityRole="button"
-                    accessibilityLabel="End the round"
-                    haptic="medium"
-                    onPress={finishRound}
-                    style={[s.play, { backgroundColor: skin.accent }, elevation(2)]}
-                  >
-                    <Text style={[s.playLabel, { color: skin.tileInkHigh }]}>END ROUND</Text>
-                  </Press>
-                ) : (
-                  <AdSlot
-                    accent={skin.accent}
-                    title="Rewarded ad — undo the last move"
-                    reward="The board and the score go back exactly one move, once per round."
-                    cta="Watch ad to take the move back"
-                    onReward={takeUndo}
-                    onDismiss={finishRound}
-                    dismissLabel="End the round"
-                  />
-                )}
-              </View>
-            ) : null}
-          </>
-        ) : null}
-
-        {phase === "over" ? (
-          <View style={s.page}>
-            <Text style={[s.title, { color: skin.ink }]}>
-              {summary?.won ? String(WIN_TILE) : "GAME OVER"}
-            </Text>
-            <View style={s.topRow}>
-              <Text variant="lede" style={{ color: skin.inkSoft }}>
-                {summary?.won ? "Reached, and the board carried on" : "No moves left"}
-              </Text>
-              {summary?.isNewBest ? <Badge tone="positive" label="New best" /> : null}
-            </View>
-
-            {summary ? (
-              <Card style={[s.rules, { borderColor: skin.boardEdge, backgroundColor: skin.paper[0] }]}>
-                <Rule skin={skin} label="Score" value={String(summary.score)} />
-                <Rule skin={skin} label="Best tile" value={String(summary.best)} />
-                <Rule skin={skin} label="Moves" value={String(summary.moves)} />
-                <Rule
-                  skin={skin}
-                  label={`Reached ${WIN_TILE}`}
-                  value={summary.won ? "Yes" : "Not this round"}
-                />
-                <Rule skin={skin} label="Best on this device" value={String(record.best)} />
-              </Card>
-            ) : null}
-
-            {record.recent.length > 0 ? (
-              <Card style={[s.rules, { borderColor: skin.boardEdge, backgroundColor: skin.paper[0] }]}>
-                <Text variant="title3" style={{ color: skin.ink }}>
-                  {record.recent.length === 1 ? "Last round" : `Last ${record.recent.length} rounds`}
-                </Text>
-                {record.recent.map((r, i) => (
-                  <View key={`${r.at}-${i}`} style={s.recentRow}>
-                    <Text variant="meta" style={{ color: skin.inkSoft, flex: 1 }}>
-                      {r.line || "round recorded"}
-                    </Text>
-                    <Text variant="meta" style={{ color: skin.ink }}>
-                      {r.score}
-                    </Text>
-                  </View>
-                ))}
-                <Text variant="caption" style={{ color: skin.inkSoft }}>
-                  Kept on this device, newest first
-                </Text>
-              </Card>
-            ) : null}
-
-            <Press
-              accessibilityRole="button"
-              accessibilityLabel="Play again"
-              haptic="medium"
-              onPress={startRound}
-              style={[s.play, { backgroundColor: skin.accent }, elevation(3)]}
-            >
-              <Text style={[s.playLabel, { color: skin.tileInkHigh }]}>PLAY AGAIN</Text>
-            </Press>
-
-            <Press
-              accessibilityRole="link"
-              accessibilityLabel="Passport photo maker, forty-nine rupees"
-              onPress={() => router.push("/passport")}
-              style={[s.cross, { borderColor: skin.boardEdge }]}
-            >
-              <Text variant="meta" style={{ color: skin.inkSoft }}>
-                Also in this app: a print-ready passport photo sheet for ₹49
-              </Text>
-            </Press>
+            )}
           </View>
-        ) : null}
+
+          <View style={s.statusRow}>
+            <RNText style={[s.statusMeta, { color: skin.inkSoft }]}>
+              Moves: <RNText style={{ fontWeight: "800", color: skin.ink }}>{game?.moves ?? 0}</RNText>
+            </RNText>
+            <RNText style={[s.statusMeta, { color: skin.inkSoft }]}>
+              Best Tile:{" "}
+              <RNText style={{ fontWeight: "800", color: skin.ink }}>
+                {game ? bestTile(game.board) : 2}
+              </RNText>
+            </RNText>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -980,6 +818,12 @@ function TileView({
   const flashStyle = useAnimatedStyle(() => ({ opacity: flash.value }));
 
   const big = tile.value >= skin.flip;
+  const isHigh = tile.value >= 128;
+  const fontSize = Math.round(
+    cell * (tile.value < 100 ? 0.44 : tile.value < 1000 ? 0.35 : 0.26),
+  );
+  const lineHeight = Math.round(fontSize * 1.16);
+
   return (
     <Animated.View
       accessibilityLabel={`Tile row ${tile.r + 1} column ${tile.c + 1}: ${tile.value}`}
@@ -989,56 +833,39 @@ function TileView({
           width: cell,
           height: cell,
           backgroundColor: fillFor(skin, tile.value),
-          borderColor: skin.tileEdge,
-          shadowColor: skin.boardShadow,
+          shadowColor: isHigh ? skin.accent : "#000000",
+          shadowOpacity: isHigh ? 0.4 : 0.12,
+          shadowRadius: isHigh ? 8 : 2,
+          shadowOffset: { width: 0, height: isHigh ? 3 : 1 },
+          elevation: isHigh ? 6 : 2,
         },
         style,
       ]}
     >
-      <Text
+      <RNText
+        numberOfLines={1}
         style={{
-          fontFamily: SERIF,
-          fontWeight: "700",
-          fontSize: Math.round(
-            cell * (tile.value < 100 ? 0.42 : tile.value < 1000 ? 0.33 : 0.25),
-          ),
+          fontFamily: FONT,
+          fontWeight: "800",
+          fontSize,
+          lineHeight,
           letterSpacing: -0.5,
           color: big ? skin.tileInkHigh : skin.tileInk,
+          textAlign: "center",
+          includeFontPadding: false,
         }}
       >
         {tile.value}
-      </Text>
+      </RNText>
       <Animated.View
         pointerEvents="none"
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: big ? "#000" : "#fff", borderRadius: radius.sm },
+          { backgroundColor: big ? "#000" : "#fff", borderRadius: 8 },
           flashStyle,
         ]}
       />
     </Animated.View>
-  );
-}
-
-/** One cell of the scoreboard. */
-function Stat({
-  skin,
-  label,
-  value,
-  highlight,
-}: {
-  skin: Skin;
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <View style={s.stat}>
-      <Text variant="caption" style={{ color: skin.inkSoft }}>
-        {label}
-      </Text>
-      <Text style={[s.statValue, { color: highlight ? skin.accent : skin.ink }]}>{value}</Text>
-    </View>
   );
 }
 
@@ -1080,141 +907,236 @@ function Arrow({
   );
 }
 
-/** A label/value line on paper. */
-function Rule({ skin, label, value }: { skin: Skin; label: string; value: string }) {
-  return (
-    <View style={s.ruleRow}>
-      <Text variant="meta" style={{ color: skin.inkSoft, flex: 1 }}>
-        {label}
-      </Text>
-      <Text variant="meta" style={{ color: skin.ink, flexShrink: 1, textAlign: "right" }}>
-        {value}
-      </Text>
-    </View>
-  );
-}
-
 const s = StyleSheet.create({
   root: { flex: 1 },
   column: {
     flex: 1,
     width: "100%",
-    maxWidth: 560,
+    maxWidth: 440,
     alignSelf: "center",
     paddingHorizontal: space.base,
+    justifyContent: "space-between",
   },
-  // ── ready / over: printed pages ──────────────────────────────────────────────
-  page: { flex: 1, justifyContent: "center", gap: space.base },
-  topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
-  title: {
-    fontFamily: SERIF,
-    fontSize: 46,
-    lineHeight: 52,
-    letterSpacing: 4,
-    fontWeight: "700",
-  },
-  chip: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius.pill,
-    paddingHorizontal: space.md,
-    paddingVertical: 4,
-  },
-  steps: { gap: space.sm },
-  step: { flexDirection: "row", alignItems: "center", gap: space.md },
-  stepDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepText: { flex: 1 },
-  ladder: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 5,
-    borderWidth: 2,
-    borderRadius: radius.md,
-    padding: GAP,
-  },
-  ladderTile: {
-    height: 30,
-    borderRadius: 6,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  ladderInk: { fontFamily: SERIF, fontWeight: "700" },
-  rules: { padding: space.base, gap: space.sm, borderWidth: 2 },
-  ruleRow: { flexDirection: "row", alignItems: "flex-start", gap: space.md },
-  recentRow: { flexDirection: "row", alignItems: "flex-start", gap: space.md },
-  play: {
-    minHeight: 60,
-    borderRadius: radius.md,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 2,
-  },
-  playLabel: {
-    fontFamily: SERIF,
-    fontSize: 22,
-    lineHeight: 28,
-    letterSpacing: 2.5,
-    fontWeight: "700",
-  },
-  cross: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius.md,
-    paddingVertical: space.md,
-    paddingHorizontal: space.base,
-    alignItems: "center",
-  },
-  centre: { textAlign: "center" },
-
-  // ── playing ─────────────────────────────────────────────────────────────────
-  hud: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
-  stat: { gap: 2 },
-  statValue: { fontFamily: SERIF, fontSize: 26, lineHeight: 30, fontWeight: "700" },
-  noticeRow: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: space.md,
-    minHeight: 24,
+    gap: 12,
+    marginBottom: 6,
   },
-  noticeText: { flexShrink: 1 },
-  sound: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius.pill,
-    paddingHorizontal: space.md,
-    paddingVertical: 3,
+  logoCard: {
+    width: 72,
+    height: 72,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
-  boardArea: { flex: 1, alignItems: "center", justifyContent: "center" },
+  logoText: {
+    fontFamily: FONT,
+    fontSize: 27,
+    lineHeight: 31,
+    fontWeight: "800",
+    color: "#ffffff",
+    letterSpacing: -0.5,
+    textAlign: "center",
+    includeFontPadding: false,
+  },
+  scoresRow: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 10,
+  },
+  scoreBox: {
+    flex: 1,
+    height: 72,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  scoreLabel: {
+    fontFamily: FONT,
+    fontSize: 11,
+    lineHeight: 14,
+    fontWeight: "800",
+    color: "#eee4da",
+    letterSpacing: 0.8,
+    textAlign: "center",
+    includeFontPadding: false,
+  },
+  scoreVal: {
+    fontFamily: FONT,
+    fontSize: 22,
+    lineHeight: 26,
+    fontWeight: "800",
+    color: "#ffffff",
+    textAlign: "center",
+    includeFontPadding: false,
+  },
+  /** What the game is and its shape, the two lines that used to be the ready panel. */
+  tagline: {
+    gap: 2,
+    marginBottom: 10,
+  },
+  taglineTitle: {
+    fontFamily: FONT,
+    fontSize: 15,
+    lineHeight: 19,
+    fontWeight: "700",
+  },
+  taglineMeta: {
+    fontFamily: FONT,
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: "600",
+  },
+  /** The line under the board that says what the last move did. */
+  notice: {
+    fontFamily: FONT,
+    fontSize: 13,
+    lineHeight: 17,
+    fontWeight: "600",
+    textAlign: "center",
+    marginTop: 2,
+    marginBottom: 8,
+  },
+  /** The pad: four arrows in the thumb zone, above the action buttons. */
+  pad: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: space.sm,
+    marginBottom: 10,
+  },
+  boardArea: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 4,
+  },
   board: {
-    borderRadius: radius.lg,
-    borderWidth: 2,
-    shadowOpacity: 0.22,
-    shadowRadius: 14,
-    shadowOffset: { width: 0, height: 8 },
+    borderRadius: 12,
+    position: "relative",
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 5,
   },
-  empty: { position: "absolute", borderRadius: radius.sm },
+  empty: {
+    position: "absolute",
+    borderRadius: 8,
+  },
   tile: {
     position: "absolute",
     left: 0,
     top: 0,
-    borderRadius: radius.sm,
-    borderWidth: 1,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    shadowOpacity: 0.18,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 2 },
   },
-  pad: { alignSelf: "center", gap: GAP },
-  padRow: { flexDirection: "row", gap: GAP, justifyContent: "center" },
-  padSpacer: { width: ARROW, height: ARROW },
-  padCentre: { width: ARROW, height: ARROW, alignItems: "center", justifyContent: "center" },
+  boardOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(238, 228, 218, 0.9)",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 24,
+    zIndex: 100,
+  },
+  overlayTitle: {
+    fontFamily: FONT,
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: "800",
+    color: "#776e65",
+    marginBottom: 6,
+    textAlign: "center",
+    includeFontPadding: false,
+  },
+  overlaySubtitle: {
+    fontFamily: FONT,
+    fontSize: 16,
+    lineHeight: 20,
+    fontWeight: "700",
+    color: "#8f7a66",
+    marginBottom: 18,
+    textAlign: "center",
+  },
+  overlayBtn: {
+    minWidth: 140,
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  overlayBtnText: {
+    fontFamily: FONT,
+    fontSize: 15,
+    lineHeight: 18,
+    fontWeight: "800",
+    color: "#ffffff",
+    textAlign: "center",
+  },
+  bottomSection: {
+    width: "100%",
+    gap: 12,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  actionsRow: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionBtn: {
+    flex: 1,
+    height: 46,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+  },
+  actionBtnText: {
+    fontFamily: FONT,
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: "800",
+    color: "#ffffff",
+    letterSpacing: 0.5,
+    textAlign: "center",
+  },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 6,
+  },
+  statusMeta: {
+    fontFamily: FONT,
+    fontSize: 13,
+    lineHeight: 16,
+    fontWeight: "600",
+  },
   arrow: {
     width: ARROW,
     height: ARROW,
@@ -1223,11 +1145,6 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  arrowInk: { fontFamily: SERIF, fontSize: 24, lineHeight: 28, fontWeight: "700" },
-  over: {
-    borderWidth: 2,
-    borderRadius: radius.md,
-    padding: space.base,
-    gap: space.md,
-  },
+  arrowInk: { fontFamily: FONT, fontSize: 24, lineHeight: 28, fontWeight: "700" },
 });
+

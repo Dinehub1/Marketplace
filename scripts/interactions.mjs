@@ -441,8 +441,13 @@ async function collageShapePick(page) {
 function mergeHud(page) {
   return page.evaluate(() => {
     const body = document.body.innerText;
+    // Read the way a person reads it. The header puts SCORE over its number, the status row
+    // puts "Moves: 4" and "Best Tile: 8" on one line — both shapes are accepted, so the probe
+    // follows the screen instead of pinning it to one of them. (It used to read a hidden
+    // block of test text in the screen; that block is gone, and a probe that reads the real
+    // HUD is a probe that would notice the HUD going missing.)
     const num = (label) => {
-      const m = body.match(new RegExp(`${label}\\s*\\n\\s*(-?\\d+)`, 'i'));
+      const m = body.match(new RegExp(`${label}\\s*:?\\s*(-?\\d+)`, 'i'));
       return m ? Number(m[1]) : null;
     };
     return { score: num('Score'), moves: num('Moves'), best: num('Best tile') };
@@ -450,8 +455,14 @@ function mergeHud(page) {
 }
 
 async function mergeTilesSlide(page) {
-  await page.locator('text=Start the round').first().click();
-  await page.waitForTimeout(400);
+  // The board is live the moment the screen opens (the game starts itself, the way the
+  // genre does), so a Start gate is clicked only when the screen has one. Both shapes are
+  // the same game, and this probe is about the slide, not about how a round begins.
+  const gate = page.locator('text=Start the round').first();
+  if (await gate.count()) {
+    await gate.click();
+    await page.waitForTimeout(400);
+  }
 
   const arrows = page.locator('[aria-label^="Slide "]');
   const arrowCount = await arrows.count();
