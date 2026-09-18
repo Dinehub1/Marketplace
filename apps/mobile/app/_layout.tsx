@@ -56,10 +56,11 @@ function Root() {
           gestureEnabled: true,
         }}
       >
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="owner" />
+        <Stack.Screen name="(directory)/(tabs)" />
+        <Stack.Screen name="(wellness)/(tabs)" />
+        <Stack.Screen name="(directory)/owner" />
         <Stack.Screen
-          name="business/[id]"
+          name="(directory)/business/[id]"
           options={{ animation: reduceMotion ? "fade" : "slide_from_right", presentation: "card" }}
         />
       </Stack>

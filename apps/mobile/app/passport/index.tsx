@@ -19,8 +19,8 @@ import {
   ActivityIndicator, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
 
-import { WEB_BASE_URL } from "../lib/config";
-import { productText, useProductUI, type ProductUI } from "../lib/product-ui";
+import { WEB_BASE_URL } from "@/lib/config";
+import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 
 const SIZES = [
   { id: "passport", label: "Passport", spec: "35 × 45 mm", note: "India, most forms" },

@@ -265,10 +265,10 @@ export default function MergeTiles() {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const soundOnRef = useRef(true);
 
-  const slideSound = useAudioPlayer(require("../assets/sounds/slide.wav"));
-  const mergeSound = useAudioPlayer(require("../assets/sounds/merge.wav"));
-  const bigSound = useAudioPlayer(require("../assets/sounds/merge-big.wav"));
-  const winSound = useAudioPlayer(require("../assets/sounds/win.wav"));
+  const slideSound = useAudioPlayer(require("../../assets/sounds/slide.wav"));
+  const mergeSound = useAudioPlayer(require("../../assets/sounds/merge.wav"));
+  const bigSound = useAudioPlayer(require("../../assets/sounds/merge-big.wav"));
+  const winSound = useAudioPlayer(require("../../assets/sounds/win.wav"));
 
   // The board is the screen, so its size follows the space that is actually left after the
   // header, the notice and the pad — measured rather than guessed from the window, because
