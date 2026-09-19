@@ -1917,7 +1917,7 @@ PNGs for all four games remain the capture VM's job. `npm run shots -- --only me
 `expo run:ios`) for a dev build, a fresh `eas build` before a store build; Expo Go picks it up on
 reload.
 
-### 41. Document Translation: give the live product a screen and a tile (new, 2026-09-17, from item 15)
+### 41. Document Translation: give the live product a screen and a tile (new, 2026-09-17, from item 15) — SCREEN DONE 2026-09-20, TILE still his call
 The engine and the route serve it (jobs 141/142/143, 200) but nothing in the app can reach
 it: `READY_TOOLS` in `apps/mobile/app/tools/index.tsx` has eight tiles and none is
 `translate-doc`, and `/tools/<slug>` has no screen. The screen is small and needs no new
@@ -1932,6 +1932,50 @@ and "wiring" came back as "तारावली"), and do not price the job on 
 should print what the server answered, exactly as `resume-checker`'s screen does. The tile is
 the same price decision as item 24's (parking lot), so the screen can land first and the tile
 waits for his call.
+
+**Result (2026-09-20): the screen exists and runs the job; two stale premises were measured
+away first.** (a) There is no `READY_TOOLS` — the hub renders `TARGET.products` through
+`lib/products.ts` (item 28), and `translate-doc` is already in the toolbox target's product
+list with `route: null`, so the hub's card for it is the catalogue's own **"COMING SOON ·
+₹49"**: the price is already on the screen and the tile is a one-line `route:` change once
+he decides (the route serves it free — the parking-lot conflict, unchanged). (b) The screen
+must draw the route's list, and the route's list was a second copy of the engine's — so the
+list now lives **once** in `packages/core` (`TRANSLATE_LANGS`, `TRANSLATE_LANG_NAMES`,
+`TRANSLATE_LANGS_HELP`) and both the route's validation and the picker import it (item 25's
+lesson: two copies of a grammar drift, and the picker that drifts is a button whose only
+outcome is a 400).
+`apps/mobile/app/tools/translate-doc.tsx` is the 14th toolbox screen: a document card, two
+wrapped chip rows drawn from `TRANSLATE_LANGS` with each language in its own script
+(`हिंदी`, `বাংলা`, `தமிழ்` …), a **Swap** control, a refusal in words when both sides are the
+same language, and a result card that prints the translation **fetched back from the report
+itself** beside what the run used (characters in/out, paragraphs, seconds, model, neurons
+billed — with the rupee figure computed from the published $0.011 per 1,000 neurons and
+labelled "about"). Gold accent in `product-ui.ts` (the toolbox's only unused meaning; a
+green would read as "passed" for a machine translation nobody read). Nothing is priced on
+the screen: it prints the server's own `free` / `locked`.
+Evidence: **job 164** through `https://expo.dropby.co.in/api/job` from the screen's own
+button = HTTP **200**, en→hi, `meta.neurons 54`, `engines {@cf/qwen/qwen3-30b-a3b-fp8: 1}`,
+and the card's Devanagari line re-read from the report keeps **35,000** and 2026; **19/19**
+measured checks at 390×844 with **0 page errors** (`%TEMP%\verify-translate.mjs`): 22 chips
+(11+11, the first 11 above the second 11), no chip label clipped (tightest "English", 13 px
+of slack each side in a 64 px chip), the button naming the job ("Translate into Hindi" →
+"Translate into Bengali" → after Swap → "Translate into English" → back), the same-language
+refusal appearing and clearing, and the free-row copy present. Honest refusals re-measured
+after the change: `target=te` → **400** `'te' is not one of the languages this tool
+translates (en, hi, bn, mr, ta, ml, kn, pa, or, as, ur)`. Captures `app__translate-doc__mobile-
+{light,dark}` (d33767ea… / feff99a8… — different, so it follows the theme), claimed by
+`app-map.mjs`, in `SCREEN_INFO` ("Document translation (machine translation)") and on the
+phone page with its own QR (`/shots` → 200, 110,597 B; `/live` → 200, **43** codes, was 42).
+`tsc` via `node node_modules/typescript/bin/tsc -p …`: 0 errors in core and web, and the same
+9 pre-existing typed-route errors in mobile, none in the files this item touched. Gated
+`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sarkarmarketplace and
+expo.dropby.co.in/tools all **200** after. No engine restart (no Python file changed: one
+listener on :8099, `health.pid 8164 == pm2 pid`, 12 products).
+**Still open, and it is his call (unchanged):** the tile. `lib/products.ts` has
+`translate-doc` with `route: null` and `price "₹49"`; pointing `route` at
+`/tools/translate-doc` promotes the hub card that already shows that price. Until then the
+screen is reachable by deep link (`/tools/translate-doc`, on the phone page) and from the
+gallery, not from the grid.
 
 
 
@@ -2197,3 +2241,44 @@ captions", "The caption file", "This build speaks English only", "Make the voice
 **Still unproven, and unchanged from item 57:** no hosted call has run from here. The screens,
 the picker, the file kinds, the SRT format and the route contracts are verified; the two model
 calls are not. The first `subtitles` and `voiceover` job ids on the VM close it.
+
+### 59. A native-only package in a shared import kills the web export — and the export takes `dist` down with it (found + fixed 2026-09-20)
+Measured this hour, while trying to export for item 41: `expo export --platform web` exited
+**1** with
+`Importing native-only module "react-native/Libraries/Utilities/codegenNativeComponent" on web
+from: node_modules/react-native-google-mobile-ads/lib/module/specs/components/…ts`, reached
+through `lib/ads/index.ts` → `adapters/admob.ts`. The adapter's own comment says the SDK is
+`require`d lazily so a build without it degrades at runtime — true at runtime, **false at
+bundle time**: Metro puts the `require` in the dependency graph either way, so the web bundle
+cannot be built at all.
+Worse than the failure: **`expo export` clears the output directory first**, so a failed export
+leaves `apps/mobile/dist` **empty** — and `dist` is what `spa_server` (`expo-preview`,
+`expo.dropby.co.in`) serves. The phone preview and every capture in the gallery read from it, so
+one failed export takes the preview down (measured: `du -sh dist` → `0`).
+Fixed with a new file, no edit to the ads code: `lib/ads/adapters/admob.web.ts` — Metro resolves
+`.web.ts` first on web, so iOS/Android keep the real SDK path and the web bundle never contains
+it. On web there is no AdMob SDK, so `supports()` is false for every format and the facade
+answers its own `sdk_unavailable`, which is what a native build with no AdMob account says too.
+Evidence: `expo export --platform web` exit **0**, `dist` 5.1 MB / 2763 KB JS, the three routes
+(`/`, `/tools`, `/tools/translate-doc`) **200** on both `127.0.0.1:8091` and
+`https://expo.dropby.co.in` afterwards, and the two gallery captures green through the marker
+gate in the same hour.
+**The rule for the next native dependency:** a package that touches the native registry needs a
+`.web.ts` sibling (or a platform-split import) **before** it is imported by anything the web
+export reaches — and after any change to a native dependency, run the export before trusting
+`dist`.
+
+### 60. `node_modules/.bin` is incomplete — `npx`, `npm run typecheck` and `npx expo` are broken on this box (found 2026-09-20)
+Measured: `node_modules/.bin` holds **72** entries (it should hold hundreds) with stray
+`.<name>.cmd-K0bNTVtJ` files beside them, and its directory mtime is **2026-09-19 02:50** — the
+signature of an interrupted install. Consequences, all measured this hour: `npx tsc` answers
+"This is not the tsc command you are looking for", `npm run typecheck -w @hermes/web` fails with
+`… is not recognized as an internal or external command`, and `npx expo export` fails the same
+way. `next` *is* present, which is why the live site builds normally.
+The workaround used (and worth keeping in the hourly job): call the CLI's own entry point —
+`node node_modules/typescript/bin/tsc -p <project> --noEmit` and
+`node node_modules/expo/bin/cli export --platform web` — which is exactly what the shims would
+run. Do not "fix" this by deleting `node_modules`: that takes the live Next app down until a
+reinstall finishes (see the hourly queue's rule 3), and `npm install` on this VM is the
+20-minute job rule 7 keeps out of a normal hour. It belongs in an hour that does nothing else.
+
