@@ -52,6 +52,12 @@ if (!KEY && !DRY) {
   process.exit(1);
 }
 
+// Single source for the REST auth headers. This pair was copy-pasted into
+// three call sites; a redaction/formatting pass mangled one of the copies
+// into a syntax error and the failure mode was a silent auth break, not a
+// crash. One definition, referenced everywhere. (2026-09-19)
+const AUTH_HEADERS = { apikey: KEY, Authorization: `Bearer ${KEY}` };
+
 // Minimal CSV parser handling quoted fields with commas/newlines.
 function parseCsv(text) {
   const rows = [];
@@ -168,7 +174,14 @@ for (const file of files) {
     const name = (r[col['name']] ?? '').trim();
     const phone = (r[col['phone_number']] ?? '').replace(/\D/g, '') || null;
     if (!name) continue;
-    const dedupeKey = `${name.toLowerCase()}|${phone ?? ''}`;
+    // place_id first. It is present on 100% of scraped rows and is the ONLY
+    // key that can tell two branches of one brand apart, so it is what makes
+    // "duplicate channel" detection possible at all: name|phone marks
+    // IndianOil's 45 separate Indore outlets as 45 unrelated rows (correct)
+    // *and* an outlet scraped once with a phone and once without as two rows
+    // (wrong). place_id separates both cases correctly. (2026-09-19)
+    const placeId = (r[col['place_id']] ?? '').trim();
+    const dedupeKey = placeId ? `pid:${placeId}` : `${name.toLowerCase()}|${phone ?? ''}`;
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
     const address = str(r[col['address']]);
@@ -178,6 +191,12 @@ for (const file of files) {
       phone,
       address,
       website: str(r[col['website']]),
+      // These CSVs carry no google_maps_url / image_url column, so both fields
+      // were always null ("EXISTING TO ENRICH: 0" every run). A place_id is a
+      // complete maps link on its own, so build one from it. (2026-09-19)
+      place_id: placeId || null,
+      google_maps: str(r[col['google_maps_url']])
+        || (placeId ? `https://www.google.com/maps/place/?q=place_id:${placeId}` : null),
       area: localityOf(address),
       pincode: pincodeOf(address),
       city: 'Indore',
@@ -186,7 +205,6 @@ for (const file of files) {
       // not showable, and a listing with no photo is not scannable.
       reviews_count: int(r[col['reviews_count']]),
       image_url: str(r[col['image_url']]),
-      google_maps: str(r[col['google_maps_url']]),
       lat: num(r[col['latitude']]),
       lng: num(r[col['longitude']]),
       source: 'geoghost-google-maps',
@@ -214,18 +232,19 @@ if (DRY) {
 // Two jobs: insert rows we've never seen, and backfill image_url /
 // reviews_count / google_maps onto rows that predate those columns. Previously
 // this only did the first, so re-running enriched nothing.
-const existing = new Map(); // "name|phone" -> { id, image_url, reviews_count, google_maps }
+const existing = new Map(); // "name|phone" -> { id, image_url, reviews_count, google_maps, place_id }
+const existingByPlace = new Map(); // place_id -> same row object
 let offset = 0;
 while (true) {
   const r = await fetch(
-    `${URL_BASE}/rest/v1/businesses?select=id,name,phone,image_url,reviews_count,google_maps&limit=1000&offset=${offset}`,
-    { headers: { apikey: KEY, Authorization: `Bearer ${KEY}` } },
+    `${URL_BASE}/rest/v1/businesses?select=id,name,phone,image_url,reviews_count,google_maps,place_id&limit=1000&offset=${offset}`,
+    { headers: AUTH_HEADERS },
   );
   if (!r.ok) {
     const txt = await r.text();
-    if (/image_url|reviews_count/.test(txt)) {
-      console.error('The image_url / reviews_count columns do not exist yet.');
-      console.error('Run supabase/migrations/20260812120000_listing_media.sql first.');
+    if (/image_url|reviews_count|place_id/.test(txt)) {
+      console.error('The image_url / reviews_count / place_id columns do not exist yet.');
+      console.error('Run supabase/migrations for listing media + place_id first.');
       process.exit(1);
     }
     console.error(`Failed to read existing rows: ${r.status} ${txt}`);
@@ -235,49 +254,86 @@ while (true) {
   for (const x of rows) {
     const key = `${(x.name || '').trim().toLowerCase()}|${x.phone || ''}`;
     existing.set(key, x);
+    if (x.place_id) existingByPlace.set(x.place_id, x);
   }
   if (rows.length < 1000) break;
   offset += 1000;
 }
-console.log('EXISTING IN DB:', existing.size);
+console.log('EXISTING IN DB:', existing.size, '| WITH place_id:', existingByPlace.size);
 
 // Delete the test row if it exists
 await fetch(`${URL_BASE}/rest/v1/businesses?name=eq.ZZTEST`, {
   method: 'DELETE',
-  headers: {apikey: KEY, Authorization: `Bearer ${KEY}`},
+  headers: AUTH_HEADERS,
 });
 
 // Split into rows to create and rows that only need the new media fields.
 const fresh = [];
-const enrich = [];
+// Records that resolve to the same existing row are MERGED, not first-match-wins.
+// Two records routinely name one row: a listing first scraped before place_id
+// existed (key `name|phone`, no place_id) and the same listing scraped again
+// later (key `pid:<id>`, place_id present). The older record carries strictly
+// less information, so under the previous first-match-wins guard it claimed the
+// row and the place_id-bearing record was dropped. Consequence: importing the
+// whole tree could never backfill place_id at all - it reported
+// "EXISTING TO ENRICH: 0" - even though importing a single file backfilled 14
+// rows, because the newer record was always shadowed by the older one. Merging
+// per row means a record can only ever ADD a value, never block another record
+// from adding it. (2026-09-19)
+const pending = new Map(); // row.id -> { orig, patch }
 for (const r of records) {
+  // place_id is the authoritative match; fall back to name|phone for rows that
+  // predate the place_id column and for listings Google gives no id for.
   const key = `${r.name.trim().toLowerCase()}|${r.phone || ''}`;
-  const row = existing.get(key);
+  const row = (r.place_id && existingByPlace.get(r.place_id)) || existing.get(key);
   if (!row) { fresh.push(r); continue; }
 
-  // Only fill gaps — never overwrite a value already in the table, which may
-  // have been corrected by hand or by an owner claiming the listing.
-  //
-  // Every patch carries the SAME keys, and carries the CURRENT value for the
-  // fields it is not changing. Two hard requirements of the PostgREST upsert:
-  //   * `name` is NOT NULL, and ON CONFLICT DO UPDATE still validates the
-  //     proposed insert tuple, so a patch without it dies with 23502
-  //     "null value in column name" — which is what this did before.
-  //   * a batch whose objects have differing key sets is rejected outright with
-  //     PGRST102 "All object keys must match", so the shapes cannot vary
-  //     per row.
-  // Sending the current value (never null) is also what keeps this from wiping
-  // a field: a null in the payload IS written.
-  const next = {
-    image_url: !row.image_url && r.image_url ? r.image_url : row.image_url,
-    reviews_count: row.reviews_count == null && r.reviews_count != null ? r.reviews_count : row.reviews_count,
-    google_maps: !row.google_maps && r.google_maps ? r.google_maps : row.google_maps,
-  };
+  let entry = pending.get(row.id);
+  if (!entry) {
+    // The patch carries the SAME keys for every row, and the CURRENT value for
+    // any field it is not changing. Two hard requirements of the PostgREST
+    // upsert:
+    //   * `name` is NOT NULL, and ON CONFLICT DO UPDATE still validates the
+    //     proposed insert tuple, so a patch without it dies with 23502
+    //     "null value in column name" - which is what this did before.
+    //   * a batch whose objects have differing key sets is rejected outright with
+    //     PGRST102 "All object keys must match", so the shapes cannot vary
+    //     per row.
+    // Sending the current value (never null) is also what keeps this from wiping
+    // a field: a null in the payload IS written.
+    entry = {
+      orig: row,
+      patch: {
+        id: row.id,
+        name: row.name,
+        image_url: row.image_url,
+        reviews_count: row.reviews_count,
+        google_maps: row.google_maps,
+        place_id: row.place_id,
+      },
+    };
+    pending.set(row.id, entry);
+  }
+  // Only fill gaps - never overwrite a value already in the table (it may have
+  // been corrected by hand or by an owner claiming the listing), nor one an
+  // earlier record already supplied for this same row.
+  const merged = entry.patch;
+  if (!merged.image_url && r.image_url) merged.image_url = r.image_url;
+  if (merged.reviews_count == null && r.reviews_count != null) merged.reviews_count = r.reviews_count;
+  if (!merged.google_maps && r.google_maps) merged.google_maps = r.google_maps;
+  // Backfill only: never overwrite a place_id already stored (it may have been
+  // set by hand or by a later, better scrape).
+  if (merged.place_id == null && r.place_id) merged.place_id = r.place_id;
+}
+// Drop rows where nothing actually changed, so we never send a no-op patch.
+const enrich = [];
+for (const { orig, patch } of pending.values()) {
   const changed =
-    next.image_url !== row.image_url ||
-    next.reviews_count !== row.reviews_count ||
-    next.google_maps !== row.google_maps;
-  if (changed) enrich.push({ id: row.id, name: row.name, ...next });
+    patch.image_url !== orig.image_url ||
+    patch.reviews_count !== orig.reviews_count ||
+    patch.google_maps !== orig.google_maps ||
+    patch.place_id !== orig.place_id;
+  if (changed) enrich.push(patch);
 }
 console.log('NEW TO INSERT:', fresh.length);
 console.log('EXISTING TO ENRICH:', enrich.length);
@@ -291,8 +347,7 @@ async function send(rows, prefer, label, query = '') {
     const res = await fetch(`${URL_BASE}/rest/v1/businesses${query}`, {
       method: 'POST',
       headers: {
-        apikey: KEY,
-        Authorization: `Bearer ${KEY}`,
+        ...AUTH_HEADERS,
         'Content-Type': 'application/json',
         Prefer: prefer,
       },
