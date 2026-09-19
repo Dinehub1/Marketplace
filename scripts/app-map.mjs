@@ -32,6 +32,10 @@ const SCREEN_FOR_PRODUCT = {
   'bg-remove': ['bg-remove'],
   'signature-maker': ['signature'],
   'ai-image': ['ai-image'],
+  // The translation screen is reachable from the toolbox target's own product list
+  // (`targets.mjs` names `translate-doc`), but its tile is still the catalogue's "coming
+  // soon" card until the price question is answered — so it is claimed here by slug.
+  'translate-doc': ['translate-doc'],
   'room-redesign': ['room-redesign'],
   // The two jobs of the Subtitles & Voice-over listing, which are screens of their own.
   subtitles: ['subtitles'],

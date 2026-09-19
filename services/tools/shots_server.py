@@ -63,7 +63,7 @@ SCREEN_ORDER = [
     "home", "browse", "search", "saved", "account", "business", "owner-sign-in",
     "tools-hub", "passport", "bg-remove", "signature", "pdf-tools", "breathe", "stretch", "walk", "habits", "water", "japa", "sleep",
     "pdf-tools-rotate", "pdf-tools-numbers",
-    "exif-strip", "photos-to-pdf", "collage", "resume-checker", "ai-image",
+    "exif-strip", "photos-to-pdf", "collage", "resume-checker", "ai-image", "translate-doc",
     "invoice", "tap-sprint", "word-duel", "paywall",
 ]
 
@@ -376,6 +376,20 @@ SCREEN_INFO = {
                 "the picture is not a real person. Free to the customer; each run bills us about "
                 "₹0.18 inside a daily free allowance of roughly 57 pictures, and the screen says so.",
         "asserts": ["TEXT TO IMAGE", "and the model draws it", "One picture per run"],
+    },
+    "translate-doc": {
+        "title": "Document translation (machine translation)",
+        "what": "One document in — a PDF, a Word file or plain text — and the same text back in "
+                "another Indian language. The picker draws its list from the same array the job "
+                "route validates against, so the screen cannot offer a language the server would "
+                "refuse; Gujarati and Telugu are offered by neither because their round trips "
+                "changed the numbers in a test sentence. The card prints the translation, fetched "
+                "back from the report itself, beside what the run used (characters, paragraphs, "
+                "seconds, model, neurons billed). It says “machine translation — read it before you "
+                "send it” in the card and not in small print: the text leaves this box for a model "
+                "on Workers AI, which is the one thing in this toolbox that does.",
+        "asserts": ["DOCUMENT TRANSLATION", "other language", "Swap the two",
+                    "no text layer to translate"],
     },
     "stretch": {
         "title": "Stretch — five-minute desk routine",
@@ -1218,6 +1232,7 @@ SCREEN_LINKS = [
     ("Collage", "/tools/collage"),
     ("Document check (CV)", "/tools/resume-checker"),
     ("Text to image", "/tools/ai-image"),
+    ("Document translation", "/tools/translate-doc"),
     ("Breathe", "/breathe"),
     ("Stretch", "/stretch"),
     ("Walk", "/walk"),

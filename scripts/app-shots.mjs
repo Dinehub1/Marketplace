@@ -71,6 +71,11 @@ const SCREENS = [
   // badge, the sentence that says it draws rather than designs, and the cap that says
   // a run cannot be undone.
   { name: 'ai-image', route: '/tools/ai-image', expect: ['TEXT TO IMAGE', 'and the model draws it', 'One picture per run'] },
+  // The second toolbox screen whose job leaves this box, and the only one that both
+  // reads a document and bills per run. Its markers are the badge, the language picker
+  // and the swap control, all of which are on the screen before anything is sent — so
+  // the capture cannot accidentally require a paid job to have run.
+  { name: 'translate-doc', route: '/tools/translate-doc', expect: ['DOCUMENT TRANSLATION', 'other language', 'Swap the two', 'no text layer to translate'] },
   { name: 'invoice', route: '/tools/invoice', expect: ['Shop name', 'Your shop', 'HSN is the code', 'applies to every item', 'The number counts itself once your shop name is in'], interact: 'invoice-upi-preview' },
   // The only screen with no server behind it: if this one fails, the fault is the
   // screen, never the network — so its markers are about the screen's own copy.
