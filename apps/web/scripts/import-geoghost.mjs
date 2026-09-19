@@ -14,6 +14,41 @@ const DATA_DIR =
   (process.platform === "win32" ? "C:\\Users\\Administrator\\GMaps Data" : path.join(ROOT, "GMaps Data"));
 const DRY = process.argv.includes("--dry-run");
 
+// ---------------------------------------------------------------------------
+// City. The importer is city-agnostic; the caller says which city the
+// --data-dir tree belongs to. Anything that lands without an explicit city is
+// inferred from the data-dir path when that path names a known city, and only
+// falls back to Indore as the historical default. (2026-09-19)
+const KNOWN_CITIES = ["Mumbai", "Delhi", "Bengaluru", "Hyderabad", "Chennai",
+  "Pune", "Kolkata", "Ahmedabad", "Jaipur", "Surat", "Lucknow",
+  "Chandigarh", "Kochi", "Nagpur", "Indore"];
+
+function inferCity(dir) {
+  if (!dir) return null;
+  const parts = path.resolve(dir).split(path.sep);
+  // Deepest segment wins, so ".../GMaps Data/Mumbai/2026-09-20" is Mumbai.
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const seg = parts[i].trim().toLowerCase();
+    const hit = KNOWN_CITIES.find((c) => c.toLowerCase() === seg);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+const cityFlag = process.argv.indexOf("--city");
+const CITY =
+  (cityFlag !== -1 && process.argv[cityFlag + 1]) ||
+  process.env.GMAPS_CITY ||
+  inferCity(DATA_DIR) ||
+  "Indore";
+
+// City is part of the FALLBACK identity. "Sharma Sweets" in Indore and the same
+// name in Mumbai are different businesses; without the city in the key the
+// second is treated as already present and never inserted. place_id stays the
+// authoritative match and needs no city - it is globally unique. (2026-09-19)
+const fallbackKey = (name, phone, city) =>
+  `${(name || "").trim().toLowerCase()}|${phone || ""}|${(city || "").trim().toLowerCase()}`;
+
 function loadEnv(file) {
   try {
     const envPath = path.join(ROOT, file); // use ROOT defined earlier
@@ -199,7 +234,7 @@ for (const file of files) {
         || (placeId ? `https://www.google.com/maps/place/?q=place_id:${placeId}` : null),
       area: localityOf(address),
       pincode: pincodeOf(address),
-      city: 'Indore',
+      city: CITY,
       rating: num(r[col['reviews_average']]),
       // Carried since 2026-08-12: a rating with no review count behind it is
       // not showable, and a listing with no photo is not scannable.
@@ -209,10 +244,11 @@ for (const file of files) {
       lng: num(r[col['longitude']]),
       source: 'geoghost-google-maps',
       status: 'active',
-      raw: { csv_file: path.basename(file), domain: str(r[col['domain']]) },
+      raw: { csv_file: path.basename(file), domain: str(r[col['domain']]), city: CITY },
     });
   }
 }
+console.log(`CITY: ${CITY} | data-dir: ${DATA_DIR}`);
 console.log(`Parsed ${records.length} unique businesses from ${files.length} CSV(s)`);
 if (DRY) {
   const has = (f) => records.filter((r) => r[f] != null).length;
@@ -237,7 +273,7 @@ const existingByPlace = new Map(); // place_id -> same row object
 let offset = 0;
 while (true) {
   const r = await fetch(
-    `${URL_BASE}/rest/v1/businesses?select=id,name,phone,image_url,reviews_count,google_maps,place_id&limit=1000&offset=${offset}`,
+    `${URL_BASE}/rest/v1/businesses?select=id,name,phone,city,image_url,reviews_count,google_maps,place_id&limit=1000&offset=${offset}`,
     { headers: AUTH_HEADERS },
   );
   if (!r.ok) {
@@ -252,7 +288,7 @@ while (true) {
   }
   const rows = await r.json();
   for (const x of rows) {
-    const key = `${(x.name || '').trim().toLowerCase()}|${x.phone || ''}`;
+    const key = fallbackKey(x.name, x.phone, x.city);
     existing.set(key, x);
     if (x.place_id) existingByPlace.set(x.place_id, x);
   }
@@ -284,7 +320,7 @@ const pending = new Map(); // row.id -> { orig, patch }
 for (const r of records) {
   // place_id is the authoritative match; fall back to name|phone for rows that
   // predate the place_id column and for listings Google gives no id for.
-  const key = `${r.name.trim().toLowerCase()}|${r.phone || ''}`;
+  const key = fallbackKey(r.name, r.phone, r.city);
   const row = (r.place_id && existingByPlace.get(r.place_id)) || existing.get(key);
   if (!row) { fresh.push(r); continue; }
 
@@ -367,7 +403,13 @@ async function send(rows, prefer, label, query = '') {
 let inserted = 0;
 let updated = 0;
 if (fresh.length) {
-  inserted = await send(fresh, 'return=representation', 'Inserted');
+  // ignore-duplicates: a unique-index collision now skips that one row instead
+  // of aborting the entire import. Before this, a single colliding record made
+  // PostgREST return 409 and send() called process.exit(1), so nothing else in
+  // the run was written. With city-scoped identity that should be rare, but a
+  // place_id can still legitimately collide across two cities' query sets, and
+  // one collision must not cost the whole pass. (2026-09-19)
+  inserted = await send(fresh, 'return=representation,resolution=ignore-duplicates', 'Inserted');
 }
 if (enrich.length) {
   // Upsert on the primary key: touches only the columns present in each row.
