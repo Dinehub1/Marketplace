@@ -305,6 +305,11 @@ await fetch(`${URL_BASE}/rest/v1/businesses?name=eq.ZZTEST`, {
 
 // Split into rows to create and rows that only need the new media fields.
 const fresh = [];
+// Two records can be new AND share name|phone (two different place_ids for one
+// business, e.g. a re-listing). businesses_name_phone_city_uniq rejects the
+// second, and a 409 used to abort the entire import. Keep the first
+// deterministically and never send the duplicate. (2026-09-19)
+const freshKeys = new Set();
 // Records that resolve to the same existing row are MERGED, not first-match-wins.
 // Two records routinely name one row: a listing first scraped before place_id
 // existed (key `name|phone`, no place_id) and the same listing scraped again
@@ -322,7 +327,13 @@ for (const r of records) {
   // predate the place_id column and for listings Google gives no id for.
   const key = fallbackKey(r.name, r.phone, r.city);
   const row = (r.place_id && existingByPlace.get(r.place_id)) || existing.get(key);
-  if (!row) { fresh.push(r); continue; }
+  if (!row) {
+    const fk = fallbackKey(r.name, r.phone, r.city);
+    if (freshKeys.has(fk)) continue;
+    freshKeys.add(fk);
+    fresh.push(r);
+    continue;
+  }
 
   let entry = pending.get(row.id);
   if (!entry) {
@@ -376,8 +387,9 @@ console.log('EXISTING TO ENRICH:', enrich.length);
 
 const BATCH = 100;
 
-async function send(rows, prefer, label, query = '') {
+async function send(rows, prefer, label, query = '', tolerateConflict = false) {
   let done = 0;
+  let skipped = 0;
   for (let i = 0; i < rows.length; i += BATCH) {
     const batch = rows.slice(i, i + BATCH);
     const res = await fetch(`${URL_BASE}/rest/v1/businesses${query}`, {
@@ -390,13 +402,23 @@ async function send(rows, prefer, label, query = '') {
       body: JSON.stringify(batch),
     });
     if (res.status !== 200 && res.status !== 201) {
-      console.error(`${label} batch ${i / BATCH + 1} failed: ${res.status} ${await res.text()}`);
+      const txt = await res.text();
+      // PostgREST here does NOT honour Prefer: resolution=ignore-duplicates
+      // (verified 2026-09-19: it still returns 409), so a duplicate has to be
+      // tolerated in code. One duplicate must never cost the whole run.
+      if (tolerateConflict && res.status === 409) {
+        skipped += batch.length;
+        console.warn(`${label} batch ${i / BATCH + 1}: skipped ${batch.length} duplicate row(s) (409)`);
+        continue;
+      }
+      console.error(`${label} batch ${i / BATCH + 1} failed: ${res.status} ${txt}`);
       process.exit(1);
     }
     const back = await res.json();
     done += Array.isArray(back) ? back.length : batch.length;
     console.log(`${label} ${done}/${rows.length}`);
   }
+  if (skipped) console.log(`${label}: skipped ${skipped} duplicate row(s)`);
   return done;
 }
 
@@ -409,7 +431,7 @@ if (fresh.length) {
   // the run was written. With city-scoped identity that should be rare, but a
   // place_id can still legitimately collide across two cities' query sets, and
   // one collision must not cost the whole pass. (2026-09-19)
-  inserted = await send(fresh, 'return=representation,resolution=ignore-duplicates', 'Inserted');
+  inserted = await send(fresh, 'return=representation', 'Inserted', '', true);
 }
 if (enrich.length) {
   // Upsert on the primary key: touches only the columns present in each row.
