@@ -66,7 +66,8 @@ export type Brand = {
   pricing_json: PricingPlan[];
   features_json: FeatureItem[];
   booking_enabled: boolean;
-  quote_enabled: boolean;
+  // `quote_enabled` is deliberately gone: the Request Quote page it gated has
+  // been removed, so the column in `public.brands` is now unread by this app.
   checkout_enabled: boolean;
   chat_enabled: boolean;
 };

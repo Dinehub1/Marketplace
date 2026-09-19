@@ -340,7 +340,11 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     const { VendorBookingsPage } = await import("./pages/vendor-bookings");
     return <VendorBookingsPage brand={brand} />;
   }
-  if (subPath === "/quote" || subPath === "/request-quote") { if (!brand.quote_enabled) return <ComingSoon brand={brand} pageName="Request Quote" />; const { QuotePage } = await import("./pages/quote"); return <QuotePage brand={brand} />; }
+  // The Request Quote page (`/quote`, `/request-quote`, and sarkarghar's
+  // `/get-quote` alias) was removed on 2026-09-19. It was a four-step form that
+  // collected a name, an email and a phone number and then said a quote would
+  // arrive in 24 hours — nothing behind it sent, stored or priced anything, so
+  // every route that reached it resolved to a promise the repo could not keep.
   if (subPath === "/checkout" || subPath === "/pay") { if (!brand.checkout_enabled) return <ComingSoon brand={brand} pageName="Checkout" />; const { CheckoutPage } = await import("./pages/checkout"); return <CheckoutPage brand={brand} />; }
   if (subPath === "/support" || subPath === "/help") { if (!isEnabled(brand, "support")) return <ComingSoon brand={brand} pageName="Support" />; const { SupportPage } = await import("./pages/support"); return <SupportPage brand={brand} />; }
   if (subPath === "/chat" || subPath === "/ai-assistant") { if (!brand.chat_enabled) return <ComingSoon brand={brand} pageName="AI Assistant" />; const { AIChatPage } = await import("./pages/ai-chat"); return <AIChatPage brand={brand} />; }

@@ -398,19 +398,9 @@ export function PricingPage({ brand }: { brand: Brand }) {
         </div>
       </section>
 
-      <section className="section">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="rounded-3xl p-10 md:p-16 relative overflow-hidden" style={{ background: "var(--brand-gradient)" }}>
-            <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 dot-pattern" /></div>
-            <div className="relative">
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4">Need a Custom Plan?</h2>
-          <p className="text-white/80 mb-8">Special pricing is available for large hospitals, clinics, and chains.</p>
-              <a href={`/quote`} className="bg-surface px-8 py-3.5 rounded-xl font-bold text-sm inline-block hover:translate-y-[-2px] transition-transform shadow-lg" style={{ color: "var(--brand-secondary)" }}>Request a custom quote →</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* The "Need a Custom Plan?" band that used to close this page is gone with
+          the Request Quote page (2026-09-19): its only action was a link to
+          /quote, and a band with a headline and nothing to press is a dead end. */}
       <BrandFooter brand={brand} />
     </div>
   );

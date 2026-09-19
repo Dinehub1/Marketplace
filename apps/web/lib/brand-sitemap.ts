@@ -11,8 +11,8 @@
  *               database cannot silently produce an empty page).
  *   detail    — /<something>/<id>, the real business page under a name this
  *               brand's visitors would look for.
- *   alias     — a route that genuinely is another page (e.g. /get-quote -> the
- *               quote form), rewritten internally rather than redirected.
+ *   alias     — a route that genuinely is another page (e.g. /reviews -> the
+ *               reviews page), rewritten internally rather than redirected.
  *   form      — a lead/booking form that already exists in the app.
  *
  * Deliberately NOT included: routes that cannot be backed by real data or real
@@ -48,7 +48,9 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/carpenters", label: "Carpenters", kind: "category", match: ["carpenter", "furniture"], blurb: "Carpenters and furniture work" },
     { path: "/painters", label: "Painters", kind: "category", match: ["painter", "denting", "painting"], blurb: "Painting and denting work" },
     { path: "/service", label: "Service", kind: "detail", prefix: "/service" },
-    { path: "/get-quote", label: "Get a quote", kind: "alias", to: "/quote" },
+    // sarkarghar's `/get-quote` alias was removed with the Request Quote page it
+    // pointed at (2026-09-19) — a nav item is a promise, and this one led to a
+    // form that priced nothing.
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],

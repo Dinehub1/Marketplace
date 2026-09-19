@@ -153,7 +153,6 @@ Generated from `apps/web/lib/brand-sitemap.ts`, the same source the router reads
 - https://sarkarghar.dropby.co.in/carpenters  — Carpenters
 - https://sarkarghar.dropby.co.in/painters  — Painters
 - https://sarkarghar.dropby.co.in/service/110779  — Service
-- https://sarkarghar.dropby.co.in/get-quote  — Get a quote
 - https://sarkarghar.dropby.co.in/about  — About
 - https://sarkarghar.dropby.co.in/contact  — Contact
 
