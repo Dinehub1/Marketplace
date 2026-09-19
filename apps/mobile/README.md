@@ -75,7 +75,7 @@ Everything a store listing is judged on comes from that one word, resolved in
 | | comes from | example (`APP_TARGET=wellness`) |
 | --- | --- | --- |
 | name, slug, scheme | target | `Wellness: Daily Practices` / `wellness` |
-| bundle id / package | target | `co.dropby.wellness` |
+| bundle id / package | target | `com.brandcollabs.wellness` |
 | icon, adaptive icon, splash | `assets/targets/<id>/` | `assets/targets/wellness/icon.png` |
 | accent colour | target | `#0891b2` |
 | permissions | target | `INTERNET` only — no camera |

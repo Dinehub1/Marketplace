@@ -82,7 +82,7 @@ import {
  * The game's own look: an ember ramp on a slate board.
  *
  * The chrome around the board comes from the design system and the accent is this build
- * target's own colour (`targets.mjs` → `co.dropby.mergetiles`, #ea580c), the way the other
+ * target's own colour (`targets.mjs` → `com.brandcollabs.mergetiles`, #ea580c), the way the other
  * three games wear theirs. The board is the one thing that is this game's own: twelve
  * values running from a pale chip to the deepest ember, so a glance at the glass says how
  * far the round has come without reading a numeral.

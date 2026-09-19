@@ -28,7 +28,7 @@ Stretch, Walk and Water produced the same shell. Six bundle ids of one app is th
 Apple 4.3 ("multiple Bundle IDs of the same app") and Play's repetitive-content policy
 reject, and that rejection lands on the developer account, not on one listing.
 
-They are now a single listing, **Wellness: Daily Practices** (`co.dropby.wellness`),
+They are now a single listing, **Wellness: Daily Practices** (`com.brandcollabs.wellness`),
 opening on the Today hub (`/habits`) with all six practices inside. `check-targets.mjs`
 never caught this because it compares words — name, subtitle, ASO keywords — and never
 screens; that gap is recorded in `targets.mjs` so the decision is not re-litigated.

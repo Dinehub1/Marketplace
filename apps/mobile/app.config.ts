@@ -58,13 +58,23 @@ const BRAND_NAME = process.env.BRAND_NAME ?? target.name;
 const PERMISSIONS: string[] = [...target.permissions];
 
 /**
- * The marketplace is already configured in App Store Connect under the legacy id, so
- * changing it here would orphan the existing listing. Every other target takes its id
- * from targets.mjs.
+ * Every target now takes its id from targets.mjs, under one `com.brandcollabs.*` prefix.
+ *
+ * The marketplace used to be pinned here to `live.cashcard.sarkarmarketplace`, its legacy id
+ * from before this repo was reorganised, because it was already configured in App Store
+ * Connect under that name and changing it would orphan the record. That pin was removed on
+ * 2026-09-19, together with the two other prefixes the fleet had accumulated (`co.dropby.*`
+ * on fourteen targets, `live.cashcard.*` on the fifteenth) — three names for one developer
+ * account is three sets of credentials, provisioning profiles and store records to keep.
+ *
+ * **A bundle id cannot be renamed once a store record exists.** An app already created under
+ * an old id stays bound to it: this change does not move that record, it strands it, and a
+ * new listing has to be created under the new id. That cost is real and no code change can
+ * undo it, so it was the user's call to make — the pin above was the record of the opposite
+ * decision. `BRAND_BUNDLE_ID` is kept as the escape hatch for a build that has to wear an id
+ * targets.mjs does not know.
  */
-const BUNDLE_ID =
-  process.env.BRAND_BUNDLE_ID ??
-  (target.id === "sarkarmarketplace" ? "live.cashcard.sarkarmarketplace" : target.bundleId);
+const BUNDLE_ID = process.env.BRAND_BUNDLE_ID ?? target.bundleId;
 
 /**
  * Brand ramp. Mirrors the `theme` column on the brand row so a cold launch paints the

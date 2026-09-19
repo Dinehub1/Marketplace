@@ -24,7 +24,7 @@ export const TARGETS = [
   {
     id: "wellness",
     name: "Wellness: Daily Practices",
-    bundleId: "co.dropby.wellness",
+    bundleId: "com.brandcollabs.wellness",
     tagline: "Breathe, stretch, walk, count water and beads, then wind down",
     storeCategory: "Health & Fitness",
     aso: [
@@ -45,7 +45,7 @@ export const TARGETS = [
   {
     id: "passport-photo",
     name: "Passport Photo Maker",
-    bundleId: "co.dropby.passportphoto",
+    bundleId: "com.brandcollabs.passportphoto",
     tagline: "Passport & visa photos in 30 seconds",
     storeCategory: "Photography",
     aso: ["passport photo", "visa photo", "id photo", "photo print size"],
@@ -57,7 +57,7 @@ export const TARGETS = [
   {
     id: "pdf-tools",
     name: "PDF Toolkit: Merge & Sign",
-    bundleId: "co.dropby.pdftools",
+    bundleId: "com.brandcollabs.pdftools",
     tagline: "Merge, split, compress, sign PDFs",
     storeCategory: "Productivity",
     aso: ["pdf merge", "pdf compress", "sign pdf", "pdf converter"],
@@ -69,7 +69,7 @@ export const TARGETS = [
   {
     id: "room-redesign",
     name: "Room Redesign: AI Interior",
-    bundleId: "co.dropby.roomredesign",
+    bundleId: "com.brandcollabs.roomredesign",
     tagline: "See your room in five new styles",
     storeCategory: "Lifestyle",
     aso: ["interior design", "room design", "home decor ideas"],
@@ -81,7 +81,7 @@ export const TARGETS = [
   {
     id: "subtitles-voice",
     name: "Subtitles & Voice-over",
-    bundleId: "co.dropby.subtitlesvoice",
+    bundleId: "com.brandcollabs.subtitlesvoice",
     tagline: "Captions for video, voice from text",
     storeCategory: "Video Players & Editors",
     aso: ["subtitles", "captions", "text to speech", "srt"],
@@ -93,7 +93,7 @@ export const TARGETS = [
   {
     id: "resume-builder",
     name: "Resume Builder & ATS Check",
-    bundleId: "co.dropby.resumebuilder",
+    bundleId: "com.brandcollabs.resumebuilder",
     tagline: "Build a resume that passes screening",
     storeCategory: "Business",
     aso: ["resume maker", "cv maker", "ats resume", "bio data"],
@@ -105,7 +105,7 @@ export const TARGETS = [
   {
     id: "shop-toolkit",
     name: "Shop Toolkit: Bills & Catalogue",
-    bundleId: "co.dropby.shoptoolkit",
+    bundleId: "com.brandcollabs.shoptoolkit",
     tagline: "Invoices, catalogue and orders for your shop",
     storeCategory: "Business",
     aso: ["invoice maker", "gst bill", "catalogue maker", "udyam"],
@@ -117,7 +117,7 @@ export const TARGETS = [
   {
     id: "toolbox",
     name: "Everyday Tools & Photo Fix",
-    bundleId: "co.dropby.toolbox",
+    bundleId: "com.brandcollabs.toolbox",
     tagline: "Photos, documents and small jobs in one app",
     storeCategory: "Tools",
     aso: ["background remover", "photo editor", "id photo", "tools"],
@@ -138,7 +138,7 @@ export const TARGETS = [
   {
     id: "sarkarhealth",
     name: "SarkarHealth: Doctors in Indore",
-    bundleId: "co.dropby.sarkarhealth",
+    bundleId: "com.brandcollabs.sarkarhealth",
     tagline: "Find and call doctors and clinics in Indore",
     storeCategory: "Medical",
     aso: ["doctors in indore", "clinic", "hospital", "chemist"],
@@ -158,7 +158,7 @@ export const TARGETS = [
   {
     id: "sarkarmarketplace",
     name: "Indore Business Directory",
-    bundleId: "co.dropby.indoredirectory",
+    bundleId: "com.brandcollabs.indoredirectory",
     tagline: "Every local business in Indore, with phone numbers",
     storeCategory: "Business",
     aso: ["indore business", "local directory", "shops near me"],
@@ -171,7 +171,7 @@ export const TARGETS = [
   {
     id: "sarkarcars",
     name: "Car Service & Dealers Indore",
-    bundleId: "co.dropby.carsindore",
+    bundleId: "com.brandcollabs.carsindore",
     tagline: "Car dealers, garages, denting and cleaning",
     storeCategory: "Auto & Vehicles",
     aso: ["car service indore", "car dealer", "denting painting"],
@@ -189,7 +189,7 @@ export const TARGETS = [
   {
     id: "tap-sprint",
     name: "Tap Sprint: Reflex Game",
-    bundleId: "co.dropby.tapsprint",
+    bundleId: "com.brandcollabs.tapsprint",
     tagline: "Thirty seconds, how fast are you?",
     storeCategory: "Games",
     aso: ["reflex game", "tap game", "reaction test", "offline games"],
@@ -203,7 +203,7 @@ export const TARGETS = [
   {
     id: "word-duel",
     name: "Word Duel: Word Puzzle",
-    bundleId: "co.dropby.wordduel",
+    bundleId: "com.brandcollabs.wordduel",
     tagline: "Sixty seconds of word making",
     storeCategory: "Games",
     aso: ["word game", "word puzzle", "offline word games"],
@@ -217,7 +217,7 @@ export const TARGETS = [
   {
     id: "block-clear",
     name: "Block Clear: Puzzle",
-    bundleId: "co.dropby.blockclear",
+    bundleId: "com.brandcollabs.blockclear",
     tagline: "Fit the blocks, clear the lines",
     storeCategory: "Games",
     aso: ["block puzzle", "block game", "offline puzzle", "brain puzzle"],
@@ -235,7 +235,7 @@ export const TARGETS = [
   {
     id: "merge-tiles",
     name: "Merge: Number Tiles",
-    bundleId: "co.dropby.mergetiles",
+    bundleId: "com.brandcollabs.mergetiles",
     tagline: "Slide the tiles, double the numbers",
     storeCategory: "Games",
     aso: ["number merge", "merge puzzle", "math puzzle", "tile puzzle"],
