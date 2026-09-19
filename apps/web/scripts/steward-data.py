@@ -47,21 +47,29 @@ def get(path):
 
 
 def patch(ids, fields, reason):
-    """Status changes are the only writes this script makes."""
+    """Status changes are the only writes this script makes.
+
+    One PATCH per row, addressed by `id`, not a POST upsert. This matters since
+    migration 20260919000000 added businesses_name_phone_city_uniq: a POST is an
+    INSERT ... ON CONFLICT DO UPDATE, and Postgres validates the proposed tuple
+    against *every* unique index before the `id` conflict target is considered,
+    so updating a duplicate's status collided with the kept row's
+    (name, phone, city) key and the whole 100-row batch died with 23505. An
+    UPDATE of an existing row by primary key needs no conflict resolution at
+    all, so the index is irrelevant here.
+    """
     ok = 0
     for i in range(0, len(ids), 100):
         chunk = ids[i:i+100]
-        payload = []
-        for j, bid in enumerate(chunk):
-            body = {"id": bid, "name": fields["names"][j], **fields["set"]}
-            payload.append(body)
-        req = urllib.request.Request(f"{URL}/rest/v1/businesses?on_conflict=id",
-                                     method="POST", data=json.dumps(payload).encode(), headers=H)
-        req.add_header("Prefer", "resolution=merge-duplicates,return=minimal")
-        try:
-            with urllib.request.urlopen(req, timeout=120): ok += len(payload)
-        except urllib.error.HTTPError as e:
-            print(f"   FAILED batch: {e.code} {e.read().decode()[:120]}")
+        for bid in chunk:
+            req = urllib.request.Request(
+                f"{URL}/rest/v1/businesses?id=eq.{bid}",
+                method="PATCH", data=json.dumps(fields["set"]).encode(), headers=H)
+            req.add_header("Prefer", "return=minimal")
+            try:
+                with urllib.request.urlopen(req, timeout=120): ok += 1
+            except urllib.error.HTTPError as e:
+                print(f"   FAILED id={bid}: {e.code} {e.read().decode()[:120]}")
     with open(LOG, "a", encoding="utf-8") as f:
         for bid in ids:
             f.write(json.dumps({"ts": time.strftime("%Y-%m-%dT%H:%M:%S"), "id": bid,
