@@ -1,11 +1,18 @@
 import { CITY_LABEL } from '@hermes/core';
 import { NextRequest } from "next/server";
-import { categoryPath, getCategoryIndex } from "@/lib/categories";
+import { categoryPath, getCategoryIndex, getCityIndex, DEFAULT_CITY } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
 import { getBrand, brandSlugFromHost, originForBrand } from "@/lib/brands";
 
 // Static pages worth submitting alongside the category set.
 const CORE_PATHS = ["/", "/marketplace", "/categories", "/about", "/contact", "/faq"];
+
+/**
+ * A city needs at least this many active listings before its category pages are
+ * submitted. Keeps thin cities out of the index while they are still being
+ * scraped. Raise as the fleet matures.
+ */
+const MIN_CITY_LISTINGS = 25;
 
 function xmlEscape(s: string): string {
   return s
@@ -114,15 +121,35 @@ export async function GET(req: NextRequest) {
     businessUrls = await collectBusinessUrls(base, key, origin, allowedLower);
   }
 
+  // Category pages for every city that actually has inventory.
+  //
+  // A city is only submitted once it clears MIN_CITY_LISTINGS, so the sitemap
+  // never advertises an empty shell — and it grows automatically as the scraper
+  // fills a city in, with no per-city edit here. Indore keeps the unqualified
+  // /<category>-in-indore URLs it has always had. (2026-09-19)
+  const cityCategoryUrls: SitemapUrl[] = [];
+  if (publishes) {
+    const allowedLowerAll = allowed ? new Set(allowed.map((c) => c.toLowerCase())) : null;
+    for (const cs of await getCityIndex()) {
+      if (cs.count < MIN_CITY_LISTINGS) continue;
+      const idx = cs.slug === DEFAULT_CITY.slug ? categories : await getCategoryIndex(cs.city);
+      for (const c of idx) {
+        if (allowedLowerAll && !allowedLowerAll.has(c.category.toLowerCase())) continue;
+        const perCity = c.count;
+        cityCategoryUrls.push({
+          loc: `${origin}${categoryPath(c.category, cs.slug)}`,
+          priority: perCity >= 100 ? "0.9" : perCity >= 20 ? "0.8" : "0.6",
+        });
+      }
+    }
+  }
+
   const urls: SitemapUrl[] = [
     ...corePaths.map((p) => ({ loc: `${origin}${p}`, priority: p === "/" ? "1.0" : "0.7" })),
     // Bigger categories first and weighted higher — with ~320 URLs the crawl
     // budget is finite, so the pages with the most listings should be found
     // first rather than being buried behind categories with three entries.
-    ...categories.map((c) => ({
-      loc: `${origin}${categoryPath(c.category)}`,
-      priority: c.count >= 100 ? "0.9" : c.count >= 20 ? "0.8" : "0.6",
-    })),
+    ...cityCategoryUrls,
     ...businessUrls,
   ];
 

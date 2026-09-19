@@ -8,7 +8,10 @@ import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categor
 import { matchBrandRoute } from "@/lib/brand-sitemap";
 import { resolveCategoryRoute } from "@/lib/brand-sitemap-resolve";
 import {
-  CITY_LABEL,
+  DEFAULT_CITY,
+  cityBySlug,
+  citySlugFromPath,
+  type City,
   categoryPath,
   categoryAreaPath,
   categorySlugFromPath,
@@ -43,6 +46,12 @@ export async function generateMetadata(
   const sp = await searchParams;
   const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
+  // City comes from the URL: "/plumber-in-mumbai" -> Mumbai. A path with no
+  // known city token (including "/plumber-in-indore") stays the default city, so
+  // every existing URL keeps its current meaning. (2026-09-19)
+  const city = cityBySlug(citySlugFromPath(subPath)) ?? DEFAULT_CITY;
+  const cityName = city.label;
+
   // Canonical origin for meta/OG/JSON-LD: the brand's own domain (the new
   // domain), so canonical tags consolidate on the domain we want indexed rather
   // than the one being retired.
@@ -52,9 +61,9 @@ export async function generateMetadata(
   // the city-level category page so the area is picked out of the same slug.
   const caSlug = categoryAreaSlugFromPath(subPath);
   if (caSlug) {
-    const category = await findCategory(caSlug.categorySlug);
+    const category = await findCategory(caSlug.categorySlug, cityName);
     if (category) {
-      const areaRaw = (await getCategoryAreaIndex(category.category)).find((a) => a.slug === caSlug.areaSlug)?.area;
+      const areaRaw = (await getCategoryAreaIndex(category.category, cityName)).find((a) => a.slug === caSlug.areaSlug)?.area;
       if (areaRaw) {
         const label = titleize(category.category);
         const areaLabel = titleize(areaRaw);
@@ -62,14 +71,14 @@ export async function generateMetadata(
         const suffix = page > 1 ? ` — Page ${page}` : "";
         const canonical = `${origin}${categoryAreaPath(category.category, areaRaw)}`;
         return {
-          title: `${category.count} Best ${label} in ${areaLabel}, ${CITY_LABEL} (2026) | ${brand.name}${suffix}`,
+          title: `${category.count} Best ${label} in ${areaLabel}, ${cityName} (2026) | ${brand.name}${suffix}`,
           description:
-            `Compare ${label.toLowerCase()} in ${areaLabel}, ${CITY_LABEL} — ratings, ` +
+            `Compare ${label.toLowerCase()} in ${areaLabel}, ${cityName} — ratings, ` +
             `addresses and phone numbers. Call directly, no signup needed.`,
           alternates: { canonical: page > 1 ? `${canonical}?page=${page}` : canonical },
           openGraph: {
-            title: `${category.count} Best ${label} in ${areaLabel}, ${CITY_LABEL}`,
-            description: `Verified ${label.toLowerCase()} listings in ${areaLabel}, ${CITY_LABEL} with ratings and phone numbers.`,
+            title: `${category.count} Best ${label} in ${areaLabel}, ${cityName}`,
+            description: `Verified ${label.toLowerCase()} listings in ${areaLabel}, ${cityName} with ratings and phone numbers.`,
             url: canonical,
             type: "website",
           },
@@ -80,21 +89,21 @@ export async function generateMetadata(
 
   const catSlug = categorySlugFromPath(subPath);
   if (catSlug) {
-    const category = await findCategory(catSlug);
+    const category = await findCategory(catSlug, cityName);
     if (category) {
       const label = titleize(category.category);
       const page = Math.max(1, Number(sp.page) || 1);
       const suffix = page > 1 ? ` — Page ${page}` : "";
-      const canonical = `${origin}${categoryPath(category.category)}`;
+      const canonical = `${origin}${categoryPath(category.category, city.slug)}`;
       return {
-        title: `${category.count} Best ${label} in ${CITY_LABEL} (2026) | ${brand.name}${suffix}`,
+        title: `${category.count} Best ${label} in ${cityName} (2026) | ${brand.name}${suffix}`,
         description:
-          `Compare ${label.toLowerCase()} in ${CITY_LABEL}, Madhya Pradesh — ratings, ` +
+          `Compare ${label.toLowerCase()} in ${cityName}, ${city.state} — ratings, ` +
           `addresses and phone numbers. Call directly, no signup needed.`,
         alternates: { canonical: page > 1 ? `${canonical}?page=${page}` : canonical },
         openGraph: {
-          title: `${category.count} Best ${label} in ${CITY_LABEL}`,
-          description: `Verified ${label.toLowerCase()} listings in ${CITY_LABEL} with ratings and phone numbers.`,
+          title: `${category.count} Best ${label} in ${cityName}`,
+          description: `Verified ${label.toLowerCase()} listings in ${cityName} with ratings and phone numbers.`,
           url: canonical,
           type: "website",
         },
@@ -106,21 +115,21 @@ export async function generateMetadata(
   // brand default — they are the pages that rank for "business directory
   // indore" and for the long tail of category browsing.
   if (subPath === "/marketplace" || subPath === "/listings") {
-    const listings = await getActiveListingCount();
+    const listings = await getActiveListingCount(cityName);
     return {
-      title: `Business Directory in ${CITY_LABEL} — ${listings.toLocaleString("en-IN")} Local Listings | ${brand.name}`,
+      title: `Business Directory in ${cityName} — ${listings.toLocaleString("en-IN")} Local Listings | ${brand.name}`,
       description:
-        `Search ${listings.toLocaleString("en-IN")} businesses in ${CITY_LABEL} — plumbers, electricians, ` +
+        `Search ${listings.toLocaleString("en-IN")} businesses in ${cityName} — plumbers, electricians, ` +
         `doctors, tutors and more. Ratings, addresses and phone numbers you can call directly.`,
       alternates: { canonical: `${origin}/marketplace` },
     };
   }
   if (subPath === "/categories") {
-    const index = await getCategoryIndex();
+    const index = await getCategoryIndex(cityName);
     return {
-      title: `All Business Categories in ${CITY_LABEL} | ${brand.name}`,
+      title: `All Business Categories in ${cityName} | ${brand.name}`,
       description:
-        `Browse every type of business listed in ${CITY_LABEL}, A to Z — ${index.length} categories, ` +
+        `Browse every type of business listed in ${cityName}, A to Z — ${index.length} categories, ` +
         `each with the highest-rated local options and phone numbers you can call.`,
       alternates: { canonical: `${origin}/categories` },
     };
@@ -221,6 +230,10 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   const sp = await searchParams;
   let subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
+  // Resolved once, then used by every fetch and passed to every page below, so
+  // a rendered page can never mix two cities. (2026-09-19)
+  const city: City = cityBySlug(citySlugFromPath(subPath)) ?? DEFAULT_CITY;
+
   // Per-brand sitemap (lib/brand-sitemap.ts): the semantic routes a visitor
   // expects from this brand - /doctors, /plumbers, /used-cars - resolved onto
   // real category listings and real business pages. An alias is rewritten
@@ -242,7 +255,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
         if (!sitemapCategory) notFound();
         const sitemapPageNo = Math.max(1, Number(sp.page) || 1);
         const { CategoryLandingPage } = await import("./pages/category-landing");
-        return <CategoryLandingPage brand={brand} category={sitemapCategory} page={sitemapPageNo} />;
+        return <CategoryLandingPage brand={brand} category={sitemapCategory} page={sitemapPageNo} city={city} />;
       }
     }
   }
@@ -261,7 +274,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/services" || subPath === "/products") { if (!isEnabled(brand, "services")) return <ComingSoon brand={brand} pageName="Services" />; const { ServicesPage } = await import("./pages/services"); return <ServicesPage brand={brand} />; }
   if (subPath === "/pricing") { if (!isEnabled(brand, "pricing")) return <ComingSoon brand={brand} pageName="Pricing" />; const { PricingPage } = await import("./pages/pricing"); return <PricingPage brand={brand} />; }
   if (subPath === "/features") { if (!isEnabled(brand, "features")) return <ComingSoon brand={brand} pageName="Features" />; const { FeaturesPage } = await import("./pages/features"); return <FeaturesPage brand={brand} />; }
-  if (subPath === "/marketplace" || subPath === "/listings") { if (!brandPublishesDirectory(brand)) notFound(); if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} sp={sp} />; }
+  if (subPath === "/marketplace" || subPath === "/listings") { if (!brandPublishesDirectory(brand)) notFound(); if (!isEnabled(brand, "marketplace")) return <ComingSoon brand={brand} pageName="Marketplace" />; const { MarketplacePage } = await import("./pages/marketplace"); return <MarketplacePage brand={brand} sp={sp} city={city} />; }
   if (subPath.startsWith("/business/")) {
     const businessId = Number(subPath.slice("/business/".length).split("/")[0]);
     if (Number.isFinite(businessId) && businessId > 0) {
@@ -278,7 +291,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
   if (subPath === "/categories") {
     if (!brandPublishesDirectory(brand)) notFound();
     const { CategoriesPage } = await import("./pages/categories");
-    return <CategoriesPage brand={brand} />;
+    return <CategoriesPage brand={brand} city={city} />;
   }
   // Category within a neighbourhood: "/plumber-in-vijay-nagar". Same slug
   // shape as the city-level category page but with a real locality, so it is
@@ -287,17 +300,17 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     const caSlug = categoryAreaSlugFromPath(subPath);
     if (caSlug) {
       if (!brandPublishesDirectory(brand)) notFound();
-      const category = await findCategory(caSlug.categorySlug);
+      const category = await findCategory(caSlug.categorySlug, city.label);
       if (!category) notFound();
       // A vertical brand only owns its own categories.
-      const index = await getCategoryIndex();
+      const index = await getCategoryIndex(city.label);
       const allowed = categoriesForBrand(brand.slug, index.map((c) => c.category));
       if (allowed && !allowed.includes(category.category)) notFound();
-      const areaRaw = (await getCategoryAreaIndex(category.category)).find((a) => a.slug === caSlug.areaSlug)?.area ?? null;
+      const areaRaw = (await getCategoryAreaIndex(category.category, city.label)).find((a) => a.slug === caSlug.areaSlug)?.area ?? null;
       if (!areaRaw) notFound();
       const page = Math.max(1, Number(sp.page) || 1);
       const { CategoryAreaPage } = await import("./pages/category-area");
-      return <CategoryAreaPage brand={brand} category={category} area={areaRaw} page={page} />;
+      return <CategoryAreaPage brand={brand} category={category} area={areaRaw} page={page} city={city} />;
     }
   }
 
@@ -307,17 +320,17 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     const catSlug = categorySlugFromPath(subPath);
     if (catSlug) {
       if (!brandPublishesDirectory(brand)) notFound();
-      const category = await findCategory(catSlug);
+      const category = await findCategory(catSlug, city.label);
       if (!category) notFound();
       // A vertical brand only owns its own categories. Without this,
       // sarkarfood served /plumber-in-indore — the same page as ten other
       // brands, competing with all of them for the same query.
-      const index = await getCategoryIndex();
+      const index = await getCategoryIndex(city.label);
       const allowed = categoriesForBrand(brand.slug, index.map((c) => c.category));
       if (allowed && !allowed.includes(category.category)) notFound();
       const page = Math.max(1, Number(sp.page) || 1);
       const { CategoryLandingPage } = await import("./pages/category-landing");
-      return <CategoryLandingPage brand={brand} category={category} page={page} />;
+      return <CategoryLandingPage brand={brand} category={category} page={page} city={city} />;
     }
   }
   if (subPath === "/blog" || subPath === "/news") { if (!isEnabled(brand, "blog")) return <ComingSoon brand={brand} pageName="Blog" />; const { BlogPage } = await import("./pages/blog"); return <BlogPage brand={brand} />; }

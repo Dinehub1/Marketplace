@@ -1,6 +1,6 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import {
-  CITY_LABEL,
+  type City,
   categoryPath,
   categoryAreaPath,
   getCategoryAreaIndex,
@@ -25,11 +25,13 @@ export async function CategoryAreaPage({
   category,
   area,
   page,
+  city,
 }: {
   brand: Brand;
   category: CategoryStat;
   area: string;
   page: number;
+  city: City;
 }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
@@ -41,7 +43,7 @@ export async function CategoryAreaPage({
   const base = `${origin}${categoryAreaPath(category.category, area)}`;
 
   const [{ rows, total }, index, areaIdx] = await Promise.all([
-    getCategoryAreaListings(category.category, area, page, PAGE_SIZE),
+    getCategoryAreaListings(category.category, area, page, PAGE_SIZE, city.label),
     getCategoryIndex(),
     getCategoryAreaIndex(category.category),
   ]);
@@ -52,7 +54,7 @@ export async function CategoryAreaPage({
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${label} in ${areaLabel}, ${CITY_LABEL}`,
+    name: `${label} in ${areaLabel}, ${city.label}`,
     numberOfItems: total,
     itemListElement: rows.slice(0, 20).map((b: Listing, i: number) => ({
       "@type": "ListItem",
@@ -60,7 +62,7 @@ export async function CategoryAreaPage({
       item: {
         "@type": "LocalBusiness",
         name: b.name,
-        ...(b.address ? { address: { "@type": "PostalAddress", streetAddress: b.address, addressLocality: b.city ?? CITY_LABEL, addressRegion: "Madhya Pradesh", addressCountry: "IN" } } : {}),
+        ...(b.address ? { address: { "@type": "PostalAddress", streetAddress: b.address, addressLocality: b.city ?? city.label, addressRegion: city.state, addressCountry: "IN" } } : {}),
         ...(b.phone ? { telephone: b.phone } : {}),
         ...(b.website ? { url: b.website } : {}),
         ...(b.rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: b.rating, bestRating: 5, ...(b.reviews_count != null ? { reviewCount: b.reviews_count } : {}) } } : {}),
@@ -74,7 +76,7 @@ export async function CategoryAreaPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: brand.name, item: origin },
       { "@type": "ListItem", position: 2, name: "Directory", item: `${origin}/marketplace` },
-      { "@type": "ListItem", position: 3, name: `${label} in ${CITY_LABEL}`, item: `${origin}${categoryPath(category.category)}` },
+      { "@type": "ListItem", position: 3, name: `${label} in ${city.label}`, item: `${origin}${categoryPath(category.category)}` },
       { "@type": "ListItem", position: 4, name: `${label} in ${areaLabel}`, item: base },
     ],
   };
@@ -112,7 +114,7 @@ export async function CategoryAreaPage({
                   {label} in {areaLabel}
                 </h1>
                 <p className="text-lede mt-3 max-w-2xl">
-                  {label.toLowerCase()} businesses in {areaLabel}, {CITY_LABEL}, sorted by rating — with phone numbers you can call straight away.
+                  {label.toLowerCase()} businesses in {areaLabel}, {city.label}, sorted by rating — with phone numbers you can call straight away.
                 </p>
               </div>
             </div>
@@ -146,7 +148,7 @@ export async function CategoryAreaPage({
             <div className="card px-6 py-16 text-center">
               <p className="text-lg font-semibold text-ink">No listings here yet</p>
               <a href={`${origin}${categoryPath(category.category)}`} className="press mt-3 inline-block text-sm font-semibold" style={{ color: "var(--brand-secondary)" }}>
-                See all {label.toLowerCase()} in {CITY_LABEL} →
+                See all {label.toLowerCase()} in {city.label} →
               </a>
             </div>
           ) : (
@@ -182,7 +184,7 @@ export async function CategoryAreaPage({
         {/* ── OTHER AREAS ──────────────────────────────────────────────── */}
         {otherAreas.length > 0 && (
           <section className="mx-auto max-w-6xl px-6 pb-4">
-            <SectionHeading title={`More areas for ${label.toLowerCase()}`} subtitle={`Browse ${label.toLowerCase()} across ${CITY_LABEL}`} />
+            <SectionHeading title={`More areas for ${label.toLowerCase()}`} subtitle={`Browse ${label.toLowerCase()} across ${city.label}`} />
             <div className="flex flex-wrap gap-2">
               {otherAreas.map((a) => (
                 <a key={a.slug} href={categoryAreaPath(category.category, a.area)}

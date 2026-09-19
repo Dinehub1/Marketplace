@@ -1,5 +1,5 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
-import { CITY_LABEL, categoryPath, getCategoryIndex, titleize } from "@/lib/categories";
+import { type City, categoryPath, getCategoryIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import type { Brand } from "@/lib/brands";
 
@@ -12,10 +12,10 @@ import type { Brand } from "@/lib/brands";
  * and it doubles as the internal-link hub that makes every category page
  * reachable in two clicks from the homepage.
  */
-export async function CategoriesPage({ brand }: { brand: Brand }) {
+export async function CategoriesPage({ brand, city }: { brand: Brand; city: City }) {
   const origin = ``;
 
-  const index = await getCategoryIndex();
+  const index = await getCategoryIndex(city.label);
 
   const groups = new Map<string, typeof index>();
   for (const c of index) {
@@ -45,7 +45,7 @@ export async function CategoriesPage({ brand }: { brand: Brand }) {
             </nav>
             <h1 className="text-[2rem] md:text-[2.6rem] font-extrabold text-ink"
                 style={{ letterSpacing: "-0.032em", lineHeight: 1.08 }}>
-              All categories in {CITY_LABEL}
+              All categories in {city.label}
             </h1>
             <p className="mt-3 max-w-2xl text-base text-ink-3" style={{ lineHeight: 1.6 }}>
               Every type of business listed in the directory, A to Z. Pick one to see the

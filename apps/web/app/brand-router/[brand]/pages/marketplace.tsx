@@ -1,6 +1,6 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { categoriesForBrand } from "@/lib/brand-categories";
-import { categoryPath, CITY_LABEL, getAreaIndex, titleize } from "@/lib/categories";
+import { categoryPath, type City, getAreaIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import { BusinessCard, type BusinessCardData } from "@/components/directory/BusinessCard";
 import { CategoryCard } from "@/components/directory/CategoryCard";
@@ -21,6 +21,7 @@ async function fetchDirectory(
   sort: string,
   page: number,
   allowed: string[] | null,
+  city: string,
 ) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
@@ -28,7 +29,7 @@ async function fetchDirectory(
   // Defense in depth (C9): never let a category outside the brand's slice reach
   // the query, regardless of where the caller got its `cat`.
   if (allowed && cat && !allowed.includes(cat)) cat = "";
-  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active", `city=eq.${encodeURIComponent(CITY_LABEL)}`];
+  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active", `city=eq.${encodeURIComponent(city)}`];
   if (q) {
     const term = encodeURIComponent(`*${q}*`);
     filters.push(`or=(name.ilike.${term},category.ilike.${term})`);
@@ -60,13 +61,13 @@ async function fetchDirectory(
   return { rows, total };
 }
 
-async function fetchCategories(): Promise<{ category: string; count: number }[]> {
+async function fetchCategories(city: string): Promise<{ category: string; count: number }[]> {
   try {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
     const counts = new Map<string, { category: string; count: number }>();
     for (let from = 0; ; from += 1000) {
-      const res = await fetch(`${url}/rest/v1/businesses?select=category&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&order=id.asc`, {
+      const res = await fetch(`${url}/rest/v1/businesses?select=category&status=eq.active&city=eq.${encodeURIComponent(city)}&order=id.asc`, {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` },
         next: { revalidate: 600 },
       });
@@ -85,7 +86,7 @@ async function fetchCategories(): Promise<{ category: string; count: number }[]>
   } catch { return []; }
 }
 
-export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: Record<string, string | string[] | undefined> }) {
+export async function MarketplacePage({ brand, sp = {}, city }: { brand: Brand; sp?: Record<string, string | string[] | undefined>; city: City }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
   const secondary = theme.secondary ?? "#8b5cf6";
@@ -97,7 +98,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: R
   const sort = String(sp.sort ?? "rating") === "reviews" ? "reviews" : String(sp.sort ?? "rating") === "name" ? "name" : "rating";
   const page = Math.max(1, Number(sp.page) || 1);
 
-  const [allCategories, areas] = await Promise.all([fetchCategories(), getAreaIndex()]);
+  const [allCategories, areas] = await Promise.all([fetchCategories(city.label), getAreaIndex(city.label)]);
   const allowed = categoriesForBrand(brand.slug, allCategories.map((c) => c.category));
   const categories = allowed ? allCategories.filter((c) => allowed.includes(c.category)) : allCategories;
   // Tenant-isolation guard (C9): on a brand-scoped directory a direct ?cat= for
@@ -105,7 +106,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: R
   // surface the full multi-tenant directory. Drop it so it falls back to the
   // brand's own listings instead of leaking the parent directory's rows.
   if (allowed && cat && !allowed.includes(cat)) cat = "";
-  const { rows, total } = await fetchDirectory(q, cat, area, rating, sort, page, allowed);
+  const { rows, total } = await fetchDirectory(q, cat, area, rating, sort, page, allowed, city.label);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const base = "/marketplace";
   const filtered = Boolean(q || cat || area || rating);
@@ -135,8 +136,8 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: R
           <div className="aurora" />
           <div className="grid-pattern absolute inset-0 -z-10 opacity-60" />
           <div className="mx-auto max-w-3xl px-6 pb-14 pt-16 text-center">
-            <p className="eyebrow mb-4">{CITY_LABEL} directory</p>
-            <h1 className="heading-xl">Find a business in {CITY_LABEL}</h1>
+            <p className="eyebrow mb-4">{city.label} directory</p>
+            <h1 className="heading-xl">Find a business in {city.label}</h1>
             <p className="text-lede mx-auto mt-4 max-w-xl">
               Plumbers, doctors, tutors and thousands more — with phone numbers you can call straight away.
             </p>
@@ -263,7 +264,7 @@ export async function MarketplacePage({ brand, sp = {} }: { brand: Brand; sp?: R
 
           <SectionHeading
             title={filtered ? "Results" : "Top rated businesses"}
-            subtitle={filtered ? `${total.toLocaleString("en-IN")} ${total === 1 ? "result" : "results"}` : `${total.toLocaleString("en-IN")} verified businesses in ${CITY_LABEL}`}
+            subtitle={filtered ? `${total.toLocaleString("en-IN")} ${total === 1 ? "result" : "results"}` : `${total.toLocaleString("en-IN")} verified businesses in ${city.label}`}
           />
           {rows.length === 0 ? (
             <div className="card px-6 py-16 text-center">

@@ -104,9 +104,10 @@ export function slugifyCategory(category: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** The path for a category landing page, e.g. "/plumber-in-indore". */
-export function categoryPath(category: string): string {
-  return `/${slugifyCategory(category)}-in-${CITY_SLUG}`;
+/** The path for a category landing page, e.g. "/plumber-in-indore".
+ *  Pass a city slug to build another city's page ("/plumber-in-mumbai"). */
+export function categoryPath(category: string, citySlug: string = CITY_SLUG): string {
+  return `/${slugifyCategory(category)}-in-${citySlug || CITY_SLUG}`;
 }
 
 /**

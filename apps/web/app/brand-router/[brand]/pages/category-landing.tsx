@@ -1,6 +1,6 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import {
-  CITY_LABEL,
+  type City,
   categoryPath,
   categoryAreaPath,
   getCategoryIndex,
@@ -24,10 +24,12 @@ export async function CategoryLandingPage({
   brand,
   category,
   page,
+  city,
 }: {
   brand: Brand;
   category: CategoryStat;
   page: number;
+  city: City;
 }) {
   const theme = (brand.theme ?? {}) as Record<string, string>;
   const primary = theme.primary ?? "#6d28d9";
@@ -35,11 +37,11 @@ export async function CategoryLandingPage({
 
   const label = titleize(category.category);
   const origin = ``;
-  const base = `${origin}${categoryPath(category.category)}`;
+  const base = `${origin}${categoryPath(category.category, city.slug)}`;
 
   const [{ rows, total }, index] = await Promise.all([
-    getCategoryListings(category.category, page, PAGE_SIZE),
-    getCategoryIndex(),
+    getCategoryListings(category.category, page, PAGE_SIZE, city.label),
+    getCategoryIndex(city.label),
   ]);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   // Ten related categories, not twenty-four. Enough to keep the crawl graph
@@ -47,13 +49,13 @@ export async function CategoryLandingPage({
   const related = index.filter((c) => c.slug !== category.slug).slice(0, RELATED);
   // Localities this category actually exists in — used for the "by area" links
   // that point at the neighbourhood landing pages.
-  const areaIdx = await getCategoryAreaIndex(category.category);
+  const areaIdx = await getCategoryAreaIndex(category.category, city.label);
   const topAreas = areaIdx.slice(0, 10);
 
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `${label} in ${CITY_LABEL}`,
+    name: `${label} in ${city.label}`,
     numberOfItems: total,
     itemListElement: rows.slice(0, 20).map((b: Listing, i: number) => ({
       "@type": "ListItem",
@@ -61,7 +63,7 @@ export async function CategoryLandingPage({
       item: {
         "@type": "LocalBusiness",
         name: b.name,
-        ...(b.address ? { address: { "@type": "PostalAddress", streetAddress: b.address, addressLocality: b.city ?? CITY_LABEL, addressRegion: "Madhya Pradesh", addressCountry: "IN" } } : {}),
+        ...(b.address ? { address: { "@type": "PostalAddress", streetAddress: b.address, addressLocality: b.city ?? city.label, addressRegion: city.state, addressCountry: "IN" } } : {}),
         ...(b.phone ? { telephone: b.phone } : {}),
         ...(b.website ? { url: b.website } : {}),
         ...(b.rating ? { aggregateRating: { "@type": "AggregateRating", ratingValue: b.rating, bestRating: 5, ...(b.reviews_count != null ? { reviewCount: b.reviews_count } : {}) } } : {}),
@@ -75,7 +77,7 @@ export async function CategoryLandingPage({
     itemListElement: [
       { "@type": "ListItem", position: 1, name: brand.name, item: origin },
       { "@type": "ListItem", position: 2, name: "Directory", item: `${origin}/marketplace` },
-      { "@type": "ListItem", position: 3, name: `${label} in ${CITY_LABEL}`, item: base },
+      { "@type": "ListItem", position: 3, name: `${label} in ${city.label}`, item: base },
     ],
   };
 
@@ -107,7 +109,7 @@ export async function CategoryLandingPage({
               </span>
               <div className="min-w-0">
                 <h1 className="heading-xl">
-                  {label} in {CITY_LABEL}
+                  {label} in {city.label}
                 </h1>
                 <p className="text-lede mt-3 max-w-2xl">
                   Sorted by rating, with phone numbers you can call straight away.
@@ -178,10 +180,10 @@ export async function CategoryLandingPage({
         <section className="mx-auto max-w-6xl px-6 pb-4">
           <div className="card p-6 md:p-8">
             <h2 className="heading-sm mb-3">
-              Finding {label.toLowerCase()} in {CITY_LABEL}
+              Finding {label.toLowerCase()} in {city.label}
             </h2>
             <p className="max-w-3xl text-sm leading-relaxed text-ink-3">
-              This page lists {label.toLowerCase()} businesses operating in {CITY_LABEL} and the
+              This page lists {label.toLowerCase()} businesses operating in {city.label} and the
               surrounding areas of Madhya Pradesh, ordered by their public customer rating.
               Details come from publicly available Google Maps listings and may be out of date —
               please confirm with the business before travelling.
@@ -200,7 +202,7 @@ export async function CategoryLandingPage({
           <section className="mx-auto max-w-6xl px-6 pb-4">
             <SectionHeading
               title={`${label} by area`}
-              subtitle={`Browse ${label.toLowerCase()} across neighbourhoods in ${CITY_LABEL}`}
+              subtitle={`Browse ${label.toLowerCase()} across neighbourhoods in ${city.label}`}
             />
             <div className="flex flex-wrap gap-2">
               {topAreas.map((a) => (

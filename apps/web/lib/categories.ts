@@ -14,6 +14,11 @@
 export {
   CITY_SLUG,
   CITY_LABEL,
+  DEFAULT_CITY,
+  CITIES,
+  cityBySlug,
+  cityLabel,
+  citySlugFromPath,
   slugifyCategory,
   categoryPath,
   isCategoryPath,
@@ -27,11 +32,16 @@ export {
   telHref,
   waHref,
 } from "@hermes/core";
-export type { CategoryStat, Listing } from "@hermes/core";
+export type { CategoryStat, Listing, City } from "@hermes/core";
 
 import {
   slugifyCategory,
   cleanArea,
+  cityBySlug,
+  cityLabel,
+  citySlugFromPath,
+  DEFAULT_CITY,
+  type City,
   // The block above re-exports these for call sites; a re-export does NOT bring
   // the name into scope, so the fetchers below need their own import.
   CITY_LABEL,
@@ -136,9 +146,47 @@ export async function businessExists(id: number): Promise<boolean> {
   }
 }
 
-export async function findCategory(slug: string): Promise<CategoryStat | null> {
-  const index = await getCategoryIndex();
+export async function findCategory(slug: string, city: string = CITY_LABEL): Promise<CategoryStat | null> {
+  // Scoped to the city: a category with no listings in THIS city must not
+  // resolve, so /eye-hospital-in-indore 404s instead of rendering another
+  // city's businesses under an Indore title. (2026-09-19)
+  const index = await getCategoryIndex(city);
   return index.find((c) => c.slug === slug) ?? null;
+}
+
+export type CityStat = { city: string; slug: string; count: number };
+
+/**
+ * Active listings per city.
+ *
+ * The gate for anything that would PRESENT a city — sitemap entries, city
+ * navigation, cross-city links. A city only appears once it actually has
+ * inventory, so the directory never links to an empty shell.
+ */
+export async function getCityIndex(): Promise<CityStat[]> {
+  const { url, key } = env();
+  const counts = new Map<string, CityStat>();
+  try {
+    for (let from = 0; ; from += 1000) {
+      const res = await fetch(
+        `${url}/rest/v1/businesses?select=city&status=eq.active&order=id.asc`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` }, next: { revalidate: 3600 } },
+      );
+      if (!res.ok) return [];
+      const page: { city: string | null }[] = await res.json();
+      for (const r of page) {
+        const label = cityLabel(r.city);
+        const slug = cityBySlug(label)?.slug ?? slugifyCategory(label);
+        const hit = counts.get(slug);
+        if (hit) hit.count += 1;
+        else counts.set(slug, { city: label, slug, count: 1 });
+      }
+      if (page.length < 1000) break;
+    }
+  } catch {
+    return [];
+  }
+  return [...counts.values()].sort((a, b) => b.count - a.count);
 }
 
 /**
