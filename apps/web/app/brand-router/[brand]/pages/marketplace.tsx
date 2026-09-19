@@ -28,7 +28,7 @@ async function fetchDirectory(
   // Defense in depth (C9): never let a category outside the brand's slice reach
   // the query, regardless of where the caller got its `cat`.
   if (allowed && cat && !allowed.includes(cat)) cat = "";
-  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active"];
+  const filters: string[] = ["select=id,name,category,area,address,phone,rating,reviews_count,city,featured", "status=eq.active", `city=eq.${encodeURIComponent(CITY_LABEL)}`];
   if (q) {
     const term = encodeURIComponent(`*${q}*`);
     filters.push(`or=(name.ilike.${term},category.ilike.${term})`);
@@ -66,7 +66,7 @@ async function fetchCategories(): Promise<{ category: string; count: number }[]>
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
     const counts = new Map<string, { category: string; count: number }>();
     for (let from = 0; ; from += 1000) {
-      const res = await fetch(`${url}/rest/v1/businesses?select=category&status=eq.active&order=id.asc`, {
+      const res = await fetch(`${url}/rest/v1/businesses?select=category&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&order=id.asc`, {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` },
         next: { revalidate: 600 },
       });

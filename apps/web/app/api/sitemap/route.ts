@@ -1,3 +1,4 @@
+import { CITY_LABEL } from '@hermes/core';
 import { NextRequest } from "next/server";
 import { categoryPath, getCategoryIndex } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
@@ -63,7 +64,7 @@ async function collectBusinessUrls(
   // freeze this page's business set for an hour after the first crawl.
   for (let from = 0; from < 100_000; from += 1000) {
     const res = await fetch(
-      `${base}/rest/v1/businesses?select=id,category&status=eq.active&order=id.asc`,
+      `${base}/rest/v1/businesses?select=id,category&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&order=id.asc`,
       {
         headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` },
         cache: "no-store",

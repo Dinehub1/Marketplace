@@ -35,8 +35,64 @@ export type CategoryStat = {
   count: number; // active listings only
 };
 
-export const CITY_SLUG = "indore";
-export const CITY_LABEL = "Indore";
+export type City = { slug: string; label: string; state: string };
+
+/**
+ * Cities the directory covers. `slug` is the URL token in /<category>-in-<slug>;
+ * `label` is the exact value stored in businesses.city. A city only becomes
+ * linkable in the UI once it actually has listings.
+ */
+export const CITIES: City[] = [
+  { slug: "indore", label: "Indore", state: "Madhya Pradesh" },
+  { slug: "mumbai", label: "Mumbai", state: "Maharashtra" },
+  { slug: "delhi", label: "Delhi", state: "Delhi" },
+  { slug: "bengaluru", label: "Bengaluru", state: "Karnataka" },
+  { slug: "hyderabad", label: "Hyderabad", state: "Telangana" },
+  { slug: "chennai", label: "Chennai", state: "Tamil Nadu" },
+  { slug: "pune", label: "Pune", state: "Maharashtra" },
+  { slug: "kolkata", label: "Kolkata", state: "West Bengal" },
+  { slug: "ahmedabad", label: "Ahmedabad", state: "Gujarat" },
+  { slug: "jaipur", label: "Jaipur", state: "Rajasthan" },
+  { slug: "surat", label: "Surat", state: "Gujarat" },
+  { slug: "lucknow", label: "Lucknow", state: "Uttar Pradesh" },
+  { slug: "chandigarh", label: "Chandigarh", state: "Chandigarh" },
+  { slug: "kochi", label: "Kochi", state: "Kerala" },
+  { slug: "nagpur", label: "Nagpur", state: "Maharashtra" },
+];
+
+const CITY_BY_SLUG = new Map(CITIES.map((c) => [c.slug, c]));
+
+/** Every unqualified URL resolves to this city. */
+export const DEFAULT_CITY: City = CITY_BY_SLUG.get("indore")!;
+
+/**
+ * The historical single-city constants. Kept exported because a lot of copy and
+ * metadata still reads them; DEFAULT_CITY is the same value, so behaviour is
+ * unchanged until a caller resolves a city explicitly.
+ */
+export const CITY_SLUG = DEFAULT_CITY.slug;
+export const CITY_LABEL = DEFAULT_CITY.label;
+
+export function cityBySlug(slug: string | null | undefined): City | null {
+  if (!slug) return null;
+  return CITY_BY_SLUG.get(slug.trim().toLowerCase()) ?? null;
+}
+
+/** Resolve a slug OR a stored label to the canonical label; falls back to Indore. */
+export function cityLabel(slugOrLabel: string | null | undefined): string {
+  const s = (slugOrLabel || "").trim();
+  if (!s) return DEFAULT_CITY.label;
+  const bySlug = CITY_BY_SLUG.get(s.toLowerCase());
+  if (bySlug) return bySlug.label;
+  const byLabel = CITIES.find((c) => c.label.toLowerCase() === s.toLowerCase());
+  return byLabel ? byLabel.label : DEFAULT_CITY.label;
+}
+
+/** The city token in "/plumber-in-mumbai", or null when it is not a city. */
+export function citySlugFromPath(pathname: string): string | null {
+  const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-([a-z0-9-]+)$/);
+  return m ? (cityBySlug(m[2])?.slug ?? null) : null;
+}
 
 /** URL-safe form of a category name. Must be stable — it is the permalink. */
 export function slugifyCategory(category: string): string {
@@ -66,8 +122,12 @@ export function isCategoryPath(pathname: string): boolean {
 
 /** Pull the category slug back out of "/furniture-store-in-indore". */
 export function categorySlugFromPath(pathname: string): string | null {
-  const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-indore$/);
-  return m ? m[1] : null;
+  // Was pinned to "-in-indore"; now any KNOWN city token is the city, so
+  // "/plumber-in-mumbai" is a Mumbai category page rather than a
+  // category+neighbourhood page for a place called "mumbai".
+  const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-([a-z0-9-]+)$/);
+  if (!m) return null;
+  return cityBySlug(m[2]) ? m[1] : null;
 }
 
 /** "/plumber-in-vijay-nagar" → { categorySlug: "plumber", areaSlug: "vijay-nagar" }.
@@ -75,7 +135,7 @@ export function categorySlugFromPath(pathname: string): string | null {
 export function categoryAreaSlugFromPath(pathname: string): { categorySlug: string; areaSlug: string } | null {
   const m = pathname.toLowerCase().replace(/\/+$/, "").match(/^\/([a-z0-9-]+)-in-([a-z0-9-]+)$/);
   if (!m) return null;
-  if (m[2] === CITY_SLUG) return null;
+  if (cityBySlug(m[2])) return null;  // a city token is never an area
   return { categorySlug: m[1], areaSlug: m[2] };
 }
 
@@ -87,7 +147,7 @@ export function categoryAreaPath(category: string, area: string): string {
 const JUNK_AREAS = new Set(["testcity", "test", "n/a", "na", "null", "undefined", "-"]);
 
 
-export function cleanArea(area: string | null | undefined): string | null {
+export function cleanArea(area: string | null | undefined, city?: string | null): string | null {
   if (!area) return null;
   const a = area.trim();
   if (!a || JUNK_AREAS.has(a.toLowerCase())) return null;
@@ -97,7 +157,14 @@ export function cleanArea(area: string | null | undefined): string | null {
   // the city, which is rendered next to it anyway.
   if (/\s+in\s+/i.test(a)) return null;
   if (a.length > 30) return null;
-  if (a.toLowerCase() === CITY_SLUG) return null;
+  const al = a.toLowerCase();
+  // The area is rendered BESIDE the city, so it must never repeat it. This was
+  // hardcoded to the single CITY_SLUG ("indore"), which meant a Mumbai row whose
+  // scraped area came back as the fallback sentinel would keep the literal
+  // "indore" in its raw row. `city` is the row's own city when known; the
+  // CITY_SLUG check stays so historical Indore behaviour is unchanged.
+  if (al === CITY_SLUG) return null;
+  if (city && al === city.trim().toLowerCase()) return null;
   return a;
 }
 
@@ -118,7 +185,7 @@ export function localityOf(
   biz: { area?: string | null; city?: string | null },
   fallback: string = CITY_LABEL,
 ): string {
-  const area = cleanArea(biz.area);
+  const area = cleanArea(biz.area, biz.city);
   return [area ? titleizeArea(area) : null, biz.city].filter(Boolean).join(", ") || fallback;
 }
 

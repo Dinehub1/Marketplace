@@ -1,3 +1,4 @@
+import { CITY_LABEL } from '@hermes/core';
 
 const PAGE = 1000; // PostgREST max-rows cap per request
 
@@ -6,7 +7,7 @@ export async function GET() {
   const apiKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
   const rows: { category: string | null; city: string | null }[] = [];
   for (let from = 0; ; from += PAGE) {
-    const res = await fetch(`${supabaseUrl}/rest/v1/businesses?select=category,city&order=id.asc`, {
+    const res = await fetch(`${supabaseUrl}/rest/v1/businesses?select=category,city&city=eq.${encodeURIComponent(CITY_LABEL)}&order=id.asc`, {
       headers: {
         apikey: apiKey,
         Authorization: `Bearer ${apiKey}`,

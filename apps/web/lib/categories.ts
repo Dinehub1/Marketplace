@@ -32,6 +32,9 @@ export type { CategoryStat, Listing } from "@hermes/core";
 import {
   slugifyCategory,
   cleanArea,
+  // The block above re-exports these for call sites; a re-export does NOT bring
+  // the name into scope, so the fetchers below need their own import.
+  CITY_LABEL,
   type CategoryStat,
   type Listing,
 } from "@hermes/core";
@@ -51,13 +54,13 @@ function env() {
  * furniture stores" and then renders 210 is a bounce — the number in the
  * heading and the number of cards below it have to be the same number.
  */
-export async function getCategoryIndex(): Promise<CategoryStat[]> {
+export async function getCategoryIndex(city: string = CITY_LABEL): Promise<CategoryStat[]> {
   const { url, key } = env();
   const counts = new Map<string, { category: string; count: number }>();
   try {
     for (let from = 0; ; from += 1000) {
       const res = await fetch(
-        `${url}/rest/v1/businesses?select=category&status=eq.active&order=id.asc`,
+        `${url}/rest/v1/businesses?select=category&status=eq.active&city=eq.${encodeURIComponent(city)}&order=id.asc`,
         {
           headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` },
           next: { revalidate: 3600 },
@@ -99,10 +102,10 @@ export async function getCategoryIndex(): Promise<CategoryStat[]> {
  * which is why the page heading said 19,361 while the <title> said 19,360. One
  * number, one source.
  */
-export async function getActiveListingCount(): Promise<number> {
+export async function getActiveListingCount(city: string = CITY_LABEL): Promise<number> {
   const { url, key } = env();
   try {
-    const res = await fetch(`${url}/rest/v1/businesses?select=id&status=eq.active`, {
+    const res = await fetch(`${url}/rest/v1/businesses?select=id&status=eq.active&city=eq.${encodeURIComponent(city)}`, {
       headers: {
         apikey: key,
         Authorization: `Bearer ${key}`,
@@ -161,6 +164,7 @@ export async function getCategoryListings(
   category: string,
   page: number,
   pageSize: number,
+  city: string = CITY_LABEL,
 ): Promise<{ rows: Listing[]; total: number }> {
   const { url, key } = env();
   const from = (page - 1) * pageSize;
@@ -168,7 +172,7 @@ export async function getCategoryListings(
     const res = await fetch(
       `${url}/rest/v1/businesses` +
         `?select=id,name,category,area,address,phone,rating,reviews_count,city,website` +
-        `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
+        `&status=eq.active&city=eq.${encodeURIComponent(city)}&category=eq.${encodeURIComponent(category)}` +
         `&order=rating.desc.nullslast,name.asc`,
       {
         headers: {
@@ -196,19 +200,19 @@ export type AreaStat = { area: string; slug: string; count: number };
  * Powers the marketplace area filter. Junk values are stripped by cleanArea so
  * "testcity" and "Plumber in indore" never become selectable neighbourhoods.
  */
-export async function getAreaIndex(): Promise<AreaStat[]> {
+export async function getAreaIndex(city: string = CITY_LABEL): Promise<AreaStat[]> {
   const { url, key } = env();
   const counts = new Map<string, AreaStat>();
   try {
     for (let from = 0; ; from += 1000) {
       const res = await fetch(
-        `${url}/rest/v1/businesses?select=area&status=eq.active&order=id.asc`,
+        `${url}/rest/v1/businesses?select=area&status=eq.active&city=eq.${encodeURIComponent(city)}&order=id.asc`,
         { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` }, next: { revalidate: 3600 } },
       );
       if (!res.ok) return [];
       const page: { area: string | null }[] = await res.json();
       for (const r of page) {
-        const a = cleanArea(r.area);
+        const a = cleanArea(r.area, city);
         if (!a) continue;
         const slug = slugifyCategory(a);
         const hit = counts.get(slug);
@@ -224,19 +228,19 @@ export async function getAreaIndex(): Promise<AreaStat[]> {
 }
 
 /** Localities within a single category — powers the "browse by area" links. */
-export async function getCategoryAreaIndex(category: string): Promise<AreaStat[]> {
+export async function getCategoryAreaIndex(category: string, city: string = CITY_LABEL): Promise<AreaStat[]> {
   const { url, key } = env();
   const counts = new Map<string, AreaStat>();
   try {
     for (let from = 0; ; from += 1000) {
       const res = await fetch(
-        `${url}/rest/v1/businesses?select=area&status=eq.active&category=eq.${encodeURIComponent(category)}&order=id.asc`,
+        `${url}/rest/v1/businesses?select=area&status=eq.active&city=eq.${encodeURIComponent(city)}&category=eq.${encodeURIComponent(category)}&order=id.asc`,
         { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: `${from}-${from + 999}` }, next: { revalidate: 3600 } },
       );
       if (!res.ok) return [];
       const page: { area: string | null }[] = await res.json();
       for (const r of page) {
-        const a = cleanArea(r.area);
+        const a = cleanArea(r.area, city);
         if (!a) continue;
         const slug = slugifyCategory(a);
         const hit = counts.get(slug);
@@ -257,6 +261,7 @@ export async function getCategoryAreaListings(
   area: string,
   page: number,
   pageSize: number,
+  city: string = CITY_LABEL,
 ): Promise<{ rows: Listing[]; total: number }> {
   const { url, key } = env();
   const from = (page - 1) * pageSize;
@@ -264,7 +269,7 @@ export async function getCategoryAreaListings(
     const res = await fetch(
       `${url}/rest/v1/businesses` +
         `?select=id,name,category,area,address,phone,rating,reviews_count,city,website` +
-        `&status=eq.active&category=eq.${encodeURIComponent(category)}&area=eq.${encodeURIComponent(area)}` +
+        `&status=eq.active&city=eq.${encodeURIComponent(city)}&category=eq.${encodeURIComponent(category)}&area=eq.${encodeURIComponent(area)}` +
         `&order=rating.desc.nullslast,name.asc`,
       {
         headers: {

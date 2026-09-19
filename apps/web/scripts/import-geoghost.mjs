@@ -125,6 +125,15 @@ function num(v) { const n = parseFloat(v); return Number.isFinite(n) ? n : null;
 // This used to read `location`, a column that does not exist, so every row got
 // area='indore' and pincode=NULL; 21,077 rows needed a one-off backfill on
 // 2026-09-13 to recover them. Parsing here keeps new rows correct.
+// Address components that are never a neighbourhood: the country, and the
+// state/UT each supported city sits in. The city itself is excluded separately
+// (see localityOf) because it is only known at runtime.
+const NON_LOCALITY = new Set([
+  'india', 'madhya pradesh', 'mp', 'maharashtra', 'delhi', 'nct of delhi',
+  'karnataka', 'telangana', 'tamil nadu', 'west bengal', 'gujarat', 'rajasthan',
+  'uttar pradesh', 'kerala', 'haryana', 'punjab', 'chandigarh',
+]);
+
 const DESCRIPTOR_JUNK = /^(?:(?:ground|first|second|third|fourth|fifth|upper|lower|top)\s*floor|floor.{0,3}\d*|basement|shop\s*(?:no\.?|number)?\s*\d*|unit\s*\d*|flat\s*\d*|plot\s*(?:no\.?)?\s*\d*|block\s*[a-z0-9]*|door\s*no\.?\s*\d*|no\.?\s*\d+|near|opp|opposite|beside|behind|in\s*front|at|testcity|test|n\/?a|-)$/i;
 
 /** 6-digit pincode from the address, preferring Indore's 45xxxx range. */
@@ -137,18 +146,24 @@ function pincodeOf(addr) {
 }
 
 /** First plausible locality in the address; 'indore' means "no locality found". */
-function localityOf(addr) {
-  if (!addr) return 'indore';
+function localityOf(addr, city) {
+  // Sentinel is the CITY ITSELF, lowercased - never a hardcoded 'indore'. The
+  // old fixed sentinel meant every city's "no locality found" rows carried the
+  // literal string "indore" in raw data. For Indore the value is unchanged
+  // ('indore'), so historical rows and behaviour are untouched. (2026-09-19)
+  const NONE = (city || 'Indore').trim().toLowerCase();
+  if (!addr) return NONE;
   for (const part of String(addr).split(',')) {
     const f = part.trim().replace(/^-+|-+$/g, '').trim();
     if (!f || f.length < 3 || f.length > 28) continue;
     if (/\d/.test(f)) continue;
     if (/\s+in\s+/i.test(f)) continue;
     if (DESCRIPTOR_JUNK.test(f)) continue;
-    if (['indore', 'india', 'madhya pradesh', 'mp'].includes(f.toLowerCase())) continue;
+    if (f.toLowerCase() === NONE) continue;
+    if (NON_LOCALITY.has(f.toLowerCase())) continue;
     return f.toLowerCase();
   }
-  return 'indore';
+  return NONE;
 }
 // The source writes review counts as decimals: "2396.0" means 2,396 reviews.
 // Stripping every non-digit parsed that as 23960 - ten times too large - which
@@ -232,7 +247,7 @@ for (const file of files) {
       place_id: placeId || null,
       google_maps: str(r[col['google_maps_url']])
         || (placeId ? `https://www.google.com/maps/place/?q=place_id:${placeId}` : null),
-      area: localityOf(address),
+      area: localityOf(address, CITY),
       pincode: pincodeOf(address),
       city: CITY,
       rating: num(r[col['reviews_average']]),

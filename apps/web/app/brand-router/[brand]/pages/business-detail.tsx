@@ -89,7 +89,7 @@ async function getRelated(category: string | null, excludeId: number) {
     if (!url || !key) return [];
     const res = await fetch(
       `${url}/rest/v1/businesses?select=id,name,area,rating,reviews_count,phone` +
-        `&status=eq.active&category=eq.${encodeURIComponent(category)}` +
+        `&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&category=eq.${encodeURIComponent(category)}` +
         `&id=neq.${excludeId}&order=rating.desc.nullslast&limit=6`,
       { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: 1800 } },
     );

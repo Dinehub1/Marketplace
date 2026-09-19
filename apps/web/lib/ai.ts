@@ -1,3 +1,4 @@
+import { CITY_LABEL } from "@hermes/core";
 /**
  * One door to every AI capability, with a chain behind it.
  *
@@ -347,7 +348,7 @@ const supabaseSearch: Provider = {
     const url = (process.env.SUPABASE_URL ?? "").replace(/\/+$/, "");
     const key = (process.env.SUPABASE_SERVICE_ROLE_KEY ?? "").trim();
     const limit = typeof input.limit === "number" && input.limit > 0 ? Math.min(input.limit * 8, 40) : 40;
-    const path = `businesses?select=id,name,category,area,rating&status=eq.active&and=${encodeURIComponent(`(${groups.join(",")})`)}&limit=${limit}`;
+    const path = `businesses?select=id,name,category,area,rating&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&and=${encodeURIComponent(`(${groups.join(",")})`)}&limit=${limit}`;
 
     const res = await fetch(`${url}/rest/v1/${path}`, {
       headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: "application/json" },

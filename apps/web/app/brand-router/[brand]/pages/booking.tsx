@@ -1,5 +1,7 @@
 "use client";
 
+import { CITY_LABEL } from "@/lib/categories";
+
 import { useEffect, useMemo, useState } from "react";
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { BRAND_CATEGORY_KEYWORDS } from "@/lib/brand-categories";
@@ -120,7 +122,7 @@ export function BookingPage({ brand, initialVendorId }: { brand: Brand; initialV
       const or = kws.map((k) => `category.ilike.*${encodeURIComponent(k)}*`).join(",");
       const rows = await (creds
         ? fetch(
-            `${creds.url}/rest/v1/businesses?select=id,name,area,rating,reviews_count&status=eq.active&or=(${or})&order=rating.desc.nullslast&limit=60`,
+            `${creds.url}/rest/v1/businesses?select=id,name,area,rating,reviews_count&status=eq.active&city=eq.${encodeURIComponent(CITY_LABEL)}&or=(${or})&order=rating.desc.nullslast&limit=60`,
             { headers: { apikey: creds.key, Authorization: `Bearer ${creds.key}` } },
           )
             .then((res) => (res.ok ? res.json() : []))
