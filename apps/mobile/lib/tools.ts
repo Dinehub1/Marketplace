@@ -14,6 +14,8 @@
  * would make it untestable without a device.
  */
 import { Platform } from "react-native";
+import { appTarget } from "@/lib/ads/config";
+import { sessionId } from "@/lib/ads/session";
 
 export type PickedFile = {
   /** Blob URL on the web, file:// on a phone. */
@@ -69,6 +71,167 @@ function WEB_BASE(): string {
   } catch {
     throw new Error("This build has no server address configured.");
   }
+}
+
+/**
+ * The answer to "may I have this file for free?", from the server.
+ *
+ * `ok` is the only outcome that carries a URL, and the URL comes from the server —
+ * this type exists so no screen can invent one locally.
+ */
+export type AdUnlockResult =
+  | { ok: true; outputUrl: string; outputName: string; already: boolean }
+  | { ok: false; error: string };
+
+/**
+ * Unlock one clean file with one rewarded ad, verified by AdMob's server.
+ *
+ * The order below is the security model, not a implementation detail:
+ *
+ *   1. **Open a claim** — the server mints a nonce and records `pending`.
+ *   2. **Show the ad carrying that nonce** — `showAd` must attach it via SSV
+ *      options, so AdMob echoes it back in a signed callback.
+ *   3. **Poll for verification** — the server releases the file only once
+ *      `/api/ad-ssv` has received a callback whose signature verified.
+ *
+ * If the ad is dismissed, this stops at step 2 and releases nothing. If AdMob never
+ * signs, this stops at step 3 and releases nothing. The phone's opinion is never the
+ * thing that opens the file — it only asks.
+ *
+ * `showAd` is injected rather than imported so this module keeps no dependency on the
+ * ad SDK, and so a test can drive the flow without a device.
+ */
+export async function unlockWithRewardedAd(
+  job: JobResult,
+  placement: string,
+  showAd: () => Promise<{ kind: string }>,
+): Promise<AdUnlockResult> {
+  if (!job.jobId) return { ok: false, error: "This file has no job to unlock." };
+
+  let base = "";
+  try {
+    base = Platform.OS === "web" ? "" : WEB_BASE();
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "No server is configured." };
+  }
+
+  const jsonHeaders = { "Content-Type": "application/json" };
+
+  // ── 1. Open the claim ────────────────────────────────────────────────────────
+  let nonce = "";
+  try {
+    const res = await fetch(`${base}/api/job/${job.jobId}/ad-claim`, {
+      method: "POST",
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        placement,
+        session_id: sessionId(),
+        app_target: appTarget(),
+        platform: Platform.OS,
+      }),
+    });
+    const body = (await res.json().catch(() => null)) as
+      | { nonce?: string; ssv?: { userId?: string }; error?: string; detail?: string }
+      | null;
+    if (!res.ok || !body?.nonce) {
+      return { ok: false, error: body?.detail ?? body?.error ?? `Could not start the unlock (${res.status}).` };
+    }
+    nonce = body.nonce;
+  } catch {
+    return { ok: false, error: "Could not reach the server to start the unlock." };
+  }
+
+  // ── 2. Show the ad, carrying the nonce ───────────────────────────────────────
+  // Attached here, immediately before the request, so the nonce on the wire is the
+  // one this claim owns.
+  try {
+    const { setSsvOptions } = require("@/lib/ads/adapters/admob") as {
+      setSsvOptions: (o: { userId: string; customData?: string } | null) => void;
+    };
+    setSsvOptions({ userId: nonce, customData: `job=${job.jobId}` });
+  } catch {
+    return { ok: false, error: "This build has no ad SDK, so nothing can be verified." };
+  }
+
+  const outcome = await showAd();
+
+  // Clear it whatever happened: a stale handshake must never ride on the next request.
+  try {
+    const { setSsvOptions } = require("@/lib/ads/adapters/admob") as {
+      setSsvOptions: (o: { userId: string; customData?: string } | null) => void;
+    };
+    setSsvOptions(null);
+  } catch {
+    /* nothing to clear */
+  }
+
+  if (outcome.kind !== "rewarded") {
+    return {
+      ok: false,
+      error:
+        outcome.kind === "dismissed"
+          ? "The ad was closed before it finished, so nothing was unlocked."
+          : "The ad did not finish, so nothing was unlocked.",
+    };
+  }
+
+  // ── 3. Wait for AdMob's signature ────────────────────────────────────────────
+  // The callback is a separate server-to-server request and can lag a second or two
+  // behind the ad closing. Four attempts over ~6 s covers a normal lag without
+  // leaving someone on a spinner.
+  const attempts = 4;
+  const delays = [800, 1500, 2000, 2500];
+
+  for (let i = 0; i < attempts; i += 1) {
+    if (i > 0) await new Promise((r) => setTimeout(r, delays[i - 1]));
+
+    try {
+      const res = await fetch(`${base}/api/job/${job.jobId}/ad-unlock`, {
+        method: "POST",
+        headers: jsonHeaders,
+        body: JSON.stringify({ claim: nonce }),
+      });
+      const body = (await res.json().catch(() => null)) as
+        | { ok?: boolean; already?: boolean; output_url?: string; state?: string; reason?: string; error?: string }
+        | null;
+
+      if (res.ok && body?.output_url) {
+        return {
+          ok: true,
+          outputUrl: body.output_url,
+          outputName: outputNameFor(job, body.output_url),
+          already: body.already === true,
+        };
+      }
+      // 202 = still waiting on the signed callback. Keep polling.
+      if (res.status === 202) continue;
+      // 403 = AdMob refused the reward, or the callback failed verification.
+      return { ok: false, error: body?.reason ? `The ad platform did not confirm the reward (${body.reason}).` : body?.error ?? "The reward was not confirmed." };
+    } catch {
+      // A network blip mid-poll should not lose an already-earned reward: keep trying.
+      continue;
+    }
+  }
+
+  return {
+    ok: false,
+    error: "The ad finished, but the reward has not been confirmed yet. Try again in a moment.",
+  };
+}
+
+/** A filename that matches what the clean file actually is. */
+function outputNameFor(job: JobResult, url: string): string {
+  const ext = (url.split("?")[0].match(/\.([a-z0-9]+)$/i)?.[1] ?? "bin").toLowerCase();
+  const stem: Record<string, string> = {
+    "passport-photo": "passport-photo",
+    "bg-remove": "cutout",
+    "ai-image": "picture",
+    "resume-checker": "report",
+    "invoice-maker": "invoice",
+  };
+  const base = (job.product && stem[job.product]) || "file";
+  const kind = ext === "md" ? "md" : ext;
+  return `${base}.${kind}`;
 }
 
 type FileKind = "image" | "pdf" | "doc" | "audio";

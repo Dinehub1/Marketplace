@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   CANONICAL_BASE,
+  DEVELOPER_HOSTS,
   HERMES_DASHBOARD_HOSTS,
   brandSlugFromHost,
 } from "@/lib/base-domains";
@@ -57,6 +58,21 @@ export async function proxy(request: NextRequest) {
 
   if (BYPASS_PREFIXES.some((p) => pathname.startsWith(p))) {
     return NextResponse.next();
+  }
+
+  // The developer website (apps.<base>): the organisation website Play Console asks for
+  // and the domain AdMob crawls for app-ads.txt. It is infrastructure, not brand
+  // content, so it must never reach the brand router — before `apps` was a reserved
+  // subdomain this host resolved to a brand named "apps", found none, and answered 404
+  // at the exact URL both Google products check.
+  //
+  // The rewrite is per-path rather than a single `→ /developer` because these are real
+  // routes: Google fetches `/privacy` and `/app-ads.txt` as paths, and a crawler that
+  // receives the HTML page instead of the text file fails verification.
+  if (DEVELOPER_HOSTS.includes(hostname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === "/" ? "/developer" : `/developer${pathname}`;
+    return NextResponse.rewrite(url);
   }
 
   // Local development: localhost has no brand subdomain, so default to

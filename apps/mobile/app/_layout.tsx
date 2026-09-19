@@ -11,10 +11,20 @@ import { ThemeProvider, useTheme } from "@/lib/theme";
 import { SavedProvider } from "@/lib/saved";
 import { OwnerProvider } from "@/lib/owner";
 import { useReduceMotion } from "@/lib/motion";
+import { prepareAds } from "@/lib/ads";
 
 function Root() {
   const { c, brand, scheme } = useTheme();
   const reduceMotion = useReduceMotion();
+
+  useEffect(() => {
+    // Boot the ad subsystem once, at the root rather than on a screen. It is a
+    // no-op unless EXPO_PUBLIC_ADS_ENABLED is set, it never throws, and it is the
+    // only subscriber to impression-level revenue — a screen that owned that
+    // subscription would drop any impression reported after it unmounted, which is
+    // the one number the whole measurement loop runs on.
+    void prepareAds();
+  }, []);
 
   useEffect(() => {
     // Paints the window behind the React tree. Without it the OS background

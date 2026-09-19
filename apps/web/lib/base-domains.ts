@@ -22,8 +22,13 @@ export const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
  * `hermes` is here because `proxy.ts` reverse-proxies it to the Hermes dashboard;
  * `www`, `dashboard` and `admin` never carry a brand either. Any of these reaching
  * the brand router would serve a brand page at an infrastructure URL.
+ *
+ * `apps` is the developer website: the address Play Console uses as the organisation
+ * website and AdMob crawls for `app-ads.txt`. It must NOT resolve to a brand, or the
+ * brand router would look for a brand called "apps" and answer 404 at the exact URL
+ * two Google products check — which is what it did before this entry existed.
  */
-export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes"];
+export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes", "apps"];
 
 /**
  * Role hosts, derived from BRAND_BASE_DOMAINS rather than retyped per domain.
@@ -39,6 +44,16 @@ export const ADMIN_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.flatMap((base) 
 /** Hosts reverse-proxied to the Hermes dashboard (see `proxy.ts`). */
 export const HERMES_DASHBOARD_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
   (base) => `hermes.${base}`,
+);
+
+/**
+ * Hosts that serve the developer website (see `proxy.ts`).
+ *
+ * Derived from the base domains for the same reason as the roles above: a hand-written
+ * list is how `apps.cashcard.live` gets forgotten while `apps.dropby.co.in` works.
+ */
+export const DEVELOPER_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
+  (base) => `apps.${base}`,
 );
 
 /** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/reserved hosts. */

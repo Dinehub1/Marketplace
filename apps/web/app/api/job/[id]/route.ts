@@ -55,17 +55,31 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const order = await paidOrderFor(jobId, phone);
   const paid = Boolean(order);
 
+  // A file can also be released for free, by a completed rewarded ad. That grant
+  // lives in `product_unlocks` rather than `orders`, because it is a different
+  // kind of proof and the books have to tell them apart — but it is the same
+  // question here: may this caller have the clean file? Reading only `orders`
+  // made an ad-unlocked job report `locked: true` here while `/ad-unlock` had
+  // already handed the URL back, which is exactly the kind of two-answers-to-one-
+  // question drift the route comment above warns about.
+  const unlockRes = await db(`product_unlocks?job_id=eq.${jobId}&select=source,created_at&limit=1`);
+  const unlock = await asRow<{ source: string; created_at: string }>(unlockRes);
+  const unlocked = paid || Boolean(unlock);
+
   return NextResponse.json(
     {
       job_id: jobId,
       product: job.product,
       status: job.status,
       preview_url: previewUrl,
-      locked: !paid,
-      output_url: paid ? publicUrlFor(job.output_key) : null,
+      locked: !unlocked,
+      output_url: unlocked ? publicUrlFor(job.output_key) : null,
       price_paise: pricePaise,
       paid_at: order?.created_at ?? null,
       amount_paise: order?.amount_paise ?? null,
+      // Which proof released it: 'rewarded_ad' or null when it was paid for.
+      unlocked_by: paid ? null : (unlock?.source ?? null),
+      unlocked_at: paid ? null : (unlock?.created_at ?? null),
     },
     { headers: noStore },
   );

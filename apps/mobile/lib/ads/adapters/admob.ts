@@ -8,22 +8,27 @@
  * and the analytics can name them, and so enabling one is a config change rather
  * than a code change.
  *
- * ## Why every import of the SDK is lazy
+ * ## Why the SDK is loaded lazily, and typed statically
  *
  * `react-native-google-mobile-ads` is a native module. A build that has not linked
- * it — Expo Go, the web export, a screenshot run, or any build before the AdMob
- * account exists — throws at import time. So this file does not import it at the
- * top: it resolves the module inside `init()`, and a build without it degrades to
- * "ads unavailable" instead of a red screen. That is also what keeps
- * `EXPO_PUBLIC_ADS_ENABLED` genuinely safe to leave off.
+ * it — the web export, a screenshot run, or any build before the AdMob account
+ * exists — throws when the native module registry is touched. So this file does not
+ * import it as a value: it `require`s it inside `init()`, inside a try/catch, and a
+ * build without it degrades to "ads unavailable" instead of a red screen.
+ *
+ * The *types*, though, come from the package with `import type`, which TypeScript
+ * erases completely. That is what keeps this adapter honest: the shapes below are
+ * the real `RewardedAd`/`InterstitialAd`/`AppOpenAd`/`AdsConsent` types, not a
+ * hand-written approximation, so a breaking change in the SDK fails `tsc` here
+ * rather than at runtime on a user's phone.
  *
  * ## The auction, in one sentence
  *
  * This file asks the host for an ad; the host runs the auction among the ad sources
  * configured in the AdMob console (including InMobi and AppLovin as bidders); the
- * highest bid for THIS impression wins; the winning price comes back through
- * impression-level revenue and becomes a row in `ad_events`. Nothing here picks a
- * winner, which is exactly right — see the design doc §3.
+ * highest bid for THIS impression wins; the winning price arrives on
+ * `AdEventType.PAID` and becomes a row in `ad_events`. Nothing here picks a winner,
+ * which is exactly right — see the design doc §3.
  *
  * ## P0 scope, stated honestly
  *
@@ -31,12 +36,17 @@
  * displays, and resolves once the ad closes. `isReady()` therefore returns false —
  * there is no preloaded instance held between calls yet, so the facade keeps
  * showing the placeholder until P1 adds a preload-and-hold cache. A rewarded tap
- * that waits for a load is a bad experience, and P0 is not the phase that claims
+ * that waits for a load is a poor experience, and P0 is not the phase that claims
  * otherwise.
  */
-import { unitFor } from "./config";
-import { setConsentState } from "./consent";
-import { recordAdEvent } from "./events";
+import type {
+  AppOpenAd,
+  InterstitialAd,
+  RewardedAd as RewardedAdType,
+} from "react-native-google-mobile-ads";
+import { unitFor } from "../config";
+import { setConsentState } from "../consent";
+import { recordAdEvent } from "../events";
 import type {
   AdFormat,
   AdNetworkAdapter,
@@ -44,32 +54,71 @@ import type {
   ImpressionRevenue,
   NetworkId,
   PlacementId,
-} from "./types";
+} from "../types";
 
-/** The subset of the SDK this adapter uses. Kept local so the import stays lazy. */
-type NativeAd = {
-  load: () => void;
-  show: () => Promise<void>;
-  addAdEventListener: (event: string, cb: (payload?: unknown) => void) => () => void;
-  paidEventHandler?: (cb: (payload: unknown) => void) => () => void;
-};
-
+/**
+ * The exact module surface this adapter uses, derived from the SDK's own classes.
+ *
+ * Every member is a `typeof import(...)` query or a type reference, so nothing here
+ * makes the package load at build time — only `resolveSdk()` does that, at runtime,
+ * and only in a build that has the package.
+ */
 type AdsModule = {
   default: () => { initialize: () => Promise<unknown[]> };
-  RewardedAd: { createForAdRequest: (unit: string) => NativeAd };
-  InterstitialAd: { createForAdRequest: (unit: string) => NativeAd };
-  AppOpenAd: { createForAdRequest: (unit: string) => NativeAd };
-  AdEventType: Record<string, string>;
-  RewardedAdEventType: Record<string, string>;
-  AdsConsent: {
-    requestInfoUpdate: (opts?: unknown) => Promise<{ canRequestAds: boolean }>;
-  };
+  RewardedAd: typeof RewardedAdType;
+  InterstitialAd: typeof InterstitialAd;
+  AppOpenAd: typeof AppOpenAd;
+  AdEventType: typeof import("react-native-google-mobile-ads").AdEventType;
+  RewardedAdEventType: typeof import("react-native-google-mobile-ads").RewardedAdEventType;
+  AdsConsent: typeof import("react-native-google-mobile-ads").AdsConsent;
 };
+
+/** The full-screen ad classes share a base; this is the part this adapter uses. */
+type FullScreenAd = RewardedAdType | InterstitialAd | AppOpenAd;
+
+/**
+ * The union of the three ad classes cannot be called as one value: each declares
+ * `addAdEventListener` with its own generic constraint (`RewardedAd` accepts the
+ * rewarded event names, the other two do not), and TypeScript refuses to call a
+ * union of generic signatures.
+ *
+ * They are in fact callable identically — the difference is only which event names
+ * the type allows — so this narrow view says exactly what this adapter relies on.
+ * The alternative would be three near-identical `show` implementations, which is
+ * how a codebase ends up with three subtly different reward paths.
+ */
+type ListenableAd = {
+  load: () => void;
+  show: () => Promise<void>;
+  /** Both event enums are string-valued; the caller passes one of their members. */
+  addAdEventListener: (type: string, listener: (payload?: unknown) => void) => () => void;
+  loaded: boolean;
+};
+
+function asListenable(ad: FullScreenAd): ListenableAd {
+  return ad as unknown as ListenableAd;
+}
 
 /** How long to wait for the auction before giving up on a placement. */
 const LOAD_TIMEOUT_MS = 15_000;
 
 const revenueSubscribers = new Set<(e: ImpressionRevenue) => void>();
+
+/**
+ * The SSV handshake for the next rewarded request, set by the caller immediately
+ * before `show()`.
+ *
+ * It has to be attached to the ad request itself: AdMob echoes these two values back
+ * to our server in the signed callback, which is what ties one signature to one job.
+ * Module state rather than a `show()` argument because the adapter interface is
+ * deliberately format-agnostic — only the rewarded path has a receipt.
+ */
+let ssvOptions: { userId: string; customData?: string } | null = null;
+
+/** Attach the SSV handshake for the next rewarded request. Pass null to clear it. */
+export function setSsvOptions(options: { userId: string; customData?: string } | null): void {
+  ssvOptions = options;
+}
 let sdk: AdsModule | null = null;
 let initialised = false;
 let initFailed = false;
@@ -77,9 +126,10 @@ let initFailed = false;
 /**
  * Resolve the native module once. Returns null when it is not in this build.
  *
- * `require` rather than `import` on purpose: Metro inlines a static `import` into
- * the bundle graph at build time, so the module would be loaded even in builds that
- * must not have it. A runtime `require` in a try/catch lets one codebase serve both.
+ * `require` rather than `import` on purpose: a static value import is inlined into
+ * the bundle graph, so the module would be evaluated — and its native registry
+ * touched — even in builds that must not have it. A runtime `require` in a
+ * try/catch lets one codebase serve both a build with the SDK and one without.
  */
 function resolveSdk(): AdsModule | null {
   if (sdk || initFailed) return sdk;
@@ -100,8 +150,11 @@ function resolveSdk(): AdsModule | null {
   return sdk;
 }
 
-/** Which class holds which unit type. Banner/native are view-based and not here yet. */
-function adClassFor(mod: AdsModule, format: AdFormat): { createForAdRequest: (unit: string) => NativeAd } | null {
+/** Which class holds which unit type. Banner and native are view-based, so they are not here. */
+function adClassFor(
+  mod: AdsModule,
+  format: AdFormat,
+): { createForAdRequest: (unit: string, options?: Record<string, unknown>) => FullScreenAd } | null {
   switch (format) {
     case "rewarded":
       return mod.RewardedAd;
@@ -114,7 +167,12 @@ function adClassFor(mod: AdsModule, format: AdFormat): { createForAdRequest: (un
   }
 }
 
-/** The SDK reports revenue in currency units; the column stores micros. */
+/**
+ * The SDK reports revenue in currency units; the column stores micros.
+ *
+ * A missing value stays null: "not measured" is not the same as "earned nothing",
+ * and averaging the two together is the one way this data could mislead.
+ */
 function toRevenue(
   placement: PlacementId,
   format: AdFormat,
@@ -127,7 +185,6 @@ function toRevenue(
     network: "admob",
     placement,
     format,
-    // A missing value stays null: "not measured" is not "earned nothing".
     valueMicros: raw === null ? null : Math.round(raw * 1_000_000),
     currency: p.currency ?? "USD",
     precision: p.precision,
@@ -192,9 +249,9 @@ export const admobAdapter: AdNetworkAdapter = {
 
   /**
    * No preloaded instance is held in P0, so there is nothing to prepare and
-   * nothing that can be ready. The facade reads `isReady` before offering a
-   * rewarded view, so this keeps the placeholder in place rather than promising an
-   * instant ad that is really a load-and-wait.
+   * nothing can be ready. The facade reads `isReady` before offering a rewarded
+   * view, so this keeps the placeholder in place rather than promising an instant
+   * ad that is really a load-and-wait.
    */
   async preload(format: AdFormat, placement: PlacementId): Promise<void> {
     void format;
@@ -220,18 +277,20 @@ export const admobAdapter: AdNetworkAdapter = {
     }
 
     const startedAt = Date.now();
-    const ad = cls.createForAdRequest(unit);
-    const unsubs: Array<() => void> = [];
+    // The SSV handshake rides on the request, so AdMob can echo it back in the
+    // signed callback. Attached only to rewarded ads — the other formats have no
+    // reward to verify.
+    const requestOptions =
+      format === "rewarded" && ssvOptions
+        ? { serverSideVerificationOptions: { userId: ssvOptions.userId, customData: ssvOptions.customData } }
+        : undefined;
 
-    const outcome = await new Promise<AdOutcome>((resolve) => {
+    const ad = asListenable(cls.createForAdRequest(unit, requestOptions));
+    const unsubs: (() => void)[] = [];
+
+    return await new Promise<AdOutcome>((resolve) => {
       let settled = false;
       let rewarded = false;
-
-      const finish = (o: AdOutcome) => {
-        if (settled) return;
-        settled = true;
-        resolve(o);
-      };
 
       const cleanup = () => {
         for (const u of unsubs) {
@@ -243,19 +302,23 @@ export const admobAdapter: AdNetworkAdapter = {
         }
       };
 
+      function settle(o: AdOutcome) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        cleanup();
+        resolve(o);
+      }
+
       // The auction answers, or it does not. A load that never completes must not
       // leave a screen waiting forever, so the timeout resolves a failure and the
       // caller falls back to its own UI.
       const timer = setTimeout(() => {
-        finish({ ...base, kind: "failed", code: "load_timeout", message: "The ad did not load in time" });
+        settle({ ...base, kind: "failed", code: "load_timeout", message: "The ad did not load in time" });
       }, LOAD_TIMEOUT_MS);
 
-      const settle = (o: AdOutcome) => {
-        clearTimeout(timer);
-        finish(o);
-        cleanup();
-      };
-
+      // AdEventType.LOADED fires for every full-screen format, rewarded included —
+      // the SDK's own hook treats RewardedAdEventType.LOADED as the same state.
       unsubs.push(
         ad.addAdEventListener(mod.AdEventType.LOADED, () => {
           recordAdEvent({
@@ -274,12 +337,12 @@ export const admobAdapter: AdNetworkAdapter = {
 
       unsubs.push(
         ad.addAdEventListener(mod.AdEventType.ERROR, (payload?: unknown) => {
-          const p = (payload ?? {}) as { code?: string; message?: string };
+          const err = (payload ?? {}) as { code?: string | number; message?: string };
           settle({
             ...base,
             kind: "failed",
-            code: p.code ?? "load_error",
-            message: p.message ?? "Ad failed to load",
+            code: String(err.code ?? "load_error"),
+            message: err.message ?? "Ad failed to load",
           });
         }),
       );
@@ -306,18 +369,15 @@ export const admobAdapter: AdNetworkAdapter = {
       }
 
       // Impression-level revenue: the actual winning price, for this impression.
-      if (typeof ad.paidEventHandler === "function") {
-        unsubs.push(
-          ad.paidEventHandler((payload: unknown) => {
-            publishRevenue(toRevenue(placement, format, payload, unit));
-          }),
-        );
-      }
+      // This is the number the whole measurement loop runs on.
+      unsubs.push(
+        ad.addAdEventListener(mod.AdEventType.PAID, (payload?: unknown) => {
+          publishRevenue(toRevenue(placement, format, payload, unit));
+        }),
+      );
 
       ad.load();
     });
-
-    return outcome;
   },
 
   onImpressionRevenue(cb: (e: ImpressionRevenue) => void): () => void {

@@ -274,6 +274,11 @@ Every one of these is a permanent-account risk, taken from `ad-policy-ban-resear
 6. Declare every ad SDK in Play Data Safety and the App Privacy label.
 7. **Demo ad unit ids in every dev build and every screenshot run.** Never tap a live ad.
 8. The first app shipped with ads is a **low-risk pilot**; a disabled AdMob account cannot rejoin.
+9. A free file unlock is **one completed ad for one specific file** — never a pack, never a
+   subscription, and never granted in a build with no ad SDK. The paid path stays visible beside
+   it: the ad is an alternative payment, not a hidden one, and neither option is buried behind the
+   other (Apple 3.2.2 says an app must not be "designed predominantly for the display of ads",
+   which a paywall whose only exit is an ad would be).
 
 ---
 
@@ -281,11 +286,67 @@ Every one of these is a permanent-account risk, taken from `ad-policy-ban-resear
 
 | Phase | Work | Depends on |
 |---|---|---|
-| **P0** | `lib/ads/*` facade + AdMob adapter + `ad_events` migration + `/api/ad-events`; wire the 4 existing game slots to it behind `EXPO_PUBLIC_ADS_ENABLED` using **Google demo units** | nothing — buildable today |
-| **P1** | The rewarded-unlock slot on the product paywall (`job.locked`), rewarded on all 4 games, interstitial after round-over/export with caps | P0 |
-| **P2** | Directory + toolbox native/banner slots; Networks screen reading measured eCPM; `ad_config` + fetch/cache | P0, volume |
-| **P3** | Onboard AdMob → `app-ads.txt` on the domain → InMobi + AppLovin MAX as ad sources → publish → consent/Data Safety | store listing live, developer website |
+| **P0 — SHIPPED 2026-09-19** | `lib/ads/*` facade + AdMob adapter + `ad_events` migration + `/api/ad-events`; the 4 existing game slots wired to it behind `EXPO_PUBLIC_ADS_ENABLED` using **Google demo units** | nothing |
+| **P1 — SHIPPED 2026-09-19** | The rewarded-unlock slot on the product paywall (`job.locked`) across the four locked-job screens; the server grant, its constraint and its audit trail | P0 |
+| **P2** | Interstitial after round-over/export with caps; directory + toolbox native/banner slots; Networks screen reading measured eCPM; `ad_config` + fetch/cache | P0, volume |
+| **P3** | Onboard AdMob → `app-ads.txt` on the domain → InMobi + AppLovin MAX as ad sources → publish → consent/Data Safety → **AdMob SSV**, which removes the client as the witness | store listing live, developer website |
 | **P4** | The daily slow loop: measured eCPM → floor/enablement suggestions → apply via config | real impressions |
+
+### P1 as shipped — one completed ad, one file
+
+The strict rule, written once: **no verified rewarded completion, no unlock.**
+
+`showRewarded` resolves `kind: "rewarded"` only after the SDK reports `EARNED_REWARD`; a
+dismissed or failed view never reaches the grant. `components/unlock-row.tsx` is the only place
+that pairs an ad with a file, so the four screens cannot diverge on the rule.
+
+| Layer | Enforces |
+|---|---|
+| `components/ad-slot.tsx` (`strict`) | A slot whose reward is a file grants **nothing** when no ad SDK is present — it refuses in words. The games keep the placeholder so their loop stays testable; the cost there is one extra life, not a paywall hole |
+| `lib/tools.ts` → `unlockWithRewardedAd` | Only ever called from the reward callback; the URL it returns comes from the server, never from local state |
+| `POST /api/job/[id]/ad-unlock` | Writes the grant on the service role; refuses a job that was paid for; per-IP daily quota (10); logs a `reward` row to `ad_events` |
+| `product_unlocks` | `unique (job_id)` — one free file per job, **ever**, however many times the route is called; `source` constrained to `rewarded_ad`; cascades with the job |
+| `GET /api/job/[id]` | Reads the unlock too, so a free file is not reported as locked. Without this the two routes disagreed — found by test, fixed |
+
+**Verified end to end against the live database**, not asserted: migration applied; the route
+returned `201` with the clean URL on the first call and `already: true` on the second; the
+`product_unlocks` row and the `ad_events` `reward` row were both written; the `is_test` row was
+excluded from `ad_network_performance`; `GET /api/job/158` then answered `locked: false` with
+`unlocked_by: "rewarded_ad"`. The migration's constraints were also proven in a throwaway local
+Postgres: a second unlock of the same job is rejected, an unlabelled `source` is rejected, a
+second *file* is allowed, and deleting the job removes its unlock. All test rows were deleted
+afterwards; the 156 real jobs are untouched.
+
+**The honest gap, closed in P3:** the completion is still witnessed by the client, because this
+build has no AdMob server-side verification. What makes that acceptable today is that the *grant*
+is not the client's to make — it is a constrained row written on the service role, one per job,
+quota-bound and logged. AdMob SSV replaces the witness with a signature.
+
+### P0 as shipped
+
+`lib/ads/` is facade + config + consent + caps + session + event buffer, with the AdMob adapter
+the only file that names a network. Components changed: `components/ad-slot.tsx` (same props plus
+a required `placement`, real ad when one is ready, placeholder otherwise), `app/_layout.tsx`
+(`prepareAds()` once), and the three games that host a rewarded slot (one added prop each).
+
+**Enabling a build** is two environment variables plus unit ids, and nothing else:
+
+```
+EXPO_PUBLIC_ADS_ENABLED=1
+EXPO_PUBLIC_ADMOB_APP_ID_ANDROID=ca-app-pub-…~…
+EXPO_PUBLIC_ADMOB_APP_ID_IOS=ca-app-pub-…~…
+# optional: live unit ids, per format; without them Google's demo units are used
+EXPO_PUBLIC_ADMOB_REWARDED_UNIT=…
+```
+
+Unset is the default and stays working: no plugin, no SDK resolved, placeholder shown.
+`EXPO_PUBLIC_ADS_ENABLED=1` without both app ids **throws at config time** rather than shipping an
+app whose every ad request fails silently.
+
+**Not yet true (P0 scope, stated):** `isReady()` returns false until P1 holds a preloaded instance,
+so `showRewarded` refuses with `sdk_unavailable` and the placeholder remains — the wiring is
+complete and observable, but no ad is shown yet. The migration is written and **not applied**;
+`ad_events` does not exist in the database until it is run.
 
 **Hard prerequisites, all missing today:** `app-ads.txt` at the domain root, a root privacy-policy
 URL, a developer website in the store listing, and Play's closed-test clock (~3 weeks per app on
@@ -306,3 +367,72 @@ revenue. The distribution problem — installs — is untouched by any of this.
 1. **Domain for `app-ads.txt`** — `dropby.co.in` is the plan in the report; confirm it is owned. AdMob app verification is mandatory for new apps and cannot be completed pre-launch.
 2. **Rewarded-unlock value** — does one rewarded view unlock one file, or grant one credit toward any ₹99 job? (Design decision; affects the paywall screen.)
 3. **44AD vs 44ADA** — needs a CA, before the first payout, not before P0.
+
+---
+
+## 12. Server-side verification — taking the phone out of the trust chain
+
+### The weakness P1 shipped with
+
+```
+  AdMob → phone → the app says "I earned the reward" → the server grants
+```
+
+The **phone was the witness**. The app is attacker-controlled code on a device the
+attacker owns, so "I watched it" is a sentence anyone can say. The grant itself was
+constrained (`unique (job_id)`, quota, logged) — but the *claim* was unverified.
+
+### The chain now
+
+```
+  AdMob → phone → AdMob's server → signed callback → our server verifies → grant
+```
+
+[`apps/web/lib/ad-ssv.ts`](../../apps/web/lib/ad-ssv.ts) verifies the callback's ECDSA
+P-256 signature against Google's published key set
+([`verifier-keys.json`](https://www.gstatic.com/admob/reward/verifier-keys.json)), and
+[`/api/ad-ssv`](../../apps/web/app/api/ad-ssv/route.ts) records the result.
+
+### The flow, step by step
+
+| Step | Call | What it proves |
+|---|---|---|
+| 1 | `POST /api/job/<id>/ad-claim` | nothing — mints a nonce, writes a `pending` claim, releases no file |
+| 2 | the ad request carries `serverSideVerificationOptions: { userId: nonce }` | the nonce rides to AdMob, so a signature can name this job |
+| 3 | `GET /api/ad-ssv?…&signature=…` (AdMob calls us) | **the signature** — a real completion, for that ad unit, recently |
+| 4 | `POST /api/job/<id>/ad-unlock { claim }` | only a `verified` claim releases the file; `202` while pending |
+
+### Details that are easy to get wrong, and are handled
+
+- **Verify the raw bytes.** The signature covers the query string up to `&signature=`.
+  Parsing and re-serialising first would verify a string nobody signed.
+- **Raw ECDSA, not DER.** AdMob sends raw `r||s`; Node needs `dsaEncoding: "ieee-p1363"`
+  or every genuine callback is rejected.
+- **`user_id` / `custom_data` are attacker-controlled.** They are a lookup key, never
+  authorisation. The security is entirely the signature.
+- **Expiry in both directions** — a captured callback cannot be replayed an hour later
+  or pre-dated.
+- **A forged callback is kept, not dropped**: `status = 'rejected'`, `signature_ok = false`,
+  with the reason, so an attack is a query rather than a log hunt.
+- **`rewarded_ad` no longer grants.** P1's source value stays in the ledger for history,
+  but the route releases only on `rewarded_ad_ssv`.
+
+### Verified, not asserted
+
+`npm run check:adssv` signs callbacks the way AdMob does and then attacks the verifier:
+genuine / tampered payload / wrong key / replay / unpublished key id / re-encoded bytes.
+
+The **wired** routes were also driven end to end against the live database with a locally
+served key set: a forged claim with no nonce → `409`; a real claim → `202` pending; a signed
+callback → `verified`; unlock → `201` with `source: "rewarded_ad_ssv"`; a replayed callback →
+`already_verified`; and **a genuine nonce with a forged signature → `rejected`, file still
+locked**. Every test row was deleted afterwards.
+
+### What is still required for this to be live
+
+1. An AdMob account and a **rewarded ad unit** (the callback names `ad_unit`).
+2. **The SSV URL set in the AdMob console**, per ad unit: `https://<host>/api/ad-ssv`.
+   Until it is set, AdMob never calls, every claim stays `pending` forever, and **no file
+   can be unlocked by an ad**. That is the fail-closed direction, and the correct one.
+3. `EXPO_PUBLIC_ADS_ENABLED=1` plus both app ids (the P0 wiring) for a build that can show ads.
+4. `ADMOB_SSV_KEYS_URL` is **test-only** — it must never be set in production.

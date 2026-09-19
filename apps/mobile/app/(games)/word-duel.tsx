@@ -632,6 +632,7 @@ export default function WordDuel() {
                   is on screen — take the pack or carry on without it.
                 </Text>
                 <AdSlot
+                  placement="game.wordduel.hintAd"
                   accent={accent}
                   title="Rewarded ad — hint pack"
                   reward={`+${HINT_PACK} hints, once per round`}

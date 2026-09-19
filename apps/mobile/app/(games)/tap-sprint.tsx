@@ -781,6 +781,7 @@ export default function TapSprint() {
                   is on screen — take the lives or end the round.
                 </Text>
                 <AdSlot
+                  placement="game.tapsprint.outOfLives"
                   accent={accent}
                   title="Rewarded ad — extra lives"
                   reward={`+${EXTRA_LIVES} lives, once per round`}

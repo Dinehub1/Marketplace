@@ -19,7 +19,8 @@ import { useMemo, useState } from "react";
 import {
   ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
-import { canDownloadFile, formatBytes, openPaywall, openResult, pickFile, runJob, saveDataUrl, type JobResult, type PickedFile } from "@/lib/tools";
+import { canDownloadFile, formatBytes, openResult, pickFile, runJob, saveDataUrl, type JobResult, type PickedFile } from "@/lib/tools";
+import { UnlockRow } from "@/components/unlock-row";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 import { ON_DEVICE_MODEL, cutOutOnDevice, onDeviceSupported, type OnDeviceCut } from "@/lib/bg-local";
 
@@ -213,11 +214,15 @@ export default function BackgroundRemover() {
             <Text style={s.secondaryText}>Save the PNG</Text>
           </Pressable>
         ) : job?.locked && job.jobId ? (
-          <Pressable style={s.primary} onPress={() => void openPaywall(job.jobId!)} accessibilityRole="button">
-            <Text style={s.primaryText}>
-              Unlock the clean PNG · ₹{Math.round((job.pricePaise || 9900) / 100)}
-            </Text>
-          </Pressable>
+          <UnlockRow
+            job={job}
+            // Per-product placement: "which paywall converts on an ad" is a real
+            // question and a shared key could not answer it.
+            placement="job.unlock-rewarded.bg-remove"
+            paidLabel={`Unlock the clean PNG · ₹${Math.round((job.pricePaise || 9900) / 100)}`}
+            paidNote="The unpaid preview above is watermarked on purpose."
+            onUnlocked={(url) => setJob({ ...job, locked: false, outputUrl: url })}
+          />
         ) : (
           <Pressable
             style={s.secondary}

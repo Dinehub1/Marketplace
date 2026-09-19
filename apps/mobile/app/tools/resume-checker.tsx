@@ -29,9 +29,10 @@ import {
   ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
 import {
-  formatBytes, openPaywall, openResult, pickFile, runJob,
+  formatBytes, openResult, pickFile, runJob,
   type JobResult, type PickedFile,
 } from "@/lib/tools";
+import { UnlockRow } from "@/components/unlock-row";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 
 /** The engine's own meta, as `resume_check` returns it. */
@@ -359,17 +360,17 @@ export default function DocumentCheck() {
       {done && !busy ? (
         <>
           {job?.locked ? (
-            <Pressable
-              style={s.primary}
-              onPress={() => job?.jobId && openPaywall(job.jobId)}
-              accessibilityRole="button"
-            >
-              <Text style={s.primaryText}>
-                {job?.pricePaise
+            <UnlockRow
+              job={job}
+              placement="job.unlock-rewarded.resume-checker"
+              paidLabel={
+                job?.pricePaise
                   ? `Unlock the report · ₹${Math.round(job.pricePaise / 100)}`
-                  : "Unlock the report"}
-              </Text>
-            </Pressable>
+                  : "Unlock the report"
+              }
+              paidNote="The report you unlock is the full check, with no mark."
+              onUnlocked={(url) => setJob({ ...job, locked: false, outputUrl: url })}
+            />
           ) : (
             <>
               <Pressable

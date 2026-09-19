@@ -30,7 +30,8 @@ import { useMemo, useState } from "react";
 import {
   ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
-import { formatBytes, openPaywall, openResult, runJob, type JobResult } from "@/lib/tools";
+import { formatBytes, openResult, runJob, type JobResult } from "@/lib/tools";
+import { UnlockRow } from "@/components/unlock-row";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 
 /**
@@ -195,17 +196,17 @@ export default function TextToImage() {
       {done && !busy ? (
         <>
           {job?.locked ? (
-            <Pressable
-              style={s.primary}
-              onPress={() => job?.jobId && openPaywall(job.jobId)}
-              accessibilityRole="button"
-            >
-              <Text style={s.primaryText}>
-                {job?.pricePaise
+            <UnlockRow
+              job={job}
+              placement="job.unlock-rewarded.ai-image"
+              paidLabel={
+                job?.pricePaise
                   ? `Unlock the picture · ₹${Math.round(job.pricePaise / 100)}`
-                  : "Unlock the picture"}
-              </Text>
-            </Pressable>
+                  : "Unlock the picture"
+              }
+              paidNote="The picture above is the watermarked preview."
+              onUnlocked={(url) => setJob({ ...job, locked: false, outputUrl: url })}
+            />
           ) : (
             <>
               <Pressable

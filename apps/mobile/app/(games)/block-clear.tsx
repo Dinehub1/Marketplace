@@ -495,6 +495,7 @@ export default function BlockClear() {
                   </Press>
                 ) : (
                   <AdSlot
+                    placement="game.blockclear.stuck"
                     accent={accent}
                     title="Rewarded ad — a fresh tray"
                     reward="Three new pieces that fit somewhere on this board, once per round."

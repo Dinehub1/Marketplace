@@ -122,6 +122,26 @@ const ANDROID_PERMISSIONS = [
 /** Only a target that uses the camera or the library gets the usage strings for them. */
 const USES_PHOTOS = PERMISSIONS.some((p) => p === "CAMERA" || p === "PHOTOS");
 
+/**
+ * The ad SDK is opt-in per build, and an opt-in build must supply its AdMob app id.
+ *
+ * Failing here, at config time, is the whole point: a build that linked the SDK with
+ * an empty app id compiles, installs, and then refuses every ad request at runtime —
+ * a silent revenue loss that looks exactly like "no demand". A thrown error before
+ * the build starts is the only version of this failure anyone can act on.
+ */
+const ADS_ENABLED = process.env.EXPO_PUBLIC_ADS_ENABLED === "1";
+const ADMOB_ANDROID_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID_ANDROID ?? "";
+const ADMOB_IOS_APP_ID = process.env.EXPO_PUBLIC_ADMOB_APP_ID_IOS ?? "";
+if (ADS_ENABLED && (!ADMOB_ANDROID_APP_ID || !ADMOB_IOS_APP_ID)) {
+  throw new Error(
+    `EXPO_PUBLIC_ADS_ENABLED=1 needs both EXPO_PUBLIC_ADMOB_APP_ID_ANDROID and ` +
+      `EXPO_PUBLIC_ADMOB_APP_ID_IOS for target "${APP_TARGET}". AdMob gives each app its ` +
+      `own app id (ca-app-pub-…~…); building without one produces an app whose ad ` +
+      `requests all fail. Set them, or unset EXPO_PUBLIC_ADS_ENABLED to build without ads.`,
+  );
+}
+
 /** Canvas colours, from packages/tokens. The splash must match the app's first
  *  painted frame or launch shows a flash of the wrong background. */
 const CANVAS_LIGHT = "#fbfbfd";
@@ -219,6 +239,35 @@ const config: ExpoConfig = {
     // in-app browser used by tel:/maps/wa.me hand-offs.
     "expo-status-bar",
     "expo-web-browser",
+    // The ad SDK, ONLY when a build asks for it.
+    //
+    // Two reasons this is conditional rather than always-on. First, a build that
+    // links the Google Mobile Ads SDK declares an advertising identifier and a set
+    // of data collection behaviours that every listing then has to disclose — an
+    // unnecessary declaration on an app that shows no ads. Second, it keeps every
+    // non-ad surface (the web export, `npm run shots`, a plain dev run) on a bundle
+    // with no ad module in it, so none of them can regress because of ad code.
+    //
+    // Unset (the default) means the plugin is absent and `lib/ads` resolves no SDK,
+    // which is exactly the placeholder state. `EXPO_PUBLIC_ADS_ENABLED=1` requires
+    // both app ids — checked at the top of this file, so the build fails there
+    // rather than producing an app whose every ad request is refused at runtime.
+    ...(ADS_ENABLED
+      ? ([
+          [
+            "react-native-google-mobile-ads",
+            {
+              androidAppId: ADMOB_ANDROID_APP_ID,
+              iosAppId: ADMOB_IOS_APP_ID,
+              // ATT must be asked for by the app's own UI, not the plugin, so that
+              // the prompt is timed and explained — and so a build that denies it
+              // still serves non-personalised rather than failing.
+              userTrackingUsageDescription:
+                "Allow tracking so the ads you see can be relevant. Without it the app still works and shows non-personalised ads.",
+            },
+          ],
+        ] as [string, Record<string, string>][])
+      : []),
     [
       "expo-splash-screen",
       {
@@ -274,6 +323,11 @@ const config: ExpoConfig = {
       ...(target.ads ? { ads: target.ads } : {}),
     },
     eas: { projectId: process.env.EAS_PROJECT_ID ?? "" },
+    // Read back at runtime by `lib/ads/config.ts`. It is in `extra` as well as the
+    // environment because `process.env.EXPO_PUBLIC_*` is inlined by Metro only for
+    // statically written references — a value that reaches the runtime through
+    // expo-constants is the one that cannot be tree-shaken away by a minifier.
+    adsEnabled: ADS_ENABLED,
   },
 };
 

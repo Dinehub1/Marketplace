@@ -22,6 +22,7 @@
  *   - **`revenue_micros` null vs 0.** Null means the network did not report a value.
  *     Averaging that in as zero would make a good network look like a bad one.
  */
+import { Platform } from "react-native";
 import { appTarget, eventsEndpoint, isTestUnit } from "./config";
 import { consentState } from "./consent";
 import { sessionId } from "./session";
@@ -57,11 +58,10 @@ const buffer: AdEventRecord[] = [];
 let flushing = false;
 
 function platform(): string {
-  // Not `react-native`'s Platform import: this file is also bundled for the web
-  // export, where the platform is the browser and the row should say so.
-  const os = (globalThis as { navigator?: { product?: string } }).navigator?.product;
-  if (os) return "web";
-  return (globalThis as { process?: { env?: Record<string, string>> }).process?.env?.EXPO_OS ?? "unknown";
+  // `react-native`'s Platform, not a `navigator` sniff: the web export runs on
+  // react-native-web, where Platform.OS is already "web" — so one call covers the
+  // phone and the browser export with no bundler-specific branch.
+  return Platform.OS;
 }
 
 /**

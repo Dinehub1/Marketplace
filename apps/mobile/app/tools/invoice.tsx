@@ -35,7 +35,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@hermes/core";
 import { paletteFor } from "@hermes/tokens";
-import { canDownloadFile, openPaywall, openResult, runJob, type JobResult } from "@/lib/tools";
+import { canDownloadFile, openResult, runJob, type JobResult } from "@/lib/tools";
+import { UnlockRow } from "@/components/unlock-row";
 import { loadCounter, recordBillNo } from "@/lib/invoice-counter";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
@@ -630,15 +631,13 @@ export default function InvoiceMaker() {
 
       {job?.locked && job.jobId ? (
         <View style={s.result}>
-          <Pressable style={s.primary} onPress={() => void openPaywall(job.jobId!)} accessibilityRole="button">
-            <Text style={s.primaryText}>
-              Unlock the invoice PDF · ₹{Math.round((job.pricePaise || 29900) / 100)}/mo
-            </Text>
-          </Pressable>
-          <Text style={s.hint}>
-            The preview PDF is watermarked. The bill you unlock has no mark and prints on A4
-            at full quality.
-          </Text>
+          <UnlockRow
+            job={job}
+            placement="job.unlock-rewarded.invoice"
+            paidLabel={`Unlock the invoice PDF · ₹${Math.round((job.pricePaise || 29900) / 100)}/mo`}
+            paidNote="The preview PDF is watermarked. The bill you unlock has no mark and prints on A4 at full quality."
+            onUnlocked={(url) => setJob({ ...job, locked: false, outputUrl: url })}
+          />
         </View>
       ) : null}
 
