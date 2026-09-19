@@ -157,6 +157,55 @@ export function AdSlot({
   );
 }
 
+/**
+ * AdBanner — the reserved space a real banner is dropped into.
+ *
+ * The second half of the same rule the rewarded slot follows: this file is the only place an
+ * ad SDK is ever mentioned, so the games keep working with or without one.
+ *
+ * The height is reserved whether or not an ad has loaded. A banner that arrives a second
+ * late and pushes the board down is a worse experience than a space that is briefly empty,
+ * and on a game screen the board moving mid-round is the one thing that must never happen.
+ * Nothing is faked — until a network is connected this says exactly what it is, the way the
+ * rewarded slot does.
+ */
+export const AD_BANNER_HEIGHT = 60;
+
+export function AdBanner({
+  accent,
+  style,
+}: {
+  /** The game's accent, so the reserved space belongs to the screen it sits in. */
+  accent?: string;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const { c } = useTheme();
+  return (
+    <View
+      accessibilityRole="summary"
+      style={[
+        styles.banner,
+        {
+          height: AD_BANNER_HEIGHT,
+          borderColor: c.hairlineStrong,
+          backgroundColor: c.surfaceSunken,
+        },
+        style,
+      ]}
+    >
+      <View style={[styles.tag, { backgroundColor: c.surfaceInset, borderColor: c.hairlineStrong }]}>
+        <Text variant="caption" tone="ink3">
+          Ad
+        </Text>
+      </View>
+      <Text variant="meta" tone="ink3" style={styles.bannerNote}>
+        Banner space
+      </Text>
+      {accent ? <View style={[styles.bannerDot, { backgroundColor: accent }]} /> : null}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   box: {
     borderWidth: 1,
@@ -165,6 +214,18 @@ const styles = StyleSheet.create({
     padding: space.base,
     gap: space.sm,
   },
+  banner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: space.sm,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderRadius: radius.sm,
+    paddingHorizontal: space.md,
+    marginBottom: space.sm,
+  },
+  bannerNote: { flex: 1 },
+  bannerDot: { width: 6, height: 6, borderRadius: 3, opacity: 0.5 },
   head: { flexDirection: "row", alignItems: "center", gap: space.sm },
   tag: {
     borderWidth: StyleSheet.hairlineWidth,

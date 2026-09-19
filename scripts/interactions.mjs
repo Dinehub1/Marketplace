@@ -464,44 +464,55 @@ async function mergeTilesSlide(page) {
     await page.waitForTimeout(400);
   }
 
-  const arrows = page.locator('[aria-label^="Slide "]');
-  const arrowCount = await arrows.count();
-  if (arrowCount !== 4)
-    throw new Error(`the round started with ${arrowCount} direction buttons on the page, not 4`);
-
   const before = await mergeHud(page);
   if (before.moves === null) throw new Error('the round started with no move counter on the page');
   if (before.moves !== 0) throw new Error(`a fresh round already reports ${before.moves} moves`);
-  await sabotage('[aria-label^="Slide "]', page);
 
-  let lastWhy = 'no direction button was ever on the page';
-  for (let i = 0; i < arrowCount; i++) {
-    const arrow = arrows.nth(i);
-    // Scrolled into view through the DOM rather than through locator.click(): the tap
-    // below is a raw coordinate press — so a sabotaged arrow cannot swallow it behind an
-    // actionability check — and a raw press at an off-screen coordinate would miss for a
-    // reason that has nothing to do with the game.
-    await arrow.evaluate((el) => el.scrollIntoView({ block: 'center' }));
-    const box = await arrow.boundingBox();
-    if (!box) continue;
-    const label = (await arrow.getAttribute('aria-label')) || `direction ${i + 1}`;
-    // Pressed at the arrow's own centre rather than through locator.click(): a sabotaged
-    // arrow (pointer-events: none) never receives the event, and locator.click() would
-    // spend its whole timeout on an actionability check instead of letting the probe say
-    // what did not happen.
-    await press(page, Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2));
+  const board = page.locator('[aria-label^="Board"]').first();
+  if (!(await board.count())) throw new Error('the round started with no board on the page');
+  await sabotage('[aria-label^="Board"]', page);
+
+  const box = await board.boundingBox();
+  if (!box) throw new Error('the board is on the page but has no box to swipe');
+
+  // The swipe is this game's only control, so a drag is what proves the screen still plays:
+  // there is no arrow pad to press any more, and a probe that pressed buttons would be
+  // proving something the game no longer ships.
+  //
+  // It is driven as real pointer events on the board — the same grant/release the game reads
+  // — with several small steps, because the game measures where the finger started and where
+  // it ended. The travel is a third of the board, comfortably past the engine's own
+  // 22-pixel threshold. All four directions are tried: which one can move depends on where
+  // the two opening tiles landed, and a slide against a wall is deliberately not a move.
+  const cx = Math.round(box.x + box.width / 2);
+  const cy = Math.round(box.y + box.height / 2);
+  const travel = Math.max(40, Math.round(Math.min(box.width, box.height) / 3));
+  const drags = [
+    [-travel, 0, 'left'],
+    [travel, 0, 'right'],
+    [0, -travel, 'up'],
+    [0, travel, 'down'],
+  ];
+
+  let lastWhy = 'the board was never swiped';
+  for (const [dx, dy, label] of drags) {
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.mouse.move(cx + Math.round(dx / 2), cy + Math.round(dy / 2), { steps: 4 });
+    await page.mouse.move(cx + dx, cy + dy, { steps: 4 });
+    await page.mouse.up();
     await page.waitForTimeout(350);
     const after = await mergeHud(page);
     if (after.moves !== null && after.moves > before.moves) {
       return {
         detail:
-          `started a round and pressed "${label}" — moves ${before.moves} → ${after.moves}, ` +
+          `swiped ${label} across the board — moves ${before.moves} → ${after.moves}, ` +
           `score ${before.score} → ${after.score}, best tile ${before.best} → ${after.best}`,
       };
     }
-    lastWhy = `pressing "${label}" did not change the board (moves still ${after.moves})`;
+    lastWhy = `swiping ${label} did not change the board (moves still ${after.moves})`;
   }
-  throw new Error(`not one of the four arrows reached the board: ${lastWhy}`);
+  throw new Error(`no swipe reached the board: ${lastWhy}`);
 }
 
 /**

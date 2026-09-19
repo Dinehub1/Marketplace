@@ -14,15 +14,16 @@
  *   - **The board is the screen.** No hub, no tabs, no scroll: score and controls sit at
  *     the edges and the sixteen squares get everything that is left, so the game fills the
  *     glass the way a game should.
- *   - **Swipe first, arrows for everyone else.** A thumb swipe is how this genre is played
- *     on a phone; the pad stays because it is the accessible control, it works one-handed
- *     at the bottom of the screen, and it is the one interaction a screenshot harness can
- *     press deterministically.
- *   - **Vintage, not themed.** Warm paper, letterpress tiles and a serif numeral are the
- *     game's own look, borrowed from the board games this puzzle descends from. The tenant
- *     brand ramp is deliberately NOT used for the board — a game someone installed has to
- *     look like the game, not like the directory behind it — but every control around the
- *     board still comes from the shared type scale, spacing and press behaviour.
+ *   - **Swipe, and only swipe.** The board is the control. A thumb swipe is how this genre is
+ *     played on a phone, and the sixteen squares get the space an arrow pad used to take.
+ *     What the pad also provided was a way to play without a gesture, so that path is kept
+ *     where it belongs — as VoiceOver/TalkBack actions on the board itself, which a screen
+ *     reader offers without a single extra pixel of chrome.
+ *   - **An ember board, not someone else's.** Twelve values run from a pale chip to the
+ *     deepest ember, so the glass says how far a round has come before a numeral is read.
+ *     The tenant brand ramp is deliberately NOT used for the board — a game someone
+ *     installed has to look like the game, not like the directory behind it — while the
+ *     chrome around it and the accent come from the shared tokens and this build target.
  *
  * The rules are not in this file. `lib/merge-tiles.ts` owns them, plus the trace that says
  * which tile travelled where and which cell joined — because a renderer cannot recover that
@@ -50,9 +51,10 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { setAudioModeAsync, useAudioPlayer, type AudioPlayer } from "expo-audio";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
-import { Press, Text } from "@/components/ui";
+import { Press } from "@/components/ui";
+import { AdBanner } from "@/components/ad-slot";
 import { useReduceMotion } from "@/lib/motion";
 import {
   EMPTY_RECORD,
@@ -63,7 +65,6 @@ import {
 import {
   at,
   bestTile,
-  canSlide,
   canUndo,
   CELLS,
   move,
@@ -78,94 +79,99 @@ import {
 } from "@/lib/merge-tiles";
 
 /**
- * The game's own look. Two complete palettes rather than tints of one, because parchment
- * and lamplight are different materials, not the same material at two brightnesses.
+ * The game's own look: an ember ramp on a slate board.
+ *
+ * The chrome around the board comes from the design system and the accent is this build
+ * target's own colour (`targets.mjs` → `co.dropby.mergetiles`, #ea580c), the way the other
+ * three games wear theirs. The board is the one thing that is this game's own: twelve
+ * values running from a pale chip to the deepest ember, so a glance at the glass says how
+ * far the round has come without reading a numeral.
+ *
+ * It is deliberately no longer the game this genre descends from. That palette — and a big
+ * "2048" logo card, which is someone else's name in our app — made this screen a copy of a
+ * product that already exists, which is exactly what App Store guideline 4.3 and Play's
+ * repetitive-content policy are for, and none of it said anything about this app.
  */
 type Skin = {
-  /** The paper the whole screen is printed on. */
-  paper: readonly [string, string];
+  /** The board: a slate card the tiles sit on. */
   board: string;
-  boardEdge: string;
-  boardShadow: string;
+  /** An empty cell — the board's own colour, lifted just enough to read as a socket. */
   empty: string;
+  /** Numerals on the board, and the overlay's copy. */
   ink: string;
   inkSoft: string;
-  tileEdge: string;
-  /** Tile fill per doubling step; index 0 is a 2. Ten steps reach 2048. */
+  /** Tile fill per doubling step; index 0 is a 2. Twelve steps reach 2048 and beyond. */
   fills: readonly string[];
   tileInk: string;
   tileInkHigh: string;
-  /** The value at which numerals flip from ink to cream/white. */
+  /** The value at which numerals flip from dark ink to a warm light one. */
   flip: number;
+  /** The build target's colour: the wordmark card, the primary button, the ambient wash. */
   accent: string;
+  /** The score boxes, which are a part of the board rather than of the chrome. */
   scoreBox: string;
-  button: string;
 };
 
 const SKIN: Record<"light" | "dark", Skin> = {
   light: {
-    paper: ["#faf8ef", "#faf8ef"],
-    board: "#bbada0",
-    boardEdge: "#bbada0",
-    boardShadow: "rgba(0,0,0,0.12)",
-    empty: "#cdc1b4",
-    ink: "#776e65",
-    inkSoft: "#8f7a66",
-    tileEdge: "transparent",
+    board: "#1e2532",
+    empty: "#38445a",
+    ink: "#f8fafc",
+    inkSoft: "#94a3b8",
     fills: [
-      "#eee4da", // 2
-      "#ede0c8", // 4
-      "#f2b179", // 8
-      "#f59563", // 16
-      "#f67c5f", // 32
-      "#f65e3b", // 64
-      "#edcf72", // 128
-      "#edcc61", // 256
-      "#edc850", // 512
-      "#edc53f", // 1024
-      "#edc22e", // 2048
-      "#3c3a32", // >2048
+      "#e2e8f0", // 2
+      "#dbe4f0", // 4
+      "#ffd9a8", // 8
+      "#ffc178", // 16
+      "#fd9d55", // 32
+      "#d9480f", // 64
+      "#c2410c", // 128
+      "#9a3412", // 256
+      "#7c2d12", // 512
+      "#60200e", // 1024
+      "#b45309", // 2048 — the deepest ember, and the round's goal
+      "#475569", // >2048
     ],
-    tileInk: "#776e65",
-    tileInkHigh: "#f9f6f2",
-    flip: 8,
-    accent: "#edc22e",
-    scoreBox: "#bbada0",
-    button: "#e99450",
+    tileInk: "#0f172a",
+    tileInkHigh: "#fff7ed",
+    flip: 64,
+    accent: "#ea580c",
+    scoreBox: "#1e2532",
   },
   dark: {
-    paper: ["#1e1b18", "#12100e"],
-    board: "#3a342e",
-    boardEdge: "#3a342e",
-    boardShadow: "#000000",
-    empty: "#4a423b",
-    ink: "#f2ece4",
-    inkSoft: "#baa896",
-    tileEdge: "transparent",
+    board: "#111827",
+    empty: "#28374d",
+    ink: "#f8fafc",
+    inkSoft: "#94a3b8",
     fills: [
-      "#4a3d30",
-      "#5a4938",
-      "#b86835",
-      "#c75628",
-      "#cf4b2d",
-      "#d93e1f",
-      "#c4a63f",
-      "#caa030",
-      "#d49f25",
-      "#dc9b1c",
-      "#edc22e",
-      "#262521",
+      "#cbd5e1", // 2
+      "#c3cfdd", // 4
+      "#ffcb8a", // 8
+      "#ffb265", // 16
+      "#fb8f3f", // 32
+      "#f97316", // 64
+      "#ea580c", // 128
+      "#c2410c", // 256
+      "#9a3412", // 512
+      "#7c2d12", // 1024
+      "#b45309", // 2048
+      "#334155", // >2048
     ],
-    tileInk: "#f2ece4",
-    tileInkHigh: "#ffffff",
-    flip: 8,
-    accent: "#edc22e",
-    scoreBox: "#3a342e",
-    button: "#d97736",
+    tileInk: "#0b1020",
+    tileInkHigh: "#fff7ed",
+    // 128, not 64: this ramp passes through a bright orange. Measured against the two inks,
+    // a warm-white numeral on the 64 tile is 2.6:1 — under the 3:1 floor for large text —
+    // while a dark numeral on it is 7:1. On the light ramp the same step is the other way
+    // round, which is exactly why the flip is a per-skin number rather than a shared one.
+    flip: 128,
+    // A lighter step on purpose: the deep orange goes muddy against a near-black canvas.
+    accent: "#fb923c",
+    scoreBox: "#111827",
   },
 };
 
-/** Classic clean sans-serif numeral font matching the original 2048 game. */
+/** The numerals, in the plainest face the OS has: a game about arithmetic should read its
+ *  numbers, not its typography. */
 const FONT = Platform.select({
   ios: "System",
   android: "sans-serif",
@@ -178,8 +184,6 @@ const MOVE_MS = 115;
 const SOUND_KEY = "hermes-merge-sound";
 /** Board geometry, in points. */
 const GAP = 12;
-/** The direction pad. */
-const ARROW = 58;
 /** Key this game's round records live under in the device score store. */
 const GAME = "merge-tiles";
 
@@ -231,7 +235,7 @@ function tilesFromBoard(board: number[], nextId: { current: number }): Tile[] {
 }
 
 export default function MergeTiles() {
-  const { scheme } = useTheme();
+  const { c, scheme, elevation } = useTheme();
   const skin = SKIN[scheme === "dark" ? "dark" : "light"];
   const reduceMotion = useReduceMotion();
   const insets = useSafeAreaInsets();
@@ -556,7 +560,13 @@ export default function MergeTiles() {
 
   return (
     <View style={s.root}>
-      <LinearGradient colors={skin.paper} style={StyleSheet.absoluteFill} />
+      {/* The canvas is the design system's, with this game's accent warming the bottom of the
+          screen — enough that the screen belongs to the game, not enough to be a colour of
+          its own. */}
+      <LinearGradient
+        colors={[c.canvas, alpha(skin.accent, scheme === "dark" ? 0.12 : 0.07)]}
+        style={StyleSheet.absoluteFill}
+      />
 
       <View
         style={[
@@ -564,10 +574,10 @@ export default function MergeTiles() {
           { paddingTop: insets.top + space.md, paddingBottom: insets.bottom + space.md },
         ]}
       >
-        {/* ── 2048 Header: Title & Scoreboard ── */}
+        {/* ── Header: the wordmark and the scoreboard ── */}
         <View style={s.header}>
-          <View style={[s.logoCard, { backgroundColor: skin.accent }]}>
-            <RNText style={s.logoText}>2048</RNText>
+          <View style={[s.logoCard, { backgroundColor: skin.accent }, elevation(2)]}>
+            <RNText style={s.logoText}>MERGE</RNText>
           </View>
 
           <View style={s.scoresRow}>
@@ -586,10 +596,10 @@ export default function MergeTiles() {
             panel's headline before this screen lost its three states, and they belong here
             rather than in a panel in front of the board. */}
         <View style={s.tagline}>
-          <RNText style={[s.taglineTitle, { color: skin.ink }]}>
+          <RNText style={[s.taglineTitle, { color: c.ink }]}>
             Slide the tiles, double the numbers
           </RNText>
-          <RNText style={[s.taglineMeta, { color: skin.inkSoft }]}>Four by four · no clock</RNText>
+          <RNText style={[s.taglineMeta, { color: c.ink2 }]}>Four by four · no clock</RNText>
         </View>
 
         {/* ── Board Container ── */}
@@ -606,6 +616,18 @@ export default function MergeTiles() {
         >
           <View
             accessibilityLabel={`Board. ${N} by ${N}. Swipe to slide the tiles.`}
+            accessibilityActions={[
+              { name: "slide-left", label: "Slide left" },
+              { name: "slide-right", label: "Slide right" },
+              { name: "slide-up", label: "Slide up" },
+              { name: "slide-down", label: "Slide down" },
+            ]}
+            onAccessibilityAction={(e) => {
+              const dir = e.nativeEvent.actionName.replace("slide-", "");
+              if (dir === "left" || dir === "right" || dir === "up" || dir === "down") {
+                onSlide(dir);
+              }
+            }}
             onStartShouldSetResponder={() => !game?.over}
             onResponderGrant={onBoardGrant}
             onResponderRelease={onBoardRelease}
@@ -646,14 +668,19 @@ export default function MergeTiles() {
 
             {/* Game Over / Win Overlay right on the board */}
             {game?.over ? (
-              <View style={s.boardOverlay}>
-                <RNText style={s.overlayTitle}>{game.won ? "You Win!" : "Game Over!"}</RNText>
-                <RNText style={s.overlaySubtitle}>Final Score: {game.score}</RNText>
+              <View style={[s.boardOverlay, { backgroundColor: alpha(skin.board, 0.94) }]}>
+                <RNText style={[s.overlayTitle, { color: skin.ink }]}>
+                  {game.won ? "You Win!" : "Game Over!"}
+                </RNText>
+                <RNText style={[s.overlaySubtitle, { color: skin.inkSoft }]}>
+                  Final Score: {game.score}
+                </RNText>
                 <Press
                   accessibilityRole="button"
                   accessibilityLabel="Try again"
+                  haptic="medium"
                   onPress={startRound}
-                  style={[s.overlayBtn, { backgroundColor: skin.button }]}
+                  style={[s.overlayBtn, { backgroundColor: skin.accent }]}
                 >
                   <RNText style={s.overlayBtnText}>Try again</RNText>
                 </Press>
@@ -662,7 +689,7 @@ export default function MergeTiles() {
                     accessibilityRole="button"
                     accessibilityLabel="Undo last move"
                     onPress={takeUndo}
-                    style={[s.overlayBtn, { backgroundColor: skin.button, marginTop: 10 }]}
+                    style={[s.overlayBtn, { backgroundColor: skin.accent, marginTop: 10 }]}
                   >
                     <RNText style={s.overlayBtnText}>Undo move</RNText>
                   </Press>
@@ -675,22 +702,15 @@ export default function MergeTiles() {
         {/* Where the last move stands, in the screen's own words: a slide that joined
             nothing says so, so "the board changed" and "why it changed" are one message
             instead of a board that moves in silence. */}
-        <RNText style={[s.notice, { color: skin.inkSoft }]} numberOfLines={1}>
-          {notice || "Swipe the board, or use the arrows"}
+        <RNText style={[s.notice, { color: c.ink2 }]} numberOfLines={1}>
+          {notice || "Swipe the board to slide the tiles"}
         </RNText>
 
-        {/* The pad. A thumb swipe is how this genre is played on a phone, and the arrows stay
-            because they are the accessible control: they need no gesture, they sit in the
-            thumb zone, and they are the one interaction a capture harness can press
-            deterministically (`scripts/interactions.mjs`, merge-tiles-slide). One row rather
-            than the usual cross — the squares get the height a cross would have cost. */}
-        {game ? (
-          <View style={s.pad}>
-            {(["left", "up", "down", "right"] as const).map((dir) => (
-              <Arrow key={dir} dir={dir} game={game} phase={phase} skin={skin} onSlide={onSlide} />
-            ))}
-          </View>
-        ) : null}
+        {/* The ad space, at the bottom of the board and above the controls, where it costs the
+            round nothing: the height is reserved whether or not a banner has loaded, so the
+            board never moves under the player's thumb when one arrives. `AdBanner` lives in
+            components/ad-slot.tsx — the only file an ad SDK ever touches. */}
+        <AdBanner accent={skin.accent} />
 
         {/* ─ Bottom Controls & Stats Bar (Thumb Zone) ── */}
         <View style={s.bottomSection}>
@@ -699,7 +719,7 @@ export default function MergeTiles() {
               accessibilityRole="button"
               accessibilityLabel="New game"
               onPress={startRound}
-              style={[s.actionBtn, { backgroundColor: skin.button }]}
+              style={[s.actionBtn, { backgroundColor: skin.accent }]}
             >
               <RNText style={s.actionBtnText}>NEW GAME</RNText>
             </Press>
@@ -709,7 +729,7 @@ export default function MergeTiles() {
                 accessibilityRole="button"
                 accessibilityLabel="Undo last move"
                 onPress={takeUndo}
-                style={[s.actionBtn, { backgroundColor: skin.button }]}
+                style={[s.actionBtn, { backgroundColor: skin.accent }]}
               >
                 <RNText style={s.actionBtnText}>UNDO</RNText>
               </Press>
@@ -726,12 +746,12 @@ export default function MergeTiles() {
           </View>
 
           <View style={s.statusRow}>
-            <RNText style={[s.statusMeta, { color: skin.inkSoft }]}>
-              Moves: <RNText style={{ fontWeight: "800", color: skin.ink }}>{game?.moves ?? 0}</RNText>
+            <RNText style={[s.statusMeta, { color: c.ink2 }]}>
+              Moves: <RNText style={{ fontWeight: "800", color: c.ink }}>{game?.moves ?? 0}</RNText>
             </RNText>
-            <RNText style={[s.statusMeta, { color: skin.inkSoft }]}>
+            <RNText style={[s.statusMeta, { color: c.ink2 }]}>
               Best Tile:{" "}
-              <RNText style={{ fontWeight: "800", color: skin.ink }}>
+              <RNText style={{ fontWeight: "800", color: c.ink }}>
                 {game ? bestTile(game.board) : 2}
               </RNText>
             </RNText>
@@ -869,44 +889,6 @@ function TileView({
   );
 }
 
-/** One arrow of the pad, dimmed exactly when the engine says it cannot move anything. */
-function Arrow({
-  dir,
-  game,
-  phase,
-  skin,
-  onSlide,
-}: {
-  dir: Dir;
-  game: State;
-  phase: Phase;
-  skin: Skin;
-  onSlide: (dir: Dir) => void;
-}) {
-  const usable = phase === "playing" && !game.over && canSlide(game.board, dir);
-  return (
-    <Press
-      accessibilityRole="button"
-      accessibilityLabel={`Slide ${dir}`}
-      accessibilityState={{ disabled: !usable }}
-      disabled={!usable}
-      onPress={() => onSlide(dir)}
-      style={[
-        s.arrow,
-        {
-          backgroundColor: skin.paper[0],
-          borderColor: usable ? skin.boardEdge : alpha(skin.boardEdge, 0.45),
-          opacity: usable ? 1 : 0.45,
-        },
-      ]}
-    >
-      <Text style={[s.arrowInk, { color: skin.ink }]}>
-        {dir === "up" ? "↑" : dir === "down" ? "↓" : dir === "left" ? "←" : "→"}
-      </Text>
-    </Press>
-  );
-}
-
 const s = StyleSheet.create({
   root: { flex: 1 },
   column: {
@@ -925,24 +907,20 @@ const s = StyleSheet.create({
     marginBottom: 6,
   },
   logoCard: {
-    width: 72,
+    minWidth: 92,
     height: 72,
-    borderRadius: 12,
+    paddingHorizontal: 14,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 3,
   },
   logoText: {
     fontFamily: FONT,
-    fontSize: 27,
-    lineHeight: 31,
+    fontSize: 21,
+    lineHeight: 25,
     fontWeight: "800",
     color: "#ffffff",
-    letterSpacing: -0.5,
+    letterSpacing: 0.5,
     textAlign: "center",
     includeFontPadding: false,
   },
@@ -954,15 +932,11 @@ const s = StyleSheet.create({
   scoreBox: {
     flex: 1,
     height: 72,
-    borderRadius: 10,
+    borderRadius: 16,
     paddingVertical: 8,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
   },
   scoreLabel: {
     fontFamily: FONT,
@@ -1010,13 +984,6 @@ const s = StyleSheet.create({
     marginTop: 2,
     marginBottom: 8,
   },
-  /** The pad: four arrows in the thumb zone, above the action buttons. */
-  pad: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: space.sm,
-    marginBottom: 10,
-  },
   boardArea: {
     flex: 1,
     alignItems: "center",
@@ -1024,23 +991,23 @@ const s = StyleSheet.create({
     marginVertical: 4,
   },
   board: {
-    borderRadius: 12,
+    borderRadius: 16,
     position: "relative",
     shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 5,
+    shadowOpacity: 0.22,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
   },
   empty: {
     position: "absolute",
-    borderRadius: 8,
+    borderRadius: 10,
   },
   tile: {
     position: "absolute",
     left: 0,
     top: 0,
-    borderRadius: 8,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -1050,8 +1017,7 @@ const s = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(238, 228, 218, 0.9)",
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
     padding: 24,
@@ -1062,7 +1028,6 @@ const s = StyleSheet.create({
     fontSize: 36,
     lineHeight: 42,
     fontWeight: "800",
-    color: "#776e65",
     marginBottom: 6,
     textAlign: "center",
     includeFontPadding: false,
@@ -1072,13 +1037,12 @@ const s = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "700",
-    color: "#8f7a66",
     marginBottom: 18,
     textAlign: "center",
   },
   overlayBtn: {
     minWidth: 140,
-    borderRadius: 8,
+    borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 20,
     alignItems: "center",
@@ -1137,14 +1101,5 @@ const s = StyleSheet.create({
     lineHeight: 16,
     fontWeight: "600",
   },
-  arrow: {
-    width: ARROW,
-    height: ARROW,
-    borderRadius: radius.md,
-    borderWidth: 2,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  arrowInk: { fontFamily: FONT, fontSize: 24, lineHeight: 28, fontWeight: "700" },
 });
 
