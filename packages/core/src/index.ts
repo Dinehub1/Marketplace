@@ -73,6 +73,20 @@ export const DEFAULT_CITY: City = CITY_BY_SLUG.get("indore")!;
 export const CITY_SLUG = DEFAULT_CITY.slug;
 export const CITY_LABEL = DEFAULT_CITY.label;
 
+/**
+ * Brand copy (tagline, description, about_text, seo_title) is authored ONCE, for
+ * the default city, and rendered on every city's pages. Rather than duplicate
+ * that copy per city in the database, the default city's name and state are
+ * swapped for the resolved city's at render time — which is why a Mumbai page
+ * used to read "Indore's business directory". Exact-string on names we control,
+ * so it cannot mangle unrelated text. (2026-09-19)
+ */
+export function cityCopy(text: string | null | undefined, city: City): string | null {
+  if (!text) return text ?? null;
+  if (city.slug === DEFAULT_CITY.slug) return text;
+  return text.split(DEFAULT_CITY.label).join(city.label).split(DEFAULT_CITY.state).join(city.state);
+}
+
 export function cityBySlug(slug: string | null | undefined): City | null {
   if (!slug) return null;
   return CITY_BY_SLUG.get(slug.trim().toLowerCase()) ?? null;

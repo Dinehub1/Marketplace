@@ -1,4 +1,5 @@
 import { createClient } from "./supabase/server";
+import { cityCopy, DEFAULT_CITY, type City } from "@hermes/core";
 import { headers } from "next/headers";
 import type {
   BlogPost,
@@ -94,14 +95,25 @@ export async function getBrands(): Promise<Brand[]> {
 }
 
 /** One brand by its URL slug. */
-export async function getBrand(slug: string): Promise<Brand | null> {
+export async function getBrand(slug: string, city?: City): Promise<Brand | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("brands")
     .select("*")
     .eq("slug", slug.toLowerCase())
     .maybeSingle();
-  return (data as Brand) ?? null;
+  const brand = (data as Brand) ?? null;
+  if (!brand || !city || city.slug === DEFAULT_CITY.slug) return brand;
+  // One place, so every consumer (header, footer, landing, about, the default
+  // metadata) gets city-correct copy without threading a city through them all.
+  return {
+    ...brand,
+    tagline: cityCopy(brand.tagline, city),
+    description: cityCopy(brand.description, city),
+    seo_title: cityCopy(brand.seo_title, city),
+    seo_description: cityCopy(brand.seo_description, city),
+    about_text: cityCopy(brand.about_text, city),
+  };
 }
 
 import { brandSlugFromHost } from "./base-domains";

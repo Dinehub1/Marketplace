@@ -40,9 +40,6 @@ export async function generateMetadata(
   { params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> },
 ): Promise<Metadata> {
   const { brand: slug } = await params;
-  const brand = await getBrand(slug.toLowerCase());
-  if (!brand) return {};
-
   const sp = await searchParams;
   const subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
@@ -51,6 +48,10 @@ export async function generateMetadata(
   // every existing URL keeps its current meaning. (2026-09-19)
   const city = cityBySlug(citySlugFromPath(subPath)) ?? DEFAULT_CITY;
   const cityName = city.label;
+
+  // Resolved after the city so the brand's copy is already city-correct here.
+  const brand = await getBrand(slug.toLowerCase(), city);
+  if (!brand) return {};
 
   // Canonical origin for meta/OG/JSON-LD: the brand's own domain (the new
   // domain), so canonical tags consolidate on the domain we want indexed rather
@@ -225,14 +226,17 @@ function isEnabled(brand: Brand, key: string): boolean {
 
 export default async function BrandRouter({ params, searchParams }: { params: Promise<{ brand: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const { brand: slug } = await params;
-  const brand = await getBrand(slug.toLowerCase());
-  if (!brand) notFound();
   const sp = await searchParams;
   let subPath = ((sp.__brand_path as string) || "/").toLowerCase();
 
   // Resolved once, then used by every fetch and passed to every page below, so
   // a rendered page can never mix two cities. (2026-09-19)
   const city: City = cityBySlug(citySlugFromPath(subPath)) ?? DEFAULT_CITY;
+
+  // Brand fetched after the city, so its copy (footer tagline, about, default
+  // metadata) is already swapped for this city.
+  const brand = await getBrand(slug.toLowerCase(), city);
+  if (!brand) notFound();
 
   // Per-brand sitemap (lib/brand-sitemap.ts): the semantic routes a visitor
   // expects from this brand - /doctors, /plumbers, /used-cars - resolved onto
