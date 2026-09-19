@@ -453,3 +453,32 @@ export function counterLabel(counter: InvoiceCounter | null | undefined): string
   if (!counter || counter.last <= 0) return null;
   return `${counter.prefix}${String(counter.last).padStart(Math.min(Math.max(counter.width, String(counter.last).length), 9), "0")}`;
 }
+
+/* ---------------------------------------------------------------------------
+ * Document translation: the languages the product offers.
+ *
+ * Kept here, and not in the two places that need it, because they are the ones that
+ * drifted the last time a grammar was owned twice (item 25: the PDF screen's own range
+ * guard hid `odd`/`l` from the user while letting `1 - 3` through to a 400).
+ * `apps/web/app/api/job/route.ts` answers "not one of the languages this tool
+ * translates" and `apps/mobile/app/tools/translate-doc.tsx` draws the picker, so a code
+ * that works in the app but not at the route would be a screen offering a 400 — and a
+ * code the route grew but the picker never showed would be a dead feature.
+ *
+ * The list is the one that passed a **round trip**, not a catalogue of codes the model
+ * claims: `gu` (Gujarati) answered five probes with five wrong numbers and `te`
+ * (Telugu) came back empty from the LLM while m2m100 refused the code outright, so
+ * neither is offered. Re-run that probe before adding one — see item 15 in
+ * docs/hourly-queue.md and TRANSLATE_LANG_NAMES in services/tools/worker.py (written
+ * separately because the Python half cannot import this file).
+ */
+export const TRANSLATE_LANGS: readonly string[] = ["en", "hi", "bn", "mr", "ta", "ml", "kn", "pa", "or", "as", "ur"];
+
+/** The languages in words, for a sentence rather than a picker. */
+export const TRANSLATE_LANG_NAMES: Record<string, string> = {
+  en: "English", hi: "Hindi", bn: "Bengali", mr: "Marathi", ta: "Tamil",
+  ml: "Malayalam", kn: "Kannada", pa: "Punjabi", or: "Odia", as: "Assamese", ur: "Urdu",
+};
+
+/** `English, Hindi, Bengali …` — what both the route's 400 and the screen's help say. */
+export const TRANSLATE_LANGS_HELP = TRANSLATE_LANGS.map((c) => TRANSLATE_LANG_NAMES[c] ?? c).join(", ");

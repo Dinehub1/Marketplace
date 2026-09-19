@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { isPageRange, PDF_PAGES_HELP } from "@hermes/core";
+import { TRANSLATE_LANGS, isPageRange, PDF_PAGES_HELP } from "@hermes/core";
 import { metaFor, runChain, type Capability } from "@/lib/ai";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
@@ -358,17 +358,17 @@ const PDF_PAGE_FORMATS = ["a4", "letter", "a5"];
 const COLLAGE_LAYOUTS = ["auto", "2x1", "1x2", "2x2", "3x1"];
 
 /**
- * Languages the translation product offers, mirroring TRANSLATE_LANGS in
- * services/tools/worker.py — the Python/TS boundary is why this list is written
- * twice, exactly like the PDF page grammar. Written from a round-trip measurement,
- * not from the model's marketing: each code below took "Payment is due within thirty
- * days of the invoice date." into the language and back to English with the thirty
- * days intact. That test removed `gu` (5 probes, 5 wrong numbers — eighteen days,
- * three months, a hundred days, sixty days) and `te` (no engine answered it at all).
- * The engine checks the same set, so a caller who bypasses this route still cannot
- * ask for a language nobody verified.
+ * Languages the translation product offers. The list itself lives in `@hermes/core`
+ * (`TRANSLATE_LANGS`) because the app's own picker draws it — a second copy is how the
+ * PDF screen ended up offering ranges the engine refused (item 25), and a picker that
+ * offers a code this route rejects is a screen whose only outcome is a 400. The engine
+ * checks the same set in `services/tools/worker.py` (the Python/TS boundary is why the
+ * names appear twice), so a caller who bypasses this route still cannot ask for a
+ * language nobody verified. Written from a round-trip measurement, not from the model's
+ * marketing: each code below took "Payment is due within thirty days of the invoice
+ * date." into the language and back to English with the thirty days intact. That test
+ * removed `gu` (5 probes, 5 wrong numbers) and `te` (no engine answered it at all).
  */
-const TRANSLATE_LANGS = ["en", "hi", "bn", "mr", "ta", "ml", "kn", "pa", "or", "as", "ur"];
 const PHOTO_JOB_LIMITS: Record<string, { files: number; totalBytes: number }> = {
   "photos-to-pdf": { files: 20, totalBytes: 60 * 1024 * 1024 },
   collage: { files: 4, totalBytes: 40 * 1024 * 1024 },

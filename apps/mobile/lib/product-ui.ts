@@ -55,6 +55,11 @@ const PRODUCT_ACCENTS: Record<string, AccentKey> = {
   // Text to image is the same family as the other photo products (it makes a
   // picture), so it keeps their accent rather than inventing a sixth meaning.
   "ai-image": "info",
+  // Translation is a text product, not a repair and not a diagnosis, so it takes the
+  // one accent in the toolbox that is not already carrying a meaning there: editorial
+  // gold. Collage holds it too, but the two are one tile apart and never on the same
+  // screen — and a green would read as "passed" for a machine translation nobody read.
+  "translate-doc": "gold",
 };
 
 /** Fallback accent when a screen is not tied to one catalogue product. */
