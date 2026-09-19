@@ -34,8 +34,17 @@ export type DeveloperApp = {
 /** The publisher name shown on the site, in the store, and in AdMob. */
 export const PUBLISHER = {
   name: "BrandCollabs",
-  /** Where a policy question goes. Must be a mailbox someone actually reads. */
-  contactEmail: "kukrejajaydeep@gmail.com",
+  /**
+   * Where a policy, privacy or abuse question goes.
+   *
+   * On the domain rather than a Gmail address, for three reasons that all point the
+   * same way: Play Console requires the account's contact address to match the
+   * organisation's website domain, AdMob reviewers treat a domain contact as a real
+   * business, and a user exercising a privacy right should not have to trust a
+   * personal mailbox. It forwards to a monitored inbox (Cloudflare Email Routing),
+   * so this is reachable — which is the only thing that makes a policy contact real.
+   */
+  contactEmail: "support@dropby.co.in",
   /** The jurisdiction the policy is written under. */
   jurisdiction: "Indore, Madhya Pradesh, India",
   /** Canonical origin for this developer site. */
