@@ -10,7 +10,7 @@ status here so the next hour does not repeat the work.
 1. **One item per hour.** Finish or leave it explicitly `blocked` — never half-apply.
 2. **Evidence or it did not happen.** A curl with its status code, a `product_jobs`
    row id, a screenshot at phone size, a test that ran. "Improved the UI" is not evidence.
-3. **Never restart the live site after a failed build.** `npm run build && pm2 restart hermes-web`
+3. **Never restart the live site after a failed build.** `npm run build && pm2 restart marketplace`
    is a single gated step, or nothing.
 4. **Licenses are checked, never assumed.** Only MIT / Apache-2.0 / BSD code may be
    copied into the app. AGPL/LGPL/Elastic stay out (read-only reference), CC0 lists are fine to read.
@@ -101,7 +101,7 @@ and the file re-downloaded from R2 carries no EXIF and no GPS IFD), **59** (3 ph
 products are untouched. Five guard cases answer an honest **400** (1 photo "A collage
 needs at least 2 photos", 5 photos, `pagesize=a0`, `layout=9x9`, `cell_px=abc`) rather
 than a 502. `npm run typecheck -w @hermes/web` exit 0 before the gated
-`npm run build && pm2 restart hermes-web`; localhost:8080, /galaxy and
+`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy and
 sarkarmarketplace.dropby.co.in all 200 afterwards.
 Not done here: no screen yet — the toolbox grid still lists nine tiles, so the three
 products are engine-only until item 14. Also unfixed: posting to the public host from a
@@ -505,7 +505,7 @@ a 9,799-character document → **400** "translates up to 9000 in one job (about 
 Rows 141-145 are `done`/`failed` in `product_jobs` with the engine's `meta` (item 40's
 column) recording `engines`, `neurons`, `chars_in`. Regressions: `resume-checker` **145** and
 `pdf-tools merge` **146** both still 200. `npm run typecheck -w @hermes/web` exit 0, then the
-gated `npm run build && pm2 restart hermes-web`; localhost:8080, sarkarmarketplace and
+gated `npm run build && pm2 restart marketplace`; localhost:8080, sarkarmarketplace and
 expo.dropby.co.in/tools all 200 after. Engine restarted as stop → port free → start (one
 listener on 8099, `health.pid 7384 == pm2 pid`).
 Measurements worth keeping: a ~500-character document takes 3.8-11 s and bills ~40-54
@@ -944,7 +944,7 @@ the price measured against the real per-image cost (item 16's job) rather than g
   Honest edges: no prompt → **400 `prompt is required`**; a >300-character prompt → **413
   `prompt is too long`**; `exif-strip` re-run afterwards = job **119**, still 200, so the route
   change broke nothing else. `npm run typecheck -w @hermes/web` exit 0, then the gated
-  `npm run build && pm2 restart hermes-web`; localhost:8080, `/galaxy`,
+  `npm run build && pm2 restart marketplace`; localhost:8080, `/galaxy`,
   sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools all 200 after.
 - One caveat measured on the way: the **first** engine call this hour answered
   `500 {"error": "HTTP Error 400: Bad Request"}` (Cloudflare rejecting the request once) and the
@@ -1230,7 +1230,7 @@ job **136** `split pages=1-,!5` = HTTP **200**, `pages_in 5 → pages_out 4`, 28
 and job **132** the same before the worker restart; a bare `!5` still answers 400, now with
 `… 1-,!5 (all but page 5) — pdfcpu said: trim: extract pages: missing page numbers` (job **131**
 `odd` = 200, 5 → 3 pages; merge of two 5-page files = job **137**, 200, `pages_out 10`), so the
-old products are untouched. Gated `npm run build && pm2 restart hermes-web` (the new sentence is
+old products are untouched. Gated `npm run build && pm2 restart marketplace` (the new sentence is
 in the built chunk and `!5 (exclude)` is gone from `.next`); localhost:8080, /galaxy,
 sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools/pdf all **200** after.
 Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
@@ -1629,7 +1629,7 @@ untouched.
 Catalogue row inserted for `listing-description` (`price_paise 0`, `plan free`, `cost_model
 free_local`, sort 40) — without it the route's own check answers 404 "This product is not switched
 on yet". `npm run typecheck -w @hermes/web` exit 0, then the gated
-`npm run build && pm2 restart hermes-web`; localhost:8080, /galaxy, sarkarmarketplace.dropby.co.in,
+`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sarkarmarketplace.dropby.co.in,
 expo.dropby.co.in/tools and shots.dropby.co.in/log all 200 afterwards. **No engine restart** — no
 Python file changed (one listener on :8099, `health.pid 8164 == pm2 pid`).
 Still open from this item, and it is deliberate: there is **no tile and no screen** — this is the
@@ -1813,7 +1813,7 @@ The pre-change rows are untouched (`id 134-137`, including two `failed` ones, re
 and the failure path still writes without the column (job **140** `failed`,
 `error "bad request: merge needs at least two PDFs"`, `meta null`), so nothing that worked before
 changed shape. `npm run typecheck -w @hermes/web` exit 0, then the gated
-`npm run build && pm2 restart hermes-web`; `localhost:8080` (200), `sarkarmarketplace.dropby.co.in`
+`npm run build && pm2 restart marketplace`; `localhost:8080` (200), `sarkarmarketplace.dropby.co.in`
 (200) and `expo.dropby.co.in/tools` (200) after — **the engine was not restarted** (one listener on
 :8099, pid 7200 == pm2 pid) because no engine file changed.
 Still open, now unblocked: **item 37's second half** — `metaFor(record)` is only produced once the

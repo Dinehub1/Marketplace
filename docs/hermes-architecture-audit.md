@@ -86,12 +86,12 @@ Cloudflare (remote-managed tunnel 6988e6e4-…)
   shots.dropby.co.in     -> localhost:8092  pm2 shots-gallery  (python shots_server.py)
   expo.dropby.co.in      -> localhost:8091  pm2 expo-preview
   hermes.dropby.co.in    -> localhost:9300  pm2 hermes-dashboard
-  dashboard.dropby.co.in -> localhost:8080  pm2 hermes-web (Next 16.2.9, apps/web)
+  dashboard.dropby.co.in -> localhost:8080  pm2 marketplace (Next 16.2.9, apps/web)
   dropby.co.in + *       -> localhost:8080  (catch-all)
   exp.direct             -> Expo Go, native app
 
 pm2 (Administrator, C:\Users\Administrator\Marketplace\ecosystem.config.js)
-  hermes-web :8080   dropby-worker :8099 (rembg/Pillow engine)
+  marketplace :8080   dropby-worker :8099 (rembg/Pillow engine)
   expo-preview :8091 shots-gallery :8092  hermes-dashboard :9300
   galaxy-site :9400  expo-dev (STOPPED)
   + pm2-logrotate module (10M, retain 30, compressed) — log growth handled

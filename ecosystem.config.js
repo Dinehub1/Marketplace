@@ -8,7 +8,7 @@ const webRoot = path.join(repoRoot, 'apps', 'web');
 
 module.exports = {
   apps: [{
-    name: 'hermes-web',
+    name: 'marketplace',
     // npm hoists `next` to the workspace root; resolve it from there, not from
     // apps/web/node_modules, which may legitimately not exist.
     script: path.join(repoRoot, 'node_modules', 'next', 'dist', 'bin', 'next'),

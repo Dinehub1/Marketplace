@@ -20,7 +20,7 @@ deliverable that talks to them.**
 ```
                        ┌──────────────── Cloudflare tunnel ────────────────┐
                        │                                                   │
-  *.dropby.co.in ──────┤ dashboard./admin. ──► :8080  hermes-web (Next 16) │
+  *.dropby.co.in ──────┤ dashboard./admin. ──► :8080  marketplace (Next 16) │
   *.cashcard.live      │ hermes.          ──► :9300  hermes-dashboard     │
   (brand subdomains)   │ expo.            ──► :8091  expo-preview (SPA)   │
                        │ shots.           ──► :8092  shots-gallery        │
@@ -196,19 +196,19 @@ From `docs/hermes-architecture-audit.md` §4 and `ecosystem.config.js`:
 
 ```
 Cloudflare tunnel
-  dashboard.dropby.co.in → :8080  hermes-web   (Next 16, apps/web)      [pm2]
+  dashboard.dropby.co.in → :8080  marketplace   (Next 16, apps/web)      [pm2]
   dropby.co.in + *       → :8080  (catch-all → brand router)
   hermes.dropby.co.in    → :9300  hermes-dashboard
   expo.dropby.co.in      → :8091  expo-preview (spa_server.py → :8080)
   shots.dropby.co.in     → :8092  shots-gallery
 
-pm2: hermes-web :8080 · dropby-worker :8099 · expo-preview :8091
+pm2: marketplace :8080 · dropby-worker :8099 · expo-preview :8091
      shots-gallery :8092 · hermes-dashboard :9300 · galaxy-site :9400
 
 Hermes agent (Windows, pm2 hermes-gateway) — cron ticker → jobs.json → repo
 ```
 
-`ecosystem.config.js` only manages two of these (`hermes-web`, `dropby-worker`) — the rest are
+`ecosystem.config.js` only manages two of these (`marketplace`, `dropby-worker`) — the rest are
 started by other means on that VM.
 
 **Deploy paths:** Vercel uses the root `vercel.json` (Root Directory must stay at the repo
