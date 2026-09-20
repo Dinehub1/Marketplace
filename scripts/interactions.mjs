@@ -631,6 +631,92 @@ async function breatheStart(page) {
   return { detail: `the session started and its phase countdown ran ${a}s → ${b}s` };
 }
 
+/**
+ * browse: press the feed's own listing card and require that listing to open.
+ *
+ * Item 51: `/browse`'s capture marker is its header line — "N verified businesses you can call
+ * straight away" — which renders whether or not a single listing arrived (the `home` entry has an
+ * empty `expect` for the same reason). So a feed that paints its header over an empty list, or a
+ * card whose press does nothing (item 21's fault class), passes every marker check in the gallery
+ * today, and this is the directory app's primary interaction and its whole conversion path.
+ *
+ * The card body is found the way a person finds it rather than by a style: it is the only
+ * `role=button` on the screen with no accessibility label — the Call / WhatsApp / website buttons
+ * all carry one. Three claims are required in order, because only the third is the useful one:
+ * a press changes the route to a listing, that page renders, and it renders **the name that was on
+ * the card that was pressed**. A card that opened a different business passes a route-only check.
+ *
+ * The press navigates, so the probe walks back to the feed before returning: the harness reloads
+ * the page it is on and photographs that, and a picture of a listing page would fail `/browse`'s
+ * marker check — a capture that fails for the probe's own side effect is worse than no probe.
+ */
+async function browseListingOpen(page) {
+  const started = new URL(page.url());
+  // The card surface and, for the sabotage control, everything inside it: `pointer-events: none`
+  // on the wrapper alone still lets a descendant be hit and the event bubble back through, which
+  // would make this gate unfailable.
+  const CARD = '[role="button"]:not([aria-label])';
+
+  const card = page.locator(CARD).first();
+  try {
+    await card.waitFor({ state: 'visible', timeout: 20000 });
+  } catch {
+    const body = await page.evaluate(() => document.body.innerText.slice(0, 200));
+    throw new Error(`no listing card ever appeared on the feed; the page reads: ${body}`);
+  }
+
+  const name = ((await card.innerText()) || '').trim().split('\n')[0];
+  if (!name) throw new Error('the first listing card carries no business name at all');
+  const box = await card.boundingBox();
+  if (!box) throw new Error(`the "${name}" card has no box on the page`);
+  await sabotage(`${CARD}, ${CARD} *`, page);
+  await press(page, Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2));
+
+  // Wait for the route rather than for a fixed delay; read it either way, so the failure sentence
+  // can say where the press left the app instead of only that it did not work.
+  try {
+    await page.waitForURL(/\/business\/\d+/, { timeout: 15000 });
+  } catch {
+    /* the route check below is what reports it */
+  }
+  const route = new URL(page.url()).pathname;
+  if (!/^\/business\/\d+$/.test(route))
+    throw new Error(
+      `pressing the "${name}" card did not open a listing — the route is still ${route} (it was ${started.pathname} before the press)`,
+    );
+
+  // The page has to name the business that was pressed. `cleanBusinessName` is applied on both
+  // screens, so a prefix is enough and survives a line clamp differing between the two.
+  const wanted = name.slice(0, 20);
+  try {
+    await page.waitForFunction(
+      (n) => document.body.innerText.includes('Business details') && document.body.innerText.includes(n),
+      wanted,
+      { timeout: 20000 },
+    );
+  } catch {
+    const body = await page.evaluate(() => document.body.innerText.slice(0, 200));
+    throw new Error(`the press reached ${route} but that page does not read "${wanted}" — it reads: ${body}`);
+  }
+
+  // Back to the feed, because this probe runs before the picture is taken.
+  try {
+    await page.goBack({ waitUntil: 'domcontentloaded', timeout: 10000 });
+  } catch {
+    /* fall through to the goto below */
+  }
+  if (new URL(page.url()).pathname !== started.pathname) {
+    await page.goto(started.href, { waitUntil: 'domcontentloaded' });
+  }
+  const back = new URL(page.url()).pathname;
+  if (back !== started.pathname)
+    throw new Error(`the probe opened ${route} and could not get back to ${started.pathname}; it is on ${back}`);
+
+  return {
+    detail: `pressed the "${name}" card — the route went ${started.pathname} → ${route}, that page rendered "Business details" and the same name, and the probe returned to ${back}`,
+  };
+}
+
 export const INTERACTIONS = {
   'pdf-rotate-pick': {
     screen: 'pdf-tools',
@@ -676,6 +762,11 @@ export const INTERACTIONS = {
     screen: 'breathe',
     what: 'press "Begin" and reach a running session; the pause state and a counting phase have to appear',
     run: breatheStart,
+  },
+  'browse-listing-open': {
+    screen: 'browse',
+    what: 'press the first listing card; the route has to open that listing and its page has to name it',
+    run: browseListingOpen,
   },
 };
 

@@ -1750,7 +1750,7 @@ dicts reports no duplicates. Process: one `pm2 restart shots-gallery` (one liste
 `5196` == `pm2 pid`); **no app change, no `expo export`, no engine restart, no `npm run build`** —
 the live site and the product worker were never touched.
 
-### 51. The directory feed has no probe, and its marker is header copy (new, 2026-09-17, from item 38)
+### 51. The directory feed has no probe, and its marker is header copy (new, 2026-09-17, from item 38) — DONE 2026-09-20
 Item 43 counted six interaction probes and none of them runs a job; item 38 added six screens to
 the capture manifest and none of *them* has a probe either. The one that matters is `/browse`: its
 marker is the header line ("N verified businesses you can call straight away"), which renders
@@ -1759,6 +1759,25 @@ cheap and needs no job: from `/browse`, press one listing card and require the r
 `/business/<id>`, then require the listing page's own marker to appear. A feed that renders its
 header over an empty list, or a card whose press does nothing (item 21's fault class), would pass
 every marker check in the gallery today.
+
+**Done (2026-09-20): `browse-listing-open` in `scripts/interactions.mjs`, attached to the `browse`
+entry in `app-shots.mjs`.** The card body is found as the only `role=button` on the screen with no
+accessibility label (Call / WhatsApp / website all carry one) — 20 matched, all real cards, and the
+tab bar is not in that set. Three claims in order: the press changes the route to `/business/<id>`,
+that page renders, and it renders **the name that was on the card that was pressed** (a card that
+opened a different business would pass a route-only check). The probe then walks back to `/browse`,
+because the harness reloads the page it is on before it photographs it — a navigating probe that
+did not return would fail `/browse`'s own marker check on its own side effect.
+
+Evidence, from the repo root: `node scripts/app-shots.mjs --no-export --only browse` → **2/2
+captures ok**, each reporting `pressed the "Vishwakarma Furniture Works – Carpenter in Indore" card
+— the route went /browse → /business/113069, that page rendered "Business details" and the same
+name, and the probe returned to /browse`; and the negative control `PROBE_SABOTAGE=1` on the same
+screen → exit **3**, `pressing the "…" card did not open a listing — the route is still /browse`,
+with `app__browse__mobile-light.png` unchanged (`md5 da78aa562c5ba3f123633d526b250e7d`) — so the
+gate can fail and a failed probe still does not overwrite the gallery.
+One thing this probe does **not** cover: the job path behind the listing (item 43's canary) and the
+call/WhatsApp buttons, which are `Linking.openURL` to the OS dialler and are not observable here.
 
 ### 52. The tab bar's labels do not follow the theme on the web build (new, 2026-09-17, from item 38)
 Measured while auditing every screen: the web build of `expo-router/unstable-native-tabs` keeps
@@ -2281,4 +2300,19 @@ The workaround used (and worth keeping in the hourly job): call the CLI's own en
 run. Do not "fix" this by deleting `node_modules`: that takes the live Next app down until a
 reinstall finishes (see the hourly queue's rule 3), and `npm install` on this VM is the
 20-minute job rule 7 keeps out of a normal hour. It belongs in an hour that does nothing else.
+
+### 61. A probe that navigates is photographed where it landed (found 2026-09-20, from item 51)
+`scripts/screenshot.mjs` takes the picture **after** the probe, and what it photographs is the page
+the browser is *on*: `page.reload()` reloads the current URL. So a probe that navigates — item 51's
+`browse-listing-open` presses a listing card and leaves the app at `/business/<id>` — would have its
+own side effect photographed, and the capture would fail on the *screen's* marker while the screen
+is perfectly healthy. Item 51's probe walks back to the feed before it returns, which is the right
+shape for that probe, but nothing enforces it: the next navigating probe (a card, a tab, a
+redirect) can be written without the walk-back and the failure will read like a broken screen.
+Two honest options, neither of them this hour's item: have `screenshot.mjs` restore the URL it was
+given before it photographs (`page.goto(opts.url)` after the probe, instead of `reload`), which
+fixes the class rather than one probe; or document the walk-back in `interactions.mjs`'s writing
+rules and leave each probe to remember it. The first is cheaper than the second looks — the URL is
+already in `opts` — but it changes the harness every probe runs through, so it wants an hour of its
+own with all nine probes re-run.
 

@@ -108,7 +108,15 @@ const SCREENS = [
   // all until the theme audit (item 38): the gallery only ever held the screens somebody
   // remembered to capture, so half the app could not be checked for dark mode. Each
   // marker is copy that screen owns.
-  { name: 'browse', route: '/browse', expect: ['businesses you can call straight away'] },
+  // `browse` carries a probe because its marker is the *header* line, which renders over an
+  // empty list too (item 51): the feed's primary interaction — pressing a listing — has to be
+  // seen to work, not inferred from a header that a broken feed also prints.
+  {
+    name: 'browse',
+    route: '/browse',
+    expect: ['businesses you can call straight away'],
+    interact: 'browse-listing-open',
+  },
   { name: 'search', route: '/search', expect: ['POPULAR SEARCHES'] },
   { name: 'saved', route: '/saved', expect: ['Nothing saved yet'] },
   { name: 'account', route: '/account', expect: ['Own a business?'] },
