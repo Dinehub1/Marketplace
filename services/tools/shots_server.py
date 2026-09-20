@@ -26,6 +26,8 @@ from __future__ import annotations
 import html
 import json
 import os
+import shutil
+import subprocess
 import sys
 import time
 from datetime import datetime, timezone
@@ -1380,12 +1382,27 @@ LOG_PAGE = """<!DOCTYPE html>
   .jcost { color:var(--dim); flex:1 1 100%; font-size:11.5px; }
   .jerr { color:#fca5a5; flex:1 1 100%; font-size:11.5px; }
   .jtries { color:#64748b; flex:1 1 100%; font-size:11px; }
+  /* Cost per run (item 42): same shape as a job row, six fields, tabular figures. */
+  .crow { background:var(--card); border:1px solid var(--line); border-radius:10px;
+          padding:7px 10px; margin-bottom:6px; display:flex; flex-wrap:wrap; gap:6px 9px;
+          align-items:baseline; font-size:12.5px; font-variant-numeric:tabular-nums; }
+  .crow.dim { opacity:.72; }
+  .crow.chead { background:transparent; border:0; padding:2px 10px; margin-bottom:2px;
+                color:#64748b; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; }
+  .cprod { font-weight:600; min-width:118px; }
+  .cprice { color:var(--dim); min-width:52px; }
+  .cruns { color:var(--dim); min-width:104px; }
+  .cp50 { color:var(--dim); min-width:44px; }
+  .ccost { color:#93c5fd; font-weight:600; min-width:64px; }
+  .ccost.dim { color:#64748b; font-weight:400; }
+  .cbasis { color:#64748b; flex:1 1 100%; font-size:11px; }
+  .cerr { color:#fca5a5; }
 </style></head><body>
 <header>
   <h1>Build log</h1>
   <div class="sub"><!--SUB--></div>
 </header>
-<div class="wrap"><!--JOBS--><!--BODY--></div>
+<div class="wrap"><!--JOBS--><!--COSTS--><!--BODY--></div>
 </body></html>"""
 
 
@@ -1580,6 +1597,135 @@ def render_jobs() -> str:
     return head + "".join(cards)
 
 
+# ---------------------------------------------------------------------------
+# /log — what each product costs per run (queue item 42).
+#
+# `npm run cost:report` (queue item 16) prints price beside measured cost per product, and
+# the only place a person could read it was a terminal on this VM — while the page he
+# actually opens on his phone is /log. This panel renders the SAME numbers by shelling out
+# to the same script, because a second implementation on the page is exactly how a hosted
+# product quietly goes back to reading "Rs 0". The rules therefore live once, in the script:
+#
+#   * the script reads `product_jobs` + `products` and one FX rate, so it takes ~4 s
+#     (measured 4.08 s cold). Cached in-process for a minute: one run per minute, shared
+#     by every request, and only /log ever pays it — / and /shots do not touch it;
+#   * the script **exits 1** when a product's numbers contradict its catalogue row (a
+#     local product showing billed neurons). That is not a reason to hide the table:
+#     the failures are printed in red above it and `ok` is on the page;
+#   * a product with a catalogue row but no run is rendered with the script's own words —
+#     "no measured run" — never a Rs 0, because a zero is a claim this box cannot measure;
+#   * when the read fails, the panel says why and keeps the last good one, so the page
+#     still renders from a phone in a tunnel.
+# ---------------------------------------------------------------------------
+
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+COST_SCRIPT = os.environ.get("COST_SCRIPT", os.path.join(REPO, "scripts", "cost-report.mjs"))
+COST_TTL = 60.0
+COST_TIMEOUT = 90.0
+COST_CACHE: dict = {"at": 0.0, "report": None, "code": None, "note": ""}
+
+
+def _node_bin() -> str:
+    """The node this box really has: PATH first, then the Hermes runtime's own copy."""
+    found = shutil.which("node")
+    if found:
+        return found
+    for guess in (
+        os.path.expanduser(r"~\AppData\Local\hermes\node\node.exe"),
+        r"C:\Program Files\nodejs\node.exe",
+    ):
+        if os.path.isfile(guess):
+            return guess
+    return "node"
+
+
+def product_costs() -> tuple[dict | None, str, int | None]:
+    """The cost report as JSON, plus a reason when it could not be produced."""
+    now = time.time()
+    if COST_CACHE["report"] is not None and now - COST_CACHE["at"] < COST_TTL:
+        return COST_CACHE["report"], COST_CACHE["note"], COST_CACHE["code"]
+    if not os.path.isfile(COST_SCRIPT):
+        return COST_CACHE["report"], "the cost script is not on this host (" + COST_SCRIPT + ")", None
+    try:
+        proc = subprocess.run(
+            [_node_bin(), COST_SCRIPT, "--json"],
+            cwd=REPO, capture_output=True, text=True, timeout=COST_TIMEOUT,
+        )
+        report = json.loads(proc.stdout)
+        if not isinstance(report, dict) or not isinstance(report.get("products"), list):
+            raise ValueError("the script's answer was not the cost report")
+        # A non-zero exit is the script's own gate (a number contradicts the catalogue): keep
+        # the report and the code, so the page can show the failures beside the figures.
+        COST_CACHE.update({"at": now, "report": report, "code": proc.returncode, "note": ""})
+        return report, "", proc.returncode
+    except subprocess.TimeoutExpired:
+        why = "the cost script did not answer in " + str(int(COST_TIMEOUT)) + " s"
+    except Exception as exc:
+        why = "the cost script could not be read just now (" + type(exc).__name__ + ")"
+    return COST_CACHE["report"], why, COST_CACHE["code"]
+
+
+def _cost_row(row: dict, dim: bool = False) -> str:
+    label = str(row.get("per_run_label"))
+    faded = label in ("Rs 0", "no measured run") or row.get("kind") == "no-measured-run"
+    cls = "ccost dim" if faded else "ccost"
+    return (
+        '<div class="crow' + (" dim" if dim else "") + '">'
+        '<span class="cprod">' + esc(str(row.get("slug"))) + "</span>"
+        '<span class="cprice">' + esc(str(row.get("price"))) + "</span>"
+        '<span class="cruns">' + esc(str(row.get("runs") or "never run")) + "</span>"
+        '<span class="cp50">' + esc(str(row.get("p50") or "—")) + "</span>"
+        '<span class="' + cls + '">' + esc(label) + "</span>"
+        '<span class="cbasis">' + esc(str(row.get("basis"))) + "</span>"
+        "</div>"
+    )
+
+
+def render_costs() -> str:
+    report, why, code = product_costs()
+    note = ("one row per product — price beside the cost measured from its own jobs; the figures "
+            "come from <code>scripts/cost-report.mjs</code> (item 16), which this page runs, so "
+            "there is no second copy of the arithmetic")
+    if report is not None:
+        neurons = report.get("neurons") or {}
+        fx = report.get("fx") or {}
+        try:
+            note += (" · neurons $" + str(neurons.get("usd_per_1k")) + " per 1,000, "
+                     + str(neurons.get("free_per_day")) + " free/day")
+        except Exception:
+            pass
+        if fx.get("usd_inr"):
+            note += (" · USD 1 = INR " + f"{float(fx['usd_inr']):.2f}" + " (" + str(fx.get("source") or "?") + ")")
+    if report is not None and COST_CACHE["at"]:
+        age = int(max(0.0, time.time() - COST_CACHE["at"]))
+        note += " · read " + (str(age) + " s ago" if age else "just now")
+    if why:
+        note += ' · <span class="cerr" style="display:inline">' + esc(why) + "</span>"
+    head = '<h2 class="jhead">What each product costs per run</h2><div class="legend">' + note + "</div>"
+    if report is None:
+        return head + '<div class="legend">No cost figures to show yet.</div>'
+
+    failures = report.get("failures") or []
+    block = ""
+    if failures or code:
+        block = ('<div class="jobrow" style="border-color:#7f1d1d"><span class="jerr">'
+                 + esc("cost report FAILED (" + str(code) + "): " + "; ".join(str(f) for f in failures))
+                 + "</span></div>") if failures else ""
+    rows = "".join(_cost_row(r) for r in report.get("products") or [])
+    no_run = report.get("no_measured_run") or []
+    tail = ""
+    if no_run:
+        tail = ('<div class="legend" style="margin-top:6px">'
+                + esc(str(len(no_run)) + " products have a catalogue row and no measured run — "
+                      + "each reads \"no measured run\", which is not a price:")
+                + "</div>" + "".join(_cost_row(r, dim=True) for r in no_run))
+    return (head + block
+            + '<div class="crow chead"><span class="cprod">product</span><span class="cprice">price</span>'
+              '<span class="cruns">runs</span><span class="cp50">p50</span>'
+              '<span class="ccost">per run</span><span class="cbasis">basis</span></div>'
+            + rows + tail)
+
+
 def render_log() -> bytes:
     data = load_build_log()
     entries = data.get("entries") or []
@@ -1588,6 +1734,7 @@ def render_log() -> bytes:
            "<a href=\"/shots\">stills</a>")
     body = log_section(limit=0) if entries else log_section(limit=0)
     return (LOG_PAGE.replace("<!--JOBS-->", render_jobs())
+            .replace("<!--COSTS-->", render_costs())
             .replace("<!--SUB-->", sub).replace("<!--BODY-->", body)).encode()
 
 

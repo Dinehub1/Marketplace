@@ -32,6 +32,13 @@ import { fileURLToPath } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const ENV_FILE = resolve(here, "../apps/web/.env");
 
+/** `--json` prints the same arithmetic as one object instead of a table, so the /log page
+ *  (queue item 42) can render it without owning a second copy of these rules — the rows, the
+ *  `basis` sentence and the failure list are computed once and emitted either way. The exit
+ *  code is unchanged in both modes, so a page that shells out can read the failure list and
+ *  still show the numbers. */
+const JSON_OUT = process.argv.includes("--json");
+
 /** Cloudflare Workers AI: $0.011 per 1,000 Neurons, 10,000 free per day (00:00 UTC reset).
  *  Source: https://developers.cloudflare.com/workers-ai/platform/pricing/ — read 2026-09-17. */
 const USD_PER_1K_NEURONS = 0.011;
@@ -73,7 +80,8 @@ function loadEnv() {
       }
     }
   } catch (error) {
-    console.log(`(could not read ${ENV_FILE}: ${error.message})`);
+    // A diagnostic, never part of the report: stderr, so `--json` output stays parseable.
+    console.error(`(could not read ${ENV_FILE}: ${error.message})`);
   }
 }
 loadEnv();
@@ -160,18 +168,22 @@ for (const job of jobs) {
   perProduct.set(job.product, row);
 }
 
-line("═");
-console.log("Product cost report — measured from product_jobs, not estimated");
-console.log(`neurons: $${USD_PER_1K_NEURONS} per 1,000 (${PRICING_SOURCE}) · ${FREE_NEURONS_PER_DAY} free/day`);
-console.log(`rupees : USD 1 = INR ${rate.toFixed(2)} — ${fxSource}, ${fxDate}`);
-line("═");
-
-console.log("\nWhat each product has really cost per run\n");
-console.log(
-  ["product".padEnd(16), "price".padEnd(11), "runs".padEnd(11), "p50".padEnd(9), "per run".padEnd(12), "basis"].join(""),
-);
-line();
+if (!JSON_OUT) {
+  line("═");
+  console.log("Product cost report — measured from product_jobs, not estimated");
+  console.log(`neurons: $${USD_PER_1K_NEURONS} per 1,000 (${PRICING_SOURCE}) · ${FREE_NEURONS_PER_DAY} free/day`);
+  console.log(`rupees : USD 1 = INR ${rate.toFixed(2)} — ${fxSource}, ${fxDate}`);
+  line("═");
+  console.log("\nWhat each product has really cost per run\n");
+  console.log(
+    ["product".padEnd(16), "price".padEnd(11), "runs".padEnd(11), "p50".padEnd(9), "per run".padEnd(12), "basis"].join(""),
+  );
+  line();
+}
 const warn = [];
+/** One entry per product that has really run — the table's row and the panel's row are the
+ *  same object, so the page cannot print a number the script did not compute. */
+const rows = [];
 for (const [slug, row] of [...perProduct.entries()].sort()) {
   const product = bySlug.get(slug);
   const price = product ? (product.price_paise === 0 ? "free" : `Rs ${(product.price_paise / 100).toFixed(0)}`) : "—";
@@ -180,25 +192,54 @@ for (const [slug, row] of [...perProduct.entries()].sort()) {
   const p50Text = p50 === null ? "—" : `${(p50 / 1000).toFixed(1)}s`;
 
   let perRun = "Rs 0";
+  let perRunInr = 0;
+  let kind = "local";
   let basis = "local — no meter (run count + speed are the evidence)";
   if (row.billed.length) {
     const neu = median(row.billed.map((b) => b.neurons));
-    perRun = inr(neuronsToInr(neu));
+    perRunInr = neuronsToInr(neu);
+    perRun = inr(perRunInr);
     basis = `billed — median ${neu} neurons, ids ${row.billed.map((b) => b.id).join(",")}`;
+    kind = "billed";
     if (!HOSTED.has(slug)) warn.push(`${slug}: billed neurons but not a hosted product`);
   } else if (row.table.length) {
     const neu = median(row.table.map((b) => b.neurons));
-    perRun = inr(neuronsToInr(neu));
+    perRunInr = neuronsToInr(neu);
+    perRun = inr(perRunInr);
     basis = `table — ${row.table[0].tiles} tiles x ${row.table[0].steps} steps, id ${row.table[0].id}`;
+    kind = "table";
   } else if (HOSTED.has(slug)) {
+    // A hosted product with no usage figure is NOT a zero: say so, in this many words.
     perRun = "unknown";
+    perRunInr = null;
+    kind = "hosted-no-usage";
     basis = "hosted — no run of this product carries a billed or table figure yet";
   } else if (row.done.length && !row.done.some((j) => j.meta && Object.keys(j.meta).length)) {
+    kind = "local-no-meta";
     basis = "local — ran before meta was recorded (no numbers in the row)";
   }
-  console.log(
-    [slug.padEnd(16), price.padEnd(11), runs.padEnd(18), p50Text.padEnd(9), perRun.padEnd(12), basis].join(""),
-  );
+  rows.push({
+    slug,
+    name: product?.name ?? null,
+    price_paise: product?.price_paise ?? null,
+    plan: product?.plan ?? null,
+    price,
+    runs_done: row.done.length,
+    runs_failed: row.failed,
+    runs,
+    p50_ms: p50,
+    p50: p50Text,
+    per_run_label: perRun,
+    per_run_inr: perRunInr,
+    kind,
+    basis,
+    hosted: HOSTED.has(slug),
+  });
+  if (!JSON_OUT) {
+    console.log(
+      [slug.padEnd(16), price.padEnd(11), runs.padEnd(18), p50Text.padEnd(9), perRun.padEnd(12), basis].join(""),
+    );
+  }
 }
 
 const crossCheck = [];
@@ -207,40 +248,74 @@ for (const [slug, row] of perProduct.entries()) {
     if (entry.billed) crossCheck.push({ slug, id: entry.id, table: entry.neurons, billed: entry.billed });
   }
 }
-if (crossCheck.length) {
-  line();
-  console.log("\nCross-check: the published token rates vs the provider's own bill\n");
-  for (const c of crossCheck) {
-    const delta = ((c.table - c.billed) / c.billed) * 100;
-    console.log(
-      `  job ${c.id} ${c.slug.padEnd(14)} table ${c.table.toFixed(1)} vs billed ${c.billed} neurons (${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%)`,
-    );
-  }
-  console.log("  (the two agree within rounding, so the rate table and the bill describe the same job)");
-}
-
-line();
-console.log("\nFree allowance, at the measured per-job figure\n");
-const hosted = [];
+/** The measured per-job figure for every product that has one, and what it buys inside the
+ *  10,000 free neurons a day — the same list the human report prints. */
+const freeAllowance = [];
 for (const [slug, row] of perProduct.entries()) {
   const neu = row.billed.length
     ? median(row.billed.map((b) => b.neurons))
     : row.table.length
       ? median(row.table.map((b) => b.neurons))
       : null;
-  if (neu) hosted.push({ slug, neu });
+  if (neu) freeAllowance.push({ slug, neurons: neu, runs_per_day: Math.floor(FREE_NEURONS_PER_DAY / neu), inr_per_run: neuronsToInr(neu) });
 }
-for (const h of hosted) {
-  const each = Math.round(h.neu * 10) / 10;
-  console.log(`  ${h.slug.padEnd(16)} ${Math.floor(FREE_NEURONS_PER_DAY / h.neu)} runs/day inside the free allowance (${each} neurons each)`);
-}
-if (!hosted.length) console.log("  no hosted-model job has run yet, so there is nothing to divide.");
+/** Catalogue rows that have never run. On the page these must read "no measured run" — a 0
+ *  here would say "this product is free", which is a different claim and an unmeasured one. */
+const noMeasuredRun = products
+  .filter((p) => p.enabled && !perProduct.has(p.slug))
+  .map((p) => ({
+    slug: p.slug,
+    name: p.name,
+    price_paise: p.price_paise,
+    price: p.price_paise === 0 ? "free" : `Rs ${(p.price_paise / 100).toFixed(0)}`,
+    per_run_label: "no measured run",
+    per_run_inr: null,
+    kind: "no-measured-run",
+    basis: "no measured run — this product has never run, so there is no figure to show",
+  }));
 
-console.log("\nProducts with a catalogue row but no measured run: " +
-  products
-    .filter((p) => p.enabled && !perProduct.has(p.slug))
-    .map((p) => p.slug)
-    .join(", "));
+if (!JSON_OUT) {
+  if (crossCheck.length) {
+    line();
+    console.log("\nCross-check: the published token rates vs the provider's own bill\n");
+    for (const c of crossCheck) {
+      const delta = ((c.table - c.billed) / c.billed) * 100;
+      console.log(
+        `  job ${c.id} ${c.slug.padEnd(14)} table ${c.table.toFixed(1)} vs billed ${c.billed} neurons (${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%)`,
+      );
+    }
+    console.log("  (the two agree within rounding, so the rate table and the bill describe the same job)");
+  }
+
+  line();
+  console.log("\nFree allowance, at the measured per-job figure\n");
+  for (const h of freeAllowance) {
+    const each = Math.round(h.neurons * 10) / 10;
+    console.log(`  ${h.slug.padEnd(16)} ${h.runs_per_day} runs/day inside the free allowance (${each} neurons each)`);
+  }
+  if (!freeAllowance.length) console.log("  no hosted-model job has run yet, so there is nothing to divide.");
+
+  console.log("\nProducts with a catalogue row but no measured run: " +
+    noMeasuredRun.map((p) => p.slug).join(", "));
+}
+
+const report = {
+  generated_at: new Date().toISOString(),
+  ok: warn.length === 0,
+  source: "product_jobs (live rows) + products (catalogue rows)",
+  neurons: { usd_per_1k: USD_PER_1K_NEURONS, free_per_day: FREE_NEURONS_PER_DAY, source: PRICING_SOURCE },
+  fx: { usd_inr: rate, source: fxSource, date: fxDate },
+  products: rows,
+  no_measured_run: noMeasuredRun,
+  free_allowance: freeAllowance,
+  cross_check: crossCheck,
+  failures: warn,
+  note: "Every figure is a provider's own usage number, a published rate applied to the request shape the engine recorded, or a local run count. Nothing is estimated.",
+};
+if (JSON_OUT) {
+  console.log(JSON.stringify(report, null, 2));
+  process.exit(warn.length ? 1 : 0);
+}
 
 if (warn.length) {
   line("═");

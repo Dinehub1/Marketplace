@@ -1999,7 +1999,7 @@ gallery, not from the grid.
 
 
 
-### 42. The cost table is a CLI script; the page he opens is /log (new, 2026-09-17, from item 16)
+### 42. The cost table is a CLI script; the page he opens is /log — DONE 2026-09-20
 `npm run cost:report` now prints price-beside-measured-cost per product, and the only place a
 person sees it is a terminal on this VM. The page he actually opens on his phone is
 `https://shots.dropby.co.in/log` (and `/perf` for trading), so the same numbers should be a panel
@@ -2010,6 +2010,41 @@ read "no measured run", not a zero. Cheapest shape: have `scripts/build-log.py` 
 server, which already re-reads its folder per request) shell out to the same script and cache the
 result for a minute, rather than recomputing Supabase on every page view — this box serves the
 live site too.
+
+**Result (2026-09-20): the panel is on `/log`, and the arithmetic did not get a second copy.**
+The item's own "cheapest shape" is the shape: `scripts/cost-report.mjs` gained a `--json` mode
+that prints the *same* objects the table prints — every row (`per_run_label`, `per_run_inr`,
+`kind`, and the `basis` sentence that says whether a figure is billed, a table, or a local run
+count), the never-run list, the free-allowance list and the failure list, computed once and
+emitted either way. `services/tools/shots_server.py` shells out to it for `/log` and renders it;
+there is no second implementation of the rules on the page, which is the only way "Rs 0" cannot
+creep back onto a product that really bills us. Three measured details shaped it:
+- **A product with no measured run says so, in the script's own words.** The 19 catalogue rows
+  that have never run render as `never run · — · no measured run` — a zero there would be the
+  claim "this is free", which is a different claim and an unmeasured one.
+- **The script's own gate is surfaced, not swallowed.** It exits 1 when a number contradicts the
+  catalogue row (a local product showing billed neurons). The page keeps the report *and* the
+  exit code, so the figures stay visible with the failure in red above them.
+- **It costs one run a minute, on one page.** The read is ~2.2 s cold (measured, `time=2.202169`)
+  and 0.009 s warm; cached in-process for 60 s with the age printed (`read 1 s ago`), and only
+  `/log` ever pays it — `/` and `/shots` never touch the script.
+Evidence: `GET https://shots.dropby.co.in/log` → **200**, 60,075 B, carrying **34 cost rows** —
+`ai-image free 5 done / 1 fail 2.9s Rs 0.1824 (table — 4 tiles x 4 steps, id 148)`,
+`translate-doc Rs 49 8 done / 2 fail 10.2s Rs 0.0390 (billed — median 37 neurons, ids
+141,142,143,152,161,162,163,164)`, `pdf-tools Rs 299 53 done / 13 fail 0.9s Rs 0 (local — no
+meter)`, a legend carrying the rates it converted at (`neurons $0.011 per 1,000, 10000 free/day ·
+USD 1 = INR 95.94 (open.er-api.com)`), and 19 dimmed `no measured run` rows — with the same
+numbers read straight from `node scripts/cost-report.mjs --json` in the same minute, so the page
+is not rendering a stale or differently-computed figure. Negative controls, **14/14 in-process
+checks** (`%TEMP%\test-cost-panel.py`, no servers started): (A) the real report; (B) a cost script
+that is not on this host → the panel names it and says "No cost figures to show yet" instead of
+showing a zero; (C) the real script run with its own test switch `COST_REPORT_HOSTED=none` → the
+page carries `cost report FAILED (1): translate-doc: billed neurons but not a hosted product`
+*and still renders* `Rs 0.0390` beside it. Also re-checked at the CLI: `--json` exits **0** on the
+live data and **1** with that same failure when the hosted set is emptied. `/` and `/shots` are
+still **200**, and `pm2 restart shots-gallery` left **one** listener on :8092 (pid 652 == `pm2
+pid`); one stray test instance I had started on :8095 was killed, and 8095 is free. No app change,
+no `npm run build`, no engine restart — the worker was never touched.
 
 ### 43. Every probe stops before the upload (new, 2026-09-17, from item 34)
 There are now six interaction probes (three games, three tool controls) and **not one of them
@@ -2315,4 +2350,16 @@ fixes the class rather than one probe; or document the walk-back in `interaction
 rules and leave each probe to remember it. The first is cheaper than the second looks — the URL is
 already in `opts` — but it changes the harness every probe runs through, so it wants an hour of its
 own with all nine probes re-run.
+
+### 62. The cost panel's cold read is unlocked, so N simultaneous views means N node processes (found 2026-09-20, from item 42)
+`product_costs()` in `services/tools/shots_server.py` caches the report for 60 s, but the cache is
+only *read* under no lock: two requests that arrive in the same second on a cold cache both see
+`report is None` and both spawn `node scripts/cost-report.mjs --json` (~2.2 s and one Supabase read
+each) on the box that serves the live site. Measured warm at 0.009 s, so the window is small and
+one person tapping the page cannot hit it — but a link opened from two phones at once, or any
+future caller, can. Cheapest honest fix: a module-level `threading.Lock` around the spawn with a
+double-check of the cache inside it (the second waiter then finds the fresh report and pays
+nothing), and a case in `%TEMP%\test-cost-panel.py` that fires two threads at a cold cache and
+counts the processes that actually started — the same "prove it by the traffic that arrived"
+shape as item 29's retry test. Not this hour's item.
 
