@@ -19,6 +19,7 @@
  * Usage:  node scripts/check-developer.mjs
  * Exit:   0 the site agrees with the fleet, 1 it does not
  */
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
@@ -30,7 +31,7 @@ const { TARGETS, familyOf } = await import(pathToFileURL(path.join(REPO, 'apps/m
 // to a repo-wide gate. The scrape is deliberately strict about shape so a reformat that
 // breaks it fails loudly instead of silently checking nothing.
 const catalogPath = path.join(REPO, 'apps/web/app/developer/catalog.ts');
-const catalogSrc = (await import('node:fs')).readFileSync(catalogPath, 'utf8');
+const catalogSrc = readFileSync(catalogPath, 'utf8');
 
 function scrapeApps(src) {
   const apps = [];
@@ -100,6 +101,32 @@ if (!adsList) {
     if (!adsList.includes(g.bundleId)) fail(`game "${g.id}" shows ads but is missing from APPS_WITH_ADS`);
   }
   if (adsList.length) ok(`ad-SDK list: ${adsList.length} bundle ids, all real, all four games present`);
+}
+
+// 5. The Search Console ownership proof must exist at the URL it names.
+//
+//    Play Console will not verify the organisation website until Search Console records
+//    us as its owner, and the HTML-file method fetches `/<token>.html` at the host root.
+//    The dangerous version of this is a file whose body names a different token than its
+//    own path: nothing on the site looks wrong, and Google answers only "we couldn't find
+//    your file". So the route directory and the token are asserted against each other.
+const token = catalogSrc.match(/GOOGLE_VERIFICATION_TOKEN\s*=\s*"([^"]+)"/)?.[1];
+if (!token) {
+  fail('GOOGLE_VERIFICATION_TOKEN could not be parsed from catalog.ts — Search Console cannot verify the site');
+} else {
+  const tokenRoute = path.join(REPO, 'apps/web/app/developer', `${token}.html`, 'route.ts');
+  if (!existsSync(tokenRoute)) {
+    fail(`no route serves /${token}.html — Search Console's file check would 404`);
+  } else {
+    const routeSrc = readFileSync(tokenRoute, 'utf8');
+    if (/google-site-verification: google[0-9a-f]+\.html/.test(routeSrc)) {
+      fail(`${token}.html/route.ts hardcodes a token instead of reading GOOGLE_VERIFICATION_TOKEN`);
+    } else if (!routeSrc.includes('GOOGLE_VERIFICATION_TOKEN')) {
+      fail(`${token}.html/route.ts does not build its body from GOOGLE_VERIFICATION_TOKEN`);
+    } else {
+      ok(`Search Console proof served at /${token}.html`);
+    }
+  }
 }
 
 console.log(

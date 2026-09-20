@@ -51,6 +51,25 @@ export const PUBLISHER = {
   site: "https://apps.dropby.co.in",
 } as const;
 
+/**
+ * The Google Search Console ownership proof for this site.
+ *
+ * Play Console will not accept an organisation website until Search Console says we own
+ * it, and Search Console's HTML-file method fetches `https://apps.dropby.co.in/<token>.html`
+ * — the **root** path of the host, not `/developer`. That is why the file is served by a
+ * route handler (`app/developer/<token>.html/route.ts`) rather than dropped in `public/`:
+ * the proxy rewrites every path on this host to `/developer<path>`, so a `public/` file
+ * would be fetched at `/developer/<token>.html` and would not exist.
+ *
+ * The token is written here once because it appears in two places that have to agree —
+ * the route's directory name, which *is* the URL, and the line inside the file the route
+ * returns. A file whose body names a different token than its own URL fails verification
+ * with no useful error message, so `check:developer` asserts the two against each other.
+ * Re-verifying with a new file is then a two-line change: rename the route directory and
+ * update this string.
+ */
+export const GOOGLE_VERIFICATION_TOKEN = "googlee4331cffdf66745d";
+
 export const APPS: DeveloperApp[] = [
   {
     id: "wellness",
@@ -96,9 +115,12 @@ export const APPS: DeveloperApp[] = [
   },
   {
     id: "shop-toolkit",
-    name: "Shop Toolkit: Bills & Catalogue",
+    // Must match targets.mjs verbatim — `npm run check:developer` fails otherwise, and a
+    // website that publishes a name the store does not is the drift it exists to catch.
+    // The name narrowed from "Bills & Catalogue" to the one job this build can do.
+    name: "Shop Toolkit: GST Bills",
     bundleId: "com.brandcollabs.shoptoolkit",
-    blurb: "GST bills, a product catalogue and order tracking for a small shop.",
+    blurb: "Numbered GST bills with a UPI QR, made on the shopkeeper's own phone.",
     platform: "Android & iOS",
   },
   {
