@@ -29,6 +29,7 @@ import os
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -1623,6 +1624,14 @@ COST_SCRIPT = os.environ.get("COST_SCRIPT", os.path.join(REPO, "scripts", "cost-
 COST_TTL = 60.0
 COST_TIMEOUT = 90.0
 COST_CACHE: dict = {"at": 0.0, "report": None, "code": None, "note": ""}
+# One run per minute, shared by every request — but *reading* the cache is not enough to keep
+# that promise: two requests arriving in the same second on a cold cache both see
+# `report is None`, both spawn the script (~4 s cold and one Supabase read each), and the box
+# that serves the live site pays twice. The server IS a ThreadingHTTPServer, so two handler
+# threads really do run at the same instant — this is a race, not a theoretical one. The lock
+# below makes the second caller wait for the first, and the double-check inside it means the
+# waiter finds the fresh report and pays nothing. It is held only around the spawn.
+COST_LOCK = threading.Lock()
 
 
 def _node_bin() -> str:
@@ -1646,22 +1655,28 @@ def product_costs() -> tuple[dict | None, str, int | None]:
         return COST_CACHE["report"], COST_CACHE["note"], COST_CACHE["code"]
     if not os.path.isfile(COST_SCRIPT):
         return COST_CACHE["report"], "the cost script is not on this host (" + COST_SCRIPT + ")", None
-    try:
-        proc = subprocess.run(
-            [_node_bin(), COST_SCRIPT, "--json"],
-            cwd=REPO, capture_output=True, text=True, timeout=COST_TIMEOUT,
-        )
-        report = json.loads(proc.stdout)
-        if not isinstance(report, dict) or not isinstance(report.get("products"), list):
-            raise ValueError("the script's answer was not the cost report")
-        # A non-zero exit is the script's own gate (a number contradicts the catalogue): keep
-        # the report and the code, so the page can show the failures beside the figures.
-        COST_CACHE.update({"at": now, "report": report, "code": proc.returncode, "note": ""})
-        return report, "", proc.returncode
-    except subprocess.TimeoutExpired:
-        why = "the cost script did not answer in " + str(int(COST_TIMEOUT)) + " s"
-    except Exception as exc:
-        why = "the cost script could not be read just now (" + type(exc).__name__ + ")"
+    with COST_LOCK:
+        # Double-checked: a caller that queued here while a sibling was running the script must
+        # find that sibling's report and pay nothing, or every waiter spawns its own node.
+        now = time.time()
+        if COST_CACHE["report"] is not None and now - COST_CACHE["at"] < COST_TTL:
+            return COST_CACHE["report"], COST_CACHE["note"], COST_CACHE["code"]
+        try:
+            proc = subprocess.run(
+                [_node_bin(), COST_SCRIPT, "--json"],
+                cwd=REPO, capture_output=True, text=True, timeout=COST_TIMEOUT,
+            )
+            report = json.loads(proc.stdout)
+            if not isinstance(report, dict) or not isinstance(report.get("products"), list):
+                raise ValueError("the script's answer was not the cost report")
+            # A non-zero exit is the script's own gate (a number contradicts the catalogue): keep
+            # the report and the code, so the page can show the failures beside the figures.
+            COST_CACHE.update({"at": now, "report": report, "code": proc.returncode, "note": ""})
+            return report, "", proc.returncode
+        except subprocess.TimeoutExpired:
+            why = "the cost script did not answer in " + str(int(COST_TIMEOUT)) + " s"
+        except Exception as exc:
+            why = "the cost script could not be read just now (" + type(exc).__name__ + ")"
     return COST_CACHE["report"], why, COST_CACHE["code"]
 
 

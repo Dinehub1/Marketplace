@@ -2380,7 +2380,7 @@ returned to /browse`. `npm run test:shots` was added so the harness's own test i
 knowing the file name. No app code changed: no `expo export`, no `npm run build`, no engine restart;
 ports/pm2 unchanged (one listener each: 8080, 8091, 8092, 8099 — same pids), no leftover Chromium.
 
-### 62. The cost panel's cold read is unlocked, so N simultaneous views means N node processes (found 2026-09-20, from item 42)
+### 62. The cost panel's cold read is unlocked, so N simultaneous views means N node processes (found 2026-09-20, from item 42) — DONE 2026-09-21
 `product_costs()` in `services/tools/shots_server.py` caches the report for 60 s, but the cache is
 only *read* under no lock: two requests that arrive in the same second on a cold cache both see
 `report is None` and both spawn `node scripts/cost-report.mjs --json` (~2.2 s and one Supabase read
@@ -2390,7 +2390,34 @@ future caller, can. Cheapest honest fix: a module-level `threading.Lock` around 
 double-check of the cache inside it (the second waiter then finds the fresh report and pays
 nothing), and a case in `%TEMP%\test-cost-panel.py` that fires two threads at a cold cache and
 counts the processes that actually started — the same "prove it by the traffic that arrived"
-shape as item 29's retry test. Not this hour's item.
+shape as item 29's retry test.
+
+**Done 2026-09-21 — the lock is in, and both directions are measured on the live server.**
+`services/tools/shots_server.py`: `COST_LOCK = threading.Lock()` (with `import threading`) around
+the spawn, and a double-check of `COST_CACHE` **inside** the lock, so a caller that queued while a
+sibling ran the script finds that sibling's report and spawns nothing. Held only around the
+`subprocess.run`, never around the cache update or the render. The race is real, not theoretical:
+the server is a `ThreadingHTTPServer` (`:2120`), so two `/log` handler threads really do read the
+cold cache in the same instant.
+The count is of **processes that actually started**, taken off the operating system:
+`wmic process where "name='node.exe'" get ProcessId,CommandLine` polled every 150 ms while the
+requests are in flight, counting the command lines carrying `cost-report.mjs`
+(`%TEMP%\item62-live.py`, end-to-end over HTTP):
+- **the live server** (`pm2 shots-gallery`, `127.0.0.1:8092`, restarted so the cache was cold),
+  4 simultaneous `/log` requests → **4 × 200 in 2.4 s, peak 1 node process** (pid 4220), all four
+  views carrying the panel with the same 34 rows — one run's wall time for four viewers;
+- **the negative control**, the same handler with that one line replaced by
+  `contextlib.nullcontext()` on a temporary port → **4 × 200, peak 4 processes, 4 distinct pids** —
+  i.e. the counter can see the race, so the single process above is the lock and not luck.
+In-process, `%TEMP%\test-cost-panel.py` (item 42's file, now with cases D/E) is **23/23**: 4 threads
+at a cold cache start **1** node process and get **the same report object** (4 reports, 1 distinct),
+one cold run measured at 1.4 s and the locked four at 1.4 s, against **4** for the unlocked copy.
+Both copies are compared line by line with the lock line removed, so the control differs by exactly
+that line. Nothing is left running: the control server is shut down and `:8093` verified free, zero
+`cost-report` processes remain, one listener each on 8080/8091/8092/8099 with `pm2 pid shots-gallery`
+(4756) equal to the listener's pid, and `https://shots.dropby.co.in/log` + `/` both **200** after
+the restart. No app code, no `npm run build`, no engine restart — only the page server.
+Found next door, appended as item 64: `JOBS_CACHE` (`:1482`) has the same unlocked cold-read shape.
 
 ### 63. The harness restores the URL, not the state (appended 2026-09-20, from item 61)
 Item 61 fixed the URL half of "the probe's own side effect is still there when the picture is
@@ -2401,4 +2428,17 @@ read "Best score on this device: 1900 · 1 round played" from a probe that just 
 wrong today (no screen's marker depends on that), so this is a note for the next probe author rather
 than work: if a capture is ever pinned by copy that a probe can change, the harness needs a fresh
 browser context per capture, not just a `goto`.
+
+### 64. `recent_jobs()` has item 62's shape, at a smaller price (appended 2026-09-21, from item 62)
+`JOBS_CACHE` (`services/tools/shots_server.py:1482`) is `product_costs()`'s twin: `recent_jobs()`
+reads the 60 s cache with no lock and, on a cold one, has every simultaneous caller issue its own
+`GET /rest/v1/product_jobs?select=…` — one Supabase round-trip each rather than one node process,
+so N viewers cost N reads of a remote table instead of N runs of a script on this box. Measured
+today: four simultaneous cold `/log` views were answered in 2.4 s and the cost panel is the
+expensive half of that, so this one is the cheaper twin and nothing is broken by it. The same fix
+applies verbatim — a module-level lock plus a double-check inside it, around `urlopen` — and it can
+share item 62's harness (`%TEMP%\item62-live.py` already counts a *process*; a job-cache case would
+have to count requests, e.g. against the scripted server pattern in `scripts/test-marker-retry.mjs`).
+Not done here: item 62 named `product_costs()` alone, and one item per hour means the twin waits
+rather than being half-fixed.
 
