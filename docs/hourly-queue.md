@@ -2429,7 +2429,7 @@ wrong today (no screen's marker depends on that), so this is a note for the next
 than work: if a capture is ever pinned by copy that a probe can change, the harness needs a fresh
 browser context per capture, not just a `goto`.
 
-### 64. `recent_jobs()` has item 62's shape, at a smaller price (appended 2026-09-21, from item 62)
+### 64. `recent_jobs()` has item 62's shape, at a smaller price (appended 2026-09-21, from item 62) — DONE 2026-09-21
 `JOBS_CACHE` (`services/tools/shots_server.py:1482`) is `product_costs()`'s twin: `recent_jobs()`
 reads the 60 s cache with no lock and, on a cold one, has every simultaneous caller issue its own
 `GET /rest/v1/product_jobs?select=…` — one Supabase round-trip each rather than one node process,
@@ -2441,4 +2441,55 @@ share item 62's harness (`%TEMP%\item62-live.py` already counts a *process*; a j
 have to count requests, e.g. against the scripted server pattern in `scripts/test-marker-retry.mjs`).
 Not done here: item 62 named `product_costs()` alone, and one item per hour means the twin waits
 rather than being half-fixed.
+
+**Done 2026-09-21 — the twin lock is in, and the count comes from the receiving server.**
+`services/tools/shots_server.py`: `JOBS_LOCK = threading.Lock()` around the request, with a
+double-check of `JOBS_CACHE` **inside** it (a caller that queued while a sibling read finds that
+sibling's rows and issues nothing), exactly the shape `COST_LOCK` has. It is held only around the
+`urlopen`, never around the render.
+One thing the lock made necessary rather than optional, and it is worth reading before copying this
+pattern: the **failure** path writes no cache entry, so under a lock N waiters would each pay the
+8 s timeout *in turn* — worse than the unlocked copy in the one case where the endpoint is down.
+So a failed read is now remembered for one TTL too (`JOBS_CACHE["failed_at"]` / `["why"]`), checked
+both before and inside the lock, and the last good rows stay on the page. Item 62's cost twin still
+has this half open — appended as item 65 rather than half-fixed here.
+The counts are of **requests that actually arrived**, taken outside the code under test:
+`%TEMP%\item64-jobs-cache.py` stands a scripted PostgREST in front of the handler and reads its own
+request log; `%TEMP%\item64-live.py` counts the live process's outbound connections with `netstat`.
+- **in-process, the real module**, 4 threads at a cold cache → **1 request left the process**, all
+  four returned the same row object; the same four callers against a copy differing by exactly the
+  lock line → **4 requests** (line-by-line diff of the two copies is a build step of the run, so the
+  control is one line, not a rewrite);
+- **end to end over HTTP**, 4 simultaneous `/log` requests against the fixed handler → **4 × 200 in
+  0.4 s and exactly 1 request** to the scripted endpoint, the real query (`select=id,product,…&
+  order=id.desc&limit=12`), every view carrying the same 12 job rows; the **negative control** on a
+  temporary port → **4 × 200 and 4 requests**;
+- **the failure case**: the endpoint answers 500 → 4 simultaneous views = **1 attempt in 0.8 s**
+  (not 4 serialised 0.8 s attempts), every view still 200 with the reason on it;
+- **the warm case**: four more views on the warm cache = **0 further requests**, 12 rows each;
+- **the live server** (pm2 `shots-gallery`, restarted so the cache was cold), 4 simultaneous
+  `/log` requests → 4 × 200 with 12 rows each and **peak 1 ESTABLISHED connection to Supabase**
+  (`172.64.149.246:443`) from the server's own pid, over 66 `netstat` samples taken while they were
+  in flight — a cold read opens one, four would be the old shape.
+`item64-jobs-cache.py` is **20/20, exit 0**; `python -m py_compile services/tools/shots_server.py`
+clean. Nothing left running: `:8093` / `:8094` / `:8096` verified free afterwards, one listener each
+on 8080 / 8091 / 8092 / 8099, `pm2 pid shots-gallery` (3648, then re-checked) equal to the listener's
+pid and `pm2 pid dropby-worker` (8164) equal to 8099's. `/`, `/log`, `/shots` all **200** on
+`127.0.0.1:8092` after the restart, and no app code, no `npm run build` and no engine restart were
+involved — only the page server.
+
+### 65. The cost panel's *failed* read still costs one node process per waiter (appended 2026-09-21, from item 64)
+`product_costs()` caches the report for 60 s and item 62 put a lock around the spawn — but only the
+**success** path writes `COST_CACHE`. When the script fails (it exits non-zero on its own gate, or
+times out at `COST_TIMEOUT` = 90 s), `report` stays `None`, so the next caller through the lock
+re-spawns it: four simultaneous views of a failing panel are four serialised node runs, and the
+last viewer waits up to ~6 minutes instead of 90 s. That is the same defect item 64 had to fix in
+the twin (`recent_jobs()` remembers a failed read for one TTL, checked before and inside the lock),
+and the fix is the same three lines — a `failed_at` / `why` pair on `COST_CACHE`, so a failure is a
+fact about the minute rather than about the caller. Note the deliberate difference from item 64:
+this cache already *keeps the last good report* on failure, so the panel keeps its figures and the
+memo only stops the repeat spawn. Evidence to require: the scripted endpoint pattern from
+`%TEMP%\item64-jobs-cache.py` applied to the spawn — N simultaneous cold views with the script made
+to fail → **1** spawn, not N, while the page still renders the retained report and the failure
+sentence.
 
