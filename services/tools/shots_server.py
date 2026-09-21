@@ -1480,7 +1480,15 @@ def log_section(limit: int = 4) -> str:
 WEB_ENV = os.environ.get("WEB_ENV", r"C:\Users\Administrator\Marketplace\apps\web\.env")
 JOBS_LIMIT = 12
 JOBS_TTL = 60.0
-JOBS_CACHE: dict = {"at": 0.0, "rows": None}
+JOBS_CACHE: dict = {"at": 0.0, "rows": None, "failed_at": 0.0, "why": ""}
+# `recent_jobs()` is `product_costs()`'s twin and had the same hole (queue item 64): the cache is
+# read with no lock, so two requests arriving in the same second on a cold one both see
+# `rows is None` and both issue their own `GET /rest/v1/product_jobs` — one remote read per
+# viewer, on a page the hourly job hands out a link to. This server IS a ThreadingHTTPServer, so
+# two handler threads really do run at the same instant; the lock below makes the second caller
+# wait for the first, and the double-check inside it means the waiter finds the fresh rows and
+# issues nothing. Held only around the request, never around the render.
+JOBS_LOCK = threading.Lock()
 
 
 def _env_kv(name: str) -> str:
@@ -1504,26 +1512,42 @@ def recent_jobs() -> tuple[list, str]:
     now = time.time()
     if JOBS_CACHE["rows"] is not None and now - JOBS_CACHE["at"] < JOBS_TTL:
         return JOBS_CACHE["rows"], ""
+    # A read that just failed is a fact about the endpoint in this minute, not about this caller.
+    # Without this the lock below would make the failure case *worse* than the unlocked copy: the
+    # failure path writes no cache entry, so N waiters each pay the 8 s timeout in turn.
+    if JOBS_CACHE["why"] and now - JOBS_CACHE["failed_at"] < JOBS_TTL:
+        return JOBS_CACHE["rows"] or [], JOBS_CACHE["why"]
     url = (_env_kv("SUPABASE_URL") or _env_kv("NEXT_PUBLIC_SUPABASE_URL")).rstrip("/")
     key = _env_kv("SUPABASE_SERVICE_ROLE_KEY")
     if not url or not key:
         return JOBS_CACHE["rows"] or [], "no Supabase URL/key on this host"
     query = ("product_jobs?select=id,product,status,duration_ms,created_at,error,meta"
              "&order=id.desc&limit=" + str(JOBS_LIMIT))
-    req = urllib.request.Request(
-        url + "/rest/v1/" + query,
-        headers={"apikey": key, "Authorization": "Bearer " + key, "Accept": "application/json"},
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=8) as resp:
-            rows = json.loads(resp.read().decode("utf-8"))
-        if not isinstance(rows, list):
-            raise ValueError("the answer was not a list")
-    except Exception as exc:
-        # Keep the last good read on screen rather than blanking the panel.
-        return JOBS_CACHE["rows"] or [], "the job table could not be read just now (" + type(exc).__name__ + ")"
-    JOBS_CACHE.update({"at": now, "rows": rows})
-    return rows, ""
+    with JOBS_LOCK:
+        # Double-checked, exactly as `product_costs()` does it: a caller that queued here while a
+        # sibling was reading finds that sibling's rows and issues no request of its own.
+        now = time.time()
+        if JOBS_CACHE["rows"] is not None and now - JOBS_CACHE["at"] < JOBS_TTL:
+            return JOBS_CACHE["rows"], ""
+        if JOBS_CACHE["why"] and now - JOBS_CACHE["failed_at"] < JOBS_TTL:
+            return JOBS_CACHE["rows"] or [], JOBS_CACHE["why"]
+        req = urllib.request.Request(
+            url + "/rest/v1/" + query,
+            headers={"apikey": key, "Authorization": "Bearer " + key, "Accept": "application/json"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                rows = json.loads(resp.read().decode("utf-8"))
+            if not isinstance(rows, list):
+                raise ValueError("the answer was not a list")
+        except Exception as exc:
+            why = "the job table could not be read just now (" + type(exc).__name__ + ")"
+            # Remember the failure for one TTL so siblings behind the lock do not re-pay it; the
+            # last good read stays on screen rather than the panel blanking.
+            JOBS_CACHE.update({"failed_at": time.time(), "why": why})
+            return JOBS_CACHE["rows"] or [], why
+        JOBS_CACHE.update({"at": now, "rows": rows, "why": "", "failed_at": 0.0})
+        return rows, ""
 
 
 def job_provider(meta: dict) -> str:
