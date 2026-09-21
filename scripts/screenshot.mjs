@@ -36,9 +36,10 @@
  *                                        (e.g. tap-sprint-hit) and fail (exit 3) unless it
  *                                        observes the change it is looking for. --expect
  *                                        proves the screen rendered; --interact proves the
- *                                        screen does something. The page is reloaded after
- *                                        a successful probe, so the PNG is of the screen
- *                                        itself and not of the probe's aftermath.
+ *                                        screen does something. The capture's own URL is
+ *                                        re-loaded after a successful probe (a `goto`, not a
+ *                                        `reload`, so a probe that navigates is still
+ *                                        photographed where the capture asked for).
  *       --json                           print a JSON result line instead of human text
  *
  * Examples:
@@ -278,13 +279,19 @@ try {
       }
       process.exit(3);
     }
-    // Reload, so the PNG is of the screen as it ships rather than of the probe's
-    // aftermath (a round in progress, a half-filled row).
+    // Back to the URL this capture was asked for — **not** `reload`, which reloads whatever
+    // page the probe left the browser on. Item 51's `browse-listing-open` presses a listing
+    // card and the app navigates to `/business/<id>`, so under `reload` the picture taken
+    // after that probe was of the *listing* page and failed `/browse`'s marker check: the
+    // probe's own side effect reported a healthy screen as broken (queue item 61). `goto(url)`
+    // re-serves the screen the capture is about, and for a probe that does not navigate it is
+    // the same load `reload` was. Pinned by case D in scripts/test-marker-retry.mjs, which
+    // fails on the pre-item-61 harness.
     try {
-      await page.reload({ waitUntil: 'domcontentloaded', timeout: opts.timeout });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: opts.timeout });
       await page.waitForLoadState('networkidle', { timeout: 15000 });
     } catch {
-      /* the reload is best-effort; the marker check below still has to pass */
+      /* the restore is best-effort; the marker check below still has to pass */
     }
     await page.waitForTimeout(opts.wait);
   }
@@ -371,6 +378,11 @@ try {
       }));
     }
   }
+
+  // Where the picture is actually taken. After a probe this is the URL the harness restored
+  // (item 61), so a capture that photographed the probe's destination by mistake is visible in
+  // the JSON line instead of only in the PNG.
+  result.finalUrl = page.url();
 
   await page.screenshot({ path: outPath, fullPage: opts.fullPage, type: 'png' });
   result.consoleErrors = consoleErrors.slice(0, 5);

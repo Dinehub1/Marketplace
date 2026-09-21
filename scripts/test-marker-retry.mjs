@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * test-marker-retry.mjs — prove the capture harness's marker gate (queue item 33).
+ * test-marker-retry.mjs — prove the capture harness's marker gate (queue item 33) and the
+ * post-probe URL restore (queue item 61).
  *
  * The defect it pins: a client-rendered SPA behind the tunnel can answer **200 with the
  * shell and no marker**, and the old marker path then treated that as a verdict — it wrote
@@ -9,11 +10,21 @@
  * 2026-09-16: tools-hub twice, stretch/walk three times, all on routes that render correctly
  * on the next attempt).
  *
- * Why a real socket and not a mock of the code: the thing being tested is *one more request*,
- * so the test counts the requests a server actually receives, and asserts on the picture the
- * harness leaves behind. A stub of `readMissing()` could only prove the code called itself.
+ * The second defect (case D, item 61): the harness used to `reload()` after a probe, which
+ * reloads *whatever page the probe left the browser on*. A probe that navigates — `/browse`'s
+ * listing-card press — therefore had its own side effect photographed and failed the screen's
+ * marker check, i.e. a healthy screen reported as broken. The fix is `goto(url)`, and case D
+ * asserts it from the server's side: the request log must be `<url>, <listing>, <url>`.
  *
- * Run:  node scripts/test-marker-retry.mjs
+ * Why a real socket and not a mock of the code: the thing being tested is *which request is
+ * made*, so the test counts the requests a server actually receives, and asserts on the picture
+ * the harness leaves behind. A stub of `readMissing()` could only prove the code called itself.
+ *
+ * Run:  node scripts/test-marker-retry.mjs        (npm run test:shots)
+ *       HARNESS=<copy of scripts/screenshot.mjs> node scripts/test-marker-retry.mjs
+ *       ↑ the negative control: the pre-item-61 harness must FAIL case D, or case D is
+ *         decoration. The copy has to sit beside a copy of `interactions.mjs`, because the
+ *         harness loads its probes from its own directory.
  * Exit: 0 when every case matches, 1 otherwise.
  */
 import { spawn } from 'node:child_process';
@@ -37,7 +48,10 @@ const ready = `<!doctype html><html><body><div id="root">${MARKER} — Everyday 
 //
 // `bodies` is consumed one entry per request; the last one repeats, so a 3rd request is
 // answerable. `seen` is the evidence: the test asserts on what arrived over the socket.
+// `routeBodies` (case D only) answers by path instead, because a navigating probe has to be
+// able to land somewhere that does *not* carry the marker.
 let bodies = [];
+let routeBodies = null;
 let seen = [];
 let server = null;
 let base = '';
@@ -50,8 +64,11 @@ function startServer() {
         res.end(JSON.stringify(seen.length));
         return;
       }
-      const body = bodies[Math.min(seen.length, bodies.length - 1)];
-      seen.push(req.url);
+      const pathname = new URL(req.url, 'http://127.0.0.1').pathname;
+      const body = routeBodies
+        ? routeBodies[pathname] ?? routeBodies['*'] ?? shell
+        : bodies[Math.min(seen.length, bodies.length - 1)];
+      seen.push(pathname);
       res.writeHead(200, { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' });
       res.end(body);
     });
@@ -67,8 +84,8 @@ const md5 = (file) => crypto.createHash('md5').update(fs.readFileSync(file)).dig
 
 // ------------------------------------------------------------------------ harness run
 
-function shoot(outFile, extra = []) {
-  const args = [HARNESS, `${base}/tools`, outFile, '--viewport', 'mobile', '--json', '--wait', '250', '--expect', MARKER, ...extra];
+function shoot(outFile, extra = [], url = `${base}/tools`) {
+  const args = [HARNESS, url, outFile, '--viewport', 'mobile', '--json', '--wait', '250', '--expect', MARKER, ...extra];
   // `spawn`, not `spawnSync`: the scripted server runs in THIS process, and spawnSync would
   // block this event loop for the whole capture — the browser would then time out on a
   // socket nobody is answering (measured: 60 s goto timeout, 0 requests arrived).
@@ -144,6 +161,46 @@ console.log(`\nscripted server on ${base}\n`);
   const r = await shoot(out);
   check('C. a healthy first read captures without a reload', r.code === 0 && r.info.markerRetried === undefined, `exit ${r.code}, markerRetried=${r.info.markerRetried}`);
   check('C. exactly one request was made', seen.length === 1, `${seen.length} request(s) arrived`);
+}
+
+// Case D — the probe navigates and does not walk back (item 61). The picture must be of the URL
+// the capture was asked for; the old harness reloaded wherever the probe had left the browser, so
+// a healthy screen failed its own marker check because of the probe's side effect.
+// The request log is the evidence, and it is the server's, not the harness's self-report.
+{
+  const landing = `<!doctype html><html><body><div id="root">${MARKER}<a id="go" href="/listing">open a listing</a></div></body></html>`;
+  const listing = `<!doctype html><html><body><div id="root">Business details</div></body></html>`;
+  routeBodies = { '/tools': landing, '/listing': listing };
+  seen = [];
+  const out = path.join(tmp, 'navigated.png');
+  const r = await shoot(out, ['--interact', 'test-navigates-away']);
+  check(
+    'D. a navigating probe still captures the URL it was given',
+    r.code === 0,
+    `exit ${r.code}${r.code ? ` (${(r.stderr || '').trim().split('\n').pop()})` : ''}`,
+  );
+  check(
+    'D. the probe really navigated away',
+    /left the browser on \/listing/.test(r.info.interaction?.detail || ''),
+    r.info.interaction?.detail || r.info.interactionFailed || 'no probe detail',
+  );
+  check(
+    'D. the harness came back to the capture URL itself',
+    seen.join(' ') === '/tools /listing /tools',
+    `requests: ${seen.join(' ') || 'none'}`,
+  );
+  check(
+    'D. the marker was found on that URL, with no reload',
+    r.info.expectMissing === undefined && r.info.markerRetried === undefined,
+    `expectMissing=${JSON.stringify(r.info.expectMissing)} markerRetried=${r.info.markerRetried}`,
+  );
+  check(
+    'D. the JSON says which URL was photographed',
+    typeof r.info.finalUrl === 'string' && r.info.finalUrl.endsWith('/tools'),
+    `finalUrl=${r.info.finalUrl}`,
+  );
+  check('D. the picture was written', fs.existsSync(out) && fs.statSync(out).size > 0, fs.existsSync(out) ? `${fs.statSync(out).size} B` : 'no file');
+  routeBodies = null;
 }
 
 await stopServer();

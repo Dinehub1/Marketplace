@@ -646,9 +646,11 @@ async function breatheStart(page) {
  * a press changes the route to a listing, that page renders, and it renders **the name that was on
  * the card that was pressed**. A card that opened a different business passes a route-only check.
  *
- * The press navigates, so the probe walks back to the feed before returning: the harness reloads
- * the page it is on and photographs that, and a picture of a listing page would fail `/browse`'s
- * marker check — a capture that fails for the probe's own side effect is worse than no probe.
+ * The press navigates, so the probe walks back to the feed before returning — belt and braces,
+ * because the harness now restores the capture's own URL after any probe (item 61: it used to
+ * `reload()` wherever the probe had left the browser, which photographed the listing page and
+ * failed `/browse`'s marker check — a capture that fails for the probe's own side effect is
+ * worse than no probe). The walk-back stays because it also asserts the return itself.
  */
 async function browseListingOpen(page) {
   const started = new URL(page.url());
@@ -717,7 +719,38 @@ async function browseListingOpen(page) {
   };
 }
 
+/**
+ * testNavigatesAway: navigates and does **not** walk back — the case item 61 is about.
+ *
+ * This probe is not a screen's control; it is the harness's own test fixture, and it exists
+ * here rather than in the test because the probe registry is this one module, loaded by
+ * `screenshot.mjs` from its own directory. `scripts/test-marker-retry.mjs` serves a page whose
+ * marker is on the landing URL with a link to a second URL that does not carry it, runs this
+ * probe, and asserts on the requests that arrived: the harness has to come back to the landing
+ * URL itself. It is named `test-` so `app-shots.mjs` (which names its probes explicitly) can
+ * never pick it up by accident.
+ */
+async function testNavigatesAway(page) {
+  const link = page.locator('#go').first();
+  if (!(await link.count())) throw new Error('the test page has no #go link to press');
+  await link.click();
+  try {
+    await page.waitForURL(/\/listing/, { timeout: 10000 });
+  } catch {
+    /* the sentence below is the verdict */
+  }
+  const landed = new URL(page.url()).pathname;
+  if (landed !== '/listing')
+    throw new Error(`pressing #go did not navigate (the browser is still on ${landed})`);
+  return { detail: `pressed #go and left the browser on ${landed}, without walking back` };
+}
+
 export const INTERACTIONS = {
+  'test-navigates-away': {
+    screen: '(harness test — scripts/test-marker-retry.mjs)',
+    what: 'a probe that navigates and does not walk back, so the harness must restore the URL itself',
+    run: testNavigatesAway,
+  },
   'pdf-rotate-pick': {
     screen: 'pdf-tools',
     what: 'press a turn chip; the primary button has to name the job it will run',

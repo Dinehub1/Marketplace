@@ -29,6 +29,8 @@
     "theme:audit": "node scripts/theme-audit.mjs",
     "shots": "node scripts/app-shots.mjs",
     "shots:fast": "node scripts/app-shots.mjs --no-export",
+    "_comment_test_shots": "The capture harness's own test. It serves a scripted page over a real socket (no app, no preview needed) and asserts what the harness does with it: the marker miss reloads once and never overwrites a gallery shot (item 33), and a probe that navigates is still photographed on the URL the capture asked for (item 61). Runs against an older copy of the harness via HARNESS= to prove the cases can fail.",
+    "test:shots": "node scripts/test-marker-retry.mjs",
     "check:targets": "node scripts/check-targets.mjs",
     "check:fleet": "node scripts/check-fleet.mjs",
     "_comment_check_game": "The two gates above are about the store listing. This one is about the game: it loads apps/mobile/lib/block-clear.ts in plain Node and asserts the rules, so it runs anywhere — the screenshot probes need Playwright and a preview, and those only exist on the capture VM.",
