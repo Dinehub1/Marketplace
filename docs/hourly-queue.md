@@ -2336,7 +2336,7 @@ run. Do not "fix" this by deleting `node_modules`: that takes the live Next app 
 reinstall finishes (see the hourly queue's rule 3), and `npm install` on this VM is the
 20-minute job rule 7 keeps out of a normal hour. It belongs in an hour that does nothing else.
 
-### 61. A probe that navigates is photographed where it landed (found 2026-09-20, from item 51)
+### 61. A probe that navigates is photographed where it landed — DONE 2026-09-20
 `scripts/screenshot.mjs` takes the picture **after** the probe, and what it photographs is the page
 the browser is *on*: `page.reload()` reloads the current URL. So a probe that navigates — item 51's
 `browse-listing-open` presses a listing card and leaves the app at `/business/<id>` — would have its
@@ -2351,6 +2351,35 @@ rules and leave each probe to remember it. The first is cheaper than the second 
 already in `opts` — but it changes the harness every probe runs through, so it wants an hour of its
 own with all nine probes re-run.
 
+**Done 2026-09-20 — the first option, and the gate was shown to fail.** `scripts/screenshot.mjs`
+now restores the URL the capture was asked for (`page.goto(url, …)` after a successful probe
+instead of `page.reload()`; for a probe that does not navigate it is the same load), and the JSON
+line records **`finalUrl`** — where the picture was actually taken — so a capture that photographed
+the probe's destination is visible in the output, not only in the PNG. `scripts/test-marker-retry.mjs`
+gained **case D**: its scripted server answers `/tools` (carrying the marker) and `/listing` (not
+carrying it), and the new test-only probe `test-navigates-away` in `scripts/interactions.mjs` presses
+the link and returns **without walking back**. The request log is the evidence and it is the
+server's, not the harness's self-report:
+- fixed harness → **18/18 checks**, `requests: /tools /listing /tools`, `expectMissing=undefined
+  markerRetried=undefined`, `finalUrl=http://127.0.0.1:54953/tools`, PNG 40,199 B, exit 0;
+- the same test against the pre-fix copy of the harness (`%TEMP%\item61-baseline\screenshot.mjs`,
+  md5 `ec957b18…` — the committed file) → **13/18, case D fails exactly as expected**:
+  `requests: /tools /listing /listing /listing`, `expectMissing=["THE SHELL PAINTED"]`,
+  `finalUrl=undefined`, **no file written** (item 33's rule held — a failed capture leaves the
+  gallery alone rather than replacing it).
+The fixture probe lives in `interactions.mjs` because the harness loads its registry from its own
+directory; it is named `test-*` so `app-shots.mjs`, which names probes explicitly, can never pick it
+up, and the baseline copy needed a copy of `interactions.mjs` beside it.
+**All ten real probes re-run after the change: 20/20 captures ok** (both themes, 390×844,
+`https://expo.dropby.co.in`, `--no-export`) — pdf-tools (`Rotate 90°` → `Rotate 180°`), invoice (UPI
+id reached the paper, `not-a-upi` refused in words), collage ("a strip of three", dimmed chip inert),
+tap-sprint (score 0 → 10), word-duel (`l` landed, tile disabled), block-clear (0 → 4 filled squares),
+merge-tiles (moves 0 → 1), stretch (clock 5:00 → 4:59), breathe (countdown 6s → 4s), and browse — the
+navigating one — `pressed the "Vishwakarma Furniture Works – Carpenter in Indore" card … the probe
+returned to /browse`. `npm run test:shots` was added so the harness's own test is reachable without
+knowing the file name. No app code changed: no `expo export`, no `npm run build`, no engine restart;
+ports/pm2 unchanged (one listener each: 8080, 8091, 8092, 8099 — same pids), no leftover Chromium.
+
 ### 62. The cost panel's cold read is unlocked, so N simultaneous views means N node processes (found 2026-09-20, from item 42)
 `product_costs()` in `services/tools/shots_server.py` caches the report for 60 s, but the cache is
 only *read* under no lock: two requests that arrive in the same second on a cold cache both see
@@ -2362,4 +2391,14 @@ double-check of the cache inside it (the second waiter then finds the fresh repo
 nothing), and a case in `%TEMP%\test-cost-panel.py` that fires two threads at a cold cache and
 counts the processes that actually started — the same "prove it by the traffic that arrived"
 shape as item 29's retry test. Not this hour's item.
+
+### 63. The harness restores the URL, not the state (appended 2026-09-20, from item 61)
+Item 61 fixed the URL half of "the probe's own side effect is still there when the picture is
+taken". The state half is open: a probe that **writes** (a game round recorded by
+`lib/game-scores.ts`, an invoice counter advanced by `lib/invoice-counter.ts`) leaves that write on
+the device, and the capture after it photographs the aftermath — the next round's start screen can
+read "Best score on this device: 1900 · 1 round played" from a probe that just played. Nothing is
+wrong today (no screen's marker depends on that), so this is a note for the next probe author rather
+than work: if a capture is ever pinned by copy that a probe can change, the harness needs a fresh
+browser context per capture, not just a `goto`.
 
