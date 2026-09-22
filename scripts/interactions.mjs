@@ -20,18 +20,35 @@
  *
  * PROBE_SABOTAGE=1 is for testing this gate itself: it makes the probe's own target
  * refuse pointer events, i.e. it reproduces "the screen stopped responding" without
- * touching the app. It is never set by a normal capture run.
+ * touching the app. PROBE_SABOTAGE=job is the second control and it belongs to the one
+ * probe that sends a job: it hands the screen a file the route must refuse, so the
+ * assertion "the job answered 200" is the one that fails. Neither is set by a normal
+ * capture run.
  *
- * Three of the probes need a file (a PDF, three photos): no job is ever sent, the
- * pickers are the thing under test. The fixtures are written to the temp dir at
- * probe time — a 1-page PDF made by hand and three 1x1 PNGs — so nothing in the repo
- * has to carry test data.
+ * Most of the probes need a file (a PDF, three photos) and stop before the upload; the
+ * pickers are the thing under test. The fixtures are written to the temp dir at probe
+ * time — a 1-page PDF made by hand and three 1x1 PNGs — so nothing in the repo has to
+ * carry test data.
+ *
+ * `exif-strip-job` is the exception and the deliberate canary (item 43): every other
+ * probe proves a press reaches the screen's own state, so an `/api/job` path that broke —
+ * a renamed field, a 502 from a bad enum, a route entry deleted — would pass all of them
+ * and every marker check in the gallery. It therefore sends **one real, free, local job**
+ * per capture (₹0, ~2.6 s, our own engine, no model), and it asserts the *response*:
+ * the POST's status, the job's own `meta`, and that the screen then prints those numbers.
  */
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
 const SABOTAGE = process.env.PROBE_SABOTAGE === '1';
+/**
+ * The second control: hand the one job-sending probe a file the route cannot accept, so
+ * the probe fails on its own "the job answered 200" assertion. Read by `exifStripJob`
+ * alone — `sabotage()`/`deafen()` stay bound to PROBE_SABOTAGE=1, or this mode would
+ * sabotage the pointer target as well and the probe would never reach the network.
+ */
+const SABOTAGE_JOB = process.env.PROBE_SABOTAGE === 'job';
 
 // ------------------------------------------------------------------- fixtures
 
@@ -51,6 +68,91 @@ const ONE_PX_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
   'base64',
 );
+
+/** An 8x8 JPEG — the picture half of the metadata-cleaner fixture, 633 bytes. */
+const TINY_JPEG = Buffer.from(
+  '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5E' +
+    'SUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAAR' +
+    'CAAIAAgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIh' +
+    'MUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4' +
+    'eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QA' +
+    'HwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHB' +
+    'CSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaX' +
+    'mJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDn6KKK8k/Q' +
+    'D//Z',
+  'base64',
+);
+
+// ------------------------------------------------------- the metadata-cleaner photo
+
+function u16le(v) {
+  const b = Buffer.alloc(2);
+  b.writeUInt16LE(v);
+  return b;
+}
+function u32le(v) {
+  const b = Buffer.alloc(4);
+  b.writeUInt32LE(v);
+  return b;
+}
+function ifdEntry(tag, type, count, value) {
+  // A value of 4 bytes or fewer rides inline in the entry; anything longer is an offset.
+  return Buffer.concat([u16le(tag), u16le(type), u32le(count), value.length === 4 ? value : u32le(value)]);
+}
+
+/**
+ * A JPEG carrying exactly the three tags the metadata cleaner exists for, built in the
+ * probe rather than carried in the repo.
+ *
+ * A photo with no tags would prove nothing about this product: the engine answers
+ * `exif_in` / `exif_out` — what it read out of the file it was handed, and what the copy
+ * it saved still carries — and "no tags" is the same answer for a working reader and for
+ * a dead one. So the probe plants GPS (the tag the whole product is about), the camera
+ * make and the editing app, and requires all three back.
+ *
+ * The segment is hand-built TIFF: an APP1 after SOI holding an IFD0 with Make +
+ * Software + a GPS-IFD pointer, in front of a 633-byte JPEG. Two details measured by
+ * getting them wrong first — the JPEG *segment length* is big-endian (written
+ * little-endian it claimed 34,304 bytes and Pillow answered "Truncated File Read"), and
+ * the TIFF inside is little-endian, which its own "II" header declares.
+ */
+function exifJpeg() {
+  const make = Buffer.from('ProbeCam\u0000', 'latin1');
+  const software = Buffer.from('dropby-probe\u0000', 'latin1');
+  const lat = Buffer.concat([u32le(22), u32le(1), u32le(43), u32le(1), u32le(0), u32le(1)]);
+  const ifd0Off = 8;
+  const makeOff = ifd0Off + 2 + 3 * 12 + 4;
+  const softwareOff = makeOff + make.length;
+  const gpsOff = softwareOff + software.length;
+  const latOff = gpsOff + 2 + 2 * 12 + 4;
+  const ifd0 = Buffer.concat([
+    u16le(3),
+    ifdEntry(0x010f, 2, make.length, makeOff), // Make
+    ifdEntry(0x0131, 2, software.length, softwareOff), // Software
+    ifdEntry(0x8825, 4, 1, gpsOff), // GPS-IFD pointer
+    u32le(0),
+  ]);
+  const gps = Buffer.concat([
+    u16le(2),
+    ifdEntry(0x0001, 2, 2, Buffer.from('N\u0000\u0000\u0000', 'latin1')), // GPSLatitudeRef
+    ifdEntry(0x0002, 5, 3, latOff), // GPSLatitude
+    u32le(0),
+  ]);
+  const tiff = Buffer.concat([
+    Buffer.from('II', 'latin1'),
+    u16le(42),
+    u32le(ifd0Off),
+    ifd0,
+    make,
+    software,
+    gps,
+    lat,
+  ]);
+  const len = Buffer.alloc(2);
+  len.writeUInt16BE(2 + 6 + tiff.length);
+  const app1 = Buffer.concat([Buffer.from([0xff, 0xe1]), len, Buffer.from('Exif\u0000\u0000', 'latin1'), tiff]);
+  return Buffer.concat([TINY_JPEG.subarray(0, 2), app1, TINY_JPEG.subarray(2)]);
+}
 
 let fixtureDir = null;
 
@@ -76,6 +178,11 @@ function fixture(name, contents) {
  */
 async function chooseFiles(page, open, files) {
   const opening = page.waitForEvent('filechooser', { timeout: 15000 });
+  // If `open()` throws (the control it presses is dead), this wait is never awaited and
+  // would reject unhandled 15 s later — taking the harness down *after* the probe has
+  // already reported the sentence it exists to report. Attaching a handler keeps that
+  // failure a sentence; awaiting it below still throws if the chooser never opened.
+  opening.catch(() => {});
   await open();
   const chooser = await opening;
   await chooser.setFiles(files);
@@ -720,6 +827,144 @@ async function browseListingOpen(page) {
 }
 
 /**
+ * exif-strip: the canary that actually sends a job (item 43).
+ *
+ * Every other probe stops before the upload, so a `/api/job` path that broke — a renamed
+ * field, a 502 from a bad enum, a route entry deleted — would pass all of them and every
+ * marker check in the gallery. This one runs the real path end to end on the one product
+ * that is free, local and fast (₹0, our own engine, ~2.6 s, no model): picker → multipart
+ * → route → engine → R2 → the meta back on the screen.
+ *
+ * Three things are required, because any one of them alone is satisfiable by a screen
+ * that is lying:
+ *   1. the POST to `/api/job` answers **200** — read off the wire, because a 502 renders
+ *      a sentence on the card too;
+ *   2. the engine's `meta.exif_in` names the tags the probe *planted* (GPS, make,
+ *      software — see `exifJpeg`) and `meta.exif_out` is empty — the copy it saved really
+ *      has no tags, which is the product's whole claim;
+ *   3. the card prints those same tags as **removed**, and the sizes the meta measured, so the
+ *      screen really rendered the job's answer and not just its own copy.
+ *
+ * What this probe is *not*: it never reaches the gallery picture. The harness reloads the
+ * capture's URL after a successful probe (item 61), and the shot of this entry is byte-identical
+ * with and without the probe — measured, `md5 dcbac83f…`. The gate is the evidence; the picture
+ * is the screen as it ships.
+ *
+ * The tag labels below are the screen's own copy, matched on purpose: the probe is
+ * asserting what a person reads, so a relabelled card is something this gate should
+ * report rather than something it should follow silently.
+ *
+ * With `PROBE_SABOTAGE=job` the fixture is a text file the route must refuse, so the
+ * first of the three is the assertion that fails. With `PROBE_SABOTAGE=1` the picker
+ * button refuses pointer events and **no job is sent at all** — the control run costs
+ * the engine nothing.
+ */
+const EXIF_BUTTON = 'xpath=//button[@role="button"][normalize-space(.)="Choose a photo"]';
+/**
+ * The sabotage selector is CSS and deliberately wider than the XPath above: `sabotage()`
+ * hands its selector to `querySelectorAll`, which cannot take an `xpath=` one — passing
+ * this XPath there threw `SyntaxError: … is not a valid selector` and the control run
+ * failed for the probe's own reason instead of the screen's. Before a photo is attached
+ * the picker is this screen's only control, so `[role="button"]` is the control set.
+ */
+const EXIF_CONTROLS = '[role="button"]';
+const EXIF_TAG_LABELS = {
+  gps: 'Where it was taken (GPS)',
+  make: 'Phone or camera make',
+  software: 'App that edited it',
+};
+
+async function exifStripJob(page) {
+  const answered = page.waitForResponse(
+    (r) => r.url().includes('/api/job') && r.request().method() === 'POST',
+    { timeout: 90000 },
+  );
+  // The sabotage path returns before this is awaited, and a rejection nobody handles
+  // would take the harness down instead of reporting a sentence. Attaching a handler
+  // keeps the promise awaitable below and silent if it is not.
+  answered.catch(() => {});
+
+  const file = SABOTAGE_JOB
+    ? fixture('probe-not-a-photo.txt', Buffer.from('this is not a photograph\n', 'utf8'))
+    : fixture('probe-exif.jpg', exifJpeg());
+
+  const opener = page.locator(EXIF_BUTTON).first();
+  if (!(await opener.count()))
+    throw new Error('the metadata cleaner has no "Choose a photo" control on the page');
+  await sabotage(EXIF_CONTROLS, page);
+  try {
+    await chooseFiles(page, () => opener.click({ timeout: 8000 }), [file]);
+  } catch {
+    throw new Error(
+      'pressing "Choose a photo" never opened a file picker — the screen stopped responding, so no job was sent',
+    );
+  }
+
+  let res;
+  try {
+    res = await answered;
+  } catch {
+    throw new Error('the screen took the photo but never posted a job to /api/job');
+  }
+  const status = res.status();
+  const body = await res.json().catch(() => null);
+  if (status !== 200) {
+    throw new Error(
+      `the photo was posted to /api/job and answered ${status}` +
+        `${body && body.error ? ` — ${body.error}` : ''}, so the canary job did not run`,
+    );
+  }
+
+  const meta = (body && body.meta) || {};
+  const read = Array.isArray(meta.exif_in) ? meta.exif_in : [];
+  const carried = Array.isArray(meta.exif_out) ? meta.exif_out : [];
+  const planted = Object.keys(EXIF_TAG_LABELS);
+  const unread = planted.filter((t) => !read.includes(t));
+  if (unread.length)
+    throw new Error(
+      `the engine did not read ${unread.join(', ')} out of a photo that carries it — it read ${JSON.stringify(read)}, ` +
+        'which is the same answer as a photo with no tags at all',
+    );
+  if (carried.length)
+    throw new Error(`the copy the server saved still carries ${carried.join(', ')} — nothing was stripped`);
+
+  // The card is the screen's own account of the same two lists.
+  try {
+    await page.waitForFunction(
+      () => document.body.innerText.includes('What was inside the file'),
+      null,
+      { timeout: 30000 },
+    );
+  } catch {
+    const text = await page.evaluate(() => document.body.innerText.slice(0, 240));
+    throw new Error(`the job answered 200 but the screen never printed the result card; it reads: ${text}`);
+  }
+  await page.waitForTimeout(600); // the card arrives a render behind the response
+
+  const text = await page.evaluate(() => document.body.innerText);
+  const quoted = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const notRemoved = planted.filter((t) => !new RegExp(`${quoted(EXIF_TAG_LABELS[t])}\\s+removed`, 'i').test(text));
+  if (notRemoved.length)
+    throw new Error(
+      `the card does not say ${notRemoved.map((t) => `"${EXIF_TAG_LABELS[t]}"`).join(', ')} was removed, ` +
+        'so the screen is not showing the work the job did',
+    );
+  if (!/read back from the copy the server saved/i.test(text))
+    throw new Error('the card does not say what the file you download carries — the second half of the product is missing');
+  if (meta.size_in && !text.includes(`${meta.size_in} → ${meta.size_out}`))
+    throw new Error(
+      `the card does not print the sizes the engine measured (${meta.size_in} → ${meta.size_out})`,
+    );
+
+  return {
+    detail:
+      `attached a photo carrying ${read.join(' + ')} and let the job run — /api/job answered ${status}, ` +
+      `job ${body.job_id}: the engine read ${JSON.stringify(meta.exif_in)}, the saved copy carries ` +
+      `${JSON.stringify(meta.exif_out)}, and the card prints all three as removed`,
+  };
+}
+
+/**
  * testNavigatesAway: navigates and does **not** walk back — the case item 61 is about.
  *
  * This probe is not a screen's control; it is the harness's own test fixture, and it exists
@@ -760,6 +1005,11 @@ export const INTERACTIONS = {
     screen: 'invoice',
     what: 'type a UPI id; the bill preview has to carry it, and refuse a malformed one',
     run: invoiceUpiPreview,
+  },
+  'exif-strip-job': {
+    screen: 'exif-strip',
+    what: 'attach a photo and let the job run; /api/job has to answer 200, the engine has to read the tags the photo carries, and the card has to print them as removed',
+    run: exifStripJob,
   },
   'collage-shape-pick': {
     screen: 'collage',
@@ -812,5 +1062,5 @@ export async function runInteraction(page, name) {
   const probe = INTERACTIONS[name];
   if (!probe) throw new Error(`unknown interaction "${name}" (known: ${interactionNames().join(', ')})`);
   const out = await probe.run(page);
-  return { name, screen: probe.screen, what: probe.what, sabotaged: SABOTAGE, detail: out.detail };
+  return { name, screen: probe.screen, what: probe.what, sabotaged: SABOTAGE, sabotageMode: process.env.PROBE_SABOTAGE || null, detail: out.detail };
 }

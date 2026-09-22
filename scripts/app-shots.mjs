@@ -63,7 +63,14 @@ const SCREENS = [
   { name: 'bg-remove', route: '/tools/bg-remove', expect: ['Remove the'] },
   { name: 'signature', route: '/tools/signature', expect: ['Sign it with', 'Sign here'] },
   { name: 'pdf-tools', route: '/tools/pdf', expect: ['Pick a job,'], interact: 'pdf-rotate-pick' },
-  { name: 'exif-strip', route: '/tools/exif-strip', expect: ['Choose a photo', 'no location, no camera name'] },
+  // The capture that runs a real job (item 43's canary: `exif-strip-job`). Its markers are the
+  // screen's copy from *before* anything is sent, which is also what the picture holds — the
+  // harness reloads the capture's URL after a successful probe (item 61), so a probe's own
+  // aftermath is never photographed. Measured on this entry: the PNG is **byte-identical**
+  // (`md5 dcbac83f…`) with the probe, without it, and with a different `--expect`. The probe is
+  // the evidence; the picture is the screen as it ships. (Several entries above still claim
+  // their picture shows the probe's leftover state — see item 68.)
+  { name: 'exif-strip', route: '/tools/exif-strip', expect: ['Choose a photo', 'no location, no camera name'], interact: 'exif-strip-job' },
   { name: 'photos-to-pdf', route: '/tools/photos-to-pdf', expect: ['Photos into', 'Page size'] },
   { name: 'collage', route: '/tools/collage', expect: ['A few photos,', 'Shape'], interact: 'collage-shape-pick' },
   { name: 'resume-checker', route: '/tools/resume-checker', expect: ['DOCUMENT CHECK', 'document says', 'not counted inside', 'no text layer'] },

@@ -2046,7 +2046,7 @@ still **200**, and `pm2 restart shots-gallery` left **one** listener on :8092 (p
 pid`); one stray test instance I had started on :8095 was killed, and 8095 is free. No app change,
 no `npm run build`, no engine restart — the worker was never touched.
 
-### 43. Every probe stops before the upload (new, 2026-09-17, from item 34)
+### 43. Every probe stops before the upload — DONE 2026-09-22
 There are now six interaction probes (three games, three tool controls) and **not one of them
 runs a job**: each proves the press reaches the screen's own state. So a `/api/job` path that
 broke — a renamed field, a 502 from a bad enum, a route entry deleted — would still pass all
@@ -2058,6 +2058,64 @@ probe did not put on the page (the tags the file arrived with vs the tags it now
 cost has to be said out loud: a capture run would then send one real job per scheme per screen,
 so it belongs on ONE screen as a canary rather than on all of them, and the probe must assert
 `http=200` plus the job's own meta, not merely that a card appeared.
+
+**Done 2026-09-22 — the canary exists, it runs the real path, and both halves of the gate have
+been seen to fail.** `exif-strip-job` in `scripts/interactions.mjs` attaches a photo through the
+screen's own picker, lets the screen send the job, and requires three things: the POST to
+`/api/job` answered **200** (read off the wire — a 502 renders a sentence on the card too), the
+engine's `meta.exif_in` names the tags the probe *planted* while `meta.exif_out` is empty, and the
+card prints those same tags as **removed** plus the sizes the meta measured. The scope is the
+item's: **one screen**, and the job is the free local one (₹0, our own engine, ~2.6 s, no model),
+so a full sweep costs two of them — one per scheme, because each capture is its own process.
+- The fixture is built **in the probe** (`exifJpeg()`): a 633-byte JPEG with an APP1 segment the
+  probe writes itself, carrying GPS (its own IFD), Make and Software. A tagless photo would prove
+  nothing — "no tags" is the same answer from a working reader and a dead one. Two details measured
+  by getting them wrong first: a JPEG *segment length* is big-endian (little-endian ⇒ Pillow
+  answers `Truncated File Read`) and the TIFF inside is little-endian, which its `II` header says.
+  Checked against the engine's own reader before it went in: `exif_in [gps, make, software]`,
+  `exif_out []`.
+- Evidence, through `https://expo.dropby.co.in` at 390×844: **2/2 captures ok** —
+  `attached a photo carrying gps + make + software and let the job run — /api/job answered 200,
+  job 198: the engine read ["gps","make","software"], the saved copy carries [], and the card
+  prints all three as removed` (dark = job **199**, same sentence), with the marker gate green and
+  0 page errors. Both rows are `done` in `product_jobs`.
+- **The gate was shown to fail in both directions.** `PROBE_SABOTAGE=job` (a new switch value: hand
+  the screen a file the route must refuse) → exit **3**, `the photo was posted to /api/job and
+  answered 415 — This tool expects JPEG or PNG or WEBP, so the canary job did not run`;
+  `PROBE_SABOTAGE=1` (the picker refuses pointer events, **no job is sent at all**) → exit **3**,
+  `pressing "Choose a photo" never opened a file picker — the screen stopped responding, so no job
+  was sent`. After both controls the newest `product_jobs` row was still **197**, so the control
+  runs cost the engine nothing, and both gallery PNGs were **byte-identical** (`md5sum`
+  `0dd2c50f…` / `dcbac83f…` before and after) — item 33's rule holds for the probe path too.
+- **What the picture holds — measured, and it corrected this item's own first assumption.** The
+  harness reloads the capture's URL after a successful probe (`scripts/screenshot.mjs:291`, item
+  61's fix), so a probe's aftermath is **never photographed**: this entry's PNG is
+  **byte-identical** (`md5 dcbac83f…`) captured with the probe, without it, and with a different
+  `--expect`. So the canary's cost buys **gate coverage, not a picture** — the shot in the gallery
+  is the empty state it always was. The first attempt assumed otherwise and changed the entry's
+  markers to copy that survives a job (the button reads "Choose another photo" once a file lands —
+  measured before the change); the run then showed the markers pass on a freshly loaded page with
+  the probe attached, so they were put **back** to the verified pair (`Choose a photo`,
+  `no location, no camera name`), `SCREEN_INFO`'s `asserts` line with them, and the capture re-run
+  green (jobs **201**/**202**). The stale copy this leaves behind — `app-shots.mjs` still says
+  block-clear's picture is "taken with a piece already on the board" and merge-tiles' "after a
+  slide" — is item **68**.
+- One harness run this hour hung past 300 s and was killed with **no job sent** (the newest
+  `product_jobs` row was still 199) and nothing left behind: no Chromium, no node process. The same
+  command repeated in the same hour completed in the usual time (job **200**). Recorded because a
+  hang in the capture pipeline otherwise reads like a slow screen.
+- **Found by the control run, and it was the probe's own fault:** `sabotage()` hands its selector
+  to `querySelectorAll`, which cannot take an `xpath=` one, so the first control failed with
+  `SyntaxError: 'xpath=…' is not a valid selector` instead of the sentence it exists to print —
+  item 67. `chooseFiles()` also gained a `.catch(() => {})` on the pending `filechooser` wait: a
+  probe whose press throws leaves that wait unawaited, and it rejected **unhandled** 15 s later,
+  i.e. after the probe had already reported. Both are fixed here; the other file-using captures
+  re-run green in the same hour (collage 2/2, pdf-tools 2/2, photos-to-pdf 2/2).
+- No app code, no `expo export`, no `npm run build`, no engine restart — the harness, the probes
+  and the fixtures are outside the app. `pm2 restart shots-gallery` was needed for the `SCREEN_INFO`
+  line (one listener on :8092, pid 5224 == `pm2 pid`); `/shots`, `/log`, `/live` and
+  `expo.dropby.co.in/tools/exif-strip` are all **200** after it, and 8080/8091/8099 each still have
+  exactly one listener matching pm2's pid.
 
 ### 44. Bad-input probes for the two fields that guard (new, 2026-09-17, from item 34)
 The invoice's UPI field is now probed in both directions (a valid id reaches the paper, a
@@ -2478,7 +2536,7 @@ pid and `pm2 pid dropby-worker` (8164) equal to 8099's. `/`, `/log`, `/shots` al
 `127.0.0.1:8092` after the restart, and no app code, no `npm run build` and no engine restart were
 involved — only the page server.
 
-### 65. The cost panel's *failed* read still costs one node process per waiter (appended 2026-09-21, from item 64)
+### 65. The cost panel's *failed* read still costs one node process per waiter (appended 2026-09-21, from item 64) — DONE 2026-09-21
 `product_costs()` caches the report for 60 s and item 62 put a lock around the spawn — but only the
 **success** path writes `COST_CACHE`. When the script fails (it exits non-zero on its own gate, or
 times out at `COST_TIMEOUT` = 90 s), `report` stays `None`, so the next caller through the lock
@@ -2492,4 +2550,76 @@ memo only stops the repeat spawn. Evidence to require: the scripted endpoint pat
 `%TEMP%\item64-jobs-cache.py` applied to the spawn — N simultaneous cold views with the script made
 to fail → **1** spawn, not N, while the page still renders the retained report and the failure
 sentence.
+
+**Done 2026-09-21 — the memo is in, and the "1 spawn" is counted by the spawned script's own log.**
+`services/tools/shots_server.py`: `COST_CACHE` gained `failed_at` / `why`; a failure is written
+after the spawn (`COST_CACHE.update({"failed_at": time.time(), "why": why})`) and checked in both
+places the success path is checked — before the lock and again inside it — and cleared by a
+successful run. Held only around the `subprocess.run`, never around the render. Deliberately
+unchanged: the last good report is still returned *with* the reason, so the panel keeps its figures
+and the sentence sits beside them (item 64's shape, not a blank panel).
+Evidence: `%TEMP%\item65-cost-failure.py` → **26/26, exit 0**, against a scripted cost script
+(`%TEMP%\item65-fake-cost.mjs`) that appends its own pid to a log file every time it starts, so the
+count comes from the spawned side and not from a counter inside the code under test.
+In-process, the real module: a good run renders the report; then with the cache aged out and the
+script failing, 4 threads → **1 spawn**, all four answered with the same retained report object and
+`the cost script could not be read just now (JSONDecodeError)`, in **1.1 s** where four serialised
+runs take 3.6 s; four more views inside the TTL → **0 spawns**. End to end over HTTP on a temporary
+`/log` server: one good view = 1 spawn and the panel; then 4 simultaneous views with the script made
+to fail = **4 × 200 in 1.2 s and 1 spawn**, every page carrying the retained row *and* the failure
+sentence. The negative control is the same source with the one line that records the failure
+replaced by `pass` — line-by-line diff is exactly that line — and the same four callers cost
+**4 spawns / 4.6 s in-process and 6.6 s end to end**, so the single spawn above is the memo and not
+luck.
+Live: `pm2 restart shots-gallery` (cold cache), then 4 simultaneous `127.0.0.1:8092/log` →
+**4 × 200 in 2.4 s, 34 cost rows on every view**, peak **1** `cost-report.mjs` node process
+(wmic poll, pid 6228) and no failure banner; `https://shots.dropby.co.in/log` → **200**, 65,713 B
+carrying the panel, `/` → 200 and `/shots` → 200. One listener per port and each equal to pm2's pid
+(:8092 7704, :8099 8164, :8080 10248); the test's ports :8093/:8094 verified free afterwards. No app
+code, no `npm run build`, no engine restart — only the page server.
+
+### 66. `_GO_CACHE` is the same cache family with neither the lock nor the failure memo — and it does not need them today (appended 2026-09-21, from item 65)
+`expo_go_url()` (`services/tools/shots_server.py:926`) memoises Expo's ngrok lookup for 10 s in
+`_GO_CACHE` (line 905) with no lock, and `/live` asks for it once per card (14 times a page). It is
+**not** items 62/64/65's shape, which is why nothing was changed: the failure path *does* write the
+cache (`url=found`, possibly `""`), so a dead tunnel is remembered for the TTL instead of being
+retried on every card, and one lookup is a 1 s-timeout call to `127.0.0.1:4040` plus one probe —
+against the two expensive ones already fixed (a 2.2 s node spawn, an 8 s remote read). N
+simultaneous cold `/live` views would cost N lookups of ~1.5 s each, on a page two people at once
+might open. Worth the lock only if `/live` is ever linked somewhere busy; recorded so the next
+reader does not re-derive it from scratch.
+
+### 67. `sabotage()` cannot take an XPath, and it fails the control run instead of the screen (appended 2026-09-22, from item 43)
+`scripts/interactions.mjs`'s `sabotage(selector, page)` hands its selector straight to
+`document.querySelectorAll`, so an XPath — the shape two probes already use to *find* their control
+(`xpath=//button[normalize-space(.)='Begin']`, because RN Web puts a Pressable's label in a nested
+`div` where neither `getByRole(name)` nor `hasText` sees it) — throws
+`SyntaxError: 'xpath=…' is not a valid selector`. Measured this hour: the first `PROBE_SABOTAGE=1`
+run of the new canary failed with that SyntaxError, i.e. **the control run failed for the probe's
+own reason**, which is the one failure mode a gate must not have — a sabotaged run is supposed to
+demonstrate the gate firing, and it said nothing about the screen. The workaround used (a CSS
+`[role="button"]`, exact for that screen because the picker is its only control) holds until a probe
+has to sabotage one XPath-identified control among several. The honest fix is inside `sabotage()`:
+resolve `xpath=` prefixes with `document.evaluate` so both selector languages work, and keep a case
+in `scripts/test-marker-retry.mjs` or a new probe test that a sabotage selector is never a syntax
+error. Cheap, and it removes a trap that costs an hour to notice.
+
+### 68. `app-shots.mjs` claims probe aftermath is in the picture, and it never is (appended 2026-09-22, from item 43)
+Measured this hour on the new canary's entry, and it corrects copy written at items 21/22/34:
+`scripts/screenshot.mjs:291` sends the browser back to the capture's URL with `page.goto(url)` after
+every successful probe (item 61's fix, and for a probe that does not navigate it is a full reload),
+so **a probe's own aftermath is never photographed**. The proof is a hash: `app__exif-strip__mobile-light.png`
+is byte-identical (`md5 dcbac83f…`) captured with the probe, without it, and with a different
+`--expect` — three runs, one image. Two consequences. (a) Several entries still describe a picture
+that cannot exist: block-clear's "Its picture is taken with a piece already on the board, which is
+the only version of this screen that proves the two-tap placement works" (a reloaded board is empty)
+and merge-tiles' "Its picture is taken after a slide for the same reason" — the copy is stale and
+should say what the capture really holds, since a future session will trust it. (b) A probe that
+does work worth *seeing* — this hour's canary sends a real job and the card is the product working —
+buys gate coverage only, and that is worth saying out loud before adding more job-sending probes
+rather than after. The honest options, neither of them this hour's item: restore the screenshot
+after the probe from a saved state instead of a fresh load (a `page.screenshot` taken *before* the
+`goto` is the cheapest version — the probe's own aftermath, then the reload for the marker check),
+or leave the pictures as they are and delete the stale claims from `app-shots.mjs`. Do not do both
+half-way: a picture described wrongly is worse than a picture of an empty screen.
 
