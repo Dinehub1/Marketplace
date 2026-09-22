@@ -1647,7 +1647,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 COST_SCRIPT = os.environ.get("COST_SCRIPT", os.path.join(REPO, "scripts", "cost-report.mjs"))
 COST_TTL = 60.0
 COST_TIMEOUT = 90.0
-COST_CACHE: dict = {"at": 0.0, "report": None, "code": None, "note": ""}
+COST_CACHE: dict = {"at": 0.0, "report": None, "code": None, "note": "", "failed_at": 0.0, "why": ""}
 # One run per minute, shared by every request — but *reading* the cache is not enough to keep
 # that promise: two requests arriving in the same second on a cold cache both see
 # `report is None`, both spawn the script (~4 s cold and one Supabase read each), and the box
@@ -1655,6 +1655,14 @@ COST_CACHE: dict = {"at": 0.0, "report": None, "code": None, "note": ""}
 # threads really do run at the same instant — this is a race, not a theoretical one. The lock
 # below makes the second caller wait for the first, and the double-check inside it means the
 # waiter finds the fresh report and pays nothing. It is held only around the spawn.
+#
+# And the lock alone is not enough, which is what `failed_at`/`why` are for: only a *success*
+# writes a cache entry, so a failure leaves `report is None` and every caller that comes through
+# the lock spawns the script again — N simultaneous views of a failing panel are N node runs
+# each up to COST_TIMEOUT (90 s), the last viewer waiting ~6 minutes for one answer that was
+# already known. Remembering the failure for one TTL makes it a fact about the minute rather
+# than about the caller. The last good report stays on the page either way, so the panel keeps
+# its figures and the memo only stops the repeat spawn.
 COST_LOCK = threading.Lock()
 
 
@@ -1677,14 +1685,22 @@ def product_costs() -> tuple[dict | None, str, int | None]:
     now = time.time()
     if COST_CACHE["report"] is not None and now - COST_CACHE["at"] < COST_TTL:
         return COST_CACHE["report"], COST_CACHE["note"], COST_CACHE["code"]
+    # The failure is remembered for one TTL, before the lock as well as inside it: a caller that
+    # arrives while the script is known to be failing must not wait for, or start, another run.
+    if COST_CACHE["why"] and now - COST_CACHE["failed_at"] < COST_TTL:
+        return COST_CACHE["report"], COST_CACHE["why"], COST_CACHE["code"]
     if not os.path.isfile(COST_SCRIPT):
         return COST_CACHE["report"], "the cost script is not on this host (" + COST_SCRIPT + ")", None
     with COST_LOCK:
         # Double-checked: a caller that queued here while a sibling was running the script must
-        # find that sibling's report and pay nothing, or every waiter spawns its own node.
+        # find that sibling's report and pay nothing, or every waiter spawns its own node. The
+        # same goes for a sibling's *failure* — without the second check the lock turns N
+        # simultaneous views of a failing panel into N serialised 90 s node runs.
         now = time.time()
         if COST_CACHE["report"] is not None and now - COST_CACHE["at"] < COST_TTL:
             return COST_CACHE["report"], COST_CACHE["note"], COST_CACHE["code"]
+        if COST_CACHE["why"] and now - COST_CACHE["failed_at"] < COST_TTL:
+            return COST_CACHE["report"], COST_CACHE["why"], COST_CACHE["code"]
         try:
             proc = subprocess.run(
                 [_node_bin(), COST_SCRIPT, "--json"],
@@ -1695,12 +1711,14 @@ def product_costs() -> tuple[dict | None, str, int | None]:
                 raise ValueError("the script's answer was not the cost report")
             # A non-zero exit is the script's own gate (a number contradicts the catalogue): keep
             # the report and the code, so the page can show the failures beside the figures.
-            COST_CACHE.update({"at": now, "report": report, "code": proc.returncode, "note": ""})
+            COST_CACHE.update({"at": now, "report": report, "code": proc.returncode, "note": "",
+                               "failed_at": 0.0, "why": ""})
             return report, "", proc.returncode
         except subprocess.TimeoutExpired:
             why = "the cost script did not answer in " + str(int(COST_TIMEOUT)) + " s"
         except Exception as exc:
             why = "the cost script could not be read just now (" + type(exc).__name__ + ")"
+        COST_CACHE.update({"failed_at": time.time(), "why": why})
     return COST_CACHE["report"], why, COST_CACHE["code"]
 
 
