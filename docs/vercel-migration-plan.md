@@ -189,9 +189,18 @@ Each phase can be released and rolled back on its own.
   - `sarkarmarketplace.` is back on the VM: its CNAME was deleted and the `*` tunnel
     wildcard serves it. The domain is still attached in Vercel as a fallback.
   - `dashboard.`, `admin.` and `apps.` stay on Vercel; they are low traffic.
-  - **Pending:** a Cloudflare Cache Rule for anonymous `GET`s on brand hosts. It needs the
-    token to have Cache Rules edit permission. Without it, the VM still renders every
-    page.
+  - **Cloudflare cache rule, live (id `2159737051f74c739b61c0aff0661024`,
+    "Brand pages: anonymous GETs on VM brand hosts").** It caches GETs on brand hosts at
+    the edge for 300 s, overriding the origin's `no-store` at the edge only; browsers
+    still get `no-store`. It excludes the role hosts, `/api`, `/unlock`, `/admin`,
+    `/dashboard`, `/profile`, `/settings`, `/business-dashboard` and `/login`, any request
+    with an `sb-` cookie (signed in), and any request carrying `rsc` or
+    `next-router-*` headers. Checked: anonymous pages and the sitemap go MISS → HIT;
+    signed-in, RSC, personal paths, `/api`, `/unlock` and POST stay DYNAMIC.
+    - `len(http.request.headers["x"]) eq 0` never matched when the header was absent;
+      `not any(lower(http.request.headers.names[*])[*] in {...})` does.
+    - Known, separate: a request with `Next-Router-Prefetch` but without `RSC` hangs at
+      the VM's Next. Browsers always send both.
 - The team is still on **Hobby**, which is non-commercial only. Upgrade to Pro before relying
   on this for payments or ads.
 
