@@ -1,4 +1,4 @@
-import { createHash, createHmac, randomUUID } from "crypto";
+import { createHash, createHmac, randomUUID, timingSafeEqual } from "crypto";
 
 /**
  * Cloudflare R2 client — S3-compatible PUT/DELETE signed with SigV4.
@@ -46,7 +46,7 @@ function encodeKey(key: string): string {
   return key.split("/").map(encodeURIComponent).join("/");
 }
 
-async function signedFetch(method: "PUT" | "DELETE", key: string, body?: Buffer, contentType?: string) {
+async function signedFetch(method: "PUT" | "DELETE" | "GET", key: string, body?: Buffer, contentType?: string) {
   if (!r2Configured) throw new Error("R2 is not configured");
   const payloadHash = createHash("sha256").update(body ?? Buffer.alloc(0)).digest("hex");
   const now = new Date();
@@ -128,4 +128,95 @@ export async function putObject(key: string, body: Buffer, contentType: string):
 export async function deleteObject(key: string): Promise<boolean> {
   const res = await signedFetch("DELETE", key);
   return res.ok || res.status === 404;
+}
+
+/** Read an object back, server-side. Null when it is missing or unreadable. */
+export async function getObject(key: string): Promise<{ bytes: Buffer; type: string } | null> {
+  const res = await signedFetch("GET", key).catch(() => null);
+  if (!res || !res.ok) return null;
+  return {
+    bytes: Buffer.from(await res.arrayBuffer()),
+    type: (res.headers.get("content-type") ?? "").split(";")[0].trim(),
+  };
+}
+
+/** SigV4's URI encoding: everything but the unreserved set, slashes included. */
+function awsEncode(v: string): string {
+  return encodeURIComponent(v).replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+}
+
+/**
+ * A presigned PUT: the phone uploads the file straight to R2, so it never passes
+ * through a serverless function (Vercel caps a request body at 4.5 MB; phone photos
+ * and scanned PDFs are larger).
+ *
+ * The content type **and the exact length** are signed headers. A client cannot use
+ * the URL to store a different kind of file, or a bigger one, than the job route
+ * approved — the size limits hold even though the bytes never reach our server.
+ */
+export function presignPut(key: string, contentType: string, contentLength: number, expiresSec = 900): string {
+  if (!r2Configured) throw new Error("R2 is not configured");
+  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const scope = `${dateStamp}/auto/s3/aws4_request`;
+  const canonicalUri = `/${BUCKET}/${encodeKey(key)}`;
+  const signedHeaders = "content-length;content-type;host";
+  const query: Record<string, string> = {
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": `${ACCESS_KEY}/${scope}`,
+    "X-Amz-Date": amzDate,
+    "X-Amz-Expires": String(expiresSec),
+    "X-Amz-SignedHeaders": signedHeaders,
+  };
+  const canonicalQuery = Object.keys(query)
+    .sort()
+    .map((k) => `${awsEncode(k)}=${awsEncode(query[k])}`)
+    .join("&");
+  const canonicalHeaders = `content-length:${contentLength}\ncontent-type:${contentType}\nhost:${host()}\n`;
+  const canonicalRequest = ["PUT", canonicalUri, canonicalQuery, canonicalHeaders, signedHeaders, "UNSIGNED-PAYLOAD"].join("\n");
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    scope,
+    createHash("sha256").update(canonicalRequest).digest("hex"),
+  ].join("\n");
+  const hmac = (k: Buffer | string, msg: string) => createHmac("sha256", k).update(msg).digest();
+  const kSigning = hmac(hmac(hmac(hmac(`AWS4${SECRET_KEY}`, dateStamp), "auto"), "s3"), "aws4_request");
+  const signature = createHmac("sha256", kSigning).update(stringToSign).digest("hex");
+  return `https://${host()}${canonicalUri}?${canonicalQuery}&X-Amz-Signature=${signature}`;
+}
+
+/**
+ * An upload ticket: proof that *this server* issued an input key, for this product,
+ * type and size, recently.
+ *
+ * `/api/job` accepts a staged input only with a valid ticket. Without it a caller
+ * could name any object in the bucket as "their" input — another job's paid output,
+ * say — and have a free product hand it back.
+ */
+export type UploadClaim = { key: string; type: string; size: number; exp: number };
+
+function ticketMac(payload: string): Buffer {
+  return createHmac("sha256", `upload-ticket:${SECRET_KEY}`).update(payload).digest();
+}
+
+export function signUploadTicket(claim: UploadClaim): string {
+  const payload = Buffer.from(JSON.stringify(claim)).toString("base64url");
+  return `${payload}.${ticketMac(payload).toString("base64url")}`;
+}
+
+export function verifyUploadTicket(ticket: string, now = Date.now()): UploadClaim | null {
+  const [payload, mac] = String(ticket ?? "").split(".");
+  if (!payload || !mac || !SECRET_KEY) return null;
+  const want = ticketMac(payload);
+  const got = Buffer.from(mac, "base64url");
+  if (got.length !== want.length || !timingSafeEqual(got, want)) return null;
+  try {
+    const claim = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as UploadClaim;
+    if (typeof claim.key !== "string" || typeof claim.type !== "string" || !Number.isInteger(claim.size)) return null;
+    if (typeof claim.exp !== "number" || claim.exp < now) return null;
+    return claim;
+  } catch {
+    return null;
+  }
 }

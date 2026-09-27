@@ -4,7 +4,7 @@ import { TRANSLATE_LANGS, isPageRange, PDF_PAGES_HELP } from "@hermes/core";
 import { metaFor, runChain, type Capability } from "@/lib/ai";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
-import { ALLOWED_IMAGE_TYPES, R2_PREFIX, deleteObject, productPreviewKey, publicUrlFor, putObject, r2Configured } from "@/lib/r2";
+import { ALLOWED_IMAGE_TYPES, R2_PREFIX, deleteObject, getObject, presignPut, productPreviewKey, publicUrlFor, putObject, r2Configured, signUploadTicket, verifyUploadTicket } from "@/lib/r2";
 import { asRow, asRows } from "@/lib/postgrest";
 import type { ProductRow, ProductJobRow } from "@/lib/db-types";
 import { errorMessage } from "@/lib/errors";
@@ -533,7 +533,176 @@ async function describeListing(id: number) {
   };
 }
 
+/** What the checks below need to know about an input, wherever its bytes are. */
+type InputFile = { type: string; size: number };
+
+/**
+ * Type, count and size limits for a job's inputs, in one place.
+ *
+ * Shared by the two ways a file arrives — a multipart part, or an object the phone
+ * staged in R2 with a presigned URL — so a limit cannot hold on one path and not the
+ * other. Returns the error response, or null when the inputs are acceptable.
+ */
+function checkInputs(product: string, spec: (typeof ENGINE)[string], uploads: InputFile[]): NextResponse | null {
+  if (uploads.length === 0) {
+    return NextResponse.json({ error: "No file provided" }, { status: 400, headers: noStore });
+  }
+  if (uploads.length > 1 && !spec.multi) {
+    return NextResponse.json({ error: "This tool takes one file" }, { status: 400, headers: noStore });
+  }
+
+  const accepts = acceptsFor(product);
+  for (const f of uploads) {
+    if (!accepts.includes(f.type)) {
+      return NextResponse.json(
+        { error: `This tool expects ${accepts.map(typeLabel).join(" or ")}` },
+        { status: 415, headers: noStore },
+      );
+    }
+  }
+  const perFileMax = spec.multi ? MAX_DOC_BYTES : MAX_JOB_BYTES;
+  if (uploads.some((f) => f.size > perFileMax)) {
+    return NextResponse.json(
+      { error: `Each file must be under ${Math.round(perFileMax / (1024 * 1024))} MB` },
+      { status: 413, headers: noStore },
+    );
+  }
+
+  // Multi-photo jobs: the per-file ceiling above is a document's, so what keeps a
+  // burst of photos out of the engine's memory is the count and the total. The
+  // engine caps both as well; this is the copy that can answer with a reason.
+  const photoLimits = PHOTO_JOB_LIMITS[product];
+  if (photoLimits) {
+    if (uploads.length > photoLimits.files) {
+      return NextResponse.json({ error: `This tool takes up to ${photoLimits.files} photos` }, { status: 400, headers: noStore });
+    }
+    if (product === "collage" && uploads.length < 2) {
+      return NextResponse.json({ error: "A collage needs at least 2 photos" }, { status: 400, headers: noStore });
+    }
+    const total = uploads.reduce((sum, f) => sum + f.size, 0);
+    if (total > photoLimits.totalBytes) {
+      return NextResponse.json(
+        { error: `Those photos add up to more than ${Math.round(photoLimits.totalBytes / (1024 * 1024))} MB` },
+        { status: 413, headers: noStore },
+      );
+    }
+  }
+  return null;
+}
+
+/** How long a phone has between asking for upload URLs and submitting the job. */
+const UPLOAD_TICKET_TTL_MS = 30 * 60 * 1000;
+const UPLOAD_URL_TTL_SEC = 15 * 60;
+
+/**
+ * POST /api/job?stage=upload — step one of a staged job.
+ *
+ * JSON in: `{ product, files: [{ type, size }] }`. JSON out: one `{ key, url, ticket,
+ * headers }` per file. The phone PUTs each file to its `url` with exactly those
+ * headers, then posts the job with `inputs` = `[{ key, ticket }]` instead of file parts.
+ *
+ * Why: the web app is moving to Vercel, where a request body is capped at 4.5 MB, and a
+ * phone photo or a scanned PDF is routinely larger. The bytes go straight to R2; only
+ * the job's small form goes through a function. Every limit the multipart path
+ * enforces is checked here first (`checkInputs`), and the signed URL pins the type and
+ * exact length, so a staged upload cannot be bigger or of another kind than approved.
+ */
+async function stageUploads(req: NextRequest): Promise<NextResponse> {
+  const body = (await req.json().catch(() => null)) as { product?: unknown; files?: unknown } | null;
+  const product = String(body?.product ?? "").trim();
+  const spec = ENGINE[product];
+  if (!spec) return NextResponse.json({ error: "Unknown product" }, { status: 404, headers: noStore });
+  if (spec.dataOnly) {
+    return NextResponse.json({ error: "This tool takes no file" }, { status: 400, headers: noStore });
+  }
+  const rowRes = await db(`products?slug=eq.${encodeURIComponent(product)}&select=slug,enabled`);
+  const productRow = await asRow<ProductRow>(rowRes);
+  if (!productRow || productRow.enabled === false) {
+    return NextResponse.json({ error: "This product is not switched on yet" }, { status: 404, headers: noStore });
+  }
+
+  const files: InputFile[] = Array.isArray(body?.files)
+    ? (body.files as unknown[]).map((f) => {
+        const o = (f ?? {}) as { type?: unknown; size?: unknown };
+        return { type: String(o.type ?? "").trim().toLowerCase(), size: Number(o.size) };
+      })
+    : [];
+  if (files.some((f) => !Number.isInteger(f.size) || f.size <= 0)) {
+    return NextResponse.json({ error: "Each file needs its size in bytes" }, { status: 400, headers: noStore });
+  }
+  const bad = checkInputs(product, spec, files);
+  if (bad) return bad;
+
+  const rl = rateLimit(`job-upload:${clientIp(req)}`, 60, 60 * 60 * 1000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many uploads. Please try again later." }, {
+      status: 429,
+      headers: { ...noStore, "Retry-After": String(Math.ceil((rl.retryAfterMs ?? 0) / 1000)) },
+    });
+  }
+
+  const exp = Date.now() + UPLOAD_TICKET_TTL_MS;
+  const uploads = files.map((f) => {
+    const ext = ALLOWED_IMAGE_TYPES[f.type] ?? DOC_INPUT_EXT[f.type] ?? "bin";
+    const key = `${R2_PREFIX}/products/${product}/input/${randomUUID()}.${ext}`;
+    return {
+      key,
+      url: presignPut(key, f.type, f.size, UPLOAD_URL_TTL_SEC),
+      ticket: signUploadTicket({ key, type: f.type, size: f.size, exp }),
+      // Signed into the URL along with the exact length: the PUT must send this type.
+      headers: { "content-type": f.type },
+      size: f.size,
+    };
+  });
+  return NextResponse.json({ uploads, expires_in: UPLOAD_URL_TTL_SEC }, { headers: noStore });
+}
+
+/**
+ * The staged inputs named in a job, each proven by its ticket.
+ *
+ * A ticket binds key, type and size, expires, and was signed by this server; the key
+ * must sit under this product's input prefix. The object's real length is checked
+ * against the signed size when it is read back.
+ */
+async function stagedInputs(
+  product: string,
+  raw: string,
+): Promise<{ claims: { key: string; type: string; size: number }[] } | { error: NextResponse }> {
+  let list: { key?: unknown; ticket?: unknown }[];
+  try {
+    list = JSON.parse(raw);
+    if (!Array.isArray(list)) throw new Error("not a list");
+  } catch {
+    return { error: NextResponse.json({ error: "inputs must be a JSON list of { key, ticket }" }, { status: 400, headers: noStore }) };
+  }
+  const prefix = `${R2_PREFIX}/products/${product}/input/`;
+  const claims: { key: string; type: string; size: number }[] = [];
+  for (const item of list) {
+    const claim = verifyUploadTicket(String(item?.ticket ?? ""));
+    if (!claim || claim.key !== String(item?.key ?? "") || !claim.key.startsWith(prefix)) {
+      return {
+        error: NextResponse.json(
+          { error: "An uploaded file's ticket is invalid or has expired. Please upload it again." },
+          { status: 400, headers: noStore },
+        ),
+      };
+    }
+    claims.push({ key: claim.key, type: claim.type, size: claim.size });
+  }
+  if (new Set(claims.map((c) => c.key)).size !== claims.length) {
+    return { error: NextResponse.json({ error: "The same file was listed twice" }, { status: 400, headers: noStore }) };
+  }
+  return { claims };
+}
+
 export async function POST(req: NextRequest) {
+  if (req.nextUrl.searchParams.get("stage") === "upload") {
+    if (!r2Configured) {
+      return NextResponse.json({ error: "Storage is not configured yet" }, { status: 503, headers: noStore });
+    }
+    return stageUploads(req);
+  }
+
   if (!r2Configured) {
     return NextResponse.json({ error: "Storage is not configured yet" }, { status: 503, headers: noStore });
   }
@@ -654,50 +823,20 @@ export async function POST(req: NextRequest) {
   // One file for most products, several for the ones that combine documents. A
   // data-only product (the invoice maker) has no file at all: its parameters are
   // the input.
-  const uploads = spec.dataOnly ? [] : form.getAll("file").filter((f): f is File => f instanceof File);
-  if (!spec.dataOnly && uploads.length === 0) {
-    return NextResponse.json({ error: "No file provided" }, { status: 400, headers: noStore });
+  //
+  // Two sources for the same inputs: multipart `file` parts (the VM, the web export,
+  // older app builds) or `inputs`, the R2 objects a phone staged via ?stage=upload.
+  const stagedRaw = spec.dataOnly ? "" : String(form.get("inputs") ?? "").trim();
+  let staged: { key: string; type: string; size: number }[] | null = null;
+  if (stagedRaw) {
+    const res = await stagedInputs(product, stagedRaw);
+    if ("error" in res) return res.error;
+    staged = res.claims;
   }
-  if (uploads.length > 1 && !spec.multi) {
-    return NextResponse.json({ error: "This tool takes one file" }, { status: 400, headers: noStore });
-  }
-
-  const accepts = acceptsFor(product);
-  for (const f of uploads) {
-    if (!accepts.includes(f.type)) {
-      return NextResponse.json(
-        { error: `This tool expects ${accepts.map(typeLabel).join(" or ")}` },
-        { status: 415, headers: noStore },
-      );
-    }
-  }
-  const perFileMax = spec.multi ? MAX_DOC_BYTES : MAX_JOB_BYTES;
-  if (uploads.some((f) => f.size > perFileMax)) {
-    return NextResponse.json(
-      { error: `Each file must be under ${Math.round(perFileMax / (1024 * 1024))} MB` },
-      { status: 413, headers: noStore },
-    );
-  }
-
-  // Multi-photo jobs: the per-file ceiling above is a document's, so what keeps a
-  // burst of photos out of the engine's memory is the count and the total. The
-  // engine caps both as well; this is the copy that can answer with a reason.
-  const photoLimits = PHOTO_JOB_LIMITS[product];
-  if (photoLimits) {
-    if (uploads.length > photoLimits.files) {
-      return NextResponse.json({ error: `This tool takes up to ${photoLimits.files} photos` }, { status: 400, headers: noStore });
-    }
-    if (product === "collage" && uploads.length < 2) {
-      return NextResponse.json({ error: "A collage needs at least 2 photos" }, { status: 400, headers: noStore });
-    }
-    const total = uploads.reduce((sum, f) => sum + f.size, 0);
-    if (total > photoLimits.totalBytes) {
-      return NextResponse.json(
-        { error: `Those photos add up to more than ${Math.round(photoLimits.totalBytes / (1024 * 1024))} MB` },
-        { status: 413, headers: noStore },
-      );
-    }
-  }
+  const uploads = spec.dataOnly || staged ? [] : form.getAll("file").filter((f): f is File => f instanceof File);
+  const inputFiles: InputFile[] = staged ?? uploads;
+  const badInputs = spec.dataOnly ? null : checkInputs(product, spec, inputFiles);
+  if (badInputs) return badInputs;
 
   // Identity is the phone number (see dropby-product-portfolio). It stays
   // optional here so the product can be tried before sign-in, but a *claimed*
@@ -721,6 +860,23 @@ export async function POST(req: NextRequest) {
 
   const id = randomUUID();
   const blobs: { bytes: Buffer; type: string; ext: string }[] = [];
+  const keys: string[] = [];
+  if (staged) {
+    // Already in R2 under keys this server issued. Read each back and hold it to the
+    // length that was signed: a mismatch means the object is not the one approved.
+    for (const c of staged) {
+      const obj = await getObject(c.key);
+      if (!obj || obj.bytes.length !== c.size) {
+        await recordFailure(product, phone, staged.map((x) => x.key).join(","), obj ? "staged input size mismatch" : "staged input missing", 0);
+        return NextResponse.json(
+          { error: obj ? "An uploaded file does not match what was approved. Please upload it again." : "An uploaded file was not found. Please upload it again." },
+          { status: 400, headers: noStore },
+        );
+      }
+      blobs.push({ bytes: obj.bytes, type: c.type, ext: ALLOWED_IMAGE_TYPES[c.type] ?? DOC_INPUT_EXT[c.type] ?? "bin" });
+      keys.push(c.key);
+    }
+  }
   for (const f of uploads) {
     blobs.push({
       bytes: Buffer.from(await f.arrayBuffer()),
@@ -731,9 +887,8 @@ export async function POST(req: NextRequest) {
 
   // Every input is kept, not just the first: for a merge, "which two documents
   // went in" is the only way to explain the result afterwards. Multi-file jobs
-  // list their keys comma-separated.
-  const keys: string[] = [];
-  for (let i = 0; i < blobs.length; i++) {
+  // list their keys comma-separated. Staged inputs are already stored.
+  for (let i = keys.length; i < blobs.length; i++) {
     const key = `${R2_PREFIX}/products/${product}/input/${id}${blobs.length > 1 ? `-${i}` : ""}.${blobs[i].ext}`;
     if (!(await putObject(key, blobs[i].bytes, blobs[i].type).catch(() => false))) {
       await recordFailure(product, phone, keys.join(",") || null, "input upload to storage failed", 0);

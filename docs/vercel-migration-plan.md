@@ -142,6 +142,27 @@ Each phase can be released and rolled back on its own.
   only, TTL 60. Before this there was no `apps` record, and the tunnel wildcard
   `*.dropby.co.in` caught it. `app-ads.txt` is served from Vercel with the seller line.
   Rollback: delete the `apps` record.
+- **Phase 2 done.** On `exness-vm`, `dropby-worker` runs from `ecosystem.config.js` with
+  `--port 8099 --public-port 8098`. `WORKER_SHARED_SECRET` is in `apps\web\.env`; the
+  original file is backed up as `.env.bak-2026-09-27`. The tunnel route
+  `worker.dropby.co.in` → `http://127.0.0.1:8098` has to use `127.0.0.1`, because on
+  Windows `localhost` resolved to `::1` and returned 502. Checked from outside: no or
+  wrong secret gives 403, `/internal/retire` gives 403 even with the secret, and the
+  right secret gives 200. Real `exif-strip` and `photo-repair` jobs through Vercel
+  returned 200 in about 4 s.
+  - Lesson: the first version trusted `Cf-Ray` / `Cf-Connecting-Ip`. The VM was still
+    running pre-pull code, and a retire probe restarted the worker. Always check what
+    is actually running on the tunnel's machine (`ssh exness-vm`) before opening a route.
+- **Phase 3 code done.** `POST /api/job?stage=upload` returns presigned R2 PUT URLs
+  with `content-type` and the exact `content-length` signed in; R2 enforces both
+  (tested: a larger body or another type is refused with 403). Each URL comes with an
+  HMAC upload ticket binding key, type, size and expiry. `/api/job` takes
+  `inputs=[{key,ticket}]`, verifies the ticket and the product prefix, reads the object
+  back and checks its length. The app's `runJob` stages first and falls back to
+  multipart when the server predates staging. The R2 bucket CORS has a new PUT-only
+  rule for `https://expo.dropby.co.in` and the local Expo ports; the existing GET-`*`
+  rule is unchanged. Tested locally with a 7.9 MB photo end to end, and a browser PUT
+  from `expo.dropby.co.in`.
 - The team is still on **Hobby**, so it must upgrade to Pro before phase 4.
 
 | # | Phase | User-visible? | Done when |

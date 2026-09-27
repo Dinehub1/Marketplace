@@ -433,6 +433,53 @@ function collectUrls(j: any): string[] {
   return out;
 }
 
+/** The bytes of a picked file: the browser's File, or a phone's file:// read into a Blob. */
+async function blobOf(file: PickedFile): Promise<Blob> {
+  if (file.blob) return file.blob;
+  // React Native's fetch reads local file:// (and Android content://) URIs into a Blob,
+  // which is all a presigned PUT needs — no file-system module.
+  return await (await fetch(file.uri)).blob();
+}
+
+/**
+ * Upload the job's files straight to storage, then name them in the job.
+ *
+ * The server hands out one presigned URL per file (`?stage=upload`), with the type and
+ * exact size signed in; the phone PUTs the bytes there and the job itself carries only
+ * `{ key, ticket }` pairs. That keeps large photos and scans out of the job request,
+ * which a serverless host caps at 4.5 MB.
+ *
+ * Returns null when the server predates staging (it answers the JSON with "Expected a
+ * file upload"), so the caller falls back to sending the files in the job as before.
+ * Any other refusal — too big, wrong type, rate limit — is the server's answer and is
+ * thrown as-is.
+ */
+async function stageFiles(product: string, files: PickedFile[]): Promise<{ key: string; ticket: string }[] | null> {
+  const blobs = await Promise.all(files.map(blobOf));
+  const res = await fetch(`${jobEndpoint()}?stage=upload`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      product,
+      files: blobs.map((b, i) => ({ type: files[i].type || b.type, size: b.size })),
+    }),
+  });
+  const j: any = await res.json().catch(() => null);
+  if (!res.ok) {
+    if (/expected a file upload/i.test(String(j?.error ?? ""))) return null;
+    throw new Error(j?.error || `The upload could not start (${res.status}). Nothing was charged.`);
+  }
+  const uploads: { key: string; ticket: string; url: string; headers: Record<string, string> }[] = j?.uploads ?? [];
+  if (uploads.length !== blobs.length) throw new Error("The server did not accept every file. Nothing was charged.");
+  await Promise.all(
+    uploads.map(async (u, i) => {
+      const put = await fetch(u.url, { method: "PUT", headers: u.headers, body: blobs[i] });
+      if (!put.ok) throw new Error(`A file did not upload (${put.status}). Nothing was charged.`);
+    }),
+  );
+  return uploads.map((u) => ({ key: u.key, ticket: u.ticket }));
+}
+
 export async function runJob(opts: {
   product: string;
   fields?: Record<string, string | number | undefined>;
@@ -443,7 +490,10 @@ export async function runJob(opts: {
   for (const [k, v] of Object.entries(opts.fields ?? {})) {
     if (v !== undefined && v !== "") form.append(k, String(v));
   }
-  for (const { field, file } of opts.files ?? []) {
+  const picked = (opts.files ?? []).map((f) => f.file);
+  const staged = picked.length > 0 ? await stageFiles(opts.product, picked) : null;
+  if (staged) form.append("inputs", JSON.stringify(staged));
+  for (const { field, file } of staged ? [] : opts.files ?? []) {
     // The browser hands FormData a File; native has no FormData part type and
     // needs the { uri, name, type } triple instead.
     form.append(
