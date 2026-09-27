@@ -163,7 +163,23 @@ Each phase can be released and rolled back on its own.
   rule for `https://expo.dropby.co.in` and the local Expo ports; the existing GET-`*`
   rule is unchanged. Tested locally with a 7.9 MB photo end to end, and a browser PUT
   from `expo.dropby.co.in`.
-- The team is still on **Hobby**, so it must upgrade to Pro before phase 4.
+- **Phase 4 done (on Hobby, by the owner's decision).** `sarkarmarketplace.`, `dashboard.`
+  and `admin.` are attached to `marketplace-web`, each with a Cloudflare CNAME →
+  `7e68231427c37a50.vercel-dns-017.com` (DNS only, TTL 60). None had its own record before;
+  the `*` tunnel wildcard caught them. Before the switch, the same requests to the VM and
+  to Vercel returned identical status codes and sizes. After it, on the live hosts: brand
+  home 200, admin login 200, OTP send (bad number) 400, OTP verify (no code) 400, worker
+  health 200, unsigned SSV `rejected`, ad-unlock (unknown job) 404, a staged 7.9 MB
+  `photo-repair` job locked with a preview and no leaked `output_url` (job 208), and the old
+  multipart path 200.
+  - Env parity was checked by hash: every value Vercel has matches the VM. Razorpay, the
+    Nextel templates, `ADMIN_TOKEN`, `BRAND_ADMIN_EMAILS` and `FEATURE_PRICE_INR` are empty
+    on the VM too, and the AI keys exist only in Hermes' `.env`, which the worker reads.
+  - Rollback: delete the host's CNAME. The VM's `marketplace` pm2 app keeps running.
+  - `expo.dropby.co.in` still proxies `/api` to the VM's own Next (`spa_server.py`), which
+    predates staging, so the web export uses the multipart fallback there.
+- The team is still on **Hobby**, which is non-commercial only. Upgrade to Pro before relying
+  on this for payments or ads.
 
 | # | Phase | User-visible? | Done when |
 |---|---|---|---|
