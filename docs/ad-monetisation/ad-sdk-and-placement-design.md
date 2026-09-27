@@ -322,6 +322,27 @@ build has no AdMob server-side verification. What makes that acceptable today is
 is not the client's to make — it is a constrained row written on the service role, one per job,
 quota-bound and logged. AdMob SSV replaces the witness with a signature.
 
+### Preload and consent — 2026-09-27
+
+Closes two P0 gaps before an account exists:
+
+- **Preload and hold.** `admob.ts` holds one loaded instance per full-screen format (units are
+  per format, not per placement), discards it after 55 min (Google expires loads at 60), and
+  requests the next one after every display. `isReady()` is now true when one is held.
+  `lib/ads/use-rewarded-ad.ts` preloads on mount and re-renders on `subscribeAdReady`. The game
+  slots key the placeholder on `mayShow` (allowed), not on readiness, so with ads on a tap before
+  the preload lands waits for a real ad instead of granting a free one. **SSV-bound rewarded
+  requests are never served from the cache:** the nonce must ride on the request and SDK 16.5
+  cannot attach it after load, so the paywall unlock stays load-and-wait.
+- **Consent.** `init()` runs UMP `gatherConsent` *before* `initialize()`. State is mapped
+  honestly: `NOT_REQUIRED` → `personalized`, `OBTAINED` → the user's `selectPersonalisedAds`
+  choice, `canRequestAds: false` → `denied`. With live units, the SDK is not initialised until
+  UMP allows requests. `AdPrivacyLink` renders the required "Ad privacy choices" entry beside
+  every ad surface, only where UMP reports it is required.
+- **ATT** is delegated to UMP's IDFA explainer message (AdMob console → Privacy & messaging),
+  so no tracking module is linked; `NSUserTrackingUsageDescription` is already set by the
+  plugin. Until that message is configured, iOS serves without IDFA.
+
 ### P0 as shipped
 
 `lib/ads/` is facade + config + consent + caps + session + event buffer, with the AdMob adapter

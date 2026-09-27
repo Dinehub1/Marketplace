@@ -12,8 +12,8 @@
  *   - **The ad-serving mode** Google picks from the two, which is the state that
  *     actually shipped: `personalized`, `non-personalized` or `denied`.
  *
- * No SDK is imported here. The UMP/ATT calls that *set* these values belong to the
- * AdMob adapter (P3, once the account exists); this module is the single place the
+ * No SDK is imported here. The UMP calls that *set* these values belong to the
+ * AdMob adapter (its `init()` runs UMP's `gatherConsent`); this module is the single place the
  * rest of the app reads them from, so no screen has to know what a TCF string is.
  *
  * Honest default is `unknown`: before a consent dialog has resolved, the app has no
@@ -33,6 +33,38 @@ export function consentState(): ConsentState {
 /** Set by the adapter once UMP and ATT have resolved. */
 export function setConsentState(next: ConsentState): void {
   state = next;
+}
+
+/**
+ * The "privacy options" entry point UMP requires.
+ *
+ * Where a consent regime applies (the EEA, the UK, some US states), Google requires
+ * the app to offer a way to change the choice later. Whether it applies is UMP's
+ * answer, not ours, so the adapter registers it here with the function that opens
+ * the form, and UI reads it without knowing which SDK is behind it.
+ */
+let privacyRequired = false;
+let privacyOpener: (() => Promise<void>) | null = null;
+
+/** Set by the adapter from UMP's `privacyOptionsRequirementStatus`. */
+export function setPrivacyOptions(required: boolean, opener: (() => Promise<void>) | null): void {
+  privacyRequired = required;
+  privacyOpener = opener;
+}
+
+/** True when this user must be offered a way to change their ad choices. */
+export function privacyOptionsRequired(): boolean {
+  return privacyRequired && privacyOpener !== null;
+}
+
+/** Open the form. Resolves quietly when there is nothing to open. */
+export async function openPrivacyOptions(): Promise<void> {
+  if (!privacyOpener) return;
+  try {
+    await privacyOpener();
+  } catch {
+    // A form that fails to open leaves the previous choice in force, which is safe.
+  }
 }
 
 /**

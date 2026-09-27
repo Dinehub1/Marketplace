@@ -35,8 +35,9 @@ import {
 import { radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { Press, Text } from "@/components/ui";
-import { isRewardedReady, mayShow, showRewarded } from "@/lib/ads";
+import { mayShow, openPrivacyOptions, privacyOptionsRequired, showRewarded } from "@/lib/ads";
 import type { PlacementId } from "@/lib/ads";
+import { useRewardedAd } from "@/lib/ads/use-rewarded-ad";
 
 export type AdSlotProps = {
   /**
@@ -105,18 +106,20 @@ export function AdSlot({
     [],
   );
 
-  const live = isRewardedReady(placement);
+  // `allowed` — ads may run here; `ready` — one is loaded and a tap is instant.
+  // Allowed-but-not-ready still shows a real ad, it just loads first.
+  const { allowed } = useRewardedAd(placement);
 
   const play = useCallback(async () => {
     if (showing) return;
 
-    // Ads off, or no network ready.
+    // Ads off, or this placement may not have one.
     //
     // A strict slot has nothing to offer here, and must say so rather than grant:
     // the value behind it is a file someone would otherwise pay for. This is the
     // branch that keeps "no verified completion, no unlock" true in a build whose
     // ad SDK is not compiled in.
-    if (strict && !live) {
+    if (strict && !allowed) {
       setNote("No ad is available in this build, so the file cannot be unlocked here. It can still be bought below.");
       return;
     }
@@ -124,7 +127,10 @@ export function AdSlot({
     // The placeholder path: games only. It grants the reward on tap so the loop can
     // be tested without an ad account, and says plainly that it is a placeholder —
     // a silent fake ad is how a reward economy starts lying.
-    if (!live) {
+    //
+    // Keyed on `allowed`, not on a held instance: in a build with ads on, a tap
+    // before the preload finishes must wait for a real ad, not hand out a free one.
+    if (!allowed) {
       const decision = mayShow("rewarded", placement);
       if (!decision.ok && decision.reason !== "sdk_unavailable") {
         setNote(decision.detail ? `${decision.reason}: ${decision.detail}` : decision.reason);
@@ -153,7 +159,7 @@ export function AdSlot({
       return;
     }
     setNote("No ad was available just now. Nothing was unlocked.");
-  }, [live, onReward, placement, showing, strict]);
+  }, [allowed, onReward, placement, showing, strict]);
 
   const ctaColor = accent ?? c.ink;
 
@@ -227,14 +233,39 @@ export function AdSlot({
         A strict slot gets different words, because for it "tested with a placeholder"
         is not an option — nothing is granted.
       */}
-      {live ? null : (
+      {allowed ? null : (
         <Text variant="meta" tone="ink3">
           {strict
             ? "No ad network is connected in this build, so this cannot be used to unlock. It grants nothing until a real ad completes."
             : "Placeholder — no ad network is connected yet. It grants the reward on tap so the flow can be tested; the game is fully playable without it."}
         </Text>
       )}
+
+      <AdPrivacyLink />
     </View>
+  );
+}
+
+/**
+ * AdPrivacyLink — the "change my ad choices" entry point Google's consent SDK requires.
+ *
+ * Rendered next to every ad surface, and only where UMP says a consent regime
+ * applies to this user (the EEA, the UK, some US states). Everywhere else it renders
+ * nothing, because a settings link for a choice the user was never asked is noise.
+ */
+export function AdPrivacyLink() {
+  if (!privacyOptionsRequired()) return null;
+  return (
+    <Press
+      accessibilityRole="button"
+      accessibilityLabel="Ad privacy choices"
+      onPress={() => void openPrivacyOptions()}
+      style={styles.privacy}
+    >
+      <Text variant="meta" tone="ink3" style={{ textDecorationLine: "underline" }}>
+        Ad privacy choices
+      </Text>
+    </Press>
   );
 }
 
@@ -324,6 +355,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   ctaLabel: { fontWeight: "600" },
+  privacy: {
+    alignSelf: "flex-start",
+    minHeight: 44,
+    justifyContent: "center",
+  },
   dismiss: {
     minHeight: 44,
     paddingHorizontal: space.md,

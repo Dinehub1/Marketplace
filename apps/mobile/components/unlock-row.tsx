@@ -30,6 +30,7 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
 import { radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { Press, Text } from "@/components/ui";
+import { AdPrivacyLink } from "@/components/ad-slot";
 import { mayShow, showRewarded } from "@/lib/ads";
 import { openPaywall, unlockWithRewardedAd, type JobResult } from "@/lib/tools";
 
@@ -128,6 +129,8 @@ export function UnlockRow({
             paid option below still works.
           </Text>
         ) : null}
+
+        <AdPrivacyLink />
       </View>
 
       <Press

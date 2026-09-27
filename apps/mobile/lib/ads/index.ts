@@ -19,16 +19,16 @@
  * and each one is logged to `ad_events`. A drop in fill is then a query, not a
  * mystery.
  *
- * ## What P0 deliberately does not do
+ * ## Ready versus allowed
  *
- * `isReady` is false until P1 holds a preloaded instance, so `showRewarded` refuses
- * with `sdk_unavailable` and every screen keeps its placeholder. That is the
- * correct behaviour for a build with no account: the integration is complete and
- * observable, and nothing pretends an ad is coming.
+ * `mayShow` is policy: may this placement have an ad at all. `isRewardedReady` is
+ * plumbing: is a loaded instance held, so a tap displays at once. A slot that is
+ * allowed but not ready still works — `showRewarded` then loads and waits, bounded
+ * by the adapter's timeout — it is only slower.
  */
 import { admobAdapter } from "./adapters/admob";
 import { ADS_ENABLED, isForbidden, isTestUnit } from "./config";
-import { canRequestAds, consentState } from "./consent";
+import { canRequestAds, consentState, openPrivacyOptions, privacyOptionsRequired } from "./consent";
 import { canShow, recordShown } from "./caps";
 import { flush, recordAdEvent } from "./events";
 import { startSession } from "./session";
@@ -127,7 +127,7 @@ export function mayShow(format: AdFormat, placement: PlacementId): PlacementDeci
  *
  * Separate from `mayShow` because a caller often needs to *lay out* differently:
  * a rewarded button that is ready can promise a reward, and one that is not must
- * say so. P0 answers false until P1 holds a preloaded instance.
+ * say so. True only while the adapter holds a loaded instance.
  */
 export function isRewardedReady(placement: PlacementId): boolean {
   if (!mayShow("rewarded", placement).ok) return false;
@@ -203,6 +203,18 @@ export function preload(format: AdFormat, placement: PlacementId): void {
   if (!adapter) return;
   void adapter.preload(format, placement).catch(() => {});
 }
+
+/**
+ * Be told when readiness may have changed, so a slot can re-render from "loading"
+ * to "ready" without polling. Returns an unsubscribe function.
+ */
+export function subscribeAdReady(cb: () => void): () => void {
+  const adapter = ADAPTERS.admob;
+  return adapter?.onReadyChange ? adapter.onReadyChange(cb) : () => {};
+}
+
+/** The consent-change entry point, for any screen that shows ads. */
+export { openPrivacyOptions, privacyOptionsRequired };
 
 /** The host's name, for the Networks screen copy. */
 export const MEDIATION_HOST: NetworkId = "admob";

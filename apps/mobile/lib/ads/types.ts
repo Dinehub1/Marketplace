@@ -106,4 +106,10 @@ export interface AdNetworkAdapter {
   show(format: AdFormat, placement: PlacementId): Promise<AdOutcome>;
   /** Subscribes to impression-level revenue. Returns an unsubscribe function. */
   onImpressionRevenue(cb: (e: ImpressionRevenue) => void): () => void;
+  /**
+   * Subscribes to changes in what `isReady` would answer — an instance finished
+   * loading, or was taken for display. Optional: an adapter that never holds an
+   * instance has nothing to announce. Returns an unsubscribe function.
+   */
+  onReadyChange?(cb: () => void): () => void;
 }
