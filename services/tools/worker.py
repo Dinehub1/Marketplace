@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hmac
 import io
 import json
 import os
@@ -2430,8 +2431,42 @@ def run_job(product: str, inputs: list[bytes], params: dict) -> tuple[bytes, dic
     raise KeyError(product)
 
 
+# The web app's own env file, two levels up: the one place both halves of the engine
+# already read on this box, so the secret is set once, not twice.
+_WEB_ENV = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                        "apps", "web", ".env")
+
+
+def _shared_secret() -> str:
+    """WORKER_SHARED_SECRET from the worker env, else from apps/web/.env. Empty if unset."""
+    value = os.environ.get("WORKER_SHARED_SECRET", "").strip()
+    if value:
+        return value
+    try:
+        with open(_WEB_ENV, encoding="utf-8", errors="replace") as fh:
+            for line in fh:
+                if line.startswith("WORKER_SHARED_SECRET="):
+                    return line.split("=", 1)[1].strip().strip("\"'")
+    except OSError:
+        pass
+    return ""
+
+
+WORKER_SHARED_SECRET = _shared_secret()
+
+
 class Handler(BaseHTTPRequestHandler):
-    """POST /job/<product>?size=<size> with the raw file as the body -> processed file back."""
+    """POST /job/<product>?size=<size> with the raw file as the body -> processed file back.
+
+    Two kinds of caller, told apart by headers a client cannot remove:
+
+      - **Loopback** (the Next app on this VM, a successor worker asking this one to
+        retire): no Cloudflare headers. Trusted, exactly as before.
+      - **Through the tunnel** (the web app on Vercel): Cloudflare's edge always adds
+        `Cf-Ray` and `Cf-Connecting-Ip`. Such a request must carry `X-Worker-Secret`,
+        and may never reach `/internal/retire`. With no secret configured, every
+        tunnelled request is refused — the engine is never public by omission.
+    """
 
     # Windows happily lets a second socket bind an already-bound port when
     # SO_REUSEADDR is on (Python's default for HTTPServer), which is how a stale
@@ -2440,7 +2475,26 @@ class Handler(BaseHTTPRequestHandler):
     # silent split-brain into a loud "address already in use" in the pm2 log.
     allow_reuse_address = False
 
+    def _via_tunnel(self) -> bool:
+        return bool(self.headers.get("Cf-Ray") or self.headers.get("Cf-Connecting-Ip"))
+
+    def _refuse_unless_authorised(self, path: str) -> bool:
+        """Send a 403 and return True when this request may not proceed."""
+        if not self._via_tunnel():
+            return False
+        if path.rstrip("/") == "/internal/retire":
+            self._send(403, b'{"error":"forbidden"}', "application/json")
+            return True
+        given = (self.headers.get("X-Worker-Secret") or "").encode()
+        if not WORKER_SHARED_SECRET or not hmac.compare_digest(given, WORKER_SHARED_SECRET.encode()):
+            print(f"worker: 403 tunnelled request without a valid secret: {path}", flush=True)
+            self._send(403, b'{"error":"forbidden"}', "application/json")
+            return True
+        return False
+
     def do_POST(self):  # noqa: N802
+        if self._refuse_unless_authorised(self.path.partition("?")[0]):
+            return
         # Split the query string off first: the parameters are part of the job, not
         # part of the product name, and the body is the file (or files).
         path, _, query = self.path.partition("?")
@@ -2507,6 +2561,8 @@ class Handler(BaseHTTPRequestHandler):
             raise UserError(f"body is not a valid job envelope: {exc}")
 
     def do_GET(self):  # noqa: N802
+        if self._refuse_unless_authorised(self.path.partition("?")[0]):
+            return
         if self.path == "/health":
             # `pid` is here so a stale listener cannot hide: two workers on one port
             # was a real failure mode (pm2 left the Python child alive), and the only
@@ -2668,4 +2724,6 @@ if __name__ == "__main__":
 
     threading.Thread(target=_watch_parent, daemon=True).start()
     print(f"worker: listening on 127.0.0.1:{args.port} products={PRODUCTS}", flush=True)
+    print("worker: tunnel access " + ("ENABLED (X-Worker-Secret required)" if WORKER_SHARED_SECRET
+          else "DISABLED (no WORKER_SHARED_SECRET; tunnelled requests get 403)"), flush=True)
     server.serve_forever()

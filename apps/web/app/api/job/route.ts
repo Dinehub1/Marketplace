@@ -22,8 +22,8 @@ import { errorMessage } from "@/lib/errors";
  * In both cases the engine's own measurements ride along in `meta`.
  *
  * Why the file round-trips through this route instead of going straight from the
- * phone to the worker: the engine binds 127.0.0.1:8099 and is deliberately not
- * reachable from the internet. It does the expensive part for ₹0 per job on this
+ * phone to the worker: the engine binds 127.0.0.1:8099 and is reachable from outside
+ * the VM only through the tunnel, with credentials this route holds (`workerHeaders`). It does the expensive part for ₹0 per job on this
  * VM (rembg, Pillow, pdfcpu); this route is the thin, metered half that stores the
  * result in R2 where a phone can actually fetch it.
  *
@@ -31,6 +31,32 @@ import { errorMessage } from "@/lib/errors";
  * per-product cost and speed are measured from that table, never assumed.
  */
 const WORKER_URL = (process.env.PRODUCT_WORKER_URL ?? "http://127.0.0.1:8099").replace(/\/+$/, "");
+
+/**
+ * Credentials for the worker, when it is reached through the tunnel rather than on
+ * loopback (the web app on Vercel, the engine on the VM).
+ *
+ * `X-Worker-Secret` is checked by `worker.py` itself on every request that arrived via
+ * Cloudflare; the `CF-Access-*` pair satisfies a Cloudflare Access policy in front of
+ * the hostname. Each is sent only when configured, so the VM's own loopback calls are
+ * unchanged. Two layers on purpose: a misconfigured Access policy alone must not
+ * expose the engine.
+ */
+function workerHeaders(extra: Record<string, string> = {}): Record<string, string> {
+  const h: Record<string, string> = { ...extra };
+  const secret = process.env.WORKER_SHARED_SECRET?.trim();
+  if (secret) h["x-worker-secret"] = secret;
+  const accessId = process.env.CF_ACCESS_CLIENT_ID?.trim();
+  const accessSecret = process.env.CF_ACCESS_CLIENT_SECRET?.trim();
+  if (accessId && accessSecret) {
+    h["cf-access-client-id"] = accessId;
+    h["cf-access-client-secret"] = accessSecret;
+  }
+  return h;
+}
+
+/** The worker may take 180 s; the upload and R2 writes ride on top of that. */
+export const maxDuration = 300;
 
 /**
  * .docx — the one Office format the engine's markitdown install has an extra for.
@@ -439,7 +465,7 @@ async function callWorker(product: string, blobs: { bytes: Buffer; type: string 
 
   return fetch(url, {
     method: "POST",
-    headers: { "content-type": single ? blobs[0].type : "application/json" },
+    headers: workerHeaders({ "content-type": single ? blobs[0].type : "application/json" }),
     body,
     signal: AbortSignal.timeout(WORKER_TIMEOUT_MS),
   });
@@ -792,7 +818,7 @@ export async function POST(req: NextRequest) {
     try {
       const wm = await fetch(`${WORKER_URL}/job/${previewEngine}`, {
         method: "POST",
-        headers: { "content-type": contentType },
+        headers: workerHeaders({ "content-type": contentType }),
         body: new Uint8Array(out),
         signal: AbortSignal.timeout(WORKER_TIMEOUT_MS),
       });
@@ -908,7 +934,7 @@ export async function POST(req: NextRequest) {
 /** Health/shape probe: is the local engine up, and what can it make? */
 export async function GET() {
   try {
-    const res = await fetch(`${WORKER_URL}/health`, { signal: AbortSignal.timeout(5000) });
+    const res = await fetch(`${WORKER_URL}/health`, { headers: workerHeaders(), signal: AbortSignal.timeout(5000) });
     return NextResponse.json(
       {
         ok: res.ok,
