@@ -18,7 +18,9 @@ export async function POST(req: NextRequest) {
   }
 
   const code = String(Math.floor(100000 + Math.random() * 900000));
-  const expires = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+  // Ten minutes, because the approved "auth" template tells the user "Expires in 10
+  // minutes"; a shorter real expiry makes the message wrong.
+  const expires = new Date(Date.now() + 10 * 60 * 1000).toISOString();
   const ins = await db("otp_codes", {
     method: "POST",
     body: JSON.stringify({ phone, code, expires_at: expires }),
@@ -27,7 +29,9 @@ export async function POST(req: NextRequest) {
   const insRow = ins.ok ? await asRow<OtpCodeRow>(ins) : null;
   if (!insRow) return NextResponse.json({ error: "Could not create code" }, { status: 500, headers: noStore });
 
-  const sent = await sendTemplate(phone, "auth", [code]);
+  // The "auth" template has a Copy code button: the code goes in twice, once for the
+  // body and once for the button (see sendTemplate).
+  const sent = await sendTemplate(phone, "auth", [code, code]);
   // Visibility: log the raw Nextel response so delivery failures are observable
   // in the dev terminal and .next/dev/logs/next-development.log.
   // Log the code in dev only — never leak OTPs in production logs. Dev-code
