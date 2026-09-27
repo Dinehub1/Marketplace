@@ -281,6 +281,9 @@ const config: ExpoConfig = {
         dark: { backgroundColor: CANVAS_DARK },
       },
     ],
+    // Xcode 27 / iOS 27 refuse to launch an app without the scene life cycle, and
+    // Expo 57's template does not adopt it. See the plugin for what it changes.
+    "./plugins/with-scene-lifecycle",
   ],
 
   experiments: { typedRoutes: true },
