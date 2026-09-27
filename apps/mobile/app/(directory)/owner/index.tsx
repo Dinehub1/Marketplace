@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { useOwner } from "@/lib/owner";
-import { WEB_BASE_URL } from "@/lib/config";
+import { API_BASE_URL } from "@/lib/config";
 import { formatCount } from "@hermes/core";
 import { Button, Card, EmptyState, Press, Skeleton, Text } from "@/components/ui";
 import { Icon } from "@/components/icons";
@@ -40,7 +40,7 @@ export default function OwnerDashboard() {
     // reads a Bearer header as a Supabase JWT and hands it to auth.getUser();
     // a phone token sent that way fails that check and never reaches the branch
     // that would have accepted it, so the screen 401s with a valid session.
-    fetch(`${WEB_BASE_URL}/api/customer`, {
+    fetch(`${API_BASE_URL}/api/customer`, {
       headers: {
         "x-phone": owner.session.phone,
         "x-phone-token": owner.session.token,

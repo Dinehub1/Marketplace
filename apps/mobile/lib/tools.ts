@@ -66,8 +66,10 @@ export async function openPaywall(jobId: number): Promise<void> {
 
 function WEB_BASE(): string {
   try {
-    const { WEB_BASE_URL } = require("@/lib/config") as { WEB_BASE_URL: string };
-    return WEB_BASE_URL.replace(/\/+$/, "");
+    // The API host, not the website: the paywall page and the ad-unlock routes live
+    // there (see API_BASE_URL in lib/config.ts).
+    const { API_BASE_URL } = require("@/lib/config") as { API_BASE_URL: string };
+    return API_BASE_URL.replace(/\/+$/, "");
   } catch {
     throw new Error("This build has no server address configured.");
   }
@@ -416,8 +418,8 @@ async function pickOnDevice(kind: FileKind, multiple: boolean): Promise<PickedFi
 export function jobEndpoint(): string {
   if (Platform.OS === "web") return "/api/job";
   try {
-    const { WEB_BASE_URL } = require("@/lib/config") as { WEB_BASE_URL: string };
-    return `${WEB_BASE_URL.replace(/\/+$/, "")}/api/job`;
+    const { API_BASE_URL } = require("@/lib/config") as { API_BASE_URL: string };
+    return `${API_BASE_URL.replace(/\/+$/, "")}/api/job`;
   } catch {
     throw new Error("This build has no server address configured, so the job cannot be sent.");
   }

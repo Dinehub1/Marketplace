@@ -33,6 +33,16 @@ export const SUPABASE_KEY = required("EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY", ext
 export const WEB_BASE_URL = extra.webBaseUrl ?? "https://sarkarmarketplace.dropby.co.in";
 
 /**
+ * Where the app's API calls go: OTP, jobs, uploads, ad events, the paywall page.
+ *
+ * Separate from the website on purpose. `api.dropby.co.in` runs on Vercel and serves
+ * only `/api/*` and `/unlock/*`; the brand sites stay on the VM behind Cloudflare's
+ * cache. Keeping the phone's traffic on its own host is what lets the heavy page and
+ * crawler traffic stay off the metered host (docs/vercel-migration-plan.md, phase 5).
+ */
+export const API_BASE_URL = extra.apiBaseUrl ?? "https://api.dropby.co.in";
+
+/**
  * Palette used until the live brand row loads, and if it never does. Sourced
  * from app.config.ts so the icon, the splash and the first painted frame all
  * come from one place.

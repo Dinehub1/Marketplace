@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  API_HOSTS,
   CANONICAL_BASE,
   DEVELOPER_HOSTS,
   HERMES_DASHBOARD_HOSTS,
@@ -54,6 +55,20 @@ export async function proxy(request: NextRequest) {
     } catch {
       return NextResponse.json({ error: "Hermes Dashboard unavailable" }, { status: 502 });
     }
+  }
+
+  // The apps' API host. It exists so phone traffic can live on Vercel while the brand
+  // sites stay on the VM behind Cloudflare's cache: anything that is not an API call or
+  // the paywall page is refused here, so a crawler or a mistyped link can never turn
+  // this host into a second copy of the websites on the metered platform.
+  if (API_HOSTS.includes(hostname)) {
+    if (pathname.startsWith("/api/") || pathname.startsWith("/unlock/") || pathname.startsWith("/_next/")) {
+      return NextResponse.next();
+    }
+    if (pathname === "/robots.txt") {
+      return new NextResponse("User-agent: *\nDisallow: /\n", { headers: { "content-type": "text/plain" } });
+    }
+    return NextResponse.json({ error: "Not found. This host serves the app API only." }, { status: 404 });
   }
 
   if (BYPASS_PREFIXES.some((p) => pathname.startsWith(p))) {

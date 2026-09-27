@@ -300,6 +300,8 @@ const config: ExpoConfig = {
     // The platform moved off cashcard.live; the marketplace lives on a
     // subdomain because dropby.co.in's apex belongs to another app.
     webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sarkarmarketplace.dropby.co.in",
+    // The app's API host (OTP, jobs, uploads, ad events, the paywall page); see lib/config.ts.
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://api.dropby.co.in",
     // The resolved target, read back at runtime by lib/target.ts. This is the one wire
     // between the build-time identity and the app that boots: everything else in the
     // binary is shared code, and every product decision keys off this object.

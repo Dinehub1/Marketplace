@@ -27,8 +27,12 @@ export const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
  * website and AdMob crawls for `app-ads.txt`. It must NOT resolve to a brand, or the
  * brand router would look for a brand called "apps" and answer 404 at the exact URL
  * two Google products check — which is what it did before this entry existed.
+ *
+ * `api` is the apps' API host (OTP, jobs, uploads, ad events, the paywall page). It is
+ * served from Vercel and answers only `/api/*` and `/unlock/*`, so page and crawler
+ * traffic never lands on the metered host.
  */
-export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes", "apps"];
+export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes", "apps", "api"];
 
 /**
  * Role hosts, derived from BRAND_BASE_DOMAINS rather than retyped per domain.
@@ -55,6 +59,9 @@ export const HERMES_DASHBOARD_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
 export const DEVELOPER_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
   (base) => `apps.${base}`,
 );
+
+/** The apps' API hosts (see `proxy.ts`): `/api/*` and `/unlock/*` only. */
+export const API_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map((base) => `api.${base}`);
 
 /** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/reserved hosts. */
 export function brandSlugFromHost(hostname: string): string | null {

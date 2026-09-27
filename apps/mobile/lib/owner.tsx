@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { WEB_BASE_URL, BRAND_SLUG } from "./config";
+import { API_BASE_URL, BRAND_SLUG } from "./config";
 
 const KEY = "hermes-owner";
 
@@ -42,7 +42,7 @@ export function OwnerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function post(path: string, body: unknown) {
-    const res = await fetch(`${WEB_BASE_URL}${path}`, {
+    const res = await fetch(`${API_BASE_URL}${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Brand": BRAND_SLUG },
       body: JSON.stringify(body),

@@ -19,7 +19,8 @@ import {
   ActivityIndicator, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
 
-import { WEB_BASE_URL } from "@/lib/config";
+import { API_BASE_URL } from "@/lib/config";
+import { runJob } from "@/lib/tools";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 
 const SIZES = [
@@ -68,28 +69,33 @@ export default function PassportPhoto() {
       if (res.canceled || !res.assets?.length) return;
       setBusy(true);
       const asset = res.assets[0];
-      const form = new FormData();
-      form.append("product", "passport-photo");
-      form.append("size", size);
-      // web hands us a File already; native needs the uri shape
-      form.append("file", Platform.OS === "web"
-        ? (asset.file as any)
-        : ({ uri: asset.uri, name: "photo.jpg", type: "image/jpeg" } as any));
-      // A relative URL only resolves in a browser. On a phone there is no page
-      // origin, so the request must name the host explicitly.
-      const base = Platform.OS === "web" ? "" : WEB_BASE_URL;
-      const r = await fetch(`${base}/api/job`, { method: "POST", body: form });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j?.error || "Could not make the photo");
-      setPreview(j.preview_url ?? j.output_url);
-      setJobId(j.job_id ?? null);
-      if (j.price_paise) setPricePaise(Number(j.price_paise));
+      // Through runJob, like every other product: it stages the photo straight to
+      // storage, so a full-resolution camera shot is not capped by the API host's
+      // request size, and it falls back to a direct upload on an older server.
+      const job = await runJob({
+        product: "passport-photo",
+        fields: { size },
+        files: [{
+          field: "file",
+          file: {
+            uri: asset.uri,
+            name: asset.fileName || "photo.jpg",
+            type: asset.mimeType || "image/jpeg",
+            size: asset.fileSize,
+            blob: Platform.OS === "web" ? (asset.file as Blob | undefined) : undefined,
+          },
+        }],
+      });
+      setPreview(job.previewUrl ?? job.outputUrl);
+      setJobId(job.jobId);
+      if (job.pricePaise) setPricePaise(job.pricePaise);
       // Say what was actually produced, from the engine's own numbers rather than
       // a hardcoded "six on a sheet" — how many fit depends on the chosen size.
-      if (j?.meta?.photos_on_sheet) {
-        const mm = j.meta.size_mm ? `${j.meta.size_mm} mm` : "";
-        const px = j.meta.photo_px ? `${j.meta.photo_px} px` : "";
-        setSheet({ count: j.meta.photos_on_sheet, spec: [mm, px].filter(Boolean).join(" · ") });
+      const meta = (job.meta ?? {}) as { photos_on_sheet?: number; size_mm?: string; photo_px?: number };
+      if (meta.photos_on_sheet) {
+        const mm = meta.size_mm ? `${meta.size_mm} mm` : "";
+        const px = meta.photo_px ? `${meta.photo_px} px` : "";
+        setSheet({ count: meta.photos_on_sheet, spec: [mm, px].filter(Boolean).join(" · ") });
       } else {
         setSheet(null);
       }
@@ -104,7 +110,7 @@ export default function PassportPhoto() {
    *  the app, so no card details and no native payment SDK ever touch the binary. */
   async function unlock() {
     if (!jobId) return;
-    const url = `${WEB_BASE_URL}/unlock/${jobId}`;
+    const url = `${API_BASE_URL}/unlock/${jobId}`;
     try {
       if (Platform.OS === "web") {
         (window as any).open(url, "_blank");

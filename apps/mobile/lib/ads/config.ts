@@ -135,7 +135,7 @@ export const CAPS = {
  * unbounded telemetry in memory.
  */
 export function eventsEndpoint(): string {
-  const base = String(extra.webBaseUrl ?? "https://sarkarmarketplace.dropby.co.in").replace(/\/+$/, "");
+  const base = String(extra.apiBaseUrl ?? extra.webBaseUrl ?? "https://api.dropby.co.in").replace(/\/+$/, "");
   return `${base}/api/ad-events`;
 }
 
