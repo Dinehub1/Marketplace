@@ -1,0 +1,21 @@
+# What a `vercel deploy` from this machine must never upload.
+#
+# Secrets first: env values live in the Vercel project settings, never in the upload.
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+
+# Generated native projects and local build output (apps/mobile/ios alone is >1 GB).
+apps/mobile/ios
+apps/mobile/android
+apps/mobile/.expo
+**/node_modules
+**/.next
+**/.turbo
+
+# Local tooling and scratch.
+.kilo
+.claude
+google
