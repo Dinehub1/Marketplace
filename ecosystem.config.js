@@ -48,7 +48,10 @@ module.exports = {
     // duplicate named dropby-worker-1.
     script: process.env.PYTHON311 ?? 'C:/Program Files/Python311/python.exe',
     interpreter: 'none',
-    args: `${path.join(repoRoot, 'services', 'tools', 'worker.py')} --port 8099`,
+    // 8099 is loopback-only (the web app on this box). 8098 is what the Cloudflare
+    // tunnel points at for the web app on Vercel: every request there needs
+    // WORKER_SHARED_SECRET, and the worker does not open it without one.
+    args: `${path.join(repoRoot, 'services', 'tools', 'worker.py')} --port 8099 --public-port 8098`,
     cwd: repoRoot,
     instances: 1,
     exec_mode: 'fork',

@@ -2588,6 +2588,19 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
+class PublicHandler(Handler):
+    """The listener the tunnel points at (`--public-port`).
+
+    Every request here is treated as tunnelled, whatever its headers: the secret is
+    always required and `/internal/retire` never runs. This does not depend on
+    cloudflared forwarding Cloudflare's headers, which the header check on the
+    loopback port does — that check stays as a second guard, this is the first.
+    """
+
+    def _via_tunnel(self) -> bool:
+        return True
+
+
 def _probe(port: int) -> dict | None:
     """Ask whoever answers :<port>/health who they are. None when nothing does."""
     try:
@@ -2668,6 +2681,9 @@ if __name__ == "__main__":
     import threading
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8099)
+    # The port the Cloudflare tunnel points at. Opened only when a shared secret is
+    # configured, so the engine can never be reachable from outside without one.
+    ap.add_argument("--public-port", type=int, default=int(os.environ.get("WORKER_PUBLIC_PORT") or 0))
     ap.add_argument("--selftest", action="store_true")
     ap.add_argument("--input")
     ap.add_argument("--size", default=DEFAULT_SIZE, choices=sorted(SIZES))
@@ -2724,6 +2740,27 @@ if __name__ == "__main__":
 
     threading.Thread(target=_watch_parent, daemon=True).start()
     print(f"worker: listening on 127.0.0.1:{args.port} products={PRODUCTS}", flush=True)
-    print("worker: tunnel access " + ("ENABLED (X-Worker-Secret required)" if WORKER_SHARED_SECRET
-          else "DISABLED (no WORKER_SHARED_SECRET; tunnelled requests get 403)"), flush=True)
+
+    # The tunnel's own port. The previous worker was retired off --port above, which
+    # ends its whole process, so its public socket is gone by now too; the retries
+    # only cover the OS releasing it.
+    if args.public_port and WORKER_SHARED_SECRET:
+        public = None
+        for attempt in range(10):
+            try:
+                public = ThreadingHTTPServer(("127.0.0.1", args.public_port), PublicHandler)
+                break
+            except OSError as exc:
+                if attempt == 9:
+                    print(f"worker: cannot bind public port {args.public_port} — {exc}; "
+                          f"tunnel access stays OFF", flush=True)
+                time.sleep(1.2)
+        if public:
+            threading.Thread(target=public.serve_forever, daemon=True).start()
+            print(f"worker: tunnel access ENABLED on 127.0.0.1:{args.public_port} "
+                  f"(X-Worker-Secret required on every request)", flush=True)
+    elif args.public_port:
+        print("worker: tunnel access DISABLED — --public-port given but no WORKER_SHARED_SECRET", flush=True)
+    else:
+        print("worker: tunnel access DISABLED (no --public-port)", flush=True)
     server.serve_forever()
