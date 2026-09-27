@@ -196,6 +196,18 @@ function resolveSdk(): AdsModule | null {
   return sdk;
 }
 
+/**
+ * The "loaded" event for a format's class.
+ *
+ * Not interchangeable: `RewardedAd.addAdEventListener` throws on `AdEventType.LOADED`
+ * and demands `RewardedAdEventType.LOADED`. The throw happens inside the load
+ * promise, so it surfaces as an uncaught rejection — the preload never holds an ad
+ * and a tap waits on a load that was never listened for.
+ */
+function loadedEventFor(mod: AdsModule, format: AdFormat): string {
+  return format === "rewarded" ? mod.RewardedAdEventType.LOADED : mod.AdEventType.LOADED;
+}
+
 /** Which class holds which unit type. Banner and native are view-based, so they are not here. */
 function adClassFor(
   mod: AdsModule,
@@ -352,10 +364,8 @@ function present(
         settle({ ...base, kind: "failed", code: "load_timeout", message: "The ad did not load in time" });
       }, LOAD_TIMEOUT_MS);
 
-      // AdEventType.LOADED fires for every full-screen format, rewarded included —
-      // the SDK's own hook treats RewardedAdEventType.LOADED as the same state.
       unsubs.push(
-        ad.addAdEventListener(mod.AdEventType.LOADED, () => {
+        ad.addAdEventListener(loadedEventFor(mod, format), () => {
           if (timer) clearTimeout(timer);
           timer = null;
           recordAdEvent({
@@ -517,7 +527,7 @@ export const admobAdapter: AdNetworkAdapter = {
       }, LOAD_TIMEOUT_MS);
 
       unsubs.push(
-        ad.addAdEventListener(mod.AdEventType.LOADED, () => {
+        ad.addAdEventListener(loadedEventFor(mod, format), () => {
           held[format] = { ad, unit, loadedAt: Date.now() };
           recordAdEvent({
             placement,
