@@ -178,6 +178,20 @@ Each phase can be released and rolled back on its own.
   - Rollback: delete the host's CNAME. The VM's `marketplace` pm2 app keeps running.
   - `expo.dropby.co.in` still proxies `/api` to the VM's own Next (`spa_server.py`), which
     predates staging, so the web export uses the multipart fallback there.
+- **Phase 5, reshaped (2026-09-28): the brand sites stay on the VM; only the apps' API is
+  on Vercel.** Every brand page is `force-dynamic` with `no-store`, so on Vercel every
+  visit, crawlers included, would be a metered function call. Instead:
+  - `api.dropby.co.in` → Vercel (CNAME, DNS only). On that host `proxy.ts` serves only
+    `/api/*`, `/unlock/*` and `/_next/*`, answers `robots.txt` with `Disallow: /`, and
+    returns 404 for everything else. The app's `API_BASE_URL` points there (OTP, jobs,
+    uploads, ad events, paywall); `WEB_BASE_URL` stays the website. The passport screen
+    now goes through `runJob`, so its photos are staged too.
+  - `sarkarmarketplace.` is back on the VM: its CNAME was deleted and the `*` tunnel
+    wildcard serves it. The domain is still attached in Vercel as a fallback.
+  - `dashboard.`, `admin.` and `apps.` stay on Vercel; they are low traffic.
+  - **Pending:** a Cloudflare Cache Rule for anonymous `GET`s on brand hosts. It needs the
+    token to have Cache Rules edit permission. Without it, the VM still renders every
+    page.
 - The team is still on **Hobby**, which is non-commercial only. Upgrade to Pro before relying
   on this for payments or ads.
 
