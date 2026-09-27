@@ -18,6 +18,12 @@ const nextConfig: NextConfig = {
   // infers a root from the nearest package.json and traces the wrong file set,
   // which on Vercel shows up as a deploy missing files it needs at runtime.
   outputFileTracingRoot: path.join(__dirname, "../.."),
+
+  // The VM rebuilds while the live site keeps serving: `NEXT_DIST_DIR=.next-new
+  // npm run build` writes a separate folder, and only the swap (stop, rename, start)
+  // costs downtime. Building into `.next` in place would replace chunks the running
+  // server still loads lazily. Unset everywhere else, so Vercel and dev use `.next`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
 };
 
 export default nextConfig;
