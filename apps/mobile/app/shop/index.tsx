@@ -5,8 +5,13 @@
  * whose first screen is the same screen is the "these are one app" signal Apple 4.3 and Play's
  * spam policy exist to catch. A shopkeeper's phone also wants a different shape: the thing they
  * do every day is make a bill, and everything else is secondary. So one job is the screen — a
- * full-width action card — and the rest of the listing's jobs are a list underneath it, named
+ * full-width action card — and the rest of the app's plan is a list underneath it, named
  * and priced, each one honest about whether it works yet.
+ *
+ * The listing promises the one job that works. `targets.mjs` narrows the store name to
+ * "Shop Toolkit: GST Bills" because the catalogue and the other five do not exist yet; the
+ * six are this app's own roadmap, which is why the section below them says "on the plan"
+ * and not "promised by this listing". A store name is a promise; a roadmap is not.
  *
  * Where the jobs come from. `TARGET.products` through `lib/products.ts`, the same registry the
  * listing is checked against — never a second list typed into this screen. That is what keeps
@@ -86,8 +91,8 @@ export default function ShopDashboard() {
       ) : (
         <View style={s.note}>
           <Text style={s.noteText}>
-            None of this listing&apos;s jobs are built yet. That is a gap in the app, not a
-            problem with your phone: the listing promises {claimed.length} jobs and this build
+            None of this app&apos;s jobs are built yet. That is a gap in the app, not a
+            problem with your phone: the plan has {claimed.length} jobs and this build
             can open none of them.
           </Text>
         </View>
@@ -96,7 +101,7 @@ export default function ShopDashboard() {
       {soon.length > 0 ? (
         <>
           <View style={s.sectionRow}>
-            <Text style={s.section}>Promised by this listing</Text>
+            <Text style={s.section}>On the plan, not in this build</Text>
             <Text style={s.sectionCount}>{`${soon.length} to come`}</Text>
           </View>
           <Text style={s.sectionNote}>
