@@ -120,6 +120,31 @@ const ANDROID_PERMISSIONS = [
   ...PERMISSIONS.map((p) => ANDROID_PERMISSION[p]).filter(Boolean),
 ];
 
+/**
+ * Sensitive permissions a target did not declare, stripped from the merged manifest.
+ *
+ * `permissions` above only *adds*. Libraries in the shared codebase (camera, audio,
+ * file pickers) merge their own permissions into every build, so a word game shipped
+ * asking for the camera and microphone. Blocking what the target does not declare is
+ * what makes "only what this target actually does" true in the built APK.
+ */
+const SENSITIVE_PERMISSIONS: Record<string, string[]> = {
+  CAMERA: ["android.permission.CAMERA"],
+  MICROPHONE: ["android.permission.RECORD_AUDIO"],
+  PHOTOS: ["android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO"],
+  FILES: ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"],
+  LOCATION: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
+  CONTACTS: ["android.permission.READ_CONTACTS"],
+};
+const BLOCKED_PERMISSIONS = [
+  ...Object.entries(SENSITIVE_PERMISSIONS)
+    // Photos on older Android are read through external storage, so PHOTOS keeps FILES' read.
+    .filter(([key]) => !PERMISSIONS.includes(key) && !(key === "FILES" && PERMISSIONS.includes("PHOTOS")))
+    .flatMap(([, names]) => names),
+  // Drawing over other apps: nothing in the fleet does it; a library merges it in.
+  "android.permission.SYSTEM_ALERT_WINDOW",
+];
+
 /** Only a target that uses the camera or the library gets the usage strings for them. */
 const USES_PHOTOS = PERMISSIONS.some((p) => p === "CAMERA" || p === "PHOTOS");
 
@@ -216,6 +241,7 @@ const config: ExpoConfig = {
     // listing and a reason for someone to decline the install — and a permission set
     // that never changes is itself evidence the listings are one app repeated.
     permissions: ANDROID_PERMISSIONS,
+    blockedPermissions: BLOCKED_PERMISSIONS,
     // Business links open the business page, which only a directory app has. This was on
     // every target, so fifteen installed apps all claimed the same verified links and
     // Android had to ask which one to open — and a game that won would send the link to

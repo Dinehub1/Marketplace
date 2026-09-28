@@ -28,6 +28,7 @@ import { alpha, radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
+import { offersRewarded } from "@/lib/ads";
 import { Icon } from "@/components/icons";
 import {
   EMPTY_RECORD,
@@ -306,7 +307,8 @@ export default function WordDuel() {
   function takeHint() {
     if (phase !== "playing" || !rack) return;
     if (hints === 0) {
-      if (packUsed) fail("No hints left this round. The clock is still running.");
+      // No pack to offer in a release build without ads: the round simply has three.
+      if (packUsed || !offersRewarded()) fail("No hints left this round. The clock is still running.");
       else setPhase("hintAd");
       return;
     }
