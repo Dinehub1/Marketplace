@@ -75,3 +75,8 @@ __pycache__/
 # simulator — and they are regenerated on every run, so they are never source. The folder is
 # ignored whole; the gallery page inside it is generated too.
 shots/
+
+# Supabase CLI local state (written by `supabase link`): project ref, pooler URL,
+# service versions. Per-machine, and the pooler URL is a connection address that
+# does not belong in a public repo.
+supabase/.temp/
