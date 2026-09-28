@@ -1,7 +1,15 @@
 // SDK 57's expo-router bundles React Navigation and refuses a direct
 // @react-navigation/native import (see docs.expo.dev/router/migrate/sdk-55-to-56).
 // The theming primitives are re-exported by expo-router itself.
-import { Stack, ThemeProvider as NavThemeProvider, DefaultTheme, DarkTheme } from "expo-router";
+import {
+  Stack,
+  ThemeProvider as NavThemeProvider,
+  DefaultTheme,
+  DarkTheme,
+  usePathname,
+  useRouter,
+  type Href,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -12,10 +20,21 @@ import { SavedProvider } from "@/lib/saved";
 import { OwnerProvider } from "@/lib/owner";
 import { useReduceMotion } from "@/lib/motion";
 import { prepareAds } from "@/lib/ads";
+import { canOpen, HOME_ROUTE } from "@/lib/routes";
 
 function Root() {
   const { c, brand, scheme } = useTheme();
   const reduceMotion = useReduceMotion();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Every screen is compiled into every app, so a deep link (or a stale link inside
+    // shared code) can reach a screen that belongs to a different store listing. Send it
+    // home instead. `replace`, not `push`: the blocked screen must not stay on the back
+    // stack for the back gesture to return to. See lib/routes.ts for what each app owns.
+    if (!canOpen(pathname)) router.replace(HOME_ROUTE as Href);
+  }, [pathname, router]);
 
   useEffect(() => {
     // Boot the ad subsystem once, at the root rather than on a screen. It is a
