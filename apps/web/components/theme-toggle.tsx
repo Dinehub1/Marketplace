@@ -4,7 +4,7 @@ import { useSyncExternalStore, useState } from "react";
 
 export type ThemeChoice = "light" | "dark" | "system";
 
-const STORAGE_KEY = "hermes-theme";
+const STORAGE_KEY = "brandcollabs-theme";
 
 /**
  * Runs before first paint, inlined in <head>, so the stored choice is applied

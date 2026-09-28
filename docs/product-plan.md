@@ -8,9 +8,9 @@ brands survive because their data really is the product.
 
 | Kept | Why |
 |---|---|
-| `sarkarhealth` | The doctor vertical was the one where the data answers the question. 23,992 real listings behind it. |
-| `sarkarmarketplace` | The whole directory (24k businesses, categories, localities, galaxy). It is the SEO surface and the proof the data exists. |
-| `sarkarcars` | Real car-service data, real categories, and a clear buyer. |
+| `brandcollabs-health` | The doctor vertical was the one where the data answers the question. 23,992 real listings behind it. |
+| `brandcollabs` | The whole directory (24k businesses, categories, localities, galaxy). It is the SEO surface and the proof the data exists. |
+| `brandcollabs-cars` | Real car-service data, real categories, and a clear buyer. |
 
 Everything else — finance, travel, legal, jobs, government, real-estate clones — is retired.
 Not reskinned: retired. Sixteen identical "connecting people connecting businesses" pages

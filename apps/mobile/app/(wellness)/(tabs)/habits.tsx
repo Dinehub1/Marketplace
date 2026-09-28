@@ -25,7 +25,7 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { Card, Press, Text } from "@/components/ui";
 import { ProfileAction, WellnessShell } from "@/components/wellness-shell";
 import { SyncBadge } from "@/components/sync-badge";

@@ -51,7 +51,7 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { setAudioModeAsync, useAudioPlayer, type AudioPlayer } from "expo-audio";
-import { alpha, space } from "@hermes/tokens";
+import { alpha, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { Press } from "@/components/ui";
 import { AdBanner } from "@/components/ad-slot";
@@ -181,7 +181,7 @@ const FONT = Platform.select({
 /** Slide time. */
 const MOVE_MS = 115;
 /** Where the sound preference lives on the device. */
-const SOUND_KEY = "hermes-merge-sound";
+const SOUND_KEY = "brandcollabs-merge-sound";
 /** Board geometry, in points. */
 const GAP = 12;
 /** Key this game's round records live under in the device score store. */

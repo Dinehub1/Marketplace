@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useOwner } from "@/lib/owner";
 import { API_BASE_URL } from "@/lib/config";
-import { formatCount } from "@hermes/core";
+import { formatCount } from "@brandcollabs/core";
 import { Button, Card, EmptyState, Press, Skeleton, Text } from "@/components/ui";
 import { Icon } from "@/components/icons";
 

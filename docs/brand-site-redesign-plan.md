@@ -28,7 +28,7 @@ statistics or testimonials, no single generic template.
 |---|---|---|
 | 1 | Audit + evidence | complete |
 | 2 | Shared machinery: sitemap config, nav/footer from config, loading/empty/error/404 states, per-route SEO | in progress |
-| 3 | Pilot end-to-end: `sarkarcars` (`/used-cars` → `/car-details/<id>`) for approval | next |
+| 3 | Pilot end-to-end: `brandcollabs-cars` (`/used-cars` → `/car-details/<id>`) for approval | next |
 | 4 | Rollout in batches of 5–6 brands, brand-specific sections | pending |
 | 5 | QA crawl: every route, every internal link, console errors, mobile + desktop | pending |
 
@@ -70,121 +70,121 @@ statistics or testimonials, no single generic template.
 - **Existing routes:** /about, /blog, /careers, /contact, /faq, /privacy, /sitemap.xml, /terms
 - **Proposed routes:** / · /features · /pricing · /docs · /login · /about · /contact
 
-### Sarkar AI — `sarkar-ai.dropby.co.in`
+### BrandCollabs AI — `brandcollabs-ai.dropby.co.in`
 - **Does:** AI — Your AI, Your Empire
 - **Today:** 5 routes, static mockup at /, 10 dead links, 22 anchor-only sections
 - **Existing routes:** /blog, /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /capabilities · /use-cases · /pricing · /chat · /about · /contact
 
-### SarkarBazaar — `sarkarbazaar.dropby.co.in`
+### BrandCollabs Bazaar — `brandcollabs-bazaar.dropby.co.in`
 - **Does:** Marketplace — Local Businesses, Global Reach
 - **Today:** 4 routes, static mockup at /, 16 dead links, 44 anchor-only sections
 - **Existing routes:** /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /manufacturers · /wholesalers · /categories/<slug> · /company/<id> · /about · /contact
 
-### SarkarCars — `sarkarcars.dropby.co.in`
+### BrandCollabs Cars — `brandcollabs-cars.dropby.co.in`
 - **Does:** car-services — Indore ka car wash aur service — slot book karein
 - **Today:** 12 routes, app at /, 0 dead links, 0 anchor-only sections
 - **Existing routes:** /, /_next/static/chunks/1ay-amgj03j_t.js, /_next/static/chunks/1ddrlgqwh3lhy.css, /about, /contact, /faq, /login, /marketplace, /privacy, /services, /support, /terms
 - **Proposed routes:** / · /used-cars · /car-details/<id> · /services · /sell-your-car · /about · /contact
 
-### SarkarConnect — `sarkarconnect.dropby.co.in`
+### BrandCollabs Connect — `brandcollabs-connect.dropby.co.in`
 - **Does:** Social — B2B Networking That Works
 - **Today:** 6 routes, static mockup at /, 11 dead links, 32 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /industries · /suppliers · /directory · /company/<id> · /post-requirement · /about · /contact
 
-### SarkarDost — `sarkardost.dropby.co.in`
+### BrandCollabs Dost — `brandcollabs-dost.dropby.co.in`
 - **Does:** Social — Connecting Indore's community
 - **Today:** 6 routes, static mockup at /, 8 dead links, 25 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /services · /professionals · /pro/<id> · /book · /about · /contact
 
-### SarkarDukaan — `sarkardukaan.dropby.co.in`
+### BrandCollabs Dukaan — `brandcollabs-dukaan.dropby.co.in`
 - **Does:** E-commerce — Your Shop Goes Digital
 - **Today:** 4 routes, static mockup at /, 5 dead links, 26 anchor-only sections
 - **Existing routes:** /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /shops · /categories/<slug> · /shop/<id> · /about · /contact
 
-### SarkarEd — `sarkared.dropby.co.in`
+### BrandCollabs Ed — `brandcollabs-ed.dropby.co.in`
 - **Does:** EdTech — Learn Skills That Pay
 - **Today:** 8 routes, static mockup at /, 6 dead links, 14 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /faq, /login, /privacy, /terms
 - **Proposed routes:** / · /schools · /coaching · /colleges · /institute/<id> · /enquiry · /about · /contact
 
-### SarkarFinance — `sarkarfinance.dropby.co.in`
+### BrandCollabs Finance — `brandcollabs-finance.dropby.co.in`
 - **Does:** Fintech — Loans & Finance Made Simple
 - **Today:** 6 routes, static mockup at /, 6 dead links, 22 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /loans · /insurance · /advisors · /advisor/<id> · /apply · /about · /contact
 
-### SarkarFood — `sarkarfood.dropby.co.in`
+### BrandCollabs Food — `brandcollabs-food.dropby.co.in`
 - **Does:** Food Tech — Food from Indore Best Kitchens
 - **Today:** 7 routes, static mockup at /, 20 dead links, 38 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /restaurants · /sweets · /caterers · /restaurant/<id> · /about · /contact
 
-### SarkarGhar — `sarkarghar.dropby.co.in`
+### BrandCollabs Ghar — `brandcollabs-ghar.dropby.co.in`
 - **Does:** Real Estate — Find Your Dream Home in Indore
 - **Today:** 3 routes, static mockup at /, 6 dead links, 19 anchor-only sections
 - **Existing routes:** /contact, /privacy, /terms
 - **Proposed routes:** / · /plumbers · /electricians · /carpenters · /painters · /service/<id> · /get-quote · /about · /contact
 
-### SarkarHealth — `sarkarhealth.dropby.co.in`
+### BrandCollabs Health — `brandcollabs-health.dropby.co.in`
 - **Does:** Healthcare — Healthcare That Cares for Indore
 - **Today:** 6 routes, static mockup at /, 13 dead links, 22 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /doctors · /clinics · /diagnostics · /pharmacies · /doctor/<id> · /about · /contact · /faq
 
-### SarkarJobs — `sarkarjobs.dropby.co.in`
+### BrandCollabs Jobs — `brandcollabs-jobs.dropby.co.in`
 - **Does:** HR Tech — Jobs That Match Your Talent
 - **Today:** 6 routes, static mockup at /, 22 dead links, 40 anchor-only sections
 - **Existing routes:** /contact, /faq, /login, /pricing, /privacy, /terms
 - **Proposed routes:** / · /jobs · /employers · /job/<id> · /post-a-job · /about · /contact
 
-### SarkarLegal — `sarkarlegal.dropby.co.in`
+### BrandCollabs Legal — `brandcollabs-legal.dropby.co.in`
 - **Does:** Legal Tech — Legal Help at Your Doorstep
 - **Today:** 6 routes, static mockup at /, 18 dead links, 28 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /advocates · /notaries · /services · /advocate/<id> · /consult · /about · /contact
 
-### SarkarMarketplace — `sarkarmarketplace.dropby.co.in`
+### BrandCollabs — `brandcollabs.dropby.co.in`
 - **Does:** Marketplace — Indore's business directory — local services, all in one place
 - **Today:** 24 routes, app at /, 0 dead links, 0 anchor-only sections
 - **Existing routes:** /, /_next/static/chunks/1ay-amgj03j_t.js, /_next/static/chunks/1ddrlgqwh3lhy.css, /about, /business/110834, /business/110835, /business/110836, /business/110837, /business/110838, /business/110859, /business/110862, /business/110863, /business/110906, /business/110912, /business/110923, /business/110940, /contact, /faq, /login, /marketplace, /privacy, /services, /support, /terms
 - **Proposed routes:** / · /categories · /category/<slug> · /locality/<area> · /business/<id> · /galaxy · /about · /contact
 
-### SarkarMart — `sarkarmart.dropby.co.in`
+### BrandCollabs Mart — `brandcollabs-mart.dropby.co.in`
 - **Does:** E-commerce — Shop Local, Sell Global
 - **Today:** 8 routes, static mockup at /, 16 dead links, 41 anchor-only sections
 - **Existing routes:** /, /about, /blog, /careers, /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /products · /categories/<slug> · /store/<id> · /about · /contact
 
-### SarkarPay — `sarkarpay.dropby.co.in`
+### BrandCollabs Pay — `brandcollabs-pay.dropby.co.in`
 - **Does:** Fintech — Payments That Power Growth
 - **Today:** 6 routes, static mockup at /, 6 dead links, 25 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /privacy, /terms
 - **Proposed routes:** / · /features · /pricing · /docs · /login · /about · /contact
 
-### SarkarSarkar — `sarkarsarkar.dropby.co.in`
+### BrandCollabs Gov — `brandcollabs-gov.dropby.co.in`
 - **Does:** Government — Government Services at Your Fingertips
 - **Today:** 4 routes, static mockup at /, 1 dead links, 2 anchor-only sections
 - **Existing routes:** /contact, /faq, /privacy, /terms
 - **Proposed routes:** / · /services · /schemes · /apply · /track · /about · /contact
 
-### SarkarSkills — `sarkarskills.dropby.co.in`
+### BrandCollabs Skills — `brandcollabs-skills.dropby.co.in`
 - **Does:** EdTech — Skills That Change Lives
 - **Today:** 8 routes, static mockup at /, 7 dead links, 25 anchor-only sections
 - **Existing routes:** /about, /blog, /careers, /contact, /faq, /login, /privacy, /terms
 - **Proposed routes:** / · /courses · /trainers · /course/<id> · /enrol · /about · /contact
 
-### SarkarTravel — `sarkartravel.dropby.co.in`
+### BrandCollabs Travel — `brandcollabs-travel.dropby.co.in`
 - **Does:** Travel — Travel More, Worry Less
 - **Today:** 6 routes, static mockup at /, 5 dead links, 27 anchor-only sections
 - **Existing routes:** /cdn-cgi/l/email-protection, /contact, /faq, /login, /privacy, /terms
 - **Proposed routes:** / · /packages · /hotels · /agents · /agent/<id> · /enquiry · /about · /contact
 
-### SarkarWellness — `sarkarwellness.dropby.co.in`
+### BrandCollabs Wellness — `brandcollabs-wellness.dropby.co.in`
 - **Does:** Wellness — Ancient Wellness, Modern Healing
 - **Today:** 3 routes, static mockup at /, 11 dead links, 27 anchor-only sections
 - **Existing routes:** /about, /privacy, /terms

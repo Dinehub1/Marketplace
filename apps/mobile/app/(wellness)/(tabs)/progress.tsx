@@ -27,7 +27,7 @@
 import { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { Card, Press, Text } from "@/components/ui";
 import { BarChart, HeatStrip, Ring } from "@/components/charts";
 import { ProfileAction, WellnessShell } from "@/components/wellness-shell";

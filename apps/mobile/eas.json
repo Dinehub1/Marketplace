@@ -43,6 +43,27 @@
         "APP_TARGET": "block-clear"
       }
     },
+    "brandcollabs": {
+      "extends": "production",
+      "channel": "brandcollabs",
+      "env": {
+        "APP_TARGET": "brandcollabs"
+      }
+    },
+    "brandcollabs-cars": {
+      "extends": "production",
+      "channel": "brandcollabs-cars",
+      "env": {
+        "APP_TARGET": "brandcollabs-cars"
+      }
+    },
+    "brandcollabs-health": {
+      "extends": "production",
+      "channel": "brandcollabs-health",
+      "env": {
+        "APP_TARGET": "brandcollabs-health"
+      }
+    },
     "merge-tiles": {
       "extends": "production",
       "channel": "merge-tiles",
@@ -76,20 +97,6 @@
       "channel": "room-redesign",
       "env": {
         "APP_TARGET": "room-redesign"
-      }
-    },
-    "sarkarcars": {
-      "extends": "production",
-      "channel": "sarkarcars",
-      "env": {
-        "APP_TARGET": "sarkarcars"
-      }
-    },
-    "sarkarhealth": {
-      "extends": "production",
-      "channel": "sarkarhealth",
-      "env": {
-        "APP_TARGET": "sarkarhealth"
       }
     },
     "shop-toolkit": {

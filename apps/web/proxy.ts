@@ -39,7 +39,7 @@ export async function proxy(request: NextRequest) {
   const hostname = host.split(":")[0].toLowerCase();
   const pathname = request.nextUrl.pathname;
 
-  // Proxy Hermes Dashboard requests to port 9300.
+  // Proxy Agent / Hermes Dashboard requests to port 9300.
   if (HERMES_DASHBOARD_HOSTS.includes(hostname)) {
     const targetUrl = `http://localhost:9300${pathname}${request.nextUrl.search}`;
     try {
@@ -53,7 +53,7 @@ export async function proxy(request: NextRequest) {
         headers: response.headers,
       });
     } catch {
-      return NextResponse.json({ error: "Hermes Dashboard unavailable" }, { status: 502 });
+      return NextResponse.json({ error: "BrandCollabs Dashboard unavailable" }, { status: 502 });
     }
   }
 
@@ -91,20 +91,32 @@ export async function proxy(request: NextRequest) {
   }
 
   // Local development: localhost has no brand subdomain, so default to
-  // sarkarmarketplace (override with DEFAULT_BRAND in .env). Every other host
+  // brandcollabs (override with DEFAULT_BRAND in .env). Every other host
   // derives its brand from the subdomain — one helper, shared with the server
   // components and the Supabase client that need the same answer.
   const brandSlug =
     hostname === "localhost" || hostname === "127.0.0.1"
-      ? (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase()
+      ? (process.env.DEFAULT_BRAND ?? "brandcollabs").toLowerCase()
       : brandSlugFromHost(hostname);
 
   if (!brandSlug) return NextResponse.next();
 
-  // Legacy alias: sarkar.<base> (old standalone marketplace) -> sarkarmarketplace
-  if (brandSlug === "sarkar") {
+  // Legacy alias: sarkar.<base> or sarkarmarketplace.<base> -> brandcollabs
+  if (brandSlug === "sarkar" || brandSlug === "sarkarmarketplace") {
     return NextResponse.redirect(
-      `https://sarkarmarketplace.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
+      `https://brandcollabs.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
+      308,
+    );
+  }
+
+  // Legacy aliases: redirect any sarkar* subdomain to brandcollabs-*
+  if (brandSlug.startsWith("sarkar")) {
+    const newSlug =
+      brandSlug === "sarkarsarkar"
+        ? "brandcollabs-services"
+        : brandSlug.replace(/^sarkar-?/, "brandcollabs-");
+    return NextResponse.redirect(
+      `https://${newSlug}.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
       308,
     );
   }

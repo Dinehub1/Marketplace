@@ -24,7 +24,7 @@
  */
 import { useMemo, useState } from "react";
 import { Share, StyleSheet, TextInput, View } from "react-native";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { Button, Card, Disclosure, Press, Text } from "@/components/ui";
 import { SoundSwitchRow } from "@/components/sound-toggle";
 import { WellnessShell } from "@/components/wellness-shell";

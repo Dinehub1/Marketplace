@@ -1,5 +1,5 @@
 import Constants from "expo-constants";
-import { scopeForBrand, type BrandScope } from "@hermes/core";
+import { scopeForBrand, type BrandScope } from "@brandcollabs/core";
 
 /**
  * Which of the 20 store apps this binary is.
@@ -14,7 +14,7 @@ import { scopeForBrand, type BrandScope } from "@hermes/core";
  * truth, so a renamed app cannot mean two different things in two places.
  *
  * The ONE thing not read from `extra` is `scope` (below): which slice of the directory
- * this app may show is derived at runtime from `@hermes/core`'s ownership table, so the
+ * this app may show is derived at runtime from `@brandcollabs/core`'s ownership table, so the
  * app and the brand websites cannot disagree about who owns a category.
  */
 export type TargetFamily = "directory" | "wellness" | "product" | "game";
@@ -36,7 +36,7 @@ export type Target = {
    * What a directory app may list: the `category` terms it owns. Null for the
    * marketplace (which is everything) and for every non-directory target.
    *
-   * Derived from `scopeForBrand()` in `@hermes/core` — never hand-written per target.
+   * Derived from `scopeForBrand()` in `@brandcollabs/core` — never hand-written per target.
    */
   scope: BrandScope | null;
   ads: { rewarded: string; interstitial: string } | null;
@@ -48,7 +48,7 @@ export type Target = {
  * directory keeps those working instead of throwing on a screen nobody can reach.
  */
 const FALLBACK: Target = {
-  id: "sarkarmarketplace",
+  id: "brandcollabs",
   name: "Indore Business Directory",
   tagline: "Every local business in Indore, with phone numbers",
   color: "#a16207",
@@ -56,7 +56,7 @@ const FALLBACK: Target = {
   firstRoute: "/browse",
   products: [],
   permissions: ["LOCATION"],
-  scope: scopeForBrand("sarkarmarketplace"),
+  scope: scopeForBrand("brandcollabs"),
   ads: null,
 };
 

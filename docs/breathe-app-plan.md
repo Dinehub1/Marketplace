@@ -2,7 +2,7 @@
 
 A guided breathing screen: a circle that grows as you breathe in and settles as you
 breathe out, a phrase you choose, and sessions you can measure. It ships inside the
-Expoolbox app first, and promotes to its own store listing with one line in
+Toolbox and Wellness app suites first, and promotes to its own store listing with one line in
 `apps/mobile/targets.mjs` when you want it.
 
 ## Why this one is worth building

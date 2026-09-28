@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import path from "path";
 
 export type GatewayStatus = {
@@ -8,11 +8,13 @@ export type GatewayStatus = {
   updatedAt: string | null;
 };
 
-/** Read the Hermes gateway state file (the app runs on the same VM). */
+/** Read the background agent gateway state file (the app runs on the same VM). */
 export function getGatewayStatus(): GatewayStatus {
   try {
     const home = process.env.USERPROFILE || "C:\\Users\\Administrator";
-    const p = path.join(home, "AppData", "Local", "hermes", "gateway_state.json");
+    const brandCollabsPath = path.join(home, "AppData", "Local", "brandcollabs", "gateway_state.json");
+    const hermesPath = path.join(home, "AppData", "Local", "hermes", "gateway_state.json");
+    const p = existsSync(brandCollabsPath) ? brandCollabsPath : hermesPath;
     const j = JSON.parse(readFileSync(p, "utf8"));
     return {
       running: j.gateway_state === "running",

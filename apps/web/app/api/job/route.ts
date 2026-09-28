@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { TRANSLATE_LANGS, isPageRange, PDF_PAGES_HELP } from "@hermes/core";
+import { TRANSLATE_LANGS, isPageRange, PDF_PAGES_HELP } from "@brandcollabs/core";
 import { metaFor, runChain, type Capability } from "@/lib/ai";
 import { checkPhoneToken, db, toIndiaPhone } from "@/lib/nextel";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
@@ -384,7 +384,7 @@ const PDF_PAGE_FORMATS = ["a4", "letter", "a5"];
 const COLLAGE_LAYOUTS = ["auto", "2x1", "1x2", "2x2", "3x1"];
 
 /**
- * Languages the translation product offers. The list itself lives in `@hermes/core`
+ * Languages the translation product offers. The list itself lives in `@brandcollabs/core`
  * (`TRANSLATE_LANGS`) because the app's own picker draws it — a second copy is how the
  * PDF screen ended up offering ranges the engine refused (item 25), and a picker that
  * offers a code this route rejects is a screen whose only outcome is a 400. The engine

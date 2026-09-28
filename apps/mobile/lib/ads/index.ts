@@ -213,6 +213,20 @@ export function subscribeAdReady(cb: () => void): () => void {
   return adapter?.onReadyChange ? adapter.onReadyChange(cb) : () => {};
 }
 
+/**
+ * Should a game offer a rewarded top-up (extra hints, lives, a fresh tray) at all?
+ *
+ * True in any build with the ad SDK compiled in — the slot then shows a real ad, or
+ * says why it cannot. Also true in a development build, where the labelled placeholder
+ * keeps the reward loop testable without an ad account. False only in a release build
+ * shipped without ads: there the placeholder's developer copy ("no ad network is
+ * connected yet…") would be shown to store users, so the offer is not made and the
+ * game plays by its base rules instead.
+ */
+export function offersRewarded(): boolean {
+  return ADS_ENABLED || __DEV__;
+}
+
 /** The consent-change entry point, for any screen that shows ads. */
 export { openPrivacyOptions, privacyOptionsRequired };
 

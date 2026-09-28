@@ -8,9 +8,9 @@
 Before the pilot itself, two evidence-backed corrections that reshape the model:
 
 **1. ONDC seller-app commission is 1–2%, not 8–12%.**
-The entire premise of ONDC is unbundled, low commission: roughly **3–5% total** to the seller, split across buyer-app fee (1–2%), seller-app fee (1–2%), and payment gateway (0.5–1%). ONDC itself charges only a flat **₹1.5 per successful transaction above ₹250** — there is no network-level percentage commission. Sellers come to ONDC *specifically* to escape 20–30% marketplace rates, so a Hermes seller-app fee above ~2% is not sellable.
+The entire premise of ONDC is unbundled, low commission: roughly **3–5% total** to the seller, split across buyer-app fee (1–2%), seller-app fee (1–2%), and payment gateway (0.5–1%). ONDC itself charges only a flat **₹1.5 per successful transaction above ₹250** — there is no network-level percentage commission. Sellers come to ONDC *specifically* to escape 20–30% marketplace rates, so a BrandCollabs seller-app fee above ~2% is not sellable.
 
-**Consequence:** commission-per-order cannot be the primary revenue engine at Hermes' scale. On a ₹1,200 home-services job, a 2% fee is **₹24** — about a quarter of the ₹100/lead the audit doc already plans to charge. Commission only works where average order value is high.
+**Consequence:** commission-per-order cannot be the primary revenue engine at BrandCollabs' scale. On a ₹1,200 home-services job, a 2% fee is **₹24** — about a quarter of the ₹100/lead the audit doc already plans to charge. Commission only works where average order value is high.
 
 **2. "Home Services" is not a mature ONDC domain.**
 ONDC's live domains are product-shaped: Food & Beverage, Grocery, Fashion & Footwear, Home & Kitchen / Home Decor, Beauty & Personal Care, Health & Wellness, Mobility, Agriculture, Financial Services. Paytm — the highest-volume buyer app — is operational in **Food, Grocery, and Home Decor**. Appointment-style local services (plumber, electrician, AC repair) do not have comparable live buyer-app demand.
@@ -28,7 +28,7 @@ Both corrections point to the same vertical, and it is *not* the one Home Servic
 | Listings (Indore) | 2,639 | **1,092** |
 | Maps to live ONDC domain | No mature equivalent | **Home & Kitchen / Home Decor — Paytm live** |
 | Typical order value | ₹800–1,500 | **₹5,000–25,000** |
-| Hermes fee @2% | ₹16–30 — not viable | **₹100–500 — viable** |
+| BrandCollabs fee @2% | ₹16–30 — not viable | **₹100–500 — viable** |
 | Catalog shape | Appointment/scope-based, hard to model | **Product SKUs — native fit for ONDC catalog** |
 
 Interior/Furniture is already Tier 1 in `research-verticals-and-design.md` (flagged "high-ticket"). The high AOV is what makes a 2% fee survive, and the product-shaped catalog is what makes the ONDC integration tractable — `businesses` has no SKU/price fields today, and modelling a fixed product is far easier than modelling a variable-scope service job.
@@ -53,14 +53,14 @@ At 40 pilot sellers:
 | Base | 5 | ₹8,000 | ₹32,000 | ₹19,960 | **₹51,960** |
 | Optimistic | 10 | ₹10,000 | ₹80,000 | ₹19,960 | **₹99,960** |
 
-**Read the conservative column carefully: subscription revenue is 2x commission revenue.** Until order volume is proven, Hermes is a SaaS business that happens to speak ONDC — not a commission business. Price and pitch it accordingly, and do not build financial plans that assume commission carries the model.
+**Read the conservative column carefully: subscription revenue is 2x commission revenue.** Until order volume is proven, BrandCollabs is a SaaS business that happens to speak ONDC — not a commission business. Price and pitch it accordingly, and do not build financial plans that assume commission carries the model.
 
 ---
 
 ## Build phases
 
 ### Phase 0 — Make payments real *(hard prerequisite)*
-An SNP is responsible for **dispersing payments to sellers**. Hermes cannot take that on with a payment stub.
+An SNP is responsible for **dispersing payments to sellers**. BrandCollabs cannot take that on with a payment stub.
 
 - Integrate a real gateway (Razorpay is the standard India choice; nothing is installed today — `package.json` has only Supabase/Next/React).
 - Wire the existing but unused `payments` table (`amount`, `currency`, `method`, `upi_ref`, `status`, `meta`).
@@ -109,7 +109,7 @@ Decide these *before* launch so the result can't be rationalised after the fact.
 
 1. **Demand-side thinness.** The pilot's core assumption is that Paytm-class buyer apps send meaningful Home Decor demand to Indore. This is unproven and is the single biggest risk. Mitigate by keeping Phase 0–1 useful even if ONDC fails: a real payment gateway and a structured catalog both serve the first-party monetisation roadmap regardless.
 2. **SNP obligations exceed expectations.** Catalog digitisation, seller training, and payment dispersal are ongoing operational duties, not one-time integrations.
-3. **Opportunity cost.** Hermes has zero first-party revenue today — every table in the monetisation path (`payments`, `subscriptions`, `bookings`) sits unused. Phase 0 alone would unlock the audit doc's existing pay-per-lead plan without any ONDC work at all. If engineering capacity is the binding constraint, **do Phase 0, ship first-party monetisation, and only then decide on ONDC** with real revenue data in hand.
+3. **Opportunity cost.** BrandCollabs has zero first-party revenue today — every table in the monetisation path (`payments`, `subscriptions`, `bookings`) sits unused. Phase 0 alone would unlock the audit doc's existing pay-per-lead plan without any ONDC work at all. If engineering capacity is the binding constraint, **do Phase 0, ship first-party monetisation, and only then decide on ONDC** with real revenue data in hand.
 
 ## Sources
 

@@ -17,7 +17,7 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import { type PaletteKey, type TypeKey, press, pressFade, radius, space, spring, type as typeScale, minTouchTarget } from "@hermes/tokens";
+import { type PaletteKey, type TypeKey, press, pressFade, radius, space, spring, type as typeScale, minTouchTarget } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useReduceMotion } from "@/lib/motion";
 

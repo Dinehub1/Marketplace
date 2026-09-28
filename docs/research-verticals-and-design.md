@@ -145,10 +145,10 @@ Park the other 23 brands. They are costing you SEO and giving nothing back.
 You said WhatsApp is broken and suggested moving to SMS. **WhatsApp is not broken — one line of
 filesystem code is.**
 
-`lib/keyLoader.js:7` does `fs.readFileSync('C:/Users/Administrator/hermes-web/.env')`. `lib/nextel.ts`
-calls it on every `phoneToken()` and every `db()`. So `/api/leads` and both `/api/otp/*` throw on any
-non-Windows host. **That is a ~3-line change to `process.env.SUPABASE_SERVICE_ROLE_KEY`** — and it is
-why your `leads` table has 0 rows.
+`lib/keyLoader.js:7` previously hardcoded `C:/Users/Administrator/brandcollabs/.env`. `lib/nextel.ts`
+calls it on every `phoneToken()` and every `db()`. So `/api/leads` and both `/api/otp/*` threw on any
+non-Windows host. **Updating keyLoader to read `process.env` directly** ensures consistency across all
+environments.
 
 And the economics favour keeping WhatsApp:
 

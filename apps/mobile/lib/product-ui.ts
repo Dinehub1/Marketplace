@@ -1,5 +1,5 @@
 /**
- * The product screens' shared look, built on @hermes/tokens.
+ * The product screens' shared look, built on @brandcollabs/tokens.
  *
  * Why this file exists: the product screens were each written as their own thing
  * and drifted — an audit of the first four found 19 raw hex values and FOURTEEN
@@ -14,7 +14,7 @@
  * colour.
  */
 import { useMemo } from "react";
-import { space, radius, type } from "@hermes/tokens";
+import { space, radius, type } from "@brandcollabs/tokens";
 import { useTheme } from "./theme";
 
 /** Semantic palette keys a product may use as its accent. */

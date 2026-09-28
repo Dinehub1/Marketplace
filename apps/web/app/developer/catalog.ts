@@ -18,6 +18,7 @@
  * Only `order` and `blurb` are ours; name and bundle id are copied from `targets.mjs`
  * and verified.
  */
+import { APPLOVIN_APP_ADS_TXT, INMOBI_APP_ADS_TXT } from "./app-ads-partners";
 
 export type DeveloperApp = {
   /** Must equal the target id in apps/mobile/targets.mjs. */
@@ -131,21 +132,21 @@ export const APPS: DeveloperApp[] = [
     platform: "Android & iOS",
   },
   {
-    id: "sarkarhealth",
-    name: "SarkarHealth: Doctors in Indore",
-    bundleId: "com.brandcollabs.sarkarhealth",
+    id: "brandcollabs-health",
+    name: "BrandCollabs Health: Doctors in Indore",
+    bundleId: "com.brandcollabs.health",
     blurb: "Find doctors, clinics and hospitals in Indore and call them directly.",
     platform: "Android & iOS",
   },
   {
-    id: "sarkarmarketplace",
+    id: "brandcollabs",
     name: "Indore Business Directory",
     bundleId: "com.brandcollabs.indoredirectory",
     blurb: "Local businesses across Indore, with phone numbers and directions.",
     platform: "Android & iOS",
   },
   {
-    id: "sarkarcars",
+    id: "brandcollabs-cars",
     name: "Car Service & Dealers Indore",
     bundleId: "com.brandcollabs.carsindore",
     blurb: "Car dealers, garages, denting and cleaning services in Indore.",
@@ -190,16 +191,40 @@ export const APPS: DeveloperApp[] = [
  * not fully serve ads. The file must live at the root of the developer website named in
  * the store listing — which is why this site exists at `apps.dropby.co.in`.
  *
- * Filled from `ADMOB_PUBLISHER_ID` once the AdMob account exists. An empty list emits a
- * comment-only file, which is the honest state before there is an account: a placeholder
- * publisher id would be a *claim* about who may sell this inventory, and a wrong one is
- * worse than none.
+ * AdMob's line is filled from `ADMOB_PUBLISHER_ID` once the AdMob account exists; the
+ * bidders' (AppLovin, InMobi) come from the blocks pasted into `app-ads-partners.ts`. An
+ * empty list emits a comment-only file, which is the honest state before there is an
+ * account: a placeholder publisher id would be a *claim* about who may sell this
+ * inventory, and a wrong one is worse than none.
  */
 export function appAdsTxtLines(): string[] {
+  const lines: string[] = [];
   const publisherId = (process.env.ADMOB_PUBLISHER_ID ?? "").trim();
-  if (!publisherId) return [];
   // google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0
-  return [`google.com, ${publisherId}, DIRECT, f08c47fec0942fa0`];
+  if (publisherId) lines.push(`google.com, ${publisherId}, DIRECT, f08c47fec0942fa0`);
+  lines.push(...sellerLines(APPLOVIN_APP_ADS_TXT), ...sellerLines(INMOBI_APP_ADS_TXT));
+
+  // Networks' blocks overlap (the same exchange resold by two bidders); a line listed
+  // twice is harmless to crawlers but makes the file harder to audit, so keep one.
+  const seen = new Set<string>();
+  return lines.filter((line) => {
+    const key = line.toLowerCase().replace(/\s+/g, "");
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** `domain, account id, DIRECT|RESELLER[, cert id]` — the IAB app-ads.txt record shape. */
+const SELLER_LINE = /^[a-z0-9.-]+\.[a-z]{2,}\s*,\s*[^,\s]+\s*,\s*(DIRECT|RESELLER)\s*(,\s*[^,\s]+\s*)?$/i;
+
+/** The valid record lines of a pasted block, normalised to `a, b, C, d`. */
+function sellerLines(block: string): string[] {
+  return block
+    .split(/\r?\n/)
+    .map((line) => line.replace(/#.*$/, "").trim())
+    .filter((line) => SELLER_LINE.test(line))
+    .map((line) => line.split(",").map((part) => part.trim()).join(", "));
 }
 
 /** The ad networks whose SDKs the apps embed, for the privacy policy. Kept explicit. */
@@ -208,6 +233,18 @@ export const AD_SDKS = [
     name: "Google AdMob",
     purpose: "Rewarded and interstitial advertising",
     policy: "https://policies.google.com/technologies/ads",
+  },
+  // Bidders inside AdMob mediation: their SDKs ship in every ads build
+  // (apps/mobile/plugins/with-ad-mediation.js), so they are named here too.
+  {
+    name: "AppLovin",
+    purpose: "Bids for ad space inside Google AdMob mediation",
+    policy: "https://www.applovin.com/privacy/",
+  },
+  {
+    name: "InMobi",
+    purpose: "Bids for ad space inside Google AdMob mediation",
+    policy: "https://www.inmobi.com/privacy-policy",
   },
 ] as const;
 

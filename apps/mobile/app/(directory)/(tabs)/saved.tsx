@@ -1,7 +1,7 @@
 import { FlatList, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 import { useSaved } from "@/lib/saved";
 import { Button, EmptyState, Text } from "@/components/ui";
 import { BusinessCard } from "@/components/business-card";

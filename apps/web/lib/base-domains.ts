@@ -32,7 +32,7 @@ export const CANONICAL_BASE = BRAND_BASE_DOMAINS[0];
  * served from Vercel and answers only `/api/*` and `/unlock/*`, so page and crawler
  * traffic never lands on the metered host.
  */
-export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes", "apps", "api"];
+export const RESERVED_SUBDOMAINS: readonly string[] = ["www", "dashboard", "admin", "hermes", "agent", "brandcollabs-dashboard", "apps", "api"];
 
 /**
  * Role hosts, derived from BRAND_BASE_DOMAINS rather than retyped per domain.
@@ -45,10 +45,11 @@ export const ADMIN_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.flatMap((base) 
   ["dashboard", "admin"].map((role) => `${role}.${base}`),
 );
 
-/** Hosts reverse-proxied to the Hermes dashboard (see `proxy.ts`). */
-export const HERMES_DASHBOARD_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
-  (base) => `hermes.${base}`,
+/** Hosts reverse-proxied to the agent / admin dashboard (see `proxy.ts`). */
+export const AGENT_DASHBOARD_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.flatMap(
+  (base) => [`hermes.${base}`, `agent.${base}`, `brandcollabs-dashboard.${base}`],
 );
+export const HERMES_DASHBOARD_HOSTS: readonly string[] = AGENT_DASHBOARD_HOSTS;
 
 /**
  * Hosts that serve the developer website (see `proxy.ts`).

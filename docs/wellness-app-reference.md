@@ -83,3 +83,6 @@ which is also what keeps Apple's 4.3 duplicate-app rule survivable (see
 Each one must ship with: no account, no data leaving the phone, a stated scope ("this is a
 timer, not a treatment"), and — for store review — a visible difference in purpose from its
 siblings, not just a different colour.
+
+> **Architecture Note (Fleet consolidation):**
+> To permanently resolve Google Play and Apple App Store Guideline 4.3 ("Spam and duplicate app functionality"), the 6 wellness tools are consolidated into a single build target in `targets.mjs`: `com.brandcollabs.wellness` ("BrandCollabs Wellness"). All 6 tools (Breathe, Stretch, Walk, Water, Japa, Sleep) are accessible with shared offline persistence, while the app portfolio remains at 15 distinct, high-value apps.

@@ -1,5 +1,6 @@
 import type { ExpoConfig } from "expo/config";
 import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targets.mjs";
+import skadnetwork from "./plugins/skadnetwork-ids.json";
 
 /**
  * Native app configuration for every app in the fleet.
@@ -12,7 +13,7 @@ import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targe
  *
  *   APP_TARGET=breathe npx expo start
  *   APP_TARGET=toolbox eas build --profile preview
- *   APP_TARGET=sarkarmarketplace eas build --profile production   # the default
+ *   APP_TARGET=brandcollabs eas build --profile production        # the default
  *
  * Everything a store listing is judged on — name, bundle id, slug, icon, accent,
  * permission set, and the screen it opens on — is derived from that one word. Retyping
@@ -25,7 +26,7 @@ import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targe
  */
 
 const APP_TARGET =
-  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "sarkarmarketplace";
+  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "brandcollabs";
 
 const target = byId(APP_TARGET);
 if (!target) {
@@ -84,9 +85,9 @@ const BUNDLE_ID = process.env.BRAND_BUNDLE_ID ?? target.bundleId;
  * marketplace keeps its hand-chosen green ramp: it is already shipped, and repainting a
  * live app is a design decision, not a side effect of adding targets.
  */
-const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "sarkarmarketplace" ? "#22543d" : target.color);
-const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "sarkarmarketplace" ? "#38a169" : target.color);
-const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "sarkarmarketplace" ? "#9ae6b4" : tint(target.color, 0.55));
+const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "brandcollabs" ? "#22543d" : target.color);
+const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "brandcollabs" ? "#38a169" : target.color);
+const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "brandcollabs" ? "#9ae6b4" : tint(target.color, 0.55));
 
 /** Lighten a hex colour toward white by `amount` (0..1). Keeps the hue, lifts the value. */
 function tint(hex: string, amount: number): string {
@@ -119,6 +120,31 @@ const ANDROID_PERMISSIONS = [
   ...PERMISSIONS.map((p) => ANDROID_PERMISSION[p]).filter(Boolean),
 ];
 
+/**
+ * Sensitive permissions a target did not declare, stripped from the merged manifest.
+ *
+ * `permissions` above only *adds*. Libraries in the shared codebase (camera, audio,
+ * file pickers) merge their own permissions into every build, so a word game shipped
+ * asking for the camera and microphone. Blocking what the target does not declare is
+ * what makes "only what this target actually does" true in the built APK.
+ */
+const SENSITIVE_PERMISSIONS: Record<string, string[]> = {
+  CAMERA: ["android.permission.CAMERA"],
+  MICROPHONE: ["android.permission.RECORD_AUDIO"],
+  PHOTOS: ["android.permission.READ_MEDIA_IMAGES", "android.permission.READ_MEDIA_VIDEO"],
+  FILES: ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"],
+  LOCATION: ["android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"],
+  CONTACTS: ["android.permission.READ_CONTACTS"],
+};
+const BLOCKED_PERMISSIONS = [
+  ...Object.entries(SENSITIVE_PERMISSIONS)
+    // Photos on older Android are read through external storage, so PHOTOS keeps FILES' read.
+    .filter(([key]) => !PERMISSIONS.includes(key) && !(key === "FILES" && PERMISSIONS.includes("PHOTOS")))
+    .flatMap(([, names]) => names),
+  // Drawing over other apps: nothing in the fleet does it; a library merges it in.
+  "android.permission.SYSTEM_ALERT_WINDOW",
+];
+
 /** Only a target that uses the camera or the library gets the usage strings for them. */
 const USES_PHOTOS = PERMISSIONS.some((p) => p === "CAMERA" || p === "PHOTOS");
 
@@ -142,6 +168,22 @@ if (ADS_ENABLED && (!ADMOB_ANDROID_APP_ID || !ADMOB_IOS_APP_ID)) {
   );
 }
 
+/**
+ * The networks that bid inside the AdMob auction, compiled in as adapters by
+ * `plugins/with-ad-mediation`. Both by default; `EXPO_PUBLIC_AD_MEDIATION` overrides per
+ * build ("inmobi" alone for a child-directed app — AppLovin is not Families-certified —
+ * or "" for AdMob demand only). Empty whenever ads are off: no SDK, no adapters.
+ */
+const AD_MEDIATION: string[] = ADS_ENABLED
+  ? (process.env.EXPO_PUBLIC_AD_MEDIATION ?? "applovin,inmobi")
+      .split(",")
+      .map((s: string) => s.trim())
+      .filter(Boolean)
+  : [];
+
+/** SKAdNetwork ids for AdMob and every bidder; regenerate with scripts/sync-skadnetwork-ids.mjs. */
+const SKADNETWORK_IDS: string[] = skadnetwork.ids;
+
 /** Canvas colours, from packages/tokens. The splash must match the app's first
  *  painted frame or launch shows a flash of the wrong background. */
 const CANVAS_LIGHT = "#fbfbfd";
@@ -153,9 +195,7 @@ const config: ExpoConfig = {
   // project id against owner/slug, so a build without it would look for the project under
   // whoever happens to be logged in.
   owner: "brandcollabs",
-  // The marketplace keeps its original slug, `sarkar-marketplace`: its EAS project is
-  // named after it, and the slug is also what existing store tooling knows it by.
-  slug: process.env.EXPO_SLUG ?? (target.id === "sarkarmarketplace" ? "sarkar-marketplace" : target.id),
+  slug: process.env.EXPO_SLUG ?? (target.id === "brandcollabs" ? "brandcollabs" : target.id),
   scheme: BRAND_SLUG,
   version: "1.0.0",
   orientation: "portrait",
@@ -199,6 +239,7 @@ const config: ExpoConfig = {
     // listing and a reason for someone to decline the install — and a permission set
     // that never changes is itself evidence the listings are one app repeated.
     permissions: ANDROID_PERMISSIONS,
+    blockedPermissions: BLOCKED_PERMISSIONS,
     // Business links open the business page, which only a directory app has. This was on
     // every target, so fifteen installed apps all claimed the same verified links and
     // Android had to ask which one to open — and a game that won would send the link to
@@ -275,8 +316,13 @@ const config: ExpoConfig = {
               // still serves non-personalised rather than failing.
               userTrackingUsageDescription:
                 "Allow tracking so the ads you see can be relevant. Without it the app still works and shows non-personalised ads.",
+              // Without these, iOS cannot attribute an install to the network that
+              // showed the ad, and every bidder in the auction bids lower for it.
+              skAdNetworkItems: SKADNETWORK_IDS,
             },
           ],
+          // The bidders' native adapters; see the plugin for the version pins.
+          ["./plugins/with-ad-mediation", { networks: AD_MEDIATION }],
           // The ad SDK's Android artifacts need Kotlin 2.3; see the plugin.
           ["./plugins/with-ads-kotlin", {}],
         ] as [string, Record<string, string>][])
@@ -315,7 +361,7 @@ const config: ExpoConfig = {
     supabaseKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
     // The platform moved off cashcard.live; the marketplace lives on a
     // subdomain because dropby.co.in's apex belongs to another app.
-    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sarkarmarketplace.dropby.co.in",
+    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://brandcollabs.dropby.co.in",
     // The app's API host (OTP, jobs, uploads, ad events, the paywall page); see lib/config.ts.
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://api.dropby.co.in",
     // The resolved target, read back at runtime by lib/target.ts. This is the one wire
@@ -336,7 +382,7 @@ const config: ExpoConfig = {
       products: target.products,
       permissions: PERMISSIONS,
       // No `scope` key: which categories a directory app may show is resolved at
-      // runtime from `@hermes/core`'s ownership table (lib/target.ts), so a binary
+      // runtime from `@brandcollabs/core`'s ownership table (lib/target.ts), so a binary
       // can never carry a stale copy of who owns which category.
       ...(target.ads ? { ads: target.ads } : {}),
     },
@@ -349,6 +395,8 @@ const config: ExpoConfig = {
     // statically written references — a value that reaches the runtime through
     // expo-constants is the one that cannot be tree-shaken away by a minifier.
     adsEnabled: ADS_ENABLED,
+    // Which bidders' adapters this binary carries, for lib/ads/config.ts.
+    adMediation: AD_MEDIATION,
   },
 };
 

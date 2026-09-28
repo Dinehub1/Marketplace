@@ -1,5 +1,5 @@
 /**
- * @hermes/core — domain logic shared by the web app and the Expo app.
+ * @brandcollabs/core — domain logic shared by the web app and the Expo app.
  *
  * What lives here is the part of the product that is genuinely the same on both
  * platforms: how a category becomes a URL slug, how a scraped business name is

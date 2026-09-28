@@ -9,7 +9,7 @@ and against the providers' own pricing pages.
 |---|---|---|
 | Supabase `xpfmqpmhmcouwzebfwhb` | SET (service role, publishable, access token) | 44 tables, 24,043 businesses, `product_jobs`, orders |
 | Cloudflare R2 (`cashcard-data-storage`) | SET (account, keys, public URL, `R2_PREFIX=marketplace`) | every product's input and output file |
-| Cloudflare Tunnel | running | `sarkarmarketplace.`, `expo.`, `shots.`, `hermes.`, `dashboard.` |
+| Cloudflare Tunnel | running | `brandcollabs.`, `expo.`, `shots.`, `dashboard.` |
 | Nextel WhatsApp API | SET (key, endpoint, sender) | OTP + notifications — but see the template gap below |
 | GeoGhost scraper | running (Windows task) | the directory's data supply |
 | GitHub `Dinehub1/Marketplace` | SET, and **push works** | source of truth; 10 commits pushed today |
@@ -36,10 +36,10 @@ and against the providers' own pricing pages.
    ~1,500 requests/day on Flash, no card. Protects us from a single-vendor outage.
 5. **Groq API key** (free) — `GROQ_API_KEY`. Fallback for fast text, 30 RPM / up to 14,400
    requests/day, and it also serves Whisper transcription free.
-6. **Apple Developer + Google Play + Expo** — needed only to *publish the 12 apps* you chose
-   to keep separate. Apple $99/yr, Google $25 once, Expo/EAS account for builds. Until then
-   the apps are web + Expo-Go only. Tell me when you want to start store work and I'll
-   prepare everything that does not need the accounts (icons, screenshots, privacy text).
+6. **Apple Developer + Google Play + Expo** — needed only to *publish the 15 fleet apps*
+   configured in `targets.mjs`. Apple $99/yr, Google $25 once, Expo/EAS account for builds. Until then
+   the apps are web + Expo-Go only. When you want to start store work, everything that does not
+   need the accounts is ready (icons, screenshots, privacy text, ad mediation).
 7. **Cloudflare API token with DNS + Tunnel edit** (optional) — lets me route
    `expo-dev.dropby.co.in → Metro` so the Expo Go QR survives restarts without me asking.
 

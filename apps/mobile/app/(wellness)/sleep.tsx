@@ -60,7 +60,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import { useRouter } from "expo-router";
-import { alpha, space } from "@hermes/tokens";
+import { alpha, space } from "@brandcollabs/tokens";
 import Animated, {
   Easing,
   useAnimatedStyle,

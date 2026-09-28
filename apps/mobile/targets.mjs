@@ -154,18 +154,18 @@ export const TARGETS = [
     firstScreen: "grid",
   },
   {
-    id: "sarkarhealth",
-    name: "SarkarHealth: Doctors in Indore",
-    bundleId: "com.brandcollabs.sarkarhealth",
+    id: "brandcollabs-health",
+    name: "BrandCollabs Health: Doctors in Indore",
+    bundleId: "com.brandcollabs.health",
     tagline: "Find and call doctors and clinics in Indore",
     storeCategory: "Medical",
     aso: ["doctors in indore", "clinic", "hospital", "chemist"],
     color: "#0e7490",
     permissions: ["LOCATION"],
     products: [],
-    directory: "sarkarhealth",
+    directory: "brandcollabs-health",
     // No `scope` here. Which categories this app may show is NOT retyped per target:
-    // it is read at runtime from the shared ownership table in `@hermes/core`
+    // it is read at runtime from the shared ownership table in `@brandcollabs/core`
     // (`scopeForBrand`, see lib/target.ts). That table is the same one the brand
     // websites use to decide who publishes /<category>-in-indore, so the app and the
     // site cannot disagree about who owns a category. It is also what keeps the three
@@ -174,7 +174,7 @@ export const TARGETS = [
     firstScreen: "directory",
   },
   {
-    id: "sarkarmarketplace",
+    id: "brandcollabs",
     name: "Indore Business Directory",
     bundleId: "com.brandcollabs.indoredirectory",
     tagline: "Every local business in Indore, with phone numbers",
@@ -183,11 +183,11 @@ export const TARGETS = [
     color: "#a16207",
     permissions: ["LOCATION"],
     products: [],
-    directory: "sarkarmarketplace",
+    directory: "brandcollabs",
     firstScreen: "directory",
   },
   {
-    id: "sarkarcars",
+    id: "brandcollabs-cars",
     name: "Car Service & Dealers Indore",
     bundleId: "com.brandcollabs.carsindore",
     tagline: "Car dealers, garages, denting and cleaning",
@@ -196,8 +196,8 @@ export const TARGETS = [
     color: "#9a3412",
     permissions: ["LOCATION"],
     products: [],
-    directory: "sarkarcars",
-    // Scope comes from the shared ownership table in `@hermes/core`, not from here —
+    directory: "brandcollabs-cars",
+    // Scope comes from the shared ownership table in `@brandcollabs/core`, not from here —
     // see the note on sarkarhealth above. The table is deliberately tight for this
     // brand (bare "dealer", "showroom" and "garage" stay unowned, because a parking
     // garage is not a car service), and that decision now governs the app and the
@@ -304,9 +304,9 @@ export const FIRST_ROUTE = {
   "shop-toolkit": "/shop",
 
   // Directory apps share the listing feed; the brand row scopes what it lists.
-  sarkarhealth: "/browse",
-  sarkarmarketplace: "/browse",
-  sarkarcars: "/browse",
+  "brandcollabs-health": "/browse",
+  brandcollabs: "/browse",
+  "brandcollabs-cars": "/browse",
 
   // Games: the whole app is the game.
   "tap-sprint": "/tap-sprint",
@@ -340,9 +340,9 @@ export const EAS_PROJECT_ID = {
   "resume-builder": "ab7b814c-a0e1-4000-9aeb-457131351c19",
   "shop-toolkit": "935cfeb0-d03d-431f-a42e-d1311361025e",
   toolbox: "92fb8572-6116-44bc-bc12-4b2487681295",
-  sarkarhealth: "31a274eb-cf87-44d5-b44e-024e3c591be8",
-  sarkarmarketplace: "56b8bb46-e2ff-419b-8149-b5dbb6f796e4",
-  sarkarcars: "500c9b8a-a2f0-4b39-b4fd-b96c83f500a3",
+  "brandcollabs-health": "31a274eb-cf87-44d5-b44e-024e3c591be8",
+  brandcollabs: "56b8bb46-e2ff-419b-8149-b5dbb6f796e4",
+  "brandcollabs-cars": "500c9b8a-a2f0-4b39-b4fd-b96c83f500a3",
   "tap-sprint": "7e48abbe-ce9f-4815-ae8b-a99e215f3834",
   "word-duel": "a70ffaa6-8ba5-4521-a197-489c68e07998",
   "block-clear": "de3f9135-c585-4310-af61-11edf629cf7f",

@@ -20,7 +20,7 @@ function required(key: string, value: string | undefined): string {
   return value;
 }
 
-export const BRAND_SLUG = extra.brandSlug ?? "sarkarmarketplace";
+export const BRAND_SLUG = extra.brandSlug ?? "brandcollabs";
 
 export const SUPABASE_URL = required("EXPO_PUBLIC_SUPABASE_URL", extra.supabaseUrl);
 export const SUPABASE_KEY = required("EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY", extra.supabaseKey);
@@ -30,7 +30,7 @@ export const SUPABASE_KEY = required("EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY", ext
  * standing up a second auth path, so this must point at the deployed site — or
  * a LAN IP during development, since on a phone `localhost` is the phone.
  */
-export const WEB_BASE_URL = extra.webBaseUrl ?? "https://sarkarmarketplace.dropby.co.in";
+export const WEB_BASE_URL = extra.webBaseUrl ?? "https://brandcollabs.dropby.co.in";
 
 /**
  * Where the app's API calls go: OTP, jobs, uploads, ad events, the paywall page.
@@ -49,7 +49,7 @@ export const API_BASE_URL = extra.apiBaseUrl ?? "https://api.dropby.co.in";
  */
 export const BRAND = {
   slug: BRAND_SLUG,
-  name: extra.brandName ?? "SarkarMarketplace",
+  name: extra.brandName ?? "BrandCollabs",
   theme: {
     primary: extra.brandPrimary ?? "#22543d",
     secondary: extra.brandSecondary ?? "#38a169",

@@ -43,13 +43,13 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Runs in every workspace: @hermes/web, @hermes/mobile, @hermes/core.
+      # Runs in every workspace: @brandcollabs/web, @brandcollabs/mobile, @brandcollabs/core.
       # The mobile app is the one most likely to break silently, because nothing
       # else in CI compiles React Native source.
       - name: Typecheck (all workspaces)
         run: npm run typecheck
 
-      # Pins the exact strings both platforms must produce from @hermes/core.
+      # Pins the exact strings both platforms must produce from @brandcollabs/core.
       # A "harmless" refactor of a slug or a phone normaliser fails here instead
       # of shipping two products that disagree about their own URLs.
       - name: Shared-contract tests
@@ -130,7 +130,7 @@ jobs:
         run: npm run check:fleet
 
       # Metro resolution in a workspace is the fragile part of this setup —
-      # duplicate React, unmapped @hermes/* packages, a missing expo-router
+      # duplicate React, unmapped @brandcollabs/* packages, a missing expo-router
       # transform. All three typecheck fine and only fail here, so an actual
       # export is the only check worth running.
       #
@@ -143,7 +143,7 @@ jobs:
         run: |
           set -euo pipefail
           # `wellness` was `breathe` until the six practices became one app.
-          for t in sarkarmarketplace wellness toolbox tap-sprint; do
+          for t in brandcollabs wellness toolbox tap-sprint; do
             echo "::group::export $t"
             APP_TARGET="$t" npx expo export --platform all --output-dir "/tmp/export-$t"
             echo "::endgroup::"

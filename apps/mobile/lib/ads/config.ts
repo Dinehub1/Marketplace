@@ -81,14 +81,25 @@ export function isTestUnit(format: AdFormat): boolean {
 export const ADMOB_APP_ID =
   process.env.EXPO_PUBLIC_ADMOB_APP_ID ?? "ca-app-pub-3940256099942544~3347511713";
 
-/** Which networks participate, before remote config says otherwise. */
+/**
+ * The bidders whose AdMob adapters are compiled into this binary, from
+ * `plugins/with-ad-mediation` via app.config.ts. Build-time fact, not config: a network
+ * whose adapter is absent cannot bid whatever the AdMob console says.
+ */
+export const MEDIATION_ADAPTERS: readonly NetworkId[] = (
+  Array.isArray(extra.adMediation) ? (extra.adMediation as unknown[]) : []
+).filter((n): n is NetworkId => n === "inmobi" || n === "applovin");
+
+/**
+ * Which networks can take part in the auction on this binary: AdMob always, a bidder
+ * when its adapter is linked. Whether it actually bids is then the AdMob console's call
+ * (the network added as a bidding source on the ad unit, with its keys) — nothing here
+ * picks a winner.
+ */
 export const DEFAULT_SOURCES: Record<NetworkId, boolean> = {
   admob: true,
-  // Bidders join the AdMob auction once the accounts exist; until then enabling
-  // them would only produce load errors, so the compiled default is off and remote
-  // config turns them on per app.
-  inmobi: false,
-  applovin: false,
+  inmobi: MEDIATION_ADAPTERS.includes("inmobi"),
+  applovin: MEDIATION_ADAPTERS.includes("applovin"),
 };
 
 /** Formats each network can serve through the AdMob mediation host. */

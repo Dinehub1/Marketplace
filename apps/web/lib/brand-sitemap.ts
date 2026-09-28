@@ -1,3 +1,4 @@
+import { normalizeBrandSlug } from "@brandcollabs/core";
 /**
  * Per-brand sitemaps.
  *
@@ -31,7 +32,7 @@ export type BrandRoute =
 const home = { path: "/", label: "Home", kind: "alias" as const, to: "/" };
 
 export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
-  sarkarhealth: [
+  "brandcollabs-health": [
     home,
     { path: "/doctors", label: "Doctors", kind: "category", match: ["doctor", "dental", "eye clinic", "clinic"], blurb: "Consult a doctor in Indore" },
     { path: "/hospitals", label: "Hospitals", kind: "category", match: ["hospital", "nursing home"], blurb: "Hospitals and nursing homes" },
@@ -41,7 +42,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarghar: [
+  "brandcollabs-ghar": [
     home,
     { path: "/plumbers", label: "Plumbers", kind: "category", match: ["plumber"], blurb: "Plumbers near you" },
     { path: "/electricians", label: "Electricians", kind: "category", match: ["electrician"], blurb: "Electricians near you" },
@@ -54,7 +55,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarcars: [
+  "brandcollabs-cars": [
     home,
     { path: "/used-cars", label: "Cars & dealers", kind: "category", match: ["car dealer", "tyre", "car accessories"], blurb: "Car dealers in Indore" },
     { path: "/services", label: "Service & repair", kind: "category", match: ["auto repair", "garage", "car wash"], blurb: "Repair, denting and detailing" },
@@ -63,7 +64,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarfood: [
+  "brandcollabs-food": [
     home,
     { path: "/restaurants", label: "Restaurants", kind: "category", match: ["restaurant", "fast food", "ice cream", "dessert", "cafe"], blurb: "Where to eat in Indore" },
     { path: "/sweets", label: "Sweets", kind: "category", match: ["sweet", "dessert"], blurb: "Sweet shops and mithai" },
@@ -72,7 +73,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkardukaan: [
+  "brandcollabs-dukaan": [
     home,
     { path: "/shops", label: "Shops", kind: "category", match: ["shop", "store", "market"], blurb: "Shops and stores in Indore" },
     { path: "/grocery", label: "Grocery", kind: "category", match: ["grocery", "kirana"], blurb: "Grocery and daily needs" },
@@ -81,7 +82,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarmart: [
+  "brandcollabs-mart": [
     home,
     { path: "/products", label: "Products", kind: "category", match: ["shop", "store", "wholesale"], blurb: "Products and suppliers" },
     { path: "/furniture", label: "Furniture", kind: "category", match: ["furniture"], blurb: "Furniture stores" },
@@ -89,7 +90,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarwellness: [
+  "brandcollabs-wellness": [
     home,
     { path: "/gyms", label: "Gyms", kind: "category", match: ["gym", "fitness"], blurb: "Gyms and fitness centres" },
     { path: "/salons", label: "Salons", kind: "category", match: ["salon", "nail"], blurb: "Salons and beauty parlours" },
@@ -99,7 +100,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkared: [
+  "brandcollabs-ed": [
     home,
     { path: "/schools", label: "Schools", kind: "category", match: ["school", "preschool"], blurb: "Schools in Indore" },
     { path: "/coaching", label: "Coaching", kind: "category", match: ["coaching", "training"], blurb: "Coaching and training centres" },
@@ -109,7 +110,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarskills: [
+  "brandcollabs-skills": [
     home,
     { path: "/courses", label: "Courses", kind: "category", match: ["computer training", "training", "institute", "coaching"], blurb: "Skill courses in Indore" },
     { path: "/trainers", label: "Trainers", kind: "category", match: ["training", "coaching"], blurb: "Trainers and institutes" },
@@ -126,7 +127,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarlegal: [
+  "brandcollabs-legal": [
     home,
     { path: "/advocates", label: "Advocates", kind: "category", match: ["lawyer", "advocate", "legal"], blurb: "Advocates and lawyers" },
     { path: "/notaries", label: "Notaries", kind: "category", match: ["notary", "stamp"], blurb: "Notary services" },
@@ -136,7 +137,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarfinance: [
+  "brandcollabs-finance": [
     home,
     { path: "/loans", label: "Loans", kind: "category", match: ["loan", "financial"], blurb: "Loans and finance" },
     { path: "/insurance", label: "Insurance", kind: "category", match: ["insurance"], blurb: "Insurance agents and brokers" },
@@ -146,7 +147,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkartravel: [
+  "brandcollabs-travel": [
     home,
     { path: "/packages", label: "Packages", kind: "category", match: ["travel", "tour"], blurb: "Tour and travel packages" },
     { path: "/hotels", label: "Hotels", kind: "category", match: ["hotel", "guest house", "resort"], blurb: "Hotels and stays" },
@@ -156,7 +157,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarconnect: [
+  "brandcollabs-connect": [
     home,
     { path: "/industries", label: "Industries", kind: "category", match: ["manufactur", "industrial"], blurb: "Manufacturers and industrial suppliers" },
     { path: "/suppliers", label: "Suppliers", kind: "category", match: ["wholesal", "distributor", "supplier"], blurb: "Wholesalers and distributors" },
@@ -166,7 +167,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarbazaar: [
+  "brandcollabs-bazaar": [
     home,
     { path: "/manufacturers", label: "Manufacturers", kind: "alias", to: "/categories" },
     { path: "/wholesalers", label: "Wholesalers", kind: "category", match: ["pharma wholesale", "wholesaler", "distributor", "wholesal"], blurb: "Wholesale and distribution" },
@@ -175,7 +176,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkardost: [
+  "brandcollabs-dost": [
     home,
     { path: "/services", label: "Services", kind: "alias", to: "/services" },
     { path: "/professionals", label: "Professionals", kind: "category", match: ["service", "consultant", "agency"], blurb: "Local professionals" },
@@ -184,7 +185,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarsarkar: [
+  "brandcollabs-services": [
     home,
     { path: "/services", label: "Services", kind: "alias", to: "/services" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
@@ -217,7 +218,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarmarketplace: [
+  brandcollabs: [
     home,
     { path: "/categories", label: "Categories", kind: "alias", to: "/categories" },
     { path: "/directory", label: "All businesses", kind: "alias", to: "/marketplace" },
@@ -227,17 +228,17 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   // Product brands: the routes that can be backed by real capability copy.
   paisaflow: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  sarkarpay: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  "brandcollabs-pay": [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   followup: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/how-it-works", label: "How it works", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   cloudplayer: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  "sarkar-ai": [home, { path: "/capabilities", label: "Capabilities", kind: "alias", to: "/features" }, { path: "/use-cases", label: "Use cases", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  "brandcollabs-ai": [home, { path: "/capabilities", label: "Capabilities", kind: "alias", to: "/features" }, { path: "/use-cases", label: "Use cases", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   "justdial-agent": [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/how-it-works", label: "How it works", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  sarkarjobs: [home, { path: "/employers", label: "Employers", kind: "category", match: ["coworking", "consultant"], blurb: "Employers and recruiters" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  "brandcollabs-jobs": [home, { path: "/employers", label: "Employers", kind: "category", match: ["coworking", "consultant"], blurb: "Employers and recruiters" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
 };
 
 /** Routes for a brand, or an empty list where no real-data sitemap is defined yet. */
 export function routesFor(slug: string): BrandRoute[] {
-  return BRAND_SITEMAP[slug] ?? [];
+  return BRAND_SITEMAP[normalizeBrandSlug(slug)] ?? [];
 }
 
 /** Does this path belong to the brand's sitemap? Returns the definition. */

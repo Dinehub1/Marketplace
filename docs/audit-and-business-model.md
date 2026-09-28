@@ -1,4 +1,4 @@
-# Sarkar Platform — Full Audit & Business Model
+# BrandCollabs Platform — Initial Audit & Business Model
 
 Audited 2026-08-12 against the live codebase, the running dev server (localhost:3001), and the live
 Supabase project (read-only, publishable key). Every claim below was verified, not assumed.
@@ -56,13 +56,13 @@ Verified live via HTTP (all 200 unless noted).
 | `/forgot-password` | Same trick. No reset email is ever sent. |
 | `/quote`, `/book` | Submit = `setState(true)`. Nothing leaves the browser. |
 | `/chat` "AI Assistant" | `responses[Math.floor(Math.random() * responses.length)]`. There is **no AI anywhere in this product.** |
-| `/pricing` | 24 brands × ₹99–4,999 tiers hardcoded in `pages/pricing.tsx`. CTA is `<a href="/register">`. Also: the FAQ block is SarkarHealth copy (doctors, home visits) **shown on every brand's pricing page**. |
+| `/pricing` | 24 brands × ₹99–4,999 tiers hardcoded in `pages/pricing.tsx`. CTA is `<a href="/register">`. Also: the FAQ block is BrandCollabs Health copy (doctors, home visits) **shown on every brand's pricing page**. |
 | `/reviews`, `/testimonials`, `/blog`, `/careers`, `/gallery` | Invented people, invented quotes, placeholder posts. |
 | Ad slots | ~110 `.ad-slot` divs across 25 static sites. **No ad network is loaded anywhere** — grep for adsense/googlesyndication returns zero. |
 
 **BROKEN:**
-- `/admin` → **404 on localhost** (middleware forces brand `sarkarmarketplace`, rewrites to `/sites/...`). Only reachable via `dashboard.cashcard.live`.
-- `app/admin/hermes-panel.tsx:22` → `POST /admin/api/hermes` — **route does not exist.**
+- `/admin` → **404 on localhost** (middleware forces brand `brandcollabs`, rewrites to `/sites/...`). Only reachable via `dashboard.cashcard.live`.
+- Admin agent chat form posted to a non-existent agent endpoint (removed in favor of live gateway status).
 - `app/admin/agent-controls.tsx:34` → `POST /api/agents` — **route does not exist.** Every button in the Agent Control Panel is dead.
 - `app/[brand]/lead-form.tsx` — POSTs without `business_id`/`token`, always 401. Orphaned.
 - `brand-login.tsx`, `brand-dashboard.tsx` — never routed to. Dead files.
@@ -70,7 +70,7 @@ Verified live via HTTP (all 200 unless noted).
 
 ### Blockers that must be fixed before any money moves
 
-1. **`lib/keyLoader.js:7` hardcodes `C:/Users/Administrator/hermes-web/.env`** and `readFileSync`s it. `lib/nextel.ts` calls it on **every** `phoneToken()` and `db()`. So `/api/leads`, `/api/otp/send`, `/api/otp/verify` — the entire working revenue pipeline — **throw on any non-Windows host**, including this Mac and any cloud deploy. This is why `leads` has 0 rows.
+1. **`lib/keyLoader.js:7` hardcodes `C:/Users/Administrator/brandcollabs/.env`** and `readFileSync`s it. `lib/nextel.ts` calls it on **every** `phoneToken()` and `db()`. So `/api/leads`, `/api/otp/send`, `/api/otp/verify` — the entire working revenue pipeline — **throw on any non-Windows host**, including this Mac and any cloud deploy. This is why `leads` has 0 rows.
 2. **Nextel API key committed in source** — `app/api/wa-test/route.ts:15` and `supabase/functions/whatsapp-otp/index.ts:21`. Rotate it.
 3. **`/whatsapp-test` is publicly routable** and fires real WhatsApp sends from a user-supplied key. Its own comment says "Remove after wiring the real hook."
 4. **`GRANT INSERT, UPDATE ON dev_tasks` and `UPDATE ON agents` TO `anon`** (`supabase/migrations/20260624191033.sql`). With the browser-exposed key, that's a public write surface unless RLS covers it. **Verify in the dashboard.**
@@ -81,7 +81,7 @@ Verified live via HTTP (all 200 unless noted).
 
 ### Credibility risks (these will kill sales calls)
 
-The homepage (`public/sites/sarkarmarketplace/index.html`) shows:
+The homepage (`public/sites/brandcollabs/index.html`) shows:
 - **"98% AI Accuracy"** and **"2Cr+ Searches/Month"** — both invented (`data-target="98"`, `data-target="2"`). Real searches/month: unknown, because nothing is measured.
 - **"Trusted by: Reliance Retail, Apollo Hospitals, SBI, DMart, Domino's, OYO, Municipal Corp"** — none of these are customers. In India this is an ASCI misleading-advertisement exposure, and it's the kind of thing a prospect Googles.
 - `data-target="2355"` businesses and `31` categories — stale by 10x and 12x respectively.
@@ -142,7 +142,7 @@ Path to ₹1L/month, the boring way:
 
 ### What to kill
 
-- **26 of 27 brands.** They dilute SEO, show 0 listings each (`brand_id` is 99.4% null), and multiply your maintenance by 27 for zero revenue. Keep `sarkarmarketplace`. Park the rest.
+- **26 of 27 brands.** They dilute SEO, show 0 listings each (`brand_id` is 99.4% null), and multiply your maintenance by 27 for zero revenue. Keep `brandcollabs`. Park the rest.
 - **Every façade page**: `/checkout`, `/dashboard`, `/orders`, `/notifications`, `/quote`, `/book`, `/chat`, `/register`, `/forgot-password`. Either build them or 404 them — a fake payment form is a legal liability, and a fake "AI Assistant" is a credibility liability.
 - **Fake reviews and testimonials.** Delete. These are invented people.
 - **The ~110 empty ad slots.** Display ads in an Indian local directory earn roughly ₹40–80 per 1,000 pageviews. You'd need ~1.5M monthly pageviews to make ₹1L. Priority placement earns more from the same traffic and doesn't degrade the page. Revisit ads only above 500k pageviews/month.

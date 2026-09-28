@@ -31,13 +31,13 @@ function post(payload: Record<string, unknown>) {
 
 function getSessionId(): string | null {
   try {
-    let sid = window.sessionStorage.getItem("hermes_sid");
+    let sid = window.sessionStorage.getItem("brandcollabs_sid") || window.sessionStorage.getItem("hermes_sid");
     if (!sid) {
       sid =
         typeof crypto !== "undefined" && "randomUUID" in crypto
           ? crypto.randomUUID()
           : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      window.sessionStorage.setItem("hermes_sid", sid);
+      window.sessionStorage.setItem("brandcollabs_sid", sid);
     }
     return sid;
   } catch {

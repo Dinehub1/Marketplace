@@ -54,11 +54,12 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useReduceMotion } from "@/lib/motion";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
+import { offersRewarded } from "@/lib/ads";
 import { Icon } from "@/components/icons";
 import {
   EMPTY_RECORD,
@@ -511,7 +512,7 @@ export default function TapSprint() {
       return;
     }
     if (left <= 0) {
-      if (continueUsed) setPhase("over");
+      if (continueUsed || !offersRewarded()) setPhase("over");
       else setPhase("outOfLives");
       setMarker(null);
       return;
@@ -634,7 +635,10 @@ export default function TapSprint() {
               <Row label="A hit" value={`100 − your reaction in ms (${MIN_POINTS} minimum)`} />
               <Row label="A missed tap" value="One life" />
               <Row label="A dot you never reach" value="One life" />
-              <Row label="Running out of lives" value={`${EXTRA_LIVES} more for one rewarded video`} />
+              <Row
+                label="Running out of lives"
+                value={offersRewarded() ? `${EXTRA_LIVES} more for one rewarded video` : "The round ends"}
+              />
             </Card>
 
             <Press

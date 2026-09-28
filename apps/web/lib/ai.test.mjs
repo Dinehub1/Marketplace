@@ -1,7 +1,7 @@
 /**
  * The router's contract, tested without keys and without the network.
  *
- * Run: `node --test apps/web/lib/ai.test.mjs` (or `npm run test:ai -w @hermes/web`).
+ * Run: `node --test apps/web/lib/ai.test.mjs` (or `npm run test:ai -w @brandcollabs/web`).
  *
  * What this pins, and why each one is a real failure mode rather than a style rule:
  *  - a chain cannot lose its ₹0 last resort without the test failing (`KEY_ONLY` is the

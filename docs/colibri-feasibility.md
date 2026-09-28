@@ -6,7 +6,7 @@ writing products, on the box that also serves the live site?
 **Answer: no — parked before any download.** The licence is fine; the hardware is not.
 Nothing was installed, nothing was downloaded, no model was fetched. The item's own
 instruction was "do NOT install it until you have measured idle RAM, disk needed, and
-whether a single request starves `hermes-web`" — this is that measurement.
+whether a single request starves the web server" — this is that measurement.
 
 ## 1. Licence: verified by API, not by the blurb
 
@@ -53,7 +53,7 @@ experts are streamed from it.
 | RAM free, live stack running | **4,854 MB ≈ 4.7 GB** | `Get-CimInstance Win32_OperatingSystem → FreePhysicalMemory` |
 | Disk | 100 GB total, **44,531 MB free (43.5 GB)**, 57 % used | `df -m /c` |
 | Disk hardware | **QEMU QEMU HARDDISK, SCSI, 100 GB** — a *virtual* disk | `Get-CimInstance Win32_DiskDrive` |
-| CPU load at the time | 48 % (7 pm2 apps online: hermes-web, dropby-worker, expo-preview, shots-gallery, galaxy-site, hermes-dashboard, hermes-gateway) | `pm2 list` host metrics, `Win32_Processor.LoadPercentage` |
+| CPU load at the time | 48 % (7 pm2 apps online: marketplace, dropby-worker, expo-preview, shots-gallery, galaxy-site, agent-dashboard, agent-gateway) | `pm2 list` host metrics, `Win32_Processor.LoadPercentage` |
 
 Two further marks against it, both from colibri's own docs: virtualised disks are
 called out as "neutral to negative" for its `PIPE` read optimisation, and its floor
@@ -62,7 +62,7 @@ number was measured on a **25 GB** box — larger than this one.
 ## 4. The arithmetic, model by model
 
 - **OLMoE** is the only model that fits the disk (7 GB of 43.5 GB free) — and it wants
-  **8 GB RAM, i.e. this box's entire RAM**, while hermes-web + the product worker + the
+  **8 GB RAM, i.e. this box's entire RAM**, while marketplace + the product worker + the
   pm2 fleet already hold ~3.3 GB of it. It would swap to death (2.7 GB swap) and take
   the live site with it. It is also a 7B/1B-active model: not an engine for a writing
   product.
@@ -71,8 +71,8 @@ number was measured on a **25 GB** box — larger than this one.
 - Everything above it fails on both counts: 85–1,600 GB of weights against 43.5 GB free,
   and 16–32 GB RAM against 8.
 - And the one request that could be run here could not be run *safely*: colibri is
-  CPU+disk-bound and this box is the box serving `hermes-web` and the product engine,
-  so the item's third measurement ("whether a single request starves `hermes-web`")
+  CPU+disk-bound and this box is the box serving marketplace web and the product engine,
+  so the item's third measurement ("whether a single request starves marketplace")
   answers itself — a 4-core VM cannot run a streaming MoE and serve the live site.
 
 **Verdict: parked on hardware, not on licence.** Re-open only on a bigger host

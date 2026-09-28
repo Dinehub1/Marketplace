@@ -33,8 +33,8 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@hermes/core";
-import { paletteFor } from "@hermes/tokens";
+import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@brandcollabs/core";
+import { paletteFor } from "@brandcollabs/tokens";
 import { canDownloadFile, openResult, runJob, type JobResult } from "@/lib/tools";
 import { UnlockRow } from "@/components/unlock-row";
 import { loadCounter, recordBillNo } from "@/lib/invoice-counter";

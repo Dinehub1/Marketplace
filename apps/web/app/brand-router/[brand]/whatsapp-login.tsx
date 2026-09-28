@@ -98,9 +98,13 @@ export function WhatsAppLogin({ brand }: { brand: Brand }) {
         return;
       }
       try {
+        localStorage.setItem("brandcollabs_otp_token", j.token);
         localStorage.setItem("hermes_otp_token", j.token);
+        document.cookie = `brandcollabs_otp_token=${j.token}; path=/; max-age=3600`;
         document.cookie = `hermes_otp_token=${j.token}; path=/; max-age=3600`;
+        localStorage.setItem("brandcollabs_customer_phone", phone);
         localStorage.setItem("hermes_customer_phone", phone);
+        document.cookie = `brandcollabs_customer_phone=${phone}; path=/; max-age=3600`;
         document.cookie = `hermes_customer_phone=${phone}; path=/; max-age=3600`;
       } catch {}
       window.location.assign(`/dashboard`);

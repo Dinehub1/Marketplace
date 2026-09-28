@@ -62,7 +62,7 @@ import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import Svg, { Circle as SvgCircle, Path as SvgPath } from "react-native-svg";
 import Animated, {
   Easing,

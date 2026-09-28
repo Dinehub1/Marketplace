@@ -30,10 +30,11 @@ import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useRouter } from "expo-router";
 import { canOpen } from "@/lib/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
+import { offersRewarded } from "@/lib/ads";
 import { Icon } from "@/components/icons";
 import {
   EMPTY_RECORD,
@@ -312,7 +313,7 @@ export default function BlockClear() {
               <Row label="A broken combo" value="Back to ×1 on the next clear" />
               <Row
                 label="No moves left"
-                value={rewardUsed ? "End the round" : "One rewarded tray, then the round ends"}
+                value={rewardUsed || !offersRewarded() ? "End the round" : "One rewarded tray, then the round ends"}
               />
             </Card>
 
@@ -478,7 +479,7 @@ export default function BlockClear() {
                   None of the three pieces fits this board. Score {score}, {lines}{" "}
                   {lines === 1 ? "line" : "lines"}, best combo {bestCombo}.
                 </Text>
-                {rewardUsed ? (
+                {rewardUsed || !offersRewarded() ? (
                   <Press
                     accessibilityRole="button"
                     accessibilityLabel="End the round"

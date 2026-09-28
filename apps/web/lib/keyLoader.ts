@@ -7,7 +7,7 @@ import path from "node:path";
  * Order: the app's own `.env` file first, then `process.env`.
  *
  * The file wins on purpose. This used to `readFileSync` the absolute path
- * `C:/Users/Administrator/hermes-web/.env` precisely because a stale
+ * `C:/Users/Administrator/brandcollabs/.env` precisely because a stale
  * `SUPABASE_SERVICE_ROLE_KEY` in the scraper VM's system environment was shadowing the
  * real one — so checking `process.env` first would quietly reintroduce that bug on the
  * one machine that runs the imports.

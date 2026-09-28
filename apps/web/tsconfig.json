@@ -26,10 +26,10 @@
       "@/*": [
         "./*"
       ],
-      "@hermes/core": [
+      "@brandcollabs/core": [
         "../../packages/core/src/index.ts"
       ],
-      "@hermes/tokens": [
+      "@brandcollabs/tokens": [
         "../../packages/tokens/src/index.ts"
       ]
     }

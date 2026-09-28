@@ -1,5 +1,5 @@
 import { createClient } from "./supabase/server";
-import { cityCopy, DEFAULT_CITY, type City } from "@hermes/core";
+import { cityCopy, DEFAULT_CITY, type City } from "@brandcollabs/core";
 import { headers } from "next/headers";
 import type {
   BlogPost,
@@ -84,6 +84,59 @@ export type Business = {
   city: string | null;
 };
 
+const LEGACY_SLUG_MAP: Record<string, string> = {
+  brandcollabs: "sarkarmarketplace",
+  "brandcollabs-health": "sarkarhealth",
+  "brandcollabs-cars": "sarkarcars",
+  "brandcollabs-food": "sarkarfood",
+  "brandcollabs-ghar": "sarkarghar",
+  "brandcollabs-dukaan": "sarkardukaan",
+  "brandcollabs-mart": "sarkarmart",
+  "brandcollabs-wellness": "sarkarwellness",
+  "brandcollabs-ed": "sarkared",
+  "brandcollabs-skills": "sarkarskills",
+  "brandcollabs-legal": "sarkarlegal",
+  "brandcollabs-finance": "sarkarfinance",
+  "brandcollabs-travel": "sarkartravel",
+  "brandcollabs-connect": "sarkarconnect",
+  "brandcollabs-bazaar": "sarkarbazaar",
+  "brandcollabs-dost": "sarkardost",
+  "brandcollabs-services": "sarkarsarkar",
+  "brandcollabs-ai": "sarkar-ai",
+  "brandcollabs-pay": "sarkarpay",
+  "brandcollabs-jobs": "sarkarjobs",
+};
+
+function cleanBrandSarkar(brand: Brand): Brand {
+  let name = brand.name;
+  if (/sarkar/i.test(name)) {
+    if (brand.slug === "sarkarmarketplace" || brand.slug === "brandcollabs") {
+      name = "BrandCollabs";
+    } else {
+      name = name.replace(/sarkar\s*/gi, "BrandCollabs ").trim();
+    }
+  }
+  let slug = brand.slug;
+  if (slug === "sarkarmarketplace") slug = "brandcollabs";
+  else if (slug === "sarkarsarkar") slug = "brandcollabs-services";
+  else if (slug.startsWith("sarkar")) slug = slug.replace(/^sarkar-?/, "brandcollabs-");
+
+  const cleanCopy = (str: string | null) =>
+    str ? str.replace(/sarkarmarketplace/gi, "brandcollabs").replace(/sarkar/gi, "BrandCollabs") : str;
+
+  return {
+    ...brand,
+    name,
+    slug,
+    tagline: cleanCopy(brand.tagline),
+    description: cleanCopy(brand.description),
+    seo_title: cleanCopy(brand.seo_title),
+    seo_description: cleanCopy(brand.seo_description),
+    about_text: cleanCopy(brand.about_text),
+    mission_text: cleanCopy(brand.mission_text),
+  };
+}
+
 /** All brands, ordered for the dashboard. */
 export async function getBrands(): Promise<Brand[]> {
   const supabase = await createClient();
@@ -91,19 +144,26 @@ export async function getBrands(): Promise<Brand[]> {
     .from("brands")
     .select("*")
     .order("sort_order", { ascending: true });
-  return (data as Brand[]) ?? [];
+  return ((data as Brand[]) ?? []).map(cleanBrandSarkar);
 }
 
 /** One brand by its URL slug. */
 export async function getBrand(slug: string, city?: City): Promise<Brand | null> {
   const supabase = await createClient();
+  const lower = slug.toLowerCase();
+  const candidates = [lower];
+  if (LEGACY_SLUG_MAP[lower]) {
+    candidates.push(LEGACY_SLUG_MAP[lower]);
+  }
   const { data } = await supabase
     .from("brands")
     .select("*")
-    .eq("slug", slug.toLowerCase())
+    .in("slug", candidates)
     .maybeSingle();
-  const brand = (data as Brand) ?? null;
-  if (!brand || !city || city.slug === DEFAULT_CITY.slug) return brand;
+  let brand = (data as Brand) ?? null;
+  if (!brand) return null;
+  brand = cleanBrandSarkar(brand);
+  if (!city || city.slug === DEFAULT_CITY.slug) return brand;
   // One place, so every consumer (header, footer, landing, about, the default
   // metadata) gets city-correct copy without threading a city through them all.
   return {

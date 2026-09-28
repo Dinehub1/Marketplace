@@ -9,7 +9,7 @@
  *
  * Three honesty rules, all of them from measurements rather than taste:
  *
- *   1. The language list is `TRANSLATE_LANGS` from `@hermes/core` — the *same array*
+ *   1. The language list is `TRANSLATE_LANGS` from `@brandcollabs/core` — the *same array*
  *      the job route validates against, so the picker cannot offer a code the route
  *      answers with a 400 (item 25's lesson: the PDF screen owned a second copy of a
  *      grammar and drifted in both directions). Gujarati and Telugu are in neither
@@ -33,7 +33,7 @@ import { useMemo, useState } from "react";
 import {
   ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
-import { TRANSLATE_LANG_NAMES, TRANSLATE_LANGS, TRANSLATE_LANGS_HELP } from "@hermes/core";
+import { TRANSLATE_LANG_NAMES, TRANSLATE_LANGS, TRANSLATE_LANGS_HELP } from "@brandcollabs/core";
 import {
   formatBytes, openResult, pickFile, runJob,
   type JobResult, type PickedFile,
@@ -61,7 +61,7 @@ type TranslateMeta = {
 
 /**
  * How each language names itself — a picker for Indian languages should not make a
- * Tamil reader find "Tamil" in English. Codes come from `@hermes/core`; a code with no
+ * Tamil reader find "Tamil" in English. Codes come from `@brandcollabs/core`; a code with no
  * label here falls back to its English name rather than rendering an empty chip, so
  * adding a language upstream can never produce a blank button.
  */

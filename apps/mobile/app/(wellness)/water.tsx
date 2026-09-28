@@ -26,7 +26,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import { useRouter } from "expo-router";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import Svg, { Path as SvgPath } from "react-native-svg";
 import Animated, {
   Easing,

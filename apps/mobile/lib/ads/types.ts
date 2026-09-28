@@ -75,7 +75,13 @@ export type AdOutcome = AdReward | AdDismissed | AdFailed;
  * average the second into the first.
  */
 export type ImpressionRevenue = {
-  network: NetworkId;
+  /**
+   * The winning network, or "unknown" when the host does not say. react-native-google-
+   * mobile-ads does not expose the winning ad source for full-screen formats, so with
+   * bidders linked this is "unknown"; per-network revenue comes from AdMob's mediation
+   * report instead (`ad_source_daily`, synced server-side).
+   */
+  network: NetworkId | "unknown";
   placement: PlacementId;
   format: AdFormat;
   valueMicros: number | null;
