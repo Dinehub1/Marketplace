@@ -149,8 +149,12 @@ const CANVAS_DARK = "#0a0a0d";
 
 const config: ExpoConfig = {
   name: BRAND_NAME,
-  // The marketplace keeps its original slug: it is already an EAS project, and a new
-  // slug would silently fork the build history away from the published app.
+  // Every EAS project in EAS_PROJECT_ID (targets.mjs) lives on this account. EAS checks the
+  // project id against owner/slug, so a build without it would look for the project under
+  // whoever happens to be logged in.
+  owner: "brandcollabs",
+  // The marketplace keeps its original slug, `sarkar-marketplace`: its EAS project is
+  // named after it, and the slug is also what existing store tooling knows it by.
   slug: process.env.EXPO_SLUG ?? (target.id === "sarkarmarketplace" ? "sarkar-marketplace" : target.id),
   scheme: BRAND_SLUG,
   version: "1.0.0",
