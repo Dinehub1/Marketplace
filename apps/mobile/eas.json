@@ -75,7 +75,8 @@
       "extends": "production",
       "channel": "passport-photo",
       "env": {
-        "APP_TARGET": "passport-photo"
+        "APP_TARGET": "passport-photo",
+        "EXPO_PUBLIC_IAP_ENABLED": "1"
       }
     },
     "pdf-tools": {

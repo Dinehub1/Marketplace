@@ -184,6 +184,41 @@ const AD_MEDIATION: string[] = ADS_ENABLED
 /** SKAdNetwork ids for AdMob and every bidder; regenerate with scripts/sync-skadnetwork-ids.mjs. */
 const SKADNETWORK_IDS: string[] = skadnetwork.ids;
 
+/**
+ * Store billing (RevenueCat), opt-in per build like ads. A digital file sold inside the app
+ * must go through Apple / Google billing, so a target that sells one sets `iap: true` in
+ * targets.mjs and its EAS profile turns this on (scripts/make-eas-profiles.mjs).
+ *
+ * Both failures are thrown here, before a build starts:
+ *   - on, but no RevenueCat public key for the platform being built → every purchase would
+ *     fail at runtime, which looks exactly like nobody buying;
+ *   - on, for a target that sells nothing → Play's BILLING permission and a store-billing
+ *     declaration on an app with nothing to buy.
+ */
+const IAP_ENABLED = process.env.EXPO_PUBLIC_IAP_ENABLED === "1";
+const REVENUECAT_IOS_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY ?? "";
+const REVENUECAT_ANDROID_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY ?? "";
+if (IAP_ENABLED) {
+  const targetSells = (target as { iap?: boolean }).iap === true;
+  if (!targetSells) {
+    throw new Error(
+      `EXPO_PUBLIC_IAP_ENABLED=1 but target "${APP_TARGET}" sells nothing in-app (no \`iap: true\` in targets.mjs).`,
+    );
+  }
+  const platform = process.env.EAS_BUILD_PLATFORM;
+  const missing =
+    platform === "ios" ? !REVENUECAT_IOS_KEY
+    : platform === "android" ? !REVENUECAT_ANDROID_KEY
+    : !REVENUECAT_IOS_KEY && !REVENUECAT_ANDROID_KEY;
+  if (missing) {
+    throw new Error(
+      `EXPO_PUBLIC_IAP_ENABLED=1 needs the RevenueCat public SDK key for ${platform ?? "at least one platform"} ` +
+        `(EXPO_PUBLIC_REVENUECAT_IOS_KEY / EXPO_PUBLIC_REVENUECAT_ANDROID_KEY) for target "${APP_TARGET}". ` +
+        `Set it as an EAS environment variable on this app's project.`,
+    );
+  }
+}
+
 /** Canvas colours, from packages/tokens. The splash must match the app's first
  *  painted frame or launch shows a flash of the wrong background. */
 const CANVAS_LIGHT = "#fbfbfd";
@@ -397,6 +432,10 @@ const config: ExpoConfig = {
     adsEnabled: ADS_ENABLED,
     // Which bidders' adapters this binary carries, for lib/ads/config.ts.
     adMediation: AD_MEDIATION,
+    // Read back at runtime by `lib/iap.ts`. The RevenueCat keys here are the *public* SDK
+    // keys (appl_… / goog_…), made to ship in a binary; the secret key lives on the server.
+    iapEnabled: IAP_ENABLED,
+    ...(IAP_ENABLED ? { revenuecatIosKey: REVENUECAT_IOS_KEY, revenuecatAndroidKey: REVENUECAT_ANDROID_KEY } : {}),
   },
 };
 
