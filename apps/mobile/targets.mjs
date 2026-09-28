@@ -304,30 +304,31 @@ export const FIRST_ROUTE = {
  * fifteen EAS projects. This used to be one `EAS_PROJECT_ID` environment variable for the
  * whole fleet, which can only ever be right for one app and silently wrong for the rest.
  *
- * `null` means the project has not been created yet. Create it with
+ * All fifteen live under the `brandcollabs` Expo account (`owner` in app.config.ts), each
+ * named by the target's slug — `@brandcollabs/<slug>`. A project id only works together with
+ * that owner and slug, so change none of the three alone.
+ *
+ * A new target starts as `null` (the project does not exist yet). Create it with
  *   APP_TARGET=<id> npx eas-cli init
  * and paste the id it prints here. `check-fleet --require-ready` (the release gate) refuses
  * a target that is still null, and any run refuses two targets sharing one id.
- *
- * The marketplace (slug `sarkar-marketplace`) already has an EAS project from before the
- * fleet existed; its id belongs here too.
  */
 export const EAS_PROJECT_ID = {
-  wellness: null,
-  "passport-photo": null,
-  "pdf-tools": null,
-  "room-redesign": null,
-  "subtitles-voice": null,
-  "resume-builder": null,
-  "shop-toolkit": null,
-  toolbox: null,
-  sarkarhealth: null,
-  sarkarmarketplace: null,
-  sarkarcars: null,
-  "tap-sprint": null,
-  "word-duel": null,
-  "block-clear": null,
-  "merge-tiles": null,
+  wellness: "0deed7b2-ae8c-4106-90a3-c61bb14c0c2c",
+  "passport-photo": "901d395d-aab8-49ab-8055-57d7de902519",
+  "pdf-tools": "3166016b-a2aa-4711-b050-3cbcd4e5d57b",
+  "room-redesign": "1e80387c-3b15-47cb-944f-65d9bef46080",
+  "subtitles-voice": "10642e6d-1a33-42c2-9f5c-e987eaa0e827",
+  "resume-builder": "ab7b814c-a0e1-4000-9aeb-457131351c19",
+  "shop-toolkit": "935cfeb0-d03d-431f-a42e-d1311361025e",
+  toolbox: "92fb8572-6116-44bc-bc12-4b2487681295",
+  sarkarhealth: "31a274eb-cf87-44d5-b44e-024e3c591be8",
+  sarkarmarketplace: "56b8bb46-e2ff-419b-8149-b5dbb6f796e4",
+  sarkarcars: "500c9b8a-a2f0-4b39-b4fd-b96c83f500a3",
+  "tap-sprint": "7e48abbe-ce9f-4815-ae8b-a99e215f3834",
+  "word-duel": "a70ffaa6-8ba5-4521-a197-489c68e07998",
+  "block-clear": "de3f9135-c585-4310-af61-11edf629cf7f",
+  "merge-tiles": "9f7bdccd-a12b-44d1-96e6-bd473d45fb0e",
 };
 
 /** The EAS project id for a target, or null when its project has not been created. */
