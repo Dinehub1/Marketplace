@@ -40,8 +40,8 @@ Names were chosen for this rename and have **not** had a trademark search. Do on
   host with a 308, path and query preserved, so indexed URLs and shared links keep working.
 - Mobile: the three directory targets are now `swasthpath`, `sheharbazaar`, `gaadighar` (`apps/mobile/targets.mjs`,
   `eas.json`, `assets/targets/`).
-- Database: `supabase/migrations/20260929000000_rename_sarkar_brands.sql` renames `brands`, `business_events` and
-  `apps` rows, and `20260929000001_…` fixes the "Sarkar Marketplace network" line in every `about_text`. Both were
+- Database: `supabase/migrations/20260928201415_rename_sarkar_brands.sql` renames `brands`, `business_events` and
+  `apps` rows, and `20260928201646_…` fixes the "Sarkar Marketplace network" line in every `about_text`. Both were
   applied to production on 2026-09-29, together with the VM deploy of the renamed code.
 
 ## DNS (Cloudflare)
