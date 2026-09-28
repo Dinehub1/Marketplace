@@ -41,14 +41,14 @@ Names were chosen for this rename and have **not** had a trademark search. Do on
 - Mobile: the three directory targets are now `swasthpath`, `sheharbazaar`, `gaadighar` (`apps/mobile/targets.mjs`,
   `eas.json`, `assets/targets/`).
 - Database: `supabase/migrations/20260929000000_rename_sarkar_brands.sql` renames `brands`, `business_events` and
-  `apps` rows. **It is written but not applied.** Until it runs, the new hostnames answer 404 because the `brands`
-  table still holds the old slugs.
+  `apps` rows, and `20260929000001_…` fixes the "Sarkar Marketplace network" line in every `about_text`. Both were
+  applied to production on 2026-09-29, together with the VM deploy of the renamed code.
 
 ## DNS (Cloudflare)
 
 `dropby.co.in` is on Cloudflare (nameservers `*.ns.cloudflare.com`) and uses a proxied wildcard: an unknown
 subdomain already resolves to the same two Cloudflare addresses as `sarkarhealth.dropby.co.in`. No per-brand CNAME
-has to be added or removed; a new hostname starts working the moment its `brands` row exists.
+has to be added or removed, and the `hermes` tunnel ingress has a matching `*.dropby.co.in` rule; a new hostname starts working the moment its `brands` row exists.
 
 ## Deliberately not renamed
 
@@ -62,3 +62,8 @@ These are permanent identifiers. Changing them after a store or Expo registratio
 - "sarkari" (Hindi for governmental) in SEO keywords such as "sarkari naukri".
 
 If the bundle id has not been submitted to a store yet, it can still be changed; decide before the first upload.
+
+## Vercel
+
+`sheharbazaar.dropby.co.in` was added to project `marketplace-web` beside the old `sarkarmarketplace` alias. Neither
+serves traffic while DNS points brand hosts at the VM tunnel; they matter only once brand hosts move to Vercel.
