@@ -266,6 +266,8 @@ const config: ExpoConfig = {
                 "Allow tracking so the ads you see can be relevant. Without it the app still works and shows non-personalised ads.",
             },
           ],
+          // The ad SDK's Android artifacts need Kotlin 2.3; see the plugin.
+          ["./plugins/with-ads-kotlin", {}],
         ] as [string, Record<string, string>][])
       : []),
     [
