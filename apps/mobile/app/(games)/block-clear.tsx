@@ -28,6 +28,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useRouter } from "expo-router";
+import { canOpen } from "@/lib/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { alpha, radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
@@ -572,16 +573,20 @@ export default function BlockClear() {
               </Text>
             </Press>
 
-            <Press
-              accessibilityRole="link"
-              accessibilityLabel="Passport photo maker, forty-nine rupees"
-              onPress={() => router.push("/passport")}
-              style={[s.cross, { borderColor: c.hairline }]}
-            >
-              <Text variant="meta" tone="ink2">
-                Also in this app: a print-ready passport photo sheet for ₹49
-              </Text>
-            </Press>
+            {/* Only when this build can open it. Every screen is compiled into every app,
+                but the passport screen needs the camera, which a game does not declare. */}
+            {canOpen("/passport") ? (
+              <Press
+                accessibilityRole="link"
+                accessibilityLabel="Passport photo maker, forty-nine rupees"
+                onPress={() => router.push("/passport")}
+                style={[s.cross, { borderColor: c.hairline }]}
+              >
+                <Text variant="meta" tone="ink2">
+                  Also in this app: a print-ready passport photo sheet for ₹49
+                </Text>
+              </Press>
+            ) : null}
           </View>
         ) : null}
       </View>

@@ -1,5 +1,5 @@
 import type { ExpoConfig } from "expo/config";
-import { TARGETS, byId, familyOf, firstRouteFor } from "./targets.mjs";
+import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targets.mjs";
 
 /**
  * Native app configuration for every app in the fleet.
@@ -195,14 +195,21 @@ const config: ExpoConfig = {
     // listing and a reason for someone to decline the install — and a permission set
     // that never changes is itself evidence the listings are one app repeated.
     permissions: ANDROID_PERMISSIONS,
-    intentFilters: [
-      {
-        action: "VIEW",
-        autoVerify: true,
-        data: [{ scheme: "https", host: "dropby.co.in", pathPrefix: "/business" }],
-        category: ["BROWSABLE", "DEFAULT"],
-      },
-    ],
+    // Business links open the business page, which only a directory app has. This was on
+    // every target, so fifteen installed apps all claimed the same verified links and
+    // Android had to ask which one to open — and a game that won would send the link to
+    // a screen it is not allowed to show (lib/routes.ts).
+    intentFilters:
+      familyOf(target) === "directory"
+      ? [
+          {
+            action: "VIEW",
+            autoVerify: true,
+            data: [{ scheme: "https", host: "dropby.co.in", pathPrefix: "/business" }],
+            category: ["BROWSABLE", "DEFAULT"],
+          },
+        ]
+      : [],
   },
 
   plugins: [
@@ -329,7 +336,10 @@ const config: ExpoConfig = {
       // can never carry a stale copy of who owns which category.
       ...(target.ads ? { ads: target.ads } : {}),
     },
-    eas: { projectId: process.env.EAS_PROJECT_ID ?? "" },
+    // Per target, from targets.mjs — each store app is its own EAS project. Omitted rather
+    // than written empty when the project does not exist yet, so EAS reports "no project"
+    // instead of trying to build under an id of "".
+    ...(easProjectIdFor(target) ? { eas: { projectId: easProjectIdFor(target) } } : {}),
     // Read back at runtime by `lib/ads/config.ts`. It is in `extra` as well as the
     // environment because `process.env.EXPO_PUBLIC_*` is inlined by Metro only for
     // statically written references — a value that reaches the runtime through
