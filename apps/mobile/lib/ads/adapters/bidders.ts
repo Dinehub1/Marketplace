@@ -19,11 +19,11 @@
  *   3. **A switch that is one line.** Enabling a bidder is turning it on in remote
  *      config once its account and adapter exist; no screen changes.
  *
- * Until those accounts exist, `available` is false and the facade refuses with
- * `sdk_unavailable` rather than silently pretending a network is in the auction.
+ * `available` means the adapter is compiled into this binary (`MEDIATION_ADAPTERS`).
+ * It still bids only once the network is added as a bidding source in the AdMob console.
  */
 import type { AdFormat, AdNetworkAdapter, AdOutcome, NetworkId, PlacementId } from "../types";
-import { SOURCE_FORMATS } from "../config";
+import { MEDIATION_ADAPTERS, SOURCE_FORMATS } from "../config";
 
 /** Why a bidder is not in the auction yet, or ever. Mirrors the Networks screen. */
 export type SourceStatus = {
@@ -41,15 +41,21 @@ export const BIDDERS: SourceStatus[] = [
   {
     id: "inmobi",
     label: "InMobi",
-    available: false,
-    deferredReason: "Account not opened yet — needs a live app and a GST invoice for India payouts",
-    exclusions: [],
+    available: MEDIATION_ADAPTERS.includes("inmobi"),
+    deferredReason: MEDIATION_ADAPTERS.includes("inmobi")
+      ? null
+      : "Adapter not in this build (EXPO_PUBLIC_AD_MEDIATION)",
+    exclusions: [
+      "India payouts need a GST invoice, or an emailed GST-exemption declaration to bd-finance@inmobi.com",
+    ],
   },
   {
     id: "applovin",
-    label: "AppLovin MAX",
-    available: false,
-    deferredReason: "Account not opened yet — joins as a bidding source inside AdMob mediation",
+    label: "AppLovin",
+    available: MEDIATION_ADAPTERS.includes("applovin"),
+    deferredReason: MEDIATION_ADAPTERS.includes("applovin")
+      ? null
+      : "Adapter not in this build (EXPO_PUBLIC_AD_MEDIATION)",
     exclusions: [
       "Must be excluded from any child-directed or Families app: AppLovin left Play's Self-Certified Ads SDK programme",
     ],

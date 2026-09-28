@@ -1,5 +1,6 @@
 import type { ExpoConfig } from "expo/config";
 import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targets.mjs";
+import skadnetwork from "./plugins/skadnetwork-ids.json";
 
 /**
  * Native app configuration for every app in the fleet.
@@ -142,6 +143,22 @@ if (ADS_ENABLED && (!ADMOB_ANDROID_APP_ID || !ADMOB_IOS_APP_ID)) {
   );
 }
 
+/**
+ * The networks that bid inside the AdMob auction, compiled in as adapters by
+ * `plugins/with-ad-mediation`. Both by default; `EXPO_PUBLIC_AD_MEDIATION` overrides per
+ * build ("inmobi" alone for a child-directed app — AppLovin is not Families-certified —
+ * or "" for AdMob demand only). Empty whenever ads are off: no SDK, no adapters.
+ */
+const AD_MEDIATION: string[] = ADS_ENABLED
+  ? (process.env.EXPO_PUBLIC_AD_MEDIATION ?? "applovin,inmobi")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+  : [];
+
+/** SKAdNetwork ids for AdMob and every bidder; regenerate with scripts/sync-skadnetwork-ids.mjs. */
+const SKADNETWORK_IDS: string[] = skadnetwork.ids;
+
 /** Canvas colours, from packages/tokens. The splash must match the app's first
  *  painted frame or launch shows a flash of the wrong background. */
 const CANVAS_LIGHT = "#fbfbfd";
@@ -275,8 +292,13 @@ const config: ExpoConfig = {
               // still serves non-personalised rather than failing.
               userTrackingUsageDescription:
                 "Allow tracking so the ads you see can be relevant. Without it the app still works and shows non-personalised ads.",
+              // Without these, iOS cannot attribute an install to the network that
+              // showed the ad, and every bidder in the auction bids lower for it.
+              skAdNetworkItems: SKADNETWORK_IDS,
             },
           ],
+          // The bidders' native adapters; see the plugin for the version pins.
+          ["./plugins/with-ad-mediation", { networks: AD_MEDIATION }],
           // The ad SDK's Android artifacts need Kotlin 2.3; see the plugin.
           ["./plugins/with-ads-kotlin", {}],
         ] as [string, Record<string, string>][])
@@ -349,6 +371,8 @@ const config: ExpoConfig = {
     // statically written references — a value that reaches the runtime through
     // expo-constants is the one that cannot be tree-shaken away by a minifier.
     adsEnabled: ADS_ENABLED,
+    // Which bidders' adapters this binary carries, for lib/ads/config.ts.
+    adMediation: AD_MEDIATION,
   },
 };
 

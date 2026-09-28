@@ -64,7 +64,7 @@ import type {
   InterstitialAd,
   RewardedAd as RewardedAdType,
 } from "react-native-google-mobile-ads";
-import { HAS_LIVE_UNITS, unitFor } from "../config";
+import { HAS_LIVE_UNITS, MEDIATION_ADAPTERS, unitFor } from "../config";
 import { setConsentState, setPrivacyOptions } from "../consent";
 import { recordAdEvent } from "../events";
 import type {
@@ -281,7 +281,10 @@ function toRevenue(
   const p = (payload ?? {}) as { value?: number; currency?: string; precision?: string };
   const raw = typeof p.value === "number" ? p.value : null;
   return {
-    network: "admob",
+    // The PAID event does not name the winning ad source. With no bidder linked the
+    // winner can only be AdMob; with one linked, naming AdMob would credit it with
+    // impressions another network won, so the honest label is "unknown".
+    network: MEDIATION_ADAPTERS.length === 0 ? "admob" : "unknown",
     placement,
     format,
     valueMicros: raw === null ? null : Math.round(raw * 1_000_000),
