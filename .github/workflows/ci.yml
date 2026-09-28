@@ -29,6 +29,14 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Node 22 ships npm 10, but package-lock.json is written by npm 11, and the two
+      # disagree about the react-native override: npm 10 rejects the lock
+      # ("@react-native/metro-config@0.87.1 does not satisfy 0.86.3") where npm 11
+      # accepts it. Install with the npm that wrote the lock, so CI checks the tree
+      # that is actually installed everywhere else.
+      - name: Use npm 11
+        run: npm install -g npm@11
+
       # `npm ci` across workspaces. It fails if package-lock.json is out of sync
       # with any package.json, which is the check that actually catches a
       # half-committed dependency change.
@@ -103,6 +111,14 @@ jobs:
           node-version: 22
           cache: npm
 
+      # Node 22 ships npm 10, but package-lock.json is written by npm 11, and the two
+      # disagree about the react-native override: npm 10 rejects the lock
+      # ("@react-native/metro-config@0.87.1 does not satisfy 0.86.3") where npm 11
+      # accepts it. Install with the npm that wrote the lock, so CI checks the tree
+      # that is actually installed everywhere else.
+      - name: Use npm 11
+        run: npm install -g npm@11
+
       - name: Install
         run: npm ci
 
@@ -126,7 +142,8 @@ jobs:
         working-directory: apps/mobile
         run: |
           set -euo pipefail
-          for t in sarkarmarketplace breathe toolbox tap-sprint; do
+          # `wellness` was `breathe` until the six practices became one app.
+          for t in sarkarmarketplace wellness toolbox tap-sprint; do
             echo "::group::export $t"
             APP_TARGET="$t" npx expo export --platform all --output-dir "/tmp/export-$t"
             echo "::endgroup::"

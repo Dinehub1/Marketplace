@@ -297,6 +297,43 @@ export const FIRST_ROUTE = {
   "merge-tiles": "/merge-tiles",
 };
 
+/**
+ * The EAS project each store app builds under — one per target.
+ *
+ * EAS ties a project to one slug, and every target has its own slug, so fifteen apps are
+ * fifteen EAS projects. This used to be one `EAS_PROJECT_ID` environment variable for the
+ * whole fleet, which can only ever be right for one app and silently wrong for the rest.
+ *
+ * `null` means the project has not been created yet. Create it with
+ *   APP_TARGET=<id> npx eas-cli init
+ * and paste the id it prints here. `check-fleet --require-ready` (the release gate) refuses
+ * a target that is still null, and any run refuses two targets sharing one id.
+ *
+ * The marketplace (slug `sarkar-marketplace`) already has an EAS project from before the
+ * fleet existed; its id belongs here too.
+ */
+export const EAS_PROJECT_ID = {
+  wellness: null,
+  "passport-photo": null,
+  "pdf-tools": null,
+  "room-redesign": null,
+  "subtitles-voice": null,
+  "resume-builder": null,
+  "shop-toolkit": null,
+  toolbox: null,
+  sarkarhealth: null,
+  sarkarmarketplace: null,
+  sarkarcars: null,
+  "tap-sprint": null,
+  "word-duel": null,
+  "block-clear": null,
+  "merge-tiles": null,
+};
+
+/** The EAS project id for a target, or null when its project has not been created. */
+export const easProjectIdFor = (target) =>
+  (target && typeof EAS_PROJECT_ID[target.id] === "string" && EAS_PROJECT_ID[target.id]) || null;
+
 /** The route a target opens on, or null when that screen is not built yet. */
 export const firstRouteFor = (target) =>
   target && Object.prototype.hasOwnProperty.call(FIRST_ROUTE, target.id)

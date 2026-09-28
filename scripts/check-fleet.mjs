@@ -15,7 +15,9 @@
  *   • the icon, adaptive icon and splash exist on disk, because app.config.ts references
  *     per-target art that a missing file turns into a build failure;
  *   • the first screen is either a route that exists or an honest null;
- *   • the declared permissions include INTERNET and nothing the store cannot see.
+ *   • the declared permissions include INTERNET and nothing the store cannot see;
+ *   • each EAS project id is unique, and with --require-ready, present — every store
+ *     app is its own EAS project (EAS_PROJECT_ID in targets.mjs).
  *
  * It also prints how much of each listing is actually built, so "ready to publish" is a
  * number rather than a feeling.
@@ -80,7 +82,9 @@ function productReadiness(productsTs, slugs) {
   return { total: slugs.length, ready, missing };
 }
 
-const seen = { slug: new Map(), bundle: new Map(), name: new Map() };
+const seen = { slug: new Map(), bundle: new Map(), name: new Map(), eas: new Map() };
+/** Targets whose EAS project has not been created yet. A store build cannot run without one. */
+const noEasProject = [];
 const failures = [];
 const rows = [];
 
@@ -122,6 +126,12 @@ for (const t of TARGETS) {
   dup(seen.slug, slug, 'slug');
   dup(seen.bundle, bundle, 'bundle id');
   dup(seen.name, name, 'name');
+
+  // Two targets on one EAS project would build under each other's slug and share an
+  // update channel namespace. Absent is only a failure for a release run (below).
+  const easId = cfg.extra?.eas?.projectId;
+  if (easId) dup(seen.eas, easId, 'EAS project id');
+  else noEasProject.push(t.id);
 
   // Art must exist: app.config.ts points at per-target files, so a missing one is a
   // build failure rather than a fallback to the previous app's icon.
@@ -195,6 +205,19 @@ if (owed.length) {
 if (failures.length) {
   console.error(`\n✗ ${failures.length} defect(s) that would fail a build or a review:`);
   for (const f of failures) console.error(`    ${f}`);
+  process.exit(1);
+}
+
+if (noEasProject.length) {
+  console.log(
+    `\n⚠  ${noEasProject.length} target(s) have no EAS project yet (EAS_PROJECT_ID in targets.mjs):` +
+      `\n    ${noEasProject.join(', ')}` +
+      `\n  Create one with: APP_TARGET=<id> npx eas-cli init`,
+  );
+}
+
+if (REQUIRE_READY && noEasProject.length) {
+  console.error(`\n✗ --require-ready: ${noEasProject.length} target(s) have no EAS project id.`);
   process.exit(1);
 }
 

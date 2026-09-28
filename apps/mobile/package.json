@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "prebuild": "expo prebuild --clean",
+    "_comment_eas_npm": "EAS Build runs this before it installs dependencies. eas.json pins Node 22, whose bundled npm 10 rejects package-lock.json (written by npm 11) at `npm ci` over the react-native override. eas.json has no npm version field, so the npm that wrote the lock is installed here. CI does the same in .github/workflows/ci.yml.",
+    "eas-build-pre-install": "npm install -g npm@11",
     "check:targets": "node ../../scripts/check-targets.mjs",
     "check:fleet": "node ../../scripts/check-fleet.mjs",
     "_comment_release": "The one gate a store build must pass. check-targets refuses two listings too alike to survive review (Apple 4.3 / Play spam); check-fleet --require-ready additionally refuses any listing whose first screen is not built, because such an app opens on nothing and cannot be submitted. Both are cheap and run before EAS is invoked, so a build that would be rejected fails here instead.",
