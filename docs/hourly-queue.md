@@ -2623,3 +2623,69 @@ after the probe from a saved state instead of a fresh load (a `page.screenshot` 
 or leave the pictures as they are and delete the stale claims from `app-shots.mjs`. Do not do both
 half-way: a picture described wrongly is worse than a picture of an empty screen.
 
+### 69. The two thin listings tell the truth — and the web export builds again — DONE 2026-09-20
+
+Two things, one of which was found while collecting the evidence for the other.
+
+**1. The store-facing copy now matches the build.** `check-fleet` has printed
+`shop-toolkit … 1/7` and `toolbox … 6/15` since the dashboard landed. Both apps disclose
+their gaps on their own front door, but the *listing* did not: shop-toolkit advertised a
+catalogue that does not exist. The rule in `status-and-next-plan.md` is "narrow the listing's
+name and screenshots to what exists, or build the jobs" — this hour narrows.
+
+- `apps/mobile/targets.mjs` — shop-toolkit's name went from "Shop Toolkit: Bills & Catalogue"
+  to **"Shop Toolkit: GST Bills"**, its tagline to the invoice product's own promise, and its
+  ASO dropped `catalogue maker` / `udyam` for keywords the one built job actually runs.
+  Toolbox dropped `id photo` — that is passport-photo's job, in a different listing — and
+  every keyword that remains names a product this app has a screen for.
+- `apps/web/app/developer/catalog.ts` — the same name, because `check:developer` asserts the
+  website against `targets.mjs`. A website publishing a name the store does not is the drift
+  that gate exists to catch.
+- `apps/mobile/app/shop/index.tsx` — the six unbuilt jobs were headed "Promised by this
+  listing". They are not promised any more; the section reads "On the plan, not in this build".
+- **The roadmap stays.** The six and the nine are still in `products` and still on the grid as
+  COMING SOON. The in-app list was never the lie; the store name was. `check-fleet` still says
+  1/7 and 6/15, which is the honest readiness number, not a listing claim.
+
+**2. `expo export --platform web` was already broken, and is fixed.** Found while producing the
+bundle evidence below. The export died with:
+
+```
+Importing native-only module "react-native/Libraries/Utilities/codegenNativeComponent" on web
+from: react-native-google-mobile-ads/…/GoogleMobileAdsBannerViewNativeComponent.ts
+```
+
+reached through `lib/ads/adapters/admob.ts` → `lib/ads/index.ts` → `components/ad-slot.tsx`.
+`admob.ts`'s header argues that a runtime `require` inside try/catch lets one codebase serve a
+build without the SDK — true at runtime, **false at bundle time**: Metro collects `require`
+calls regardless of reachability, so the native SDK entered the web graph even with
+`ADS_ENABLED` false, which is the state the design doc promises "keeps working untouched". It
+also took `npm run shots` down with it, because `app-shots.mjs` exports before it captures.
+
+- `apps/mobile/lib/ads/adapters/admob.web.ts` (new) — a no-op adapter behind Metro's platform
+  extension. `supports()` is false, `show()` answers `web_unsupported`, `init()` answers false,
+  `isReady()` false, and `setSsvOptions` is exported as a no-op because `lib/tools.ts` requires
+  it before a rewarded request. Web is not an ad surface, so it records no `ad_events` row: an
+  error on a surface never meant to serve ads is noise in the one table the eCPM loop reads.
+- `admob.ts`'s header now names the web file and why. Native behaviour is unchanged.
+
+Evidence, from the repo root:
+
+- `node scripts/check-targets.mjs` → PASSED — 15 targets, 105 pairs compared, 0 too similar.
+- `node scripts/check-developer.mjs` → ✓ the developer website agrees with the fleet.
+- `node scripts/check-fleet.mjs` → 15 targets resolve; every state `ok`.
+- `npm run typecheck` → clean in all three workspaces, including the new `.web.ts`.
+- `APP_TARGET=shop-toolkit npx expo config --type public --json` →
+  `name: "Shop Toolkit: GST Bills"`, `tagline: "Numbered GST bills with a UPI QR, made on your
+  phone"`, `adsEnabled: false`.
+- `npx expo export --platform web` → **exit 0**, 2.8 MB; the bundle carries the new screen copy
+  ("On the plan, not in this build") and `grep react-native-google-mobile-ads
+  dist/_expo/static/js/web` → **0 hits** (was a hard build failure before).
+
+**Still owed, unchanged:** the six shop jobs and the nine toolbox jobs are still unbuilt, and
+resume-builder is still 2/3 (`application-writer`). This hour made the listings honest about
+that; it did not build them. **A real risk remains and is not fixed by copy:** an app whose
+front door lists more COMING SOON than READY is the "minimum functionality" shape Play rejects,
+so toolbox (6 ready / 9 soon) and shop-toolkit (1 ready / 6 soon) should be the *last*
+submitted, after the single-job apps. And the submission chain is still the Play/AdMob
+credentials — untouched here.
