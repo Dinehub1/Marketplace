@@ -49,7 +49,7 @@ screen and dropping the shared hub, and add a target back to `targets.mjs`.
 Catalogue: **13 of 30 products have a screen**; the Toolbox app declares 15 and has built 6.
 
 Web is separate and already live: **27 brand sites** on one multi-tenant Next.js router,
-plus the three data brands (`sarkarhealth`, `sarkarmarketplace`, `sarkarcars`).
+plus the three data brands (`swasthpath`, `sheharbazaar`, `gaadighar`).
 
 ## Next plan, in order
 

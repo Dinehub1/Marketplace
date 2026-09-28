@@ -24,8 +24,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SarkarDash — One Platform",
-  description: "All Sarkar brands on one multi-tenant platform.",
+  title: "Dropby — One Platform",
+  description: "All Dropby brands on one multi-tenant platform.",
 };
 
 export const viewport: Viewport = {

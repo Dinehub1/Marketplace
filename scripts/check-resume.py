@@ -77,7 +77,7 @@ TYPICAL = {
         {"role": "Senior Engineer", "org": "PaisaFlow", "from": "2023", "to": "now",
          "bullets": ["Led the ledger rewrite that cut settlement time from hours to minutes.",
                      "Owned the reconciliation job and its on-call runbook."]},
-        {"role": "Engineer", "org": "SarkarPay", "from": "2020", "to": "2023",
+        {"role": "Engineer", "org": "Kadam Pay", "from": "2020", "to": "2023",
          "bullets": ["Built the UPI webhook path and the retry queue behind it."]},
     ],
     "education": [{"course": "B.E. Computer Science", "org": "RGPV", "from": "2016", "to": "2020",

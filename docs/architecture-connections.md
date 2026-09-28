@@ -36,7 +36,7 @@ deliverable that talks to them.**
    │                                    │                        │
 19 Expo apps ──► PostgREST (publishable) └──► :8080 /api/* ───────┘
    │                                                  │
-   └──► https://sarkarmarketplace.dropby.co.in/api/*  └──► :8099 worker.py (rembg, Pillow, pdfcpu)
+   └──► https://sheharbazaar.dropby.co.in/api/*  └──► :8099 worker.py (rembg, Pillow, pdfcpu)
 ```
 
 ---
@@ -57,7 +57,7 @@ There is **one** Next app. Brands are rows, not deployments.
 appear on a vertical brand *and* on the marketplace, which a single `brand_id` column cannot
 express — so `BRAND_CATEGORY_KEYWORDS` in `apps/web/lib/brand-categories.ts` matches
 substrings against `businesses.category` at query time. A brand with no entry (the
-marketplace, sarkarbazaar) deliberately shows everything.
+marketplace, thokbazaar) deliberately shows everything.
 
 **Special hosts** (`proxy.ts`): `dashboard.`/`admin.` are the admin console, `hermes.` is
 proxied to the Hermes dashboard on `:9300`, `/api/*`, `/unlock/*` and `/sites/*` bypass the
@@ -77,7 +77,7 @@ id, colour, ASO keywords, permissions, products, first screen, directory scope).
 
 | Step | File | What it does |
 |---|---|---|
-| Pick the app | `app.config.ts` | `APP_TARGET=sarkarhealth` resolves the target and derives name, bundle id, icon path, permissions, splash and first route. Unknown id throws at config time. |
+| Pick the app | `app.config.ts` | `APP_TARGET=swasthpath` resolves the target and derives name, bundle id, icon path, permissions, splash and first route. Unknown id throws at config time. |
 | Tell the app | `app.config.ts` → `extra.target` | The resolved identity is serialised into `expo.extra`. |
 | Read it back | `lib/target.ts` | `TARGET` at runtime, with normalisation for Expo's `{}`-for-`null` serialiser quirk. |
 | Gate the fleet | `scripts/check-targets.mjs`, `scripts/check-fleet.mjs` | Refuse a build where two listings are too alike (Apple 4.3 / Play spam), or where art, route or bundle id is missing. |
@@ -89,11 +89,11 @@ apps), `product` (5, one leads with its own screen), `directory` (3), `game` (4)
 
 | Family | Talks to | Where |
 |---|---|---|
-| Directory (3 apps) | Supabase PostgREST **directly** — a hand-rolled client, not supabase-js | `lib/api.ts`. The filter comes from `scopeForBrand(target.id)` in `@hermes/core`, resolved at runtime in `lib/target.ts` and compiled into the PostgREST `or=`/`and=` expression — so SarkarHealth lists doctors and SarkarCars lists garages instead of all three listing the same 24,048 rows, and the answer cannot drift from the brand websites'. |
+| Directory (3 apps) | Supabase PostgREST **directly** — a hand-rolled client, not supabase-js | `lib/api.ts`. The filter comes from `scopeForBrand(target.id)` in `@hermes/core`, resolved at runtime in `lib/target.ts` and compiled into the PostgREST `or=`/`and=` expression — so Swasth Path lists doctors and Gaadi Ghar lists garages instead of all three listing the same 24,048 rows, and the answer cannot drift from the brand websites'. |
 | Wellness (6 apps) | Supabase PostgREST directly, off-line-first | `lib/wellness-db.ts` + `lib/session.ts`. Identity is a per-install token sent as `x-wellness-token`; only its SHA-256 is stored (`supabase/migrations/20260917000000_wellness_sync.sql`). AsyncStorage holds the cache, the pending-write queue and the token; the database holds sessions and daily counts. |
 | Product + tools | The **web** app's `/api/job` | `lib/tools.ts` → `jobEndpoint()`. On device it is `${WEB_BASE_URL}/api/job`; on web export it is the relative `/api/job`. |
 | Business owner screens | The **web** app's `/api/otp/*` | `lib/owner.tsx`. No second auth system: the app is a client of the website's WhatsApp OTP endpoints and stores the returned phone token. |
-| All | `WEB_BASE_URL` | `lib/config.ts`, default `https://sarkarmarketplace.dropby.co.in`. The phone can only reach the web app through this. |
+| All | `WEB_BASE_URL` | `lib/config.ts`, default `https://sheharbazaar.dropby.co.in`. The phone can only reach the web app through this. |
 
 Games, timers and the invoice counter are entirely on-device (`lib/block-clear.ts`,
 `lib/merge-tiles.ts`, `lib/timer-core.ts`, `lib/invoice-counter.ts`); both games and the
@@ -252,7 +252,7 @@ means it is a decision or a follow-up, deliberately not taken.
 
 They are the original 28 brand landing pages, retired from the router because they were
 mockups with dead links and no live data — and because they hijacked brand-semantic routes:
-`/doctors` on sarkarhealth resolved to a file that did not exist, so the route 404'd whatever
+`/doctors` on swasthpath resolved to a file that did not exist, so the route 404'd whatever
 the app defined. Requests under `/sites/` are still served directly (`BYPASS_PREFIXES` in
 `proxy.ts`), so existing links keep working.
 

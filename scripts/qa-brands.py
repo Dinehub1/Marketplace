@@ -9,7 +9,7 @@ navigation remains. Status code alone is never sufficient.
 
 Usage:
     python scripts/qa-brands.py                 # all 28 brands
-    python scripts/qa-brands.py sarkarcars sarkarhealth
+    python scripts/qa-brands.py gaadighar swasthpath
     python scripts/qa-brands.py --json out.json --md docs/brand-qa-report.md
 
 Exit code 0 only when every audited brand passes, so it can gate a batch.

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Brand } from "@/lib/brands";
 
 /**
- * WhatsApp OTP login — one "Sarkar ID" across every brand.
+ * WhatsApp OTP login — one "Dropby ID" across every brand.
  *
  * Uses Supabase native phone auth (signInWithOtp / verifyOtp). The OTP is
  * delivered over WhatsApp by the "whatsapp-otp" Send SMS Hook (Nextel).
@@ -206,7 +206,7 @@ export function WhatsAppLogin({ brand }: { brand: Brand }) {
         </div>
 
         <p className="mt-4 text-center text-[11px] opacity-40">
-          One login works across all Sarkar brands.
+          One login works across all Dropby brands.
         </p>
       </div>
     </div>

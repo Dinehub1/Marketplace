@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
   const dupRes = await db(`leads?business_id=eq.${businessId}&phone=eq.${encodeURIComponent(phone)}&created_at=gte.${since}&select=id&limit=1`);
   if (dupRes.ok && (await dupRes.json()).length > 0) {
     const bizWa = toIndiaPhone(biz.phone ?? "");
-    const waText = encodeURIComponent(`Namaste! Maine aapko ${"SarkarMarketplace"} par dekha. ${message || "Mujhe aapki services mein interest hai."} — ${name}`);
+    const waText = encodeURIComponent(`Namaste! Maine aapko ${"Shehar Bazaar"} par dekha. ${message || "Mujhe aapki services mein interest hai."} — ${name}`);
     const wa_link = bizWa ? `https://wa.me/${bizWa}?text=${waText}` : null;
     return NextResponse.json({ ok: true, already: true, notified: false, wa_link }, { headers: noStore });
   }
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 
   // wa.me deep link so the customer can message the business directly.
   const bizWa = toIndiaPhone(biz.phone ?? "");
-  const waText = encodeURIComponent(`Namaste! Maine aapko ${"SarkarMarketplace"} par dekha. ${message || "Mujhe aapki services mein interest hai."} — ${name}`);
+  const waText = encodeURIComponent(`Namaste! Maine aapko ${"Shehar Bazaar"} par dekha. ${message || "Mujhe aapki services mein interest hai."} — ${name}`);
   const wa_link = bizWa ? `https://wa.me/${bizWa}?text=${waText}` : null;
 
   return NextResponse.json({ ok: true, notified, wa_link }, { headers: noStore });

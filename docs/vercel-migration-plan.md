@@ -16,7 +16,7 @@ them affects all of them.
 |---|---|---|
 | `dropby.co.in` → `www.dropby.co.in` | Vercel, a **different** project (`dropy-web`, probably) | `x-vercel-id` header; apex 308s to `www` |
 | `cashcard.live` | Vercel, project `cash-card` | `x-vercel-id` header |
-| `apps.`, `sarkarmarketplace.`, `dashboard.`, every brand subdomain | VM → Cloudflare tunnel → pm2 `marketplace :8080` | no `x-vercel-id`; `x-middleware-rewrite` from `proxy.ts` |
+| `apps.`, `sheharbazaar.`, `dashboard.`, every brand subdomain | VM → Cloudflare tunnel → pm2 `marketplace :8080` | no `x-vercel-id`; `x-middleware-rewrite` from `proxy.ts` |
 | This repo on Vercel | **Not deployed.** No `.vercel/` link and no project among the 12 in the `brandcollabs` team | `vercel project ls` |
 
 DNS for `dropby.co.in` is on Cloudflare, not Vercel's nameservers.
@@ -80,7 +80,7 @@ Checked against the code:
 3. **Function duration.** Add `export const maxDuration = 300` to `app/api/job/route.ts`
    (worker timeout 180 s plus R2 transfers).
 4. **`spa_server.py` upstream.** Start it with `api-target` =
-   `sarkarmarketplace.dropby.co.in:443` (or retire it; see open questions). Its API
+   `sheharbazaar.dropby.co.in:443` (or retire it; see open questions). Its API
    forwarding currently assumes plain HTTP to `127.0.0.1:8080`, so this needs a small
    HTTPS change.
 
@@ -97,7 +97,7 @@ Already safe on Vercel, no change needed:
 Vercel wildcard domains need Vercel's nameservers. Moving `dropby.co.in` off Cloudflare would
 break the tunnel hostnames, so **each host is added to the Vercel project explicitly**:
 - the brand subdomains (27 site folders today; the `brands` table is the source of truth);
-- `apps.`, `sarkarmarketplace.`, `dashboard.`, `admin.`.
+- `apps.`, `sheharbazaar.`, `dashboard.`, `admin.`.
 
 Each gets a Cloudflare CNAME to `cname.vercel-dns.com`, set **DNS only** (grey cloud), so
 Vercel issues and renews the certificate.
@@ -163,7 +163,7 @@ Each phase can be released and rolled back on its own.
   rule for `https://expo.dropby.co.in` and the local Expo ports; the existing GET-`*`
   rule is unchanged. Tested locally with a 7.9 MB photo end to end, and a browser PUT
   from `expo.dropby.co.in`.
-- **Phase 4 done (on Hobby, by the owner's decision).** `sarkarmarketplace.`, `dashboard.`
+- **Phase 4 done (on Hobby, by the owner's decision).** `sheharbazaar.`, `dashboard.`
   and `admin.` are attached to `marketplace-web`, each with a Cloudflare CNAME →
   `7e68231427c37a50.vercel-dns-017.com` (DNS only, TTL 60). None had its own record before;
   the `*` tunnel wildcard caught them. Before the switch, the same requests to the VM and
@@ -186,7 +186,7 @@ Each phase can be released and rolled back on its own.
     returns 404 for everything else. The app's `API_BASE_URL` points there (OTP, jobs,
     uploads, ad events, paywall); `WEB_BASE_URL` stays the website. The passport screen
     now goes through `runJob`, so its photos are staged too.
-  - `sarkarmarketplace.` is back on the VM: its CNAME was deleted and the `*` tunnel
+  - `sheharbazaar.` is back on the VM: its CNAME was deleted and the `*` tunnel
     wildcard serves it. The domain is still attached in Vercel as a fallback.
   - `dashboard.`, `admin.` and `apps.` stay on Vercel; they are low traffic.
   - **Cloudflare cache rule, live (id `2159737051f74c739b61c0aff0661024`,
@@ -210,7 +210,7 @@ Each phase can be released and rolled back on its own.
 | 1 | **`apps.dropby.co.in` on Vercel.** Developer site, privacy page, `app-ads.txt` | Yes, low risk | `https://apps.dropby.co.in/app-ads.txt` shows the `google.com, pub-3150584264351771, …` line. **This also fixes today's AdMob problem.** |
 | 2 | **Worker bridge.** Tunnel route `worker.` → `:8099`, Access service token, shared-secret check in `worker.py` | No | A Vercel preview runs a bg-remove job end to end; an unauthenticated request to `worker.` is refused |
 | 3 | **Direct-to-R2 uploads** (code change 1). Ship it on the **VM first**, where it works the same, so it is proven before the host moves | App update | A 12 MB photo and a 50 MB photos-to-pdf batch succeed; old small uploads still work |
-| 4 | **API host:** `sarkarmarketplace.` (mobile `WEB_BASE_URL`, AdMob SSV callback, Razorpay webhook), plus `dashboard.` and `admin.` | Yes | OTP, a paid order + webhook, an ad unlock and an admin login all work on Vercel |
+| 4 | **API host:** `sheharbazaar.` (mobile `WEB_BASE_URL`, AdMob SSV callback, Razorpay webhook), plus `dashboard.` and `admin.` | Yes | OTP, a paid order + webhook, an ad unlock and an admin login all work on Vercel |
 | 5 | **Remaining brand subdomains**, by script, in two batches | Yes | Every host returns `x-vercel-id`; sitemaps and brand pages render |
 | 6 | **VM cleanup.** Keep pm2 `marketplace` stopped but installed for one week as a fallback, then remove it and the tunnel catch-all; update `ecosystem.config.js`, `architecture-connections.md` and `spa_server.py` | No | The tunnel only carries `hermes.`, `expo.`, `shots.`, `worker.` |
 

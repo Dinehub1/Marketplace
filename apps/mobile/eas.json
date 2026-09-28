@@ -78,18 +78,18 @@
         "APP_TARGET": "room-redesign"
       }
     },
-    "sarkarcars": {
+    "gaadighar": {
       "extends": "production",
-      "channel": "sarkarcars",
+      "channel": "gaadighar",
       "env": {
-        "APP_TARGET": "sarkarcars"
+        "APP_TARGET": "gaadighar"
       }
     },
-    "sarkarhealth": {
+    "swasthpath": {
       "extends": "production",
-      "channel": "sarkarhealth",
+      "channel": "swasthpath",
       "env": {
-        "APP_TARGET": "sarkarhealth"
+        "APP_TARGET": "swasthpath"
       }
     },
     "shop-toolkit": {

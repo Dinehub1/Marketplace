@@ -32,7 +32,7 @@ import json, os, re, sys, time, urllib.parse, urllib.request, urllib.error
 ENV = r"C:\Users\Administrator\Marketplace\apps\web\.env"
 CACHE = r"C:\Users\Administrator\geocode-places-cache.json"
 REF = "xpfmqpmhmcouwzebfwhb"
-UA = "SarkarMarketplaceDirectory/1.0 (business directory; contact: admin@cashcard.live)"
+UA = "Shehar BazaarDirectory/1.0 (business directory; contact: admin@cashcard.live)"
 DELAY = 0.7
 STATUS_ONLY = "--status" in sys.argv
 # Chunked runs: the background supervisor proved unreliable for long jobs,

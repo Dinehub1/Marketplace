@@ -9,8 +9,8 @@ import { getBrand } from "@/lib/brands";
  *
  * These prebuilt sites were the original 28 brand landing pages. They were retired
  * from the router because they were marketing mockups with dead `#` links and no
- * live data — worse, they hijacked brand-semantic routes: `/doctors` on sarkarhealth
- * resolved to `/sites/sarkarhealth/doctors`, a file that does not exist, so the route
+ * live data — worse, they hijacked brand-semantic routes: `/doctors` on swasthpath
+ * resolved to `/sites/swasthpath/doctors`, a file that does not exist, so the route
  * answered 404 no matter what the app defined. `proxy.ts` no longer routes to them;
  * the brand router serves real pages from live data instead.
  *

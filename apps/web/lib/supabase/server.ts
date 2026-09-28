@@ -6,7 +6,7 @@ import { cookieDomainForHost } from "@/lib/base-domains";
 export async function createClient() {
   const cookieStore = await cookies();
   const host = (await headers()).get("host") ?? "";
-  // Share the session across all brand subdomains (one "Sarkar ID"), scoped to
+  // Share the session across all brand subdomains (one "Dropby ID"), scoped to
   // whichever base domain served the request so sign-in works on the new domain
   // as well as the old one during the migration.
   const domain = cookieDomainForHost(host);

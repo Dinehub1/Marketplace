@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Enrich Sarkar Marketplace businesses with the socials they publish themselves.
+"""Enrich Shehar Bazaar businesses with the socials they publish themselves.
 
 WHY THE WEBSITE AND NOT THE SCRAPER
 -----------------------------------

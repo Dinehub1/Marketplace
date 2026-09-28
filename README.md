@@ -6,7 +6,7 @@ Multi-tenant local business directory. One backend, three deliverables:
 .
 ├── apps/
 │   ├── web/         Next.js 16 — 27 brand sites on one multi-tenant router
-│   └── mobile/      Expo (iOS + Android) — SarkarMarketplace
+│   └── mobile/      Expo (iOS + Android) — Shehar Bazaar
 ├── packages/
 │   ├── core/        Domain logic shared by both apps (slugs, formatting, links)
 │   └── tokens/      Design system — colours GENERATED from the web's globals.css

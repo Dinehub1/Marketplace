@@ -5,7 +5,7 @@ import type { Brand } from "@/lib/brands";
 import type { ByBrandSlug, FaqItem } from "@/lib/brand-content";
 
 const BRAND_FAQ: ByBrandSlug<FaqItem> = {
-  sarkarhealth: [
+  swasthpath: [
       { q: "How do I book a video consultation?", a: "Go to the app or website, choose a doctor, pick a time slot, and pay via UPI. You'll receive a link — click it to start your consultation." },
       { q: "Are the medicines genuine?", a: "100%! We source only from licensed chemists and authorized distributors. You can verify the batch number and expiry of every medicine." },
       { q: "How does the lab test work?", a: "A technician visits your home to collect the sample. Reports are available online within 24-48 hours." },
@@ -17,7 +17,7 @@ const BRAND_FAQ: ByBrandSlug<FaqItem> = {
       { q: "How can I access my medical records?", a: "All your reports, prescriptions, and consultation history are stored securely in the 'My Health' section of the app. You can also share them with your doctor." },
       { q: "How do I get my prescription or follow-up after a consultation?", a: "After a video consultation, your prescription is shared in the chat as a PDF. You can book a follow-up appointment via video call." }
     ],
-  sarkardost: [
+  padosi: [
     { q: "How do I create a listing?", a: "Sign up with your mobile number, fill in your business details, and submit — you're live in 5 minutes!" },
     { q: "Is listing free?", a: "Yes! Basic listing is completely free. Paid plans are available for premium features." },
     { q: "How will I get customers?", a: "When someone searches in your category, your listing appears — they contact you via WhatsApp or call." },
@@ -54,32 +54,32 @@ const BRAND_FAQ: ByBrandSlug<FaqItem> = {
     { q: "Can I access notes in offline mode?", a: "Yes! Your notes sync across all devices, and you can access the most recently synced notes offline." },
     { q: "How do smart reminders work?", a: "YaadRakh's AI understands your notes — if you write 'meeting tomorrow at 10', it sets a reminder accordingly and also provides context-based reminders." },
   ],
-  "sarkar-ai": [
+  "ustaad-ai": [
     { q: "How many languages does the AI understand?", a: "Hindi, English, and 10+ Indian languages — talk in your own language." },
     { q: "How do I get API access?", a: "API access is available on the Pro plan — documentation and SDK are provided." },
     { q: "Is my business data safe?", a: "Yes! Your data is not used for training — we take a privacy-first approach." },
   ],
-  sarkarfood: [
+  swaadghar: [
     { q: "What is the delivery time?", a: "Guaranteed within 30 minutes — if late, you get a free delivery coupon." },
     { q: "Is cash on delivery available?", a: "Yes! Cash on delivery is available at all restaurants." },
     { q: "What does the Premium plan offer?", a: "Free delivery, special offers, and 10% cashback on every order." },
   ],
-  sarkarfinance: [
+  loansaathi: [
     { q: "How long does loan approval take?", a: "Within 10 minutes — instant approval through AI-based verification." },
     { q: "What documents are required?", a: "Just Aadhaar and PAN — you won't be asked repeatedly." },
     { q: "How do I pay the EMI?", a: "Via auto-debit — set up a NACH mandate and it deducts automatically every month." },
   ],
-  sarkarpay: [
+  kadampay: [
     { q: "What is the settlement time?", a: "T+0 — today's sales land in your bank account the same day." },
     { q: "Are international payments accepted?", a: "Yes! On the Business plan, you can also accept international cards." },
     { q: "How are chargebacks handled?", a: "Track them from the dashboard — automated dispute resolution is available." },
   ],
-  sarkarmart: [
+  haatmart: [
     { q: "When is delivery completed?", a: "Within 24 hours in Indore — free delivery on orders of ₹499 and above." },
     { q: "What is the return policy?", a: "Return within 7 days — full refund, no questions asked." },
     { q: "How do I get cashback?", a: "5-20% cashback on every purchase — credited directly to your wallet." },
   ],
-  sarkarlegal: [
+  nyaysaathi: [
     { q: "Is the first consultation free?", a: "Yes! The first 15-minute consultation is completely free." },
     { q: "How does online consultation work?", a: "Over a video call — you connect via WhatsApp or Zoom." },
     { q: "Is court representation available?", a: "On the Pro plan, experienced lawyers represent you in court." },
@@ -89,7 +89,7 @@ const BRAND_FAQ: ByBrandSlug<FaqItem> = {
     { q: "What is included in lead generation?", a: "Verified customer contacts, demand analysis, and targeted outreach — reaching only those who are genuinely interested." },
     { q: "Can it be managed from mobile?", a: "Absolutely! The entire dashboard is mobile-friendly — monitor your business anytime, anywhere." },
   ],
-  sarkarmarketplace: [
+  sheharbazaar: [
     { q: "How do I list my business?", a: "Sign up for free — fill in your business details and you're instantly live." },
     { q: "Is verification done?", a: "Yes! We verify every business — GST and address checks." },
     { q: "How do I get leads?", a: "When someone searches your category, your contact details appear." },
@@ -99,12 +99,12 @@ const BRAND_FAQ: ByBrandSlug<FaqItem> = {
     { q: "Is the Vaidya consultation free?", a: "Yes! Free 15-minute consultation — remedies tailored to your constitution (prakriti)." },
     { q: "What are the shipping charges?", a: "Free shipping on orders of ₹499 and above — delivered in 3-5 days." },
   ],
-  sarkarghar: [
+  mistrimitra: [
     { q: "How do I view the virtual tour?", a: "Click the 'Virtual Tour' button on the property page — a 360° walkthrough." },
     { q: "Is a loan facility available?", a: "Yes! 15+ bank partners — support from application to approval." },
     { q: "Are the listings verified?", a: "All listings are verified — owner documents are checked." },
   ],
-  sarkarskills: [
+  hunarhub: [
     { q: "Do I get a certificate?", a: "Yes! You receive a government-recognized certificate upon course completion." },
     { q: "Is placement assistance provided?", a: "Yes! 60% of students get placed — through tie-ups with 100+ companies." },
     { q: "Is there an installment option?", a: "Yes! Starting at ₹500/month — education loans are also available." },
@@ -119,37 +119,37 @@ const BRAND_FAQ: ByBrandSlug<FaqItem> = {
     { q: "Are there live classes?", a: "Yes! Weekly live sessions — you can ask the teacher directly." },
     { q: "Do I get a progress report?", a: "Yes! A monthly report for parents — including weak areas." },
   ],
-  sarkartravel: [
+  safarsaathi: [
     { q: "How do I get the best rates?", a: "Compare across 100+ airlines and hotels — lowest price guaranteed." },
     { q: "Is cancellation flexible?", a: "Yes! Free cancellation up to 24 hours — full refund." },
     { q: "Is travel insurance included?", a: "Free travel insurance on the Premium plan — covering medical and trip disruptions." },
   ],
-  sarkardukaan: [
+  dukaandigital: [
     { q: "How do I create a store?", a: "Sign up, add products, and set up a payment link — you're live in 10 minutes!" },
     { q: "How do I manage delivery?", a: "Use our delivery network — or deliver on your own." },
     { q: "Do I get a custom domain?", a: "Yes, on the Pro plan — your own name, your own brand, your own store." },
   ],
-  sarkarbazaar: [
+  thokbazaar: [
     { q: "How do I start exporting?", a: "Join the Bazaar export program — connect with international buyers." },
     { q: "How do B2B orders come in?", a: "List wholesale — bulk buyers contact you directly." },
     { q: "Is payment secure?", a: "Yes! An escrow system — payment is released only after the buyer confirms." },
   ],
-  sarkarjobs: [
+  rozgarpath: [
     { q: "How do I create a profile?", a: "Sign up — fill in your education, experience, and skills — ready in 5 minutes!" },
     { q: "Are companies verified?", a: "Yes! All companies are GST verified — no fraud." },
     { q: "Is there a resume builder?", a: "Yes! Professional templates — with one-click apply." },
   ],
-  sarkared: [
+  padhaipath: [
     { q: "Which courses are available?", a: "Digital Marketing, AI, Web Development, Data Science — industry-ready skills." },
     { q: "Is there a job guarantee?", a: "70% placement rate — with 100+ hiring partners." },
     { q: "How long are the courses?", a: "4-12 weeks — self-paced, with lifetime access." },
   ],
-  sarkarsarkar: [
+  yojanasaathi: [
     { q: "What services are available?", a: "Aadhaar, PAN, Passport, Ration Card, Driving License — all in one place." },
     { q: "How do I apply?", a: "Fill the form, upload documents — we'll handle the rest." },
     { q: "How do I check the status?", a: "Live tracking from the dashboard — with SMS and email alerts." },
   ],
-  sarkarwellness: [
+  tandrust: [
     { q: "What is Panchakarma?", a: "An Ayurvedic detox therapy — 5 steps, natural healing, no side effects." },
     { q: "Are yoga classes online?", a: "Yes! Daily live classes — from beginner to advanced level." },
     { q: "Do I get a diet plan?", a: "Yes! The Vaidya provides a customized diet plan based on your constitution (prakriti)." },
@@ -181,7 +181,7 @@ export function FAQPage({ brand }: { brand: Brand }) {
         <div className="relative mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: "var(--hairline)", color: "var(--brand-secondary)" }}>FAQ</div>
           <h1 className="heading-xl mb-6"><span style={{ color: "var(--brand-secondary)" }}>Frequently asked questions</span></h1>
-          <p className="text-lg opacity-60 max-w-2xl mx-auto">Answers to some common questions about SarkarHealth</p>
+          <p className="text-lg opacity-60 max-w-2xl mx-auto">Answers to some common questions about Swasth Path</p>
         </div>
       </section>
 
