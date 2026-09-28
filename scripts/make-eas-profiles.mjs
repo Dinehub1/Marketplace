@@ -28,7 +28,20 @@ const { TARGETS } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs'))
 const eas = JSON.parse(fs.readFileSync(EAS, 'utf8'));
 
 /** The marketplace is the existing listing and keeps the plain profile names. */
-const DEFAULT_TARGET = 'sarkarmarketplace';
+const DEFAULT_TARGET = 'brandcollabs';
+
+// A profile generated for a target that no longer exists (renamed or removed) would build
+// an unknown APP_TARGET and fail on EAS. Generated profiles are recognisable — they extend
+// `production` and pin APP_TARGET — so those whose target is gone are dropped.
+const ids = new Set(TARGETS.map((t) => t.id));
+let removed = 0;
+for (const [name, p] of Object.entries(eas.build)) {
+  const pinned = p?.env?.APP_TARGET;
+  if (p?.extends === 'production' && pinned && !ids.has(pinned)) {
+    delete eas.build[name];
+    removed++;
+  }
+}
 
 let added = 0;
 for (const t of TARGETS) {
@@ -53,4 +66,4 @@ for (const k of Object.keys(eas.build).sort()) if (!ordered[k]) ordered[k] = eas
 eas.build = ordered;
 
 fs.writeFileSync(EAS, `${JSON.stringify(eas, null, 2)}\n`);
-console.log(`▸ eas.json: ${Object.keys(eas.build).length} build profiles (${added} changed)`);
+console.log(`▸ eas.json: ${Object.keys(eas.build).length} build profiles (${added} changed, ${removed} removed)`);

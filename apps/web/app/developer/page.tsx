@@ -17,8 +17,8 @@ export const metadata: Metadata = {
 };
 
 export default function DeveloperHome() {
-  const products = APPS.filter((a) => !["sarkarhealth", "sarkarmarketplace", "sarkarcars", "tap-sprint", "word-duel", "block-clear", "merge-tiles"].includes(a.id));
-  const directory = APPS.filter((a) => ["sarkarhealth", "sarkarmarketplace", "sarkarcars"].includes(a.id));
+  const products = APPS.filter((a) => !["brandcollabs-health", "brandcollabs", "brandcollabs-cars", "tap-sprint", "word-duel", "block-clear", "merge-tiles"].includes(a.id));
+  const directory = APPS.filter((a) => ["brandcollabs-health", "brandcollabs", "brandcollabs-cars"].includes(a.id));
   const games = APPS.filter((a) => ["tap-sprint", "word-duel", "block-clear", "merge-tiles"].includes(a.id));
 
   const groups = [

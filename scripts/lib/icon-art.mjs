@@ -265,7 +265,7 @@ export const MARKS = {
    * The counter-intuitive choice: a heart is the obvious mark and is used by every health app in
    * both stores, so a cross in a frame is the one that identifies *this* listing.
    */
-  sarkarhealth: {
+  'brandcollabs-health': {
     glyph: `${P('M4.4 4.4h15.2v15.2H4.4z')}${P('M12 8v8')}${P('M8 12h8')}`,
   },
 
@@ -275,7 +275,7 @@ export const MARKS = {
    * A basket rather than a bag because the sibling listings include a shop toolkit, and two
    * adjacent apps must not both be a bag. The handle arc keeps it from reading as a bin.
    */
-  sarkarmarketplace: {
+  brandcollabs: {
     glyph: `${P('M3.2 9.4h17.6l-1.8 11H5z')}${P('M8.2 9.4 12 4.2l3.8 5.2')}${P('M8.6 13v3.6')}${P('M15.4 13v3.6')}`,
   },
 
@@ -286,7 +286,7 @@ export const MARKS = {
    * lower and longer with a shorter cabin and a rising window line, which is what makes a car a car
    * in a silhouette: the ratio of bonnet to cabin, not the details.
    */
-  sarkarcars: {
+  'brandcollabs-cars': {
     glyph:
       `${P('M2.6 15.2v-2.6l1.9-3.9A1.7 1.7 0 0 1 6 7.6h3.4l1.6-1.8h3.6a1.8 1.8 0 0 1 1.3.6l2.5 3.2 3.2.9a1.6 1.6 0 0 1 1.2 1.6v3.1')}` +
       `${P('M9.4 7.6v3.1h4.6')}` +
