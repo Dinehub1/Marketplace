@@ -13,7 +13,7 @@ import skadnetwork from "./plugins/skadnetwork-ids.json";
  *
  *   APP_TARGET=breathe npx expo start
  *   APP_TARGET=toolbox eas build --profile preview
- *   APP_TARGET=sarkarmarketplace eas build --profile production   # the default
+ *   APP_TARGET=brandcollabs eas build --profile production        # the default
  *
  * Everything a store listing is judged on — name, bundle id, slug, icon, accent,
  * permission set, and the screen it opens on — is derived from that one word. Retyping
@@ -177,7 +177,7 @@ if (ADS_ENABLED && (!ADMOB_ANDROID_APP_ID || !ADMOB_IOS_APP_ID)) {
 const AD_MEDIATION: string[] = ADS_ENABLED
   ? (process.env.EXPO_PUBLIC_AD_MEDIATION ?? "applovin,inmobi")
       .split(",")
-      .map((s) => s.trim())
+      .map((s: string) => s.trim())
       .filter(Boolean)
   : [];
 
