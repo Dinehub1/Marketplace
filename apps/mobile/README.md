@@ -193,7 +193,7 @@ To give a target a product, add the slug in `targets.mjs`; there is no second li
 
 ```bash
 npx eas login
-npx eas build:configure                       # once — writes the EAS project id
+# EAS project ids are already in targets.mjs (EAS_PROJECT_ID), on the brandcollabs account
 npm run build:preview -w @hermes/mobile       # internal .apk / ad-hoc .ipa
 npm run build:ios     -w @hermes/mobile       # App Store
 npm run build:android -w @hermes/mobile       # Play Store (.aab)
