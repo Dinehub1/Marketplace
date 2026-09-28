@@ -62,7 +62,7 @@ repo's own rules forbid. So the four divide by what the engine can actually do:
 | app | what it needs | engine today | verdict |
 |---|---|---|---|
 | ~~Resume Builder~~ | ~~`resume-builder` (a PDF from a form), `application-writer` (text), `resume-checker`~~ | **DONE 2026-09-18** — `resume-builder` + `resume-checker` live (2/3); `application-writer` still `route: null` and shows honestly as coming soon | shipped |
-| ~~Shop Toolkit~~ | ~~dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker~~ | **DONE 2026-09-18** — dashboard first screen at `/shop`; 1 of 7 jobs live (the GST bill), the other six labelled coming soon on the app's own front door. **Copy narrowed 2026-09-20** — the listing is "Shop Toolkit: GST Bills" and no longer promises the catalogue (queue item 59) | first screen shipped, app thin |
+| ~~Shop Toolkit~~ | ~~dashboard + catalogue, order loop, digital card, booking page, bill tracker, fee tracker~~ | **DONE 2026-09-18** — dashboard first screen at `/shop`; 1 of 7 jobs live (the GST bill), the other six labelled coming soon on the app's own front door. **Copy narrowed 2026-09-20** — the listing is "Shop Toolkit: GST Bills" and no longer promises the catalogue (queue item 69) | first screen shipped, app thin |
 | ~~Subtitles & Voice-over~~ | ~~`subtitles` (STT), `voiceover` (TTS)~~ | **DONE 2026-09-18** — whisper-large-v3-turbo and melotts wired; chooser + two screens; 2/2 jobs live. Captions are an SRT (not burnt into video — no ffmpeg) and the voice is English only, both said on the screen | shipped |
 | Room Redesign | image-to-image restyle of a photo | **No image-to-image model exists any more.** The full Workers AI catalogue (65 models, page dated 2026-08-12) contains none: `stable-diffusion-v1-5-img2img` is gone and its doc page 404s. The only near-misses are `stable-diffusion-v1-5-inpainting` (mask editing, not a restyle of a photo) and the FLUX.2 klein/dev family, which advertise "multi-reference editing" but whose input schema has not been read | Investigate whether FLUX.2 klein accepts an input image; if it does not, park this listing and say so |
 
@@ -72,7 +72,7 @@ Order: **Room Redesign**, the last listing owed a first screen.
 whether a listing *could* be submitted — does it resolve, is its first screen real. Shop
 Toolkit passes it with one job of seven built and Resume Builder with two of three.
 
-**Two of those copy gaps are now closed (item 59, 2026-09-20).** Shop Toolkit's listing was
+**Two of those copy gaps are now closed (item 69, 2026-09-20).** Shop Toolkit's listing was
 "Bills & Catalogue" and is now "Shop Toolkit: GST Bills", so the store name no longer promises
 a catalogue that does not exist; the six unbuilt jobs stay in the app as an honestly-labelled
 plan. Toolbox's ASO no longer buys installs for `id photo`, which is passport-photo's job in a
