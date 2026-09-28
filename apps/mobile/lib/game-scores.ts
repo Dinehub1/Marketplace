@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  * Stored shape, under one key so a game added later needs no migration:
  *   { "<game>": { best, rounds, recent: [{ score, line, at }] } }
  */
-const KEY = "hermes-game-scores";
+const KEY = "brandcollabs-game-scores";
 
 /** Rounds kept per game. The last five are what the summary screen lists. */
 const RECENT_MAX = 5;

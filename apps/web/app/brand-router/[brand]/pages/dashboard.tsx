@@ -59,8 +59,8 @@ export function UserDashboard({ brand }: { brand: Brand }) {
     // `let` here is the flag's whole point, not a `prefer-const` violation.
     let cancelled = false;
     (async () => {
-      let userPhone: string | null = readStored("hermes_customer_phone");
-      const token: string | null = readStored("hermes_otp_token");
+      let userPhone: string | null = readStored("brandcollabs_customer_phone") || readStored("hermes_customer_phone");
+      const token: string | null = readStored("brandcollabs_otp_token") || readStored("hermes_otp_token");
       let bearer: string | null = null;
 
       const { data } = await supabase.auth.getSession().catch(() => ({ data: { session: null } }));

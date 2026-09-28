@@ -7,12 +7,12 @@ import {
   elevation,
   type Palette,
   type Scheme,
-} from "@hermes/tokens";
+} from "@brandcollabs/tokens";
 import { BRAND } from "./config";
 
 export type ThemeChoice = "light" | "dark" | "system";
 
-const STORAGE_KEY = "hermes-theme";
+const STORAGE_KEY = "brandcollabs-theme";
 
 export type Theme = {
   scheme: Scheme;

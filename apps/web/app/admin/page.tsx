@@ -5,7 +5,7 @@ import { getBrands } from "@/lib/brands";
 import { getAgents, getRecentTasks, getPlatformStats } from "@/lib/agentos";
 import { getGatewayStatus } from "@/lib/hermes";
 import { SignOut } from "./sign-out";
-import { HermesPanel } from "./hermes-panel";
+import { AgentStatusPanel } from "./agent-status-panel";
 import { AgentControls } from "./agent-controls";
 
 export const dynamic = "force-dynamic";
@@ -65,10 +65,10 @@ export default async function Dashboard() {
         <Stat label="Queued tasks" value={String(stats.tasksQueued)} accent="tone-gold" />
       </section>
 
-      {/* Hermes agent */}
-      <SectionTitle>🛰️ Hermes Agent</SectionTitle>
+      {/* BrandCollabs agent */}
+      <SectionTitle>🛰️ BrandCollabs Agent</SectionTitle>
       <div className="mb-10">
-        <HermesPanel status={hermes} />
+        <AgentStatusPanel status={hermes} />
       </div>
 
       {/* Agent Controls — NEW */}

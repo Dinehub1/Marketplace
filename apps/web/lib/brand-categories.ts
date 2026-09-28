@@ -1,14 +1,14 @@
 /**
  * Web-side view of brand → category ownership.
  *
- * The ownership table itself lives in `@hermes/core` (`brand-scope.ts`), because the
+ * The ownership table itself lives in `@brandcollabs/core` (`brand-scope.ts`), because the
  * mobile directory apps filter the same `businesses` table down to their own slice
  * and the two surfaces must never be able to disagree. This module used to hold the
  * table; it now re-exports it and keeps only what is genuinely web-only — gating a
  * brand's *routes* on its `features.listings` flag.
  */
 
-import { BRAND_CATEGORY_KEYWORDS, FULL_DIRECTORY_BRANDS } from "@hermes/core";
+import { BRAND_CATEGORY_KEYWORDS, FULL_DIRECTORY_BRANDS } from "@brandcollabs/core";
 
 export {
   BRAND_CATEGORY_KEYWORDS,
@@ -19,9 +19,9 @@ export {
   brandOwnsCategory,
   ownerOfCategory,
   scopeForBrand,
-} from "@hermes/core";
+} from "@brandcollabs/core";
 
-export type { BrandScope } from "@hermes/core";
+export type { BrandScope } from "@brandcollabs/core";
 
 /**
  * Does this brand publish the business directory at all?

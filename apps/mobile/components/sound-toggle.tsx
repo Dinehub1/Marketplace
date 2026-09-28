@@ -25,7 +25,7 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import Svg, { Path } from "react-native-svg";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { Text } from "@/components/ui";
 import { useSettings } from "@/lib/settings";
 import { isMuted, setMuted, useSoundPrefs } from "@/lib/sound";

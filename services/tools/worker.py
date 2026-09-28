@@ -392,7 +392,7 @@ def pdf_number_text(text: str) -> str:
 # this sentence is answering — `trim -p '!5'` exits 0 having written a 0-byte file with
 # `missing page numbers` (measured on v0.15.0; `1-,!5` is really pages 1-4 of 5). A 400
 # that tells the caller to retype the form that just failed is worse than no hint.
-# The same sentence exists on the route side (`PDF_PAGES_HELP` in @hermes/core); the
+# The same sentence exists on the route side (`PDF_PAGES_HELP` in @brandcollabs/core); the
 # language boundary is why it is written twice — change both when the grammar changes.
 PDF_PAGES_HINT = (
     "pages must select pages of the PDF, e.g. 1-3,7 — pdfcpu also takes odd, even, "

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { listBusinesses, type Business } from "@/lib/api";
 import { Chip, EmptyState, Skeleton, Text, Card } from "@/components/ui";

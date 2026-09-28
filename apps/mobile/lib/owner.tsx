@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL, BRAND_SLUG } from "./config";
 
-const KEY = "hermes-owner";
+const KEY = "brandcollabs-owner";
 
 export type OwnerSession = { phone: string; token: string };
 

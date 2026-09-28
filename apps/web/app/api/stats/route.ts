@@ -1,4 +1,4 @@
-import { CITY_LABEL } from '@hermes/core';
+import { CITY_LABEL } from '@brandcollabs/core';
 
 export async function GET() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

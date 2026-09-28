@@ -6,7 +6,7 @@
  * taps and the user should see that immediately.
  *
  * Look and feel: every colour, size, radius and gap comes from
- * `lib/product-ui` (which is built on @hermes/tokens), not from constants in this
+ * `lib/product-ui` (which is built on @brandcollabs/tokens), not from constants in this
  * file. That is what makes this screen match the rest of the app and follow dark
  * mode — an audit of the first four product screens found 19 raw hex values and
  * fourteen different font sizes between them.

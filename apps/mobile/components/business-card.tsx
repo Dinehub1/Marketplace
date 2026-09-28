@@ -1,8 +1,8 @@
 import { Linking, View, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
-import { cleanBusinessName, formatCount, telHref, waHref } from "@hermes/core";
+import { cleanBusinessName, formatCount, telHref, waHref } from "@brandcollabs/core";
 import type { Business } from "@/lib/api";
 import { Badge, Card, Press, Text } from "./ui";
 import { Icon } from "./icons";

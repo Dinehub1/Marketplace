@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
-import { paletteFor } from "@hermes/tokens";
+import { paletteFor } from "@brandcollabs/tokens";
 import Svg, { Path, Line } from "react-native-svg";
 import { saveDataUrl } from "@/lib/tools";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";

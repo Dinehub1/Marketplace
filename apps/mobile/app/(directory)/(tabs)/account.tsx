@@ -1,7 +1,7 @@
 import { Linking, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useOwner } from "@/lib/owner";
 import { BRAND, WEB_BASE_URL } from "@/lib/config";

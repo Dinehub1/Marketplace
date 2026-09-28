@@ -1,4 +1,4 @@
-# @hermes/mobile
+# @brandcollabs/mobile
 
 Native iOS and Android apps, built with Expo (SDK 57, New Architecture, Expo Router).
 **One codebase, fifteen store listings** — see "Fifteen apps from one codebase" below.
@@ -97,7 +97,7 @@ node -e "import('./apps/mobile/lib/products.ts')"   # or just read the file
 ### Store art
 
 ```bash
-npm run icons -w @hermes/mobile        # regenerate one icon set per target from targets.mjs
+npm run icons -w @brandcollabs/mobile        # regenerate one icon set per target from targets.mjs
 ```
 
 These are generated monograms — distinct, shippable placeholders. Replace them with
@@ -108,7 +108,7 @@ opaque), `adaptive-icon.png` (1024, transparent, inside the Android safe zone),
 ### Building one app
 
 ```bash
-npm run eas:profiles -w @hermes/mobile     # regenerate a profile per target
+npm run eas:profiles -w @brandcollabs/mobile     # regenerate a profile per target
 eas build --profile breathe --platform ios
 eas build --profile toolbox --platform all
 ```
@@ -158,9 +158,9 @@ Two gates decide whether the fleet can be built — they run before every store 
 demand — and one more checks the games' own rules:
 
 ```bash
-npm run check:targets -w @hermes/mobile              # are two listings too alike to pass review?
-npm run check:fleet   -w @hermes/mobile              # does each one resolve to a real app?
-npm run check:fleet   -w @hermes/mobile -- --require-ready   # exit 1 unless every app is publishable
+npm run check:targets -w @brandcollabs/mobile              # are two listings too alike to pass review?
+npm run check:fleet   -w @brandcollabs/mobile              # does each one resolve to a real app?
+npm run check:fleet   -w @brandcollabs/mobile -- --require-ready   # exit 1 unless every app is publishable
 npm run check:games                                  # do the games' rules still hold?
 ```
 
@@ -194,9 +194,9 @@ To give a target a product, add the slug in `targets.mjs`; there is no second li
 ```bash
 npx eas login
 # EAS project ids are already in targets.mjs (EAS_PROJECT_ID), on the brandcollabs account
-npm run build:preview -w @hermes/mobile       # internal .apk / ad-hoc .ipa
-npm run build:ios     -w @hermes/mobile       # App Store
-npm run build:android -w @hermes/mobile       # Play Store (.aab)
+npm run build:preview -w @brandcollabs/mobile       # internal .apk / ad-hoc .ipa
+npm run build:ios     -w @brandcollabs/mobile       # App Store
+npm run build:android -w @brandcollabs/mobile       # Play Store (.aab)
 ```
 
 Store credentials are yours to supply: EAS will prompt for an Apple Developer
@@ -254,7 +254,7 @@ npm run tokens         # from the repo root
 Re-run after changing a colour token on the web side. One-way on purpose: two
 hand-maintained palettes drift within a week.
 
-Everything else in `@hermes/tokens` (type scale, spacing, radii, springs,
+Everything else in `@brandcollabs/tokens` (type scale, spacing, radii, springs,
 elevation) is hand-written, because React Native has no `clamp()`, no `em`, no
 cascade, and a per-platform shadow model.
 

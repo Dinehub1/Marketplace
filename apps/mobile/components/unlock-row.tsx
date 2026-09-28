@@ -27,7 +27,7 @@
  */
 import { useState } from "react";
 import { StyleSheet, View, type StyleProp, type ViewStyle } from "react-native";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { Press, Text } from "@/components/ui";
 import { AdPrivacyLink } from "@/components/ad-slot";

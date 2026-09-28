@@ -66,7 +66,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { Button, Card, Text } from "@/components/ui";
 import { WellnessShell, ProfileAction } from "@/components/wellness-shell";
 import { SoundToggle } from "@/components/sound-toggle";

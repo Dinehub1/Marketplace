@@ -4,16 +4,192 @@ Generated from `apps/web/lib/brand-sitemap.ts`, the same source the router reads
 
 ## Main platform
 
-- https://sarkarmarketplace.dropby.co.in/
-- https://sarkarmarketplace.dropby.co.in/categories
-- https://sarkarmarketplace.dropby.co.in/marketplace
-- https://sarkarmarketplace.dropby.co.in/galaxy
-- https://sarkarmarketplace.dropby.co.in/business/110779
-- https://sarkarmarketplace.dropby.co.in/sitemap.xml
+- https://brandcollabs.dropby.co.in/
+- https://brandcollabs.dropby.co.in/categories
+- https://brandcollabs.dropby.co.in/marketplace
+- https://brandcollabs.dropby.co.in/galaxy
+- https://brandcollabs.dropby.co.in/business/110779
+- https://brandcollabs.dropby.co.in/sitemap.xml
 - https://expo.dropby.co.in/
-- https://hermes.dropby.co.in/
 
 ## Brand sites
+
+### BrandCollabs — `brandcollabs.dropby.co.in`
+
+- https://brandcollabs.dropby.co.in/categories  — Categories
+- https://brandcollabs.dropby.co.in/directory  — All businesses
+- https://brandcollabs.dropby.co.in/galaxy  — Galaxy
+- https://brandcollabs.dropby.co.in/about  — About
+- https://brandcollabs.dropby.co.in/contact  — Contact
+
+### BrandCollabs AI — `brandcollabs-ai.dropby.co.in`
+
+- https://brandcollabs-ai.dropby.co.in/capabilities  — Capabilities
+- https://brandcollabs-ai.dropby.co.in/use-cases  — Use cases
+- https://brandcollabs-ai.dropby.co.in/pricing  — Pricing
+- https://brandcollabs-ai.dropby.co.in/about  — About
+- https://brandcollabs-ai.dropby.co.in/contact  — Contact
+
+### BrandCollabs Bazaar — `brandcollabs-bazaar.dropby.co.in`
+
+- https://brandcollabs-bazaar.dropby.co.in/manufacturers  — Manufacturers
+- https://brandcollabs-bazaar.dropby.co.in/wholesalers  — Wholesalers
+- https://brandcollabs-bazaar.dropby.co.in/packaging  — Packaging
+- https://brandcollabs-bazaar.dropby.co.in/company/110779  — Company
+- https://brandcollabs-bazaar.dropby.co.in/about  — About
+- https://brandcollabs-bazaar.dropby.co.in/contact  — Contact
+
+### BrandCollabs Cars — `brandcollabs-cars.dropby.co.in`
+
+- https://brandcollabs-cars.dropby.co.in/used-cars  — Cars & dealers
+- https://brandcollabs-cars.dropby.co.in/services  — Service & repair
+- https://brandcollabs-cars.dropby.co.in/car-details/110779  — Car
+- https://brandcollabs-cars.dropby.co.in/sell-your-car  — Sell your car
+- https://brandcollabs-cars.dropby.co.in/about  — About
+- https://brandcollabs-cars.dropby.co.in/contact  — Contact
+
+### BrandCollabs Connect — `brandcollabs-connect.dropby.co.in`
+
+- https://brandcollabs-connect.dropby.co.in/industries  — Industries
+- https://brandcollabs-connect.dropby.co.in/suppliers  — Suppliers
+- https://brandcollabs-connect.dropby.co.in/directory  — Directory
+- https://brandcollabs-connect.dropby.co.in/company/110779  — Company
+- https://brandcollabs-connect.dropby.co.in/post-requirement  — Post requirement
+- https://brandcollabs-connect.dropby.co.in/about  — About
+- https://brandcollabs-connect.dropby.co.in/contact  — Contact
+
+### BrandCollabs Dost — `brandcollabs-dost.dropby.co.in`
+
+- https://brandcollabs-dost.dropby.co.in/services  — Services
+- https://brandcollabs-dost.dropby.co.in/professionals  — Professionals
+- https://brandcollabs-dost.dropby.co.in/pro/110779  — Professional
+- https://brandcollabs-dost.dropby.co.in/book  — Book
+- https://brandcollabs-dost.dropby.co.in/about  — About
+- https://brandcollabs-dost.dropby.co.in/contact  — Contact
+
+### BrandCollabs Dukaan — `brandcollabs-dukaan.dropby.co.in`
+
+- https://brandcollabs-dukaan.dropby.co.in/shops  — Shops
+- https://brandcollabs-dukaan.dropby.co.in/grocery  — Grocery
+- https://brandcollabs-dukaan.dropby.co.in/jewellery  — Jewellery
+- https://brandcollabs-dukaan.dropby.co.in/shop/110779  — Shop
+- https://brandcollabs-dukaan.dropby.co.in/about  — About
+- https://brandcollabs-dukaan.dropby.co.in/contact  — Contact
+
+### BrandCollabs Ed — `brandcollabs-ed.dropby.co.in`
+
+- https://brandcollabs-ed.dropby.co.in/schools  — Schools
+- https://brandcollabs-ed.dropby.co.in/coaching  — Coaching
+- https://brandcollabs-ed.dropby.co.in/colleges  — Colleges
+- https://brandcollabs-ed.dropby.co.in/institute/110779  — Institute
+- https://brandcollabs-ed.dropby.co.in/enquiry  — Enquiry
+- https://brandcollabs-ed.dropby.co.in/about  — About
+- https://brandcollabs-ed.dropby.co.in/contact  — Contact
+
+### BrandCollabs Finance — `brandcollabs-finance.dropby.co.in`
+
+- https://brandcollabs-finance.dropby.co.in/loans  — Loans
+- https://brandcollabs-finance.dropby.co.in/insurance  — Insurance
+- https://brandcollabs-finance.dropby.co.in/advisors  — Advisors
+- https://brandcollabs-finance.dropby.co.in/advisor/110779  — Advisor
+- https://brandcollabs-finance.dropby.co.in/apply  — Apply
+- https://brandcollabs-finance.dropby.co.in/about  — About
+- https://brandcollabs-finance.dropby.co.in/contact  — Contact
+
+### BrandCollabs Food — `brandcollabs-food.dropby.co.in`
+
+- https://brandcollabs-food.dropby.co.in/restaurants  — Restaurants
+- https://brandcollabs-food.dropby.co.in/sweets  — Sweets
+- https://brandcollabs-food.dropby.co.in/caterers  — Caterers
+- https://brandcollabs-food.dropby.co.in/restaurant/110779  — Restaurant
+- https://brandcollabs-food.dropby.co.in/about  — About
+- https://brandcollabs-food.dropby.co.in/contact  — Contact
+
+### BrandCollabs Ghar — `brandcollabs-ghar.dropby.co.in`
+
+- https://brandcollabs-ghar.dropby.co.in/plumbers  — Plumbers
+- https://brandcollabs-ghar.dropby.co.in/electricians  — Electricians
+- https://brandcollabs-ghar.dropby.co.in/carpenters  — Carpenters
+- https://brandcollabs-ghar.dropby.co.in/painters  — Painters
+- https://brandcollabs-ghar.dropby.co.in/service/110779  — Service
+- https://brandcollabs-ghar.dropby.co.in/about  — About
+- https://brandcollabs-ghar.dropby.co.in/contact  — Contact
+
+### BrandCollabs Health — `brandcollabs-health.dropby.co.in`
+
+- https://brandcollabs-health.dropby.co.in/doctors  — Doctors
+- https://brandcollabs-health.dropby.co.in/hospitals  — Hospitals
+- https://brandcollabs-health.dropby.co.in/diagnostics  — Diagnostics
+- https://brandcollabs-health.dropby.co.in/pharmacies  — Pharmacies
+- https://brandcollabs-health.dropby.co.in/doctor/110779  — Doctor
+- https://brandcollabs-health.dropby.co.in/about  — About
+- https://brandcollabs-health.dropby.co.in/contact  — Contact
+
+### BrandCollabs Jobs — `brandcollabs-jobs.dropby.co.in`
+
+- https://brandcollabs-jobs.dropby.co.in/employers  — Employers
+- https://brandcollabs-jobs.dropby.co.in/about  — About
+- https://brandcollabs-jobs.dropby.co.in/contact  — Contact
+
+### BrandCollabs Legal — `brandcollabs-legal.dropby.co.in`
+
+- https://brandcollabs-legal.dropby.co.in/advocates  — Advocates
+- https://brandcollabs-legal.dropby.co.in/notaries  — Notaries
+- https://brandcollabs-legal.dropby.co.in/services  — Services
+- https://brandcollabs-legal.dropby.co.in/advocate/110779  — Advocate
+- https://brandcollabs-legal.dropby.co.in/consult  — Consult
+- https://brandcollabs-legal.dropby.co.in/about  — About
+- https://brandcollabs-legal.dropby.co.in/contact  — Contact
+
+### BrandCollabs Mart — `brandcollabs-mart.dropby.co.in`
+
+- https://brandcollabs-mart.dropby.co.in/products  — Products
+- https://brandcollabs-mart.dropby.co.in/furniture  — Furniture
+- https://brandcollabs-mart.dropby.co.in/store/110779  — Store
+- https://brandcollabs-mart.dropby.co.in/about  — About
+- https://brandcollabs-mart.dropby.co.in/contact  — Contact
+
+### BrandCollabs Pay — `brandcollabs-pay.dropby.co.in`
+
+- https://brandcollabs-pay.dropby.co.in/features  — Features
+- https://brandcollabs-pay.dropby.co.in/pricing  — Pricing
+- https://brandcollabs-pay.dropby.co.in/about  — About
+- https://brandcollabs-pay.dropby.co.in/contact  — Contact
+
+### BrandCollabs Services — `brandcollabs-services.dropby.co.in`
+
+- https://brandcollabs-services.dropby.co.in/services  — Services
+- https://brandcollabs-services.dropby.co.in/contact  — Contact
+- https://brandcollabs-services.dropby.co.in/about  — About
+
+### BrandCollabs Skills — `brandcollabs-skills.dropby.co.in`
+
+- https://brandcollabs-skills.dropby.co.in/courses  — Courses
+- https://brandcollabs-skills.dropby.co.in/trainers  — Trainers
+- https://brandcollabs-skills.dropby.co.in/course/110779  — Course
+- https://brandcollabs-skills.dropby.co.in/enrol  — Enrol
+- https://brandcollabs-skills.dropby.co.in/about  — About
+- https://brandcollabs-skills.dropby.co.in/contact  — Contact
+
+### BrandCollabs Travel — `brandcollabs-travel.dropby.co.in`
+
+- https://brandcollabs-travel.dropby.co.in/packages  — Packages
+- https://brandcollabs-travel.dropby.co.in/hotels  — Hotels
+- https://brandcollabs-travel.dropby.co.in/agents  — Agents
+- https://brandcollabs-travel.dropby.co.in/agent/110779  — Agent
+- https://brandcollabs-travel.dropby.co.in/enquiry  — Enquiry
+- https://brandcollabs-travel.dropby.co.in/about  — About
+- https://brandcollabs-travel.dropby.co.in/contact  — Contact
+
+### BrandCollabs Wellness — `brandcollabs-wellness.dropby.co.in`
+
+- https://brandcollabs-wellness.dropby.co.in/gyms  — Gyms
+- https://brandcollabs-wellness.dropby.co.in/salons  — Salons
+- https://brandcollabs-wellness.dropby.co.in/spas  — Spas
+- https://brandcollabs-wellness.dropby.co.in/clinics  — Clinics
+- https://brandcollabs-wellness.dropby.co.in/centre/110779  — Centre
+- https://brandcollabs-wellness.dropby.co.in/about  — About
+- https://brandcollabs-wellness.dropby.co.in/contact  — Contact
 
 ### Cloud Player — `cloudplayer.dropby.co.in`
 
@@ -62,183 +238,6 @@ Generated from `apps/web/lib/brand-sitemap.ts`, the same source the router reads
 - https://paisaflow.dropby.co.in/pricing  — Pricing
 - https://paisaflow.dropby.co.in/about  — About
 - https://paisaflow.dropby.co.in/contact  — Contact
-
-### Sarkar AI — `sarkar-ai.dropby.co.in`
-
-- https://sarkar-ai.dropby.co.in/capabilities  — Capabilities
-- https://sarkar-ai.dropby.co.in/use-cases  — Use cases
-- https://sarkar-ai.dropby.co.in/pricing  — Pricing
-- https://sarkar-ai.dropby.co.in/about  — About
-- https://sarkar-ai.dropby.co.in/contact  — Contact
-
-### SarkarBazaar — `sarkarbazaar.dropby.co.in`
-
-- https://sarkarbazaar.dropby.co.in/manufacturers  — Manufacturers
-- https://sarkarbazaar.dropby.co.in/wholesalers  — Wholesalers
-- https://sarkarbazaar.dropby.co.in/packaging  — Packaging
-- https://sarkarbazaar.dropby.co.in/company/110779  — Company
-- https://sarkarbazaar.dropby.co.in/about  — About
-- https://sarkarbazaar.dropby.co.in/contact  — Contact
-
-### SarkarCars — `sarkarcars.dropby.co.in`
-
-- https://sarkarcars.dropby.co.in/used-cars  — Cars & dealers
-- https://sarkarcars.dropby.co.in/services  — Service & repair
-- https://sarkarcars.dropby.co.in/car-details/110779  — Car
-- https://sarkarcars.dropby.co.in/sell-your-car  — Sell your car
-- https://sarkarcars.dropby.co.in/about  — About
-- https://sarkarcars.dropby.co.in/contact  — Contact
-
-### SarkarConnect — `sarkarconnect.dropby.co.in`
-
-- https://sarkarconnect.dropby.co.in/industries  — Industries
-- https://sarkarconnect.dropby.co.in/suppliers  — Suppliers
-- https://sarkarconnect.dropby.co.in/directory  — Directory
-- https://sarkarconnect.dropby.co.in/company/110779  — Company
-- https://sarkarconnect.dropby.co.in/post-requirement  — Post requirement
-- https://sarkarconnect.dropby.co.in/about  — About
-- https://sarkarconnect.dropby.co.in/contact  — Contact
-
-### SarkarDost — `sarkardost.dropby.co.in`
-
-- https://sarkardost.dropby.co.in/services  — Services
-- https://sarkardost.dropby.co.in/professionals  — Professionals
-- https://sarkardost.dropby.co.in/pro/110779  — Professional
-- https://sarkardost.dropby.co.in/book  — Book
-- https://sarkardost.dropby.co.in/about  — About
-- https://sarkardost.dropby.co.in/contact  — Contact
-
-### SarkarDukaan — `sarkardukaan.dropby.co.in`
-
-- https://sarkardukaan.dropby.co.in/shops  — Shops
-- https://sarkardukaan.dropby.co.in/grocery  — Grocery
-- https://sarkardukaan.dropby.co.in/jewellery  — Jewellery
-- https://sarkardukaan.dropby.co.in/shop/110779  — Shop
-- https://sarkardukaan.dropby.co.in/about  — About
-- https://sarkardukaan.dropby.co.in/contact  — Contact
-
-### SarkarEd — `sarkared.dropby.co.in`
-
-- https://sarkared.dropby.co.in/schools  — Schools
-- https://sarkared.dropby.co.in/coaching  — Coaching
-- https://sarkared.dropby.co.in/colleges  — Colleges
-- https://sarkared.dropby.co.in/institute/110779  — Institute
-- https://sarkared.dropby.co.in/enquiry  — Enquiry
-- https://sarkared.dropby.co.in/about  — About
-- https://sarkared.dropby.co.in/contact  — Contact
-
-### SarkarFinance — `sarkarfinance.dropby.co.in`
-
-- https://sarkarfinance.dropby.co.in/loans  — Loans
-- https://sarkarfinance.dropby.co.in/insurance  — Insurance
-- https://sarkarfinance.dropby.co.in/advisors  — Advisors
-- https://sarkarfinance.dropby.co.in/advisor/110779  — Advisor
-- https://sarkarfinance.dropby.co.in/apply  — Apply
-- https://sarkarfinance.dropby.co.in/about  — About
-- https://sarkarfinance.dropby.co.in/contact  — Contact
-
-### SarkarFood — `sarkarfood.dropby.co.in`
-
-- https://sarkarfood.dropby.co.in/restaurants  — Restaurants
-- https://sarkarfood.dropby.co.in/sweets  — Sweets
-- https://sarkarfood.dropby.co.in/caterers  — Caterers
-- https://sarkarfood.dropby.co.in/restaurant/110779  — Restaurant
-- https://sarkarfood.dropby.co.in/about  — About
-- https://sarkarfood.dropby.co.in/contact  — Contact
-
-### SarkarGhar — `sarkarghar.dropby.co.in`
-
-- https://sarkarghar.dropby.co.in/plumbers  — Plumbers
-- https://sarkarghar.dropby.co.in/electricians  — Electricians
-- https://sarkarghar.dropby.co.in/carpenters  — Carpenters
-- https://sarkarghar.dropby.co.in/painters  — Painters
-- https://sarkarghar.dropby.co.in/service/110779  — Service
-- https://sarkarghar.dropby.co.in/about  — About
-- https://sarkarghar.dropby.co.in/contact  — Contact
-
-### SarkarHealth — `sarkarhealth.dropby.co.in`
-
-- https://sarkarhealth.dropby.co.in/doctors  — Doctors
-- https://sarkarhealth.dropby.co.in/hospitals  — Hospitals
-- https://sarkarhealth.dropby.co.in/diagnostics  — Diagnostics
-- https://sarkarhealth.dropby.co.in/pharmacies  — Pharmacies
-- https://sarkarhealth.dropby.co.in/doctor/110779  — Doctor
-- https://sarkarhealth.dropby.co.in/about  — About
-- https://sarkarhealth.dropby.co.in/contact  — Contact
-
-### SarkarJobs — `sarkarjobs.dropby.co.in`
-
-- https://sarkarjobs.dropby.co.in/employers  — Employers
-- https://sarkarjobs.dropby.co.in/about  — About
-- https://sarkarjobs.dropby.co.in/contact  — Contact
-
-### SarkarLegal — `sarkarlegal.dropby.co.in`
-
-- https://sarkarlegal.dropby.co.in/advocates  — Advocates
-- https://sarkarlegal.dropby.co.in/notaries  — Notaries
-- https://sarkarlegal.dropby.co.in/services  — Services
-- https://sarkarlegal.dropby.co.in/advocate/110779  — Advocate
-- https://sarkarlegal.dropby.co.in/consult  — Consult
-- https://sarkarlegal.dropby.co.in/about  — About
-- https://sarkarlegal.dropby.co.in/contact  — Contact
-
-### SarkarMarketplace — `sarkarmarketplace.dropby.co.in`
-
-- https://sarkarmarketplace.dropby.co.in/categories  — Categories
-- https://sarkarmarketplace.dropby.co.in/directory  — All businesses
-- https://sarkarmarketplace.dropby.co.in/galaxy  — Galaxy
-- https://sarkarmarketplace.dropby.co.in/about  — About
-- https://sarkarmarketplace.dropby.co.in/contact  — Contact
-
-### SarkarMart — `sarkarmart.dropby.co.in`
-
-- https://sarkarmart.dropby.co.in/products  — Products
-- https://sarkarmart.dropby.co.in/furniture  — Furniture
-- https://sarkarmart.dropby.co.in/store/110779  — Store
-- https://sarkarmart.dropby.co.in/about  — About
-- https://sarkarmart.dropby.co.in/contact  — Contact
-
-### SarkarPay — `sarkarpay.dropby.co.in`
-
-- https://sarkarpay.dropby.co.in/features  — Features
-- https://sarkarpay.dropby.co.in/pricing  — Pricing
-- https://sarkarpay.dropby.co.in/about  — About
-- https://sarkarpay.dropby.co.in/contact  — Contact
-
-### SarkarSarkar — `sarkarsarkar.dropby.co.in`
-
-- https://sarkarsarkar.dropby.co.in/services  — Services
-- https://sarkarsarkar.dropby.co.in/contact  — Contact
-- https://sarkarsarkar.dropby.co.in/about  — About
-
-### SarkarSkills — `sarkarskills.dropby.co.in`
-
-- https://sarkarskills.dropby.co.in/courses  — Courses
-- https://sarkarskills.dropby.co.in/trainers  — Trainers
-- https://sarkarskills.dropby.co.in/course/110779  — Course
-- https://sarkarskills.dropby.co.in/enrol  — Enrol
-- https://sarkarskills.dropby.co.in/about  — About
-- https://sarkarskills.dropby.co.in/contact  — Contact
-
-### SarkarTravel — `sarkartravel.dropby.co.in`
-
-- https://sarkartravel.dropby.co.in/packages  — Packages
-- https://sarkartravel.dropby.co.in/hotels  — Hotels
-- https://sarkartravel.dropby.co.in/agents  — Agents
-- https://sarkartravel.dropby.co.in/agent/110779  — Agent
-- https://sarkartravel.dropby.co.in/enquiry  — Enquiry
-- https://sarkartravel.dropby.co.in/about  — About
-- https://sarkartravel.dropby.co.in/contact  — Contact
-
-### SarkarWellness — `sarkarwellness.dropby.co.in`
-
-- https://sarkarwellness.dropby.co.in/gyms  — Gyms
-- https://sarkarwellness.dropby.co.in/salons  — Salons
-- https://sarkarwellness.dropby.co.in/spas  — Spas
-- https://sarkarwellness.dropby.co.in/clinics  — Clinics
-- https://sarkarwellness.dropby.co.in/centre/110779  — Centre
-- https://sarkarwellness.dropby.co.in/about  — About
-- https://sarkarwellness.dropby.co.in/contact  — Contact
 
 ### SikshaHub — `sikshahub.dropby.co.in`
 

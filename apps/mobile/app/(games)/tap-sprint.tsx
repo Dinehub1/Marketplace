@@ -54,7 +54,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useReduceMotion } from "@/lib/motion";
 import { Badge, Card, Press, Text } from "@/components/ui";

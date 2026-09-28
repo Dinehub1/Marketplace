@@ -2,7 +2,7 @@
  * Brand → category ownership: the ONE table that decides which business listings
  * belong to which brand.
  *
- * This lives in `@hermes/core` because two independent surfaces have to agree about
+ * This lives in `@brandcollabs/core` because two independent surfaces have to agree about
  * it and must never be able to drift:
  *
  *   • the 28 brand websites, which render /<category>-in-indore landing pages and
@@ -36,13 +36,13 @@
 
 /** Brand slug -> substring patterns matched against `businesses.category`. */
 export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
-  sarkarhealth: [
+  "brandcollabs-health": [
     "hospital", "clinic", "dental", "dentist", "pharma", "doctor", "medical",
     "nursing", "physio", "diagnos", "radiolog", "oncolog", "dialysis",
     "optometr", "orthoped", "psychiat", "psycholog", "surgery", "ultrasound",
     "veterinar", "immunis", "rehabilit", "speech therap", "fertility", "eye ",
     "gynec", "ayurved", "homeopath", "pathology", "blood bank",
-    // Medical aesthetics belongs to the medical brand: sarkarwellness owns
+    // Medical aesthetics belongs to the medical brand: brandcollabs-wellness owns
     // salons and spas, not clinics. "skin" and "cosmetic" on their own used to
     // pull "skin clinic" / "cosmetic clinic" onto wellness - see the note there.
     "cosmetic clinic", "skin clinic", "derma",
@@ -51,10 +51,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // ("real estate", "property", "realty", "builder") moved to
   // hyperframes-realestate on 2026-08-10 — two brands cannot both own
   // /real-estate-agency-in-indore without competing with each other.
-  sarkarghar: [
+  "brandcollabs-ghar": [
     "plumb", "electric", "furniture", "interior", "architect",
     "carpenter", "mason", "tile", "paint",
-    // "roof" alone matched "rooftop restaurant", which belongs to sarkarfood.
+    // "roof" alone matched "rooftop restaurant", which belongs to brandcollabs-food.
     "roofing", "roof repair", "roof waterproofing",
     "civil contractor",
     "construction", "glass", "sanitary",
@@ -68,7 +68,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "packers", "movers", "carpet cleaning", "sofa cleaning", "deep cleaning",
     "housekeeping",
   ],
-  sarkarfood: [
+  "brandcollabs-food": [
     "restaurant", "cafe", "coffee", "bakery", "dhaba", "biryani", "pizza",
     "ice cream", "juice", "food", "kebab", "sweet", "caterer", "catering",
     "bar &", "lounge", "tandoor", "dessert", "microbrewery",
@@ -76,10 +76,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "tea stall", "chaat", "food court", "cloud kitchen",
   ],
   // Salons, spas, fitness. NOT clinics and NOT shops: bare "skin"/"cosmetic"
-  // matched "skin clinic" (sarkarhealth) and "cosmetics store" (sarkardukaan),
-  // and "sports academy" matched coaching academies owned by sarkared. Every
+  // matched "skin clinic" (brandcollabs-health) and "cosmetics store" (brandcollabs-dukaan),
+  // and "sports academy" matched coaching academies owned by brandcollabs-ed. Every
   // one of those was two brands publishing the same category page.
-  sarkarwellness: [
+  "brandcollabs-wellness": [
     // "=spa" is whole-word: as a bare substring it matched "spare parts",
     // putting vehicle parts on the wellness brand.
     "salon", "gym", "=spa", "yoga", "beauty", "massage", "wellness", "fitness",
@@ -89,13 +89,13 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   ],
   // Electronics and appliance retail/repair.
   // Bare "store" and "shop" were removed on 2026-08-10: they matched ANY
-  // category containing those words, so sarkarmart was silently co-claiming
+  // category containing those words, so brandcollabs-mart was silently co-claiming
   // furniture store, glass shop, ice cream shop, coffee shop, dessert shop,
   // sanitaryware shop, electrical goods store and home decor store from
-  // sarkarghar and sarkarfood — eight categories with two owners each.
+  // brandcollabs-ghar and brandcollabs-food — eight categories with two owners each.
   // Bare "computer"/"laptop" came out the same way on 2026-09-14: they matched
-  // "computer training institute", which sarkared owns.
-  sarkarmart: [
+  // "computer training institute", which brandcollabs-ed owns.
+  "brandcollabs-mart": [
     "ac repair", "air conditioner", "appliance", "mobile phone", "electronics",
     "computer repair", "computer store", "computer shop", "laptop repair",
     "laptop store", "printer repair", "printer store", "repair shop",
@@ -109,7 +109,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   ],
 
   // Property transactions — agencies, agents, developers, realty firms.
-  // Distinct from sarkarghar, which owns the trades that work ON a home.
+  // Distinct from brandcollabs-ghar, which owns the trades that work ON a home.
   "hyperframes-realestate": [
     "real estate", "property", "realty", "estate agent", "apartment builder",
     "housing",
@@ -119,21 +119,21 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // claimed. Manufacturers are deliberately excluded: "bag manufacturer" and
   // "garment manufacturer" are factories, not shops, and this brand is about
   // shops going online.
-  sarkardukaan: [
+  "brandcollabs-dukaan": [
     "grocery", "supermarket", "clothing", "boutique", "jewell", "footwear",
     "shoe store", "stationery", "gift shop", "toy store", "book store",
     "perfume", "watch store", "department store", "general store",
     "sports goods", "pet store", "music store", "handicraft",
     // "cosmetics" alone also matched "cosmetics store" AND "cosmetic clinic";
-    // the shop form is named explicitly so the clinic stays with sarkarhealth.
+    // the shop form is named explicitly so the clinic stays with brandcollabs-health.
     "cosmetics store", "cosmetic store", "cosmetics shop", "cosmetic shop",
     // orphan sweep 2026-09-14: retail the dukaan should own.
-    // "sweet shop" is deliberately NOT here - sarkarfood owns sweets, and both
+    // "sweet shop" is deliberately NOT here - brandcollabs-food owns sweets, and both
     // brands listing it meant two of our pages competing for one query.
     "candle", "utensil", "household", "dry fruit", "kirana", "fancy store",
     "gift center", "cake shop", "ice cream parlour",
   ],
-  sarkartravel: [
+  "brandcollabs-travel": [
     "hotel", "guest house", "hostel", "travel", "tour ", "resort", "lodge",
     // orphan sweep 2026-09-14: local mobility a visitor books
     "cab service", "taxi", "cabs", "travel agency", "tour operator",
@@ -147,8 +147,8 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // booking funnel.
   // Bare "painting" was removed on 2026-09-14: it matched "painting
   // contractor", "interior painting service" and "painting restoration
-  // service", all of which are sarkarghar's.
-  sarkarcars: [
+  // service", all of which are brandcollabs-ghar's.
+  "brandcollabs-cars": [
     "car wash", "car cleaning", "car detail", "vehicle detail", "detailing",
     "car service", "vehicle service", "car repair", "auto repair",
     "automobile repair", "mechanic", "denting", "car painting", "car care",
@@ -157,15 +157,15 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "car rental", "bike rental", "car dealer", "car accessories", "tyre",
     "wheel alignment", "car stereo", "car audio",
   ],
-  sarkarfinance: [
+  "brandcollabs-finance": [
     "bank", "insurance", "stock brok", "mutual fund", "chartered account",
     "accounting", "tax ", "financial", "money transfer", "loan", "paytm",
     "credit", "nbfc", "fintech",
   ],
-  sarkarlegal: [
+  "brandcollabs-legal": [
     "law firm", "legal", "advocate", "notary", "lawyer",
   ],
-  sarkared: [
+  "brandcollabs-ed": [
     "school", "college", "university", "institute", "academy", "coaching",
     "tutor", "education", "training", "preschool", "language school",
     "driving school",
@@ -175,7 +175,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "e-learning", "e‑learning", "e-learning centre", "e‑learning centre",
     "tuition", "library", "study centre", "computer training",
   ],
-  sarkarjobs: [
+  "brandcollabs-jobs": [
     "recruit", "human resources", "staffing", "placement", "hr ",
   ],
 
@@ -186,7 +186,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
    * Deliberately excluded from every other brand's keywords so no category ends
    * up with two owners (the whole point of this file).
    */
-  sarkarconnect: [
+  "brandcollabs-connect": [
     "digital marketing", "marketing agency", "advertising", "seo service",
     "it services", "software", "web design", "web development", "app develop",
     "graphic design", "3d printing", "printing press", "printing service",
@@ -203,9 +203,9 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   /**
    * Manufacturers, wholesalers and industrial supply - the B2B supply side of
    * the same orphan sweep. A "garment manufacturer" is a factory, not a
-   * sarkardukaan shop, which is why it belongs here and not in retail.
+   * brandcollabs-dukaan shop, which is why it belongs here and not in retail.
    */
-  sarkarbazaar: [
+  "brandcollabs-bazaar": [
     "manufacturer", "manufacturing", "wholesale", "wholesaler", "distributor",
     "supplier", "trading company", "traders", "mill", "factory", "industry",
     "industrial", "packaging", "plastic", "steel", "iron", "metal",
@@ -227,19 +227,19 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
  * exists to prevent. Exclusions are evaluated before the keyword match counts.
  */
 export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
-  sarkarmart: ["auto repair", "computer training", "laptop training"],
-  sarkared: ["martial arts"],
-  sarkarfinance: ["blood bank"],
-  // An electrician is a trade (sarkarghar); the shop selling the goods is
-  // sarkarmart's. "electric" matched "electrical goods store" for both.
+  "brandcollabs-mart": ["auto repair", "computer training", "laptop training"],
+  "brandcollabs-ed": ["martial arts"],
+  "brandcollabs-finance": ["blood bank"],
+  // An electrician is a trade (brandcollabs-ghar); the shop selling the goods is
+  // brandcollabs-mart's. "electric" matched "electrical goods store" for both.
   // "paint" likewise matched "car denting painting" - the paintshop that works
-  // on a vehicle is sarkarcars'.
-  sarkarghar: [
+  // on a vehicle is brandcollabs-cars'.
+  "brandcollabs-ghar": [
     "electrical goods", "electrical store",
     "car denting", "car painting", "vehicle painting",
   ],
-  // A clinic named "legal aid clinic" is sarkarlegal's, not a medical one.
-  sarkarhealth: ["legal aid clinic", "ayurvedic spa"],
+  // A clinic named "legal aid clinic" is brandcollabs-legal's, not a medical one.
+  "brandcollabs-health": ["legal aid clinic", "ayurvedic spa"],
 };
 
 /**
@@ -252,27 +252,31 @@ export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
  * supplier" or "pvc pipe supplier" matched two or three brands at once, and a
  * category owned twice is two of our own pages competing for one query. The
  * specialist verticals are listed first, the catch-all B2B brands last, so
- * sarkarconnect and sarkarbazaar only ever receive what nobody else claims.
+ * brandcollabs-connect and brandcollabs-bazaar only ever receive what nobody else claims.
  */
 export const BRAND_PRECEDENCE: readonly string[] = [
-  "sarkarhealth", "sarkarghar", "sarkarfood", "sarkarwellness", "sarkarmart",
-  "sarkardukaan", "sarkartravel", "sarkarcars", "sarkarfinance", "sarkarlegal",
-  "sarkared", "sarkarjobs", "hyperframes-realestate", "sarkarconnect",
-  "sarkarbazaar",
+  "brandcollabs-health", "brandcollabs-ghar", "brandcollabs-food", "brandcollabs-wellness", "brandcollabs-mart",
+  "brandcollabs-dukaan", "brandcollabs-travel", "brandcollabs-cars", "brandcollabs-finance", "brandcollabs-legal",
+  "brandcollabs-ed", "brandcollabs-jobs", "hyperframes-realestate", "brandcollabs-connect",
+  "brandcollabs-bazaar",
 ];
 
 /**
  * The single brand that publishes the entire directory.
- *
- * Was {sarkarmarketplace, sarkarbazaar, justdial-agent}. Three brands serving
- * the identical 320 category pages meant /plumber-in-indore existed three times
- * over, competing with itself — Google picks one canonical and can suppress the
- * others, which risks suppressing the one you actually want ranking. Narrowed
- * to one owner on 2026-08-10 at the user's direction.
  */
 export const FULL_DIRECTORY_BRANDS: ReadonlySet<string> = new Set([
+  "brandcollabs",
   "sarkarmarketplace",
 ]);
+
+/** Normalize legacy/alias brand slugs to their BrandCollabs canonical slugs. */
+export function normalizeBrandSlug(brandSlug: string): string {
+  const s = (brandSlug ?? "").toLowerCase();
+  if (s === "sarkarmarketplace" || s === "sarkar") return "brandcollabs";
+  if (s === "sarkarsarkar") return "brandcollabs-services";
+  if (s.startsWith("sarkar")) return s.replace(/^sarkar-?/, "brandcollabs-");
+  return s;
+}
 
 /**
  * Keyword match. A keyword may be written "=word" to mean whole-word only -
@@ -315,7 +319,7 @@ export function categoriesForBrand(
   brandSlug: string,
   allCategories: string[],
 ): string[] | null {
-  const slug = (brandSlug ?? "").toLowerCase();
+  const slug = normalizeBrandSlug(brandSlug);
   if (FULL_DIRECTORY_BRANDS.has(slug)) return null;
   const keywords = BRAND_CATEGORY_KEYWORDS[slug];
   // An unmapped brand used to fall through to the FULL directory. That was a
@@ -353,7 +357,7 @@ export function ownerOfCategory(category: string | null | undefined): string | n
  * already hold a row and only need to know whether it belongs to them.
  */
 export function brandOwnsCategory(brandSlug: string, category: string | null | undefined): boolean {
-  const slug = (brandSlug ?? "").toLowerCase();
+  const slug = normalizeBrandSlug(brandSlug);
   if (FULL_DIRECTORY_BRANDS.has(slug)) return true;
   if (!BRAND_CATEGORY_KEYWORDS[slug]) return false;
   return ownerOfCategory(category) === slug;
@@ -381,7 +385,7 @@ export type BrandScope = {
  * but is allowed to show everything — the caller reads that as "no filter".
  */
 export function scopeForBrand(brandSlug: string): BrandScope | null {
-  const slug = (brandSlug ?? "").toLowerCase();
+  const slug = normalizeBrandSlug(brandSlug);
   if (FULL_DIRECTORY_BRANDS.has(slug)) return null;
   const keywords = BRAND_CATEGORY_KEYWORDS[slug];
   if (!keywords || keywords.length === 0) return null;

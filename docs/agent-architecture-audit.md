@@ -1,19 +1,19 @@
-# Hermes / DropBy — architecture, direction, and VM tidy-up
+# BrandCollabs Worker & Agent — Architecture, Direction, and VM Tidy-up
 
 **Audit date:** 2026-09-16 · **Auditor:** DSH session (read-only on the VM except for the archive moves below)
-**Scope:** the Windows VM `<vm-public-ip>` (`WIN-3A54GFFGPCJ`), the Hermes agent that runs on it, its cron
+**Scope:** the Windows VM `<vm-public-ip>` (`WIN-3A54GFFGPCJ`), the background worker agent that runs on it, its cron
 scheduler, the pm2 services, and the local Mac side.
 
 ---
 
-## 1. Answer to "what is Hermes actually doing?"
+## 1. Answer to "what is the background worker actually doing?"
 
 One job, on a timer:
 
 ```
 dropby-hourly-build   cron: 20 * * * *   ENABLED
 workdir: C:\Users\Administrator\Marketplace
-skills:  sarkar-marketplace-operations, trending-oss-repos
+skills:  marketplace-operations, trending-oss-repos
 ```
 
 It is **not** directionless in the sense of broken — it is working *exactly* as configured, and doing it well:
@@ -25,7 +25,7 @@ It is **not** directionless in the sense of broken — it is working *exactly* a
 | Delivery | `delivered` on every run |
 | Failure streak | 0 |
 | Cron ticker heartbeat | live (fresh within the minute) |
-| Hermes gateway (pid 5012) | online, 13 h uptime |
+| Background agent gateway (pid 5012) | online, 13 h uptime |
 
 Each run: read `docs/hourly-queue.md` → take the top non-done item → change one thing → verify it for real
 (HTTP status, a `/api/job` job_id, an `expo export` size, a phone-sized screenshot) → publish to
@@ -52,7 +52,7 @@ same story — `fix(mobile)`, `fix(gallery)`, `docs(queue)` — competent, but i
 | `infra-sentinel` | `*/15 * * * *` | **off** | nobody watches the box |
 | `vault-guardian` | `0 */6 * * *` | **off** | nobody watches the data |
 | `log-rotator` | `0 3 * * *` | **off** | (mitigated: pm2-logrotate module is doing this) |
-| `market-scan`, `acc1-*` (5), `sarkar-pipeline` | various | **off** | trading + pipeline jobs parked |
+| `market-scan`, `acc1-*` (5), `data-pipeline` | various | **off** | trading + pipeline jobs parked |
 
 The hourly job takes this literally — its own prompt says *"never resume or touch the paused cron jobs"*.
 So the agent that could add direction has been instructed not to, and the jobs that would supply direction
@@ -72,7 +72,7 @@ The queue's parking lot is full of items that mark time because they need a huma
   proves a screen renders, not that it works`.
 
 **Missing, structurally:**
-- No kanban board usage — `~/.hermes/kanban.db` has **0 tasks**; `kanban.dispatch_in_gateway` is on but idle.
+- No kanban board usage — `kanban.db` has **0 tasks**; `kanban.dispatch_in_gateway` is on but idle.
 - No revenue telemetry in the loop. Build log tracks *fixes*, not installs, revenue, or retention.
 - No single source of truth for "what is this business and what is the next milestone" — the queue file is
   the de-facto strategy document, and it is a bug list.
@@ -85,28 +85,26 @@ The queue's parking lot is full of items that mark time because they need a huma
 Cloudflare (remote-managed tunnel 6988e6e4-…)
   shots.dropby.co.in     -> localhost:8092  pm2 shots-gallery  (python shots_server.py)
   expo.dropby.co.in      -> localhost:8091  pm2 expo-preview
-  hermes.dropby.co.in    -> localhost:9300  pm2 hermes-dashboard
   dashboard.dropby.co.in -> localhost:8080  pm2 marketplace (Next 16.2.9, apps/web)
   dropby.co.in + *       -> localhost:8080  (catch-all)
   exp.direct             -> Expo Go, native app
 
 pm2 (Administrator, C:\Users\Administrator\Marketplace\ecosystem.config.js)
   marketplace :8080   dropby-worker :8099 (rembg/Pillow engine)
-  expo-preview :8091 shots-gallery :8092  hermes-dashboard :9300
+  expo-preview :8091 shots-gallery :8092
   galaxy-site :9400  expo-dev (STOPPED)
   + pm2-logrotate module (10M, retain 30, compressed) — log growth handled
 
-Hermes agent (Win, pm2 hermes-gateway, pid 5012)
-  HERMES_HOME = C:\Users\Administrator\AppData\Local\hermes
+Background agent runner (Win, pid 5012)
   cron ticker -> jobs.json (16 jobs, 1 enabled) -> C:\Users\Administrator\Marketplace
 
 Live repo   C:\Users\Administrator\Marketplace  (main == origin/main, 1 uncommitted file)
 Product     apps/mobile (Expo), apps/web (Next), services/tools/{worker,shots_server,spa_server}.py
 ```
 
-Note the **local Mac is a separate, mostly dormant install**: `~/.hermes` gateway 0.14.0 (a fork of
-`Dinehub1/Hermes-agent`) is running with **Telegram paused** (token rejected) and **Discord retrying
-(failed)** — so the local agent has no working platform channel at all, and has been idle since May.
+Note the **local Mac is a separate, mostly dormant install**: local gateway 0.14.0 is running with
+**Telegram paused** (token rejected) and **Discord retrying (failed)** — so the local agent has no
+working platform channel at all, and has been idle since May.
 
 ## 5. What was tidied on the VM (this session)
 
@@ -117,9 +115,9 @@ Note the **local Mac is a separate, mostly dormant install**: `~/.hermes` gatewa
 |---|---|---|
 | `stray-home-scripts/` | 19 | one-off probes: `imgtest.py`, `std_trader.py` (814-line paper trader), `mt5_*`, `req.jsonl`, `ontester_snippet.inc`, `cashcard-dns-*-backup.json`, … |
 | `stray-home-logs/` | 33 | run artifacts and superseded docs: `expo-*.log`, `mb_*.json`, `social_crawl.jsonl`, `brand_audit.json`, `galaxy-live.png`, `plan_vs_reality.json`, old root `README/CLAUDE/CHANGELOG/package.json` |
-| `dead-orchestrator/` | 14 | abandoned earlier attempts: `src/` (JS orchestrator+worker), `tools/` (higgsfield/whatsapp stubs), `staging/` (4 orphan UUID dirs), `tmp/` (zztest scripts), `supabase/`, `Projects/`, `Notes/`, `mojibake-backup/`, `hermes-cron/`, `GMaps Data/`, `GeoGhost/`, `local-service-leads/`, 3 stale logs |
+| `dead-orchestrator/` | 14 | abandoned earlier attempts: `src/` (JS orchestrator+worker), `tools/` (higgsfield/whatsapp stubs), `staging/` (4 orphan UUID dirs), `tmp/` (zztest scripts), `supabase/`, `Projects/`, `Notes/`, `mojibake-backup/`, cron tasks, `GMaps Data/`, `GeoGhost/`, `local-service-leads/`, 3 stale logs |
 | `dead-web/` | 1 | `ai-free-test/` (14 scratch API probes) |
-| `stray-home-bak/` | 3 | two `start-services.cmd.bak-*`, superseded `hermes-dashboard.ecosystem.config.js` |
+| `stray-home-bak/` | 3 | two `start-services.cmd.bak-*`, superseded `ecosystem.config.js` |
 
 Before/after, the home root went from ~45 loose files to: `cloudflared.exe` (live, used by the
 named-tunnel task), `start-services.cmd` (live, boot task), `.env`, `.gitconfig`, `.git-credentials`,

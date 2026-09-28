@@ -31,7 +31,7 @@ attendance & fees · worksheet generator · translation · study helper · resum
 cover maker · image tools.
 
 **Tier 3 — directory apps** (data already exists, 24k listings)
-SarkarHealth · SarkarMarketplace · SarkarCars — same app shell, city-directory intent.
+BrandCollabs Health · BrandCollabs Directory · BrandCollabs Cars — same app shell, city-directory intent.
 
 ## Games: traffic engines, not products
 

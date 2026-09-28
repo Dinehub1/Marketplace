@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Business } from "./api";
 
-const KEY = "hermes-saved";
+const KEY = "brandcollabs-saved";
 
 /**
  * Saved listings, stored on the device.

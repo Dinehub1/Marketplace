@@ -29,7 +29,7 @@ import type { ReactNode } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { Text } from "@/components/ui";
 import { Icon, type IconName } from "@/components/icons";
 import { useTheme } from "@/lib/theme";
@@ -44,7 +44,7 @@ import { useProductUI, type ProductUI } from "@/lib/product-ui";
  */
 const TAB_BAR_CLEARANCE = 55;
 
-/** Minimum hit area. Matches `minTouchTarget` in @hermes/tokens; 44pt is the platform floor. */
+/** Minimum hit area. Matches `minTouchTarget` in @brandcollabs/tokens; 44pt is the platform floor. */
 const ACTION_SIZE = 44;
 
 export function WellnessShell({

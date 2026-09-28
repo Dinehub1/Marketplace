@@ -26,7 +26,7 @@ import skadnetwork from "./plugins/skadnetwork-ids.json";
  */
 
 const APP_TARGET =
-  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "sarkarmarketplace";
+  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "brandcollabs";
 
 const target = byId(APP_TARGET);
 if (!target) {
@@ -85,9 +85,9 @@ const BUNDLE_ID = process.env.BRAND_BUNDLE_ID ?? target.bundleId;
  * marketplace keeps its hand-chosen green ramp: it is already shipped, and repainting a
  * live app is a design decision, not a side effect of adding targets.
  */
-const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "sarkarmarketplace" ? "#22543d" : target.color);
-const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "sarkarmarketplace" ? "#38a169" : target.color);
-const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "sarkarmarketplace" ? "#9ae6b4" : tint(target.color, 0.55));
+const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "brandcollabs" ? "#22543d" : target.color);
+const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "brandcollabs" ? "#38a169" : target.color);
+const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "brandcollabs" ? "#9ae6b4" : tint(target.color, 0.55));
 
 /** Lighten a hex colour toward white by `amount` (0..1). Keeps the hue, lifts the value. */
 function tint(hex: string, amount: number): string {
@@ -195,9 +195,7 @@ const config: ExpoConfig = {
   // project id against owner/slug, so a build without it would look for the project under
   // whoever happens to be logged in.
   owner: "brandcollabs",
-  // The marketplace keeps its original slug, `sarkar-marketplace`: its EAS project is
-  // named after it, and the slug is also what existing store tooling knows it by.
-  slug: process.env.EXPO_SLUG ?? (target.id === "sarkarmarketplace" ? "sarkar-marketplace" : target.id),
+  slug: process.env.EXPO_SLUG ?? (target.id === "brandcollabs" ? "brandcollabs" : target.id),
   scheme: BRAND_SLUG,
   version: "1.0.0",
   orientation: "portrait",
@@ -363,7 +361,7 @@ const config: ExpoConfig = {
     supabaseKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
     // The platform moved off cashcard.live; the marketplace lives on a
     // subdomain because dropby.co.in's apex belongs to another app.
-    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sarkarmarketplace.dropby.co.in",
+    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://brandcollabs.dropby.co.in",
     // The app's API host (OTP, jobs, uploads, ad events, the paywall page); see lib/config.ts.
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://api.dropby.co.in",
     // The resolved target, read back at runtime by lib/target.ts. This is the one wire
@@ -384,7 +382,7 @@ const config: ExpoConfig = {
       products: target.products,
       permissions: PERMISSIONS,
       // No `scope` key: which categories a directory app may show is resolved at
-      // runtime from `@hermes/core`'s ownership table (lib/target.ts), so a binary
+      // runtime from `@brandcollabs/core`'s ownership table (lib/target.ts), so a binary
       // can never carry a stale copy of who owns which category.
       ...(target.ads ? { ads: target.ads } : {}),
     },

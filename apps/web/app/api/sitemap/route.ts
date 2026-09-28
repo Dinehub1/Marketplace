@@ -1,4 +1,4 @@
-import { CITY_LABEL } from '@hermes/core';
+import { CITY_LABEL } from '@brandcollabs/core';
 import { NextRequest } from "next/server";
 import { categoryPath, getCategoryIndex, getCityIndex, DEFAULT_CITY } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";

@@ -1,7 +1,7 @@
 import { Redirect, type Href } from "expo-router";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 import { Card, Text } from "@/components/ui";
 import { TARGET } from "@/lib/target";
 import { unbuiltProductsFor } from "@/lib/products";

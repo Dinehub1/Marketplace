@@ -84,8 +84,8 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
       // the effect's commit pass forces a second render before the browser paints.
       await Promise.resolve();
       if (cancelled) return;
-      const stored = localStorage.getItem("hermes_otp_token");
-      const storedPhone = localStorage.getItem("hermes_phone");
+      const stored = localStorage.getItem("brandcollabs_otp_token") || localStorage.getItem("hermes_otp_token");
+      const storedPhone = localStorage.getItem("brandcollabs_phone") || localStorage.getItem("hermes_phone");
       if (stored && storedPhone) {
         setToken(stored);
         setPhone(storedPhone);
@@ -153,8 +153,8 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
       });
       const j = await res.json();
       if (!res.ok) throw new Error(j?.error || "Could not verify the code");
-      localStorage.setItem("hermes_otp_token", j.token);
-      localStorage.setItem("hermes_phone", j.phone);
+      localStorage.setItem("brandcollabs_otp_token", j.token);
+      localStorage.setItem("brandcollabs_phone", j.phone);
       setToken(j.token);
       // The order route also claims the job for this phone.
       await pay(j.token, j.phone);
@@ -179,6 +179,7 @@ export default function PayPanel({ jobId, pricePaise, previewUrl }: Props) {
     if (res.status === 401) {
       setError("That number is not verified. Send a new code.");
       setStage("phone");
+      localStorage.removeItem("brandcollabs_otp_token");
       localStorage.removeItem("hermes_otp_token");
       setToken(null);
       return;
