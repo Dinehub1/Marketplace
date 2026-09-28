@@ -25,8 +25,13 @@ import {
   localityOf,
 } from "@/lib/categories";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 300; // Revalidate every 5 minutes (ISR cache)
+// Not "force-dynamic": that sets fetchCache to force-no-store for the whole tree,
+// which silently disabled every `next: { revalidate }` below and sent each page
+// view straight to Supabase (~400k REST calls in one crawl on 2026-09-27). The
+// page is still rendered per request (it reads searchParams); only fetches that
+// ask for a revalidate window are cached, and anything without one (session,
+// dashboard data) stays uncached.
+export const fetchCache = "default-no-store";
 
 /**
  * Per-page metadata.
@@ -151,7 +156,7 @@ export async function generateMetadata(
               apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!}`,
             },
-            next: { revalidate: 300 },
+            next: { revalidate: 3600 },
           },
         );
         const biz = res.ok ? (await res.json())[0] : null;

@@ -95,14 +95,28 @@ export async function getBrands(): Promise<Brand[]> {
 }
 
 /** One brand by its URL slug. */
+/**
+ * Every page on every brand calls this, as do the 404s from scanners probing
+ * random subdomains, so it is a cached anon fetch rather than a cookie-bound
+ * client: `brands` is public-read, and a misses-cache (`[]`) is cached too.
+ * Brand edits show up within BRAND_TTL seconds.
+ */
+const BRAND_TTL = 300;
+
 export async function getBrand(slug: string, city?: City): Promise<Brand | null> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("brands")
-    .select("*")
-    .eq("slug", slug.toLowerCase())
-    .maybeSingle();
-  const brand = (data as Brand) ?? null;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) return null;
+  let brand: Brand | null = null;
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/brands?select=*&slug=eq.${encodeURIComponent(slug.toLowerCase())}&limit=1`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}` }, next: { revalidate: BRAND_TTL, tags: ["brands"] } },
+    );
+    if (res.ok) brand = ((await res.json()) as Brand[])[0] ?? null;
+  } catch {
+    brand = null;
+  }
   if (!brand || !city || city.slug === DEFAULT_CITY.slug) return brand;
   // One place, so every consumer (header, footer, landing, about, the default
   // metadata) gets city-correct copy without threading a city through them all.
