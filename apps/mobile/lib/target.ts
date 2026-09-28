@@ -48,7 +48,7 @@ export type Target = {
  * directory keeps those working instead of throwing on a screen nobody can reach.
  */
 const FALLBACK: Target = {
-  id: "sarkarmarketplace",
+  id: "sheharbazaar",
   name: "Indore Business Directory",
   tagline: "Every local business in Indore, with phone numbers",
   color: "#a16207",
@@ -56,7 +56,7 @@ const FALLBACK: Target = {
   firstRoute: "/browse",
   products: [],
   permissions: ["LOCATION"],
-  scope: scopeForBrand("sarkarmarketplace"),
+  scope: scopeForBrand("sheharbazaar"),
   ads: null,
 };
 

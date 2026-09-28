@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Keep the Sarkar Marketplace catalogue clean, forever, without being asked.
+"""Keep the Shehar Bazaar catalogue clean, forever, without being asked.
 
 Runs against the live `businesses` table and is safe to run repeatedly (every
 action is idempotent). It never deletes a row: the directory filters on

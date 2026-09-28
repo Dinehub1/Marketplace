@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
   await db("business_events", {
     method: "POST",
     headers: { Prefer: "return=minimal" },
-    body: JSON.stringify({ business_id: businessId, brand_slug: "sarkarcars", type: "booking", session_id: null, referrer: null, city: null }),
+    body: JSON.stringify({ business_id: businessId, brand_slug: "gaadighar", type: "booking", session_id: null, referrer: null, city: null }),
   }).catch(() => {});
 
   let notified = false;

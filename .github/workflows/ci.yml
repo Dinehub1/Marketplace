@@ -143,7 +143,7 @@ jobs:
         run: |
           set -euo pipefail
           # `wellness` was `breathe` until the six practices became one app.
-          for t in sarkarmarketplace wellness toolbox tap-sprint; do
+          for t in sheharbazaar wellness toolbox tap-sprint; do
             echo "::group::export $t"
             APP_TARGET="$t" npx expo export --platform all --output-dir "/tmp/export-$t"
             echo "::endgroup::"

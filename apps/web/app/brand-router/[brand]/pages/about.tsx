@@ -2,8 +2,8 @@ import { BrandHeader, BrandFooter } from "../brand-header";
 import type { Brand } from "@/lib/brands";
 
 const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: string; values: Array<{ icon: string; title: string; desc: string }>; whyChoose?: Array<{ title: string; desc: string }>; stats?: Array<{ label: string; value: string }> }> = {
-  sarkarconnect: {
-    story: "SarkarConnect was born from a question — millions of small and medium businesses across India exist, yet they lack access to the right B2B network.\n\nIn 2024, we launched SarkarConnect — a platform that connects merchants based on their industry, location, and needs.\n\nToday, SarkarConnect connects 10,000+ verified businesses across manufacturing, electronics, textiles, food processing, and dozens of other sectors. Hundreds of new deals close every month.",
+  vyaparsetu: {
+    story: "Vyapar Setu was born from a question — millions of small and medium businesses across India exist, yet they lack access to the right B2B network.\n\nIn 2024, we launched Vyapar Setu — a platform that connects merchants based on their industry, location, and needs.\n\nToday, Vyapar Setu connects 10,000+ verified businesses across manufacturing, electronics, textiles, food processing, and dozens of other sectors. Hundreds of new deals close every month.",
     mission: "Our mission is to make B2B trade digital and transparent for India's MSMEs — so every merchant can reach the right partner, without middlemen.",
     values: [
       { icon: "🔗", title: "Connection", desc: "We don't just build a platform, we build relationships — we value every connection." },
@@ -12,8 +12,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🇮🇳", title: "India Tradition", desc: "We promote indigenous business — we are committed to Make in India." },
     ],
   },
-  sarkarhealth: {
-    story: "SarkarHealth began in a government hospital in Indore — where a young doctor noticed patients waiting hours to see the right doctor.\n\nIn 2025, we launched SarkarHealth — a digital healthcare platform that connects patients with verified doctors, lab tests, and medicine delivery.\n\nToday, SarkarHealth serves 50+ verified doctors, 10+ lab partners, and 5,000+ active patients — Indore's fastest-growing digital healthcare network.",
+  swasthpath: {
+    story: "Swasth Path began in a government hospital in Indore — where a young doctor noticed patients waiting hours to see the right doctor.\n\nIn 2025, we launched Swasth Path — a digital healthcare platform that connects patients with verified doctors, lab tests, and medicine delivery.\n\nToday, Swasth Path serves 50+ verified doctors, 10+ lab partners, and 5,000+ active patients — Indore's fastest-growing digital healthcare network.",
     mission: "Our mission is to provide every resident of Indore with affordable, quality healthcare — regardless of neighborhood or income level.",
     values: [
       { icon: "🩺", title: "Medical Responsibility", desc: "Every doctor is licensed and verified — your health is our responsibility." },
@@ -22,8 +22,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "❤️", title: "Patient-Centric", desc: "Every feature is built for patient convenience — healthcare made easy." },
     ],
   },
-  sarkardost: {
-      story: "SarkarDost started in Indore — where two friends who met at a humble tea stall saw that local merchants struggled to reach their customers.\\n\\nIn 2024, we decided that every shopkeeper, service provider, and specialist in Indore deserves an equal platform — where they can find customers through their own merit, without paying the heavy fees of large platforms.\\n\\nToday SarkarDost connects 800+ local businesses, 40,000+ active users, and 25+ neighborhoods in Indore — a community where trust, locality, and technology come together. Our journey began at a small tea stall in Rajwada, where Raju bhai built his shop's online presence and saw 3x growth in his daily customers. Today, with that same spirit, we are committed to bringing digital success to every small business.",
+  padosi: {
+      story: "Padosi started in Indore — where two friends who met at a humble tea stall saw that local merchants struggled to reach their customers.\\n\\nIn 2024, we decided that every shopkeeper, service provider, and specialist in Indore deserves an equal platform — where they can find customers through their own merit, without paying the heavy fees of large platforms.\\n\\nToday Padosi connects 800+ local businesses, 40,000+ active users, and 25+ neighborhoods in Indore — a community where trust, locality, and technology come together. Our journey began at a small tea stall in Rajwada, where Raju bhai built his shop's online presence and saw 3x growth in his daily customers. Today, with that same spirit, we are committed to bringing digital success to every small business.",
       mission: "Our mission is to digitally empower every business in Indore — so they are no longer confined to their locality and can reach customers across the whole city. We believe every local shop, whether a tea stall or a professional service, deserves to grow in the digital age.",
       vision: "To become Indore's most trusted local business network, where every merchant can connect with customers in their neighborhood and every citizen can easily discover services near them.",
       values: [
@@ -89,8 +89,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🔒", title: "Security", desc: "Encrypted — just yours." },
     ],
   },
-  "sarkar-ai": {
-    story: "Sarkar AI was born in 2024 — when AI technology advanced rapidly in India.\n\nWe saw that small merchants and teachers lacked the means to use AI — Sarkar AI bridged that gap.\n\nToday, Sarkar AI provides 2,000+ users with an AI assistant, task automation, and multilingual support.",
+  "ustaad-ai": {
+    story: "Ustaad AI was born in 2024 — when AI technology advanced rapidly in India.\n\nWe saw that small merchants and teachers lacked the means to use AI — Ustaad AI bridged that gap.\n\nToday, Ustaad AI provides 2,000+ users with an AI assistant, task automation, and multilingual support.",
     mission: "Our mission is to give every Indian the benefit of AI technology — simple, affordable, and effective.",
     values: [
       { icon: "🤖", title: "AI", desc: "Available 24/7 — an intelligent assistant." },
@@ -99,8 +99,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🔧", title: "Automation", desc: "Tasks automated — save time." },
     ],
   },
-  sarkarfood: {
-    story: "SarkarFood began in 2024 — to bring Indore's delicious food to every home.\n\nWe saw that local restaurants and home cooks have to pay heavy fees to large platforms just to reach customers.\n\nToday, SarkarFood connects 50+ restaurants and 10,000+ active customers — Indore's own food platform.",
+  swaadghar: {
+    story: "Swaad Ghar began in 2024 — to bring Indore's delicious food to every home.\n\nWe saw that local restaurants and home cooks have to pay heavy fees to large platforms just to reach customers.\n\nToday, Swaad Ghar connects 50+ restaurants and 10,000+ active customers — Indore's own food platform.",
     mission: "Our mission is to bring Indore's delicious food to every home — with fast delivery and affordable prices.",
     values: [
       { icon: "🍔", title: "Taste", desc: "50+ kitchens — for every palate." },
@@ -109,8 +109,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🎁", title: "Rewards", desc: "Points on every order." },
     ],
   },
-  sarkarfinance: {
-    story: "SarkarFinance was born in 2025 — when small merchants and individuals in India couldn't get loans on time.\n\nWe saw that traditional bank processes are complex and time-consuming — SarkarFinance simplified them.\n\nToday, SarkarFinance provides 3,000+ customers with instant loans and financial advice.",
+  loansaathi: {
+    story: "Loan Saathi was born in 2025 — when small merchants and individuals in India couldn't get loans on time.\n\nWe saw that traditional bank processes are complex and time-consuming — Loan Saathi simplified them.\n\nToday, Loan Saathi provides 3,000+ customers with instant loans and financial advice.",
     mission: "Our mission is to provide every Indian with timely financial assistance — without complex procedures.",
     values: [
       { icon: "🏦", title: "Instant", desc: "Instant approval — minimal documents." },
@@ -119,8 +119,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🔒", title: "Security", desc: "Bank-level encryption." },
     ],
   },
-  sarkarpay: {
-    story: "SarkarPay was born in 2024 — when UPI and digital payments transformed India.\n\nWe saw that small merchants struggle to collect payments — SarkarPay offered a simple solution.\n\nToday, SarkarPay gives 5,000+ merchants every payment mode in one place.",
+  kadampay: {
+    story: "Kadam Pay was born in 2024 — when UPI and digital payments transformed India.\n\nWe saw that small merchants struggle to collect payments — Kadam Pay offered a simple solution.\n\nToday, Kadam Pay gives 5,000+ merchants every payment mode in one place.",
     mission: "Our mission is to give every merchant a simple and secure payment solution — with no hidden fees.",
     values: [
       { icon: "💰", title: "Everything", desc: "UPI, card, net banking." },
@@ -129,8 +129,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "📈", title: "Analytics", desc: "Sales data in one place." },
     ],
   },
-  sarkarmart: {
-    story: "SarkarMart was born in 2024 — to give Indore's local merchants an online platform.\n\nWe saw that local brands and merchants were helpless before large platforms — SarkarMart empowered them.\n\nToday, SarkarMart connects 200+ local brands and 15,000+ customers.",
+  haatmart: {
+    story: "Haat Mart was born in 2024 — to give Indore's local merchants an online platform.\n\nWe saw that local brands and merchants were helpless before large platforms — Haat Mart empowered them.\n\nToday, Haat Mart connects 200+ local brands and 15,000+ customers.",
     mission: "Our mission is to bring Indore's local merchants to the global market.",
     values: [
       { icon: "🛍️", title: "Local", desc: "200+ local brands." },
@@ -139,8 +139,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🔄", title: "Returns", desc: "7-day easy returns." },
     ],
   },
-  sarkarlegal: {
-    story: "SarkarLegal was born in 2025 — when ordinary people in India most needed legal help.\n\nWe saw that reaching lawyers is expensive and complex — SarkarLegal made it simple and affordable.\n\nToday, SarkarLegal provides 1,000+ customers with lawyer consultations and document assistance.",
+  nyaysaathi: {
+    story: "Nyay Saathi was born in 2025 — when ordinary people in India most needed legal help.\n\nWe saw that reaching lawyers is expensive and complex — Nyay Saathi made it simple and affordable.\n\nToday, Nyay Saathi provides 1,000+ customers with lawyer consultations and document assistance.",
     mission: "Our mission is to provide every Indian with easy access to legal help — from home, at affordable fees.",
     values: [
       { icon: "⚖️", title: "Consultation", desc: "Experienced lawyers." },
@@ -159,8 +159,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🏆", title: "Ranking", desc: "Premium listing." },
     ],
   },
-  sarkarmarketplace: {
-    story: "SarkarMarketplace was born in 2024 — to build Indore's largest digital directory.\n\nWe saw that Indore's merchants needed a centralized platform — SarkarMarketplace empowered it.\n\nToday, SarkarMarketplace serves 3,233+ businesses and 100,000+ monthly users.",
+  sheharbazaar: {
+    story: "Shehar Bazaar was born in 2024 — to build Indore's largest digital directory.\n\nWe saw that Indore's merchants needed a centralized platform — Shehar Bazaar empowered it.\n\nToday, Shehar Bazaar serves 3,233+ businesses and 100,000+ monthly users.",
     mission: "Our mission is to bring every business in Indore onto a single platform — simple and effective.",
     values: [
       { icon: "🧭", title: "Business", desc: "3,233+ businesses." },
@@ -179,8 +179,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💰", title: "Value", desc: "Starting at ₹99." },
     ],
   },
-  sarkarghar: {
-    story: "SarkarGhar was born in 2025 — to simplify the home-finding process in Indore.\n\nWe saw that finding and buying property is complex — SarkarGhar made it simple and transparent.\n\nToday, SarkarGhar serves 500+ properties and 2,000+ active users.",
+  mistrimitra: {
+    story: "Mistri Mitra was born in 2025 — to simplify the home-finding process in Indore.\n\nWe saw that finding and buying property is complex — Mistri Mitra made it simple and transparent.\n\nToday, Mistri Mitra serves 500+ properties and 2,000+ active users.",
     mission: "Our mission is to give every resident of Indore their dream home — without any hassle.",
     values: [
       { icon: "🏠", title: "Property", desc: "500+ verified." },
@@ -189,8 +189,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🏦", title: "Loan", desc: "Bank assistance." },
     ],
   },
-  sarkarskills: {
-    story: "SarkarSkills was born in 2024 — to teach India's youth employable skills.\n\nWe saw that thousands of young people finish their studies without skills — SarkarSkills empowered them.\n\nToday, SarkarSkills provides vocational training and placement to 2,000+ students.",
+  hunarhub: {
+    story: "Hunar Hub was born in 2024 — to teach India's youth employable skills.\n\nWe saw that thousands of young people finish their studies without skills — Hunar Hub empowered them.\n\nToday, Hunar Hub provides vocational training and placement to 2,000+ students.",
     mission: "Our mission is to teach every Indian youth employable skills — at affordable fees.",
     values: [
       { icon: "🛠️", title: "Skill", desc: "Vocational training." },
@@ -219,8 +219,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💰", title: "Fees", desc: "From ₹199/month." },
     ],
   },
-  sarkartravel: {
-    story: "SarkarTravel was born in 2024 — to make travel simple and affordable.\n\nWe saw that travel booking has many middlemen — SarkarTravel built a direct platform.\n\nToday, SarkarTravel provides flight, hotel, and package booking to 2,000+ travelers.",
+  safarsaathi: {
+    story: "Safar Saathi was born in 2024 — to make travel simple and affordable.\n\nWe saw that travel booking has many middlemen — Safar Saathi built a direct platform.\n\nToday, Safar Saathi provides flight, hotel, and package booking to 2,000+ travelers.",
     mission: "Our mission is to make travel simple and affordable for every Indian.",
     values: [
       { icon: "✈️", title: "Booking", desc: "Flight, hotel, package." },
@@ -229,8 +229,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🛡️", title: "Insurance", desc: "Travel insurance." },
     ],
   },
-  sarkardukaan: {
-    story: "SarkarDukaan was born in 2024 — to digitize small shopkeepers.\n\nWe saw that shopkeepers want to go online but lack the technical know-how — SarkarDukaan offered an easy solution.\n\nToday, SarkarDukaan provides a digital store and delivery network to 1,000+ shopkeepers.",
+  dukaandigital: {
+    story: "Dukaan Digital was born in 2024 — to digitize small shopkeepers.\n\nWe saw that shopkeepers want to go online but lack the technical know-how — Dukaan Digital offered an easy solution.\n\nToday, Dukaan Digital provides a digital store and delivery network to 1,000+ shopkeepers.",
     mission: "Our mission is to digitize every small shopkeeper — in a simple and affordable way.",
     values: [
       { icon: "🛒", title: "Store", desc: "Ready in minutes." },
@@ -239,8 +239,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💳", title: "Payment", desc: "UPI, card, COD." },
     ],
   },
-  sarkarbazaar: {
-    story: "SarkarBazaar was born in 2024 — to bring Indore's local merchants to the global market.\n\nWe saw that local products don't get a global platform — SarkarBazaar built an export platform.\n\nToday, SarkarBazaar provides both B2B and B2C platforms to 1,000+ merchants.",
+  thokbazaar: {
+    story: "Thok Bazaar was born in 2024 — to bring Indore's local merchants to the global market.\n\nWe saw that local products don't get a global platform — Thok Bazaar built an export platform.\n\nToday, Thok Bazaar provides both B2B and B2C platforms to 1,000+ merchants.",
     mission: "Our mission is to take Indore's local products across the world.",
     values: [
       { icon: "🏪", title: "Local", desc: "1,000+ merchants." },
@@ -249,8 +249,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "🚚", title: "Shipping", desc: "Across India." },
     ],
   },
-  sarkarjobs: {
-    story: "SarkarJobs was born in 2024 — to connect India's youth with the right jobs.\n\nWe saw that job hunting involves fraud — SarkarJobs built a platform of verified employers.\n\nToday, SarkarJobs connects 500+ companies and 10,000+ candidates.",
+  rozgarpath: {
+    story: "Rozgar Path was born in 2024 — to connect India's youth with the right jobs.\n\nWe saw that job hunting involves fraud — Rozgar Path built a platform of verified employers.\n\nToday, Rozgar Path connects 500+ companies and 10,000+ candidates.",
     mission: "Our mission is to give every Indian youth the right and verified job.",
     values: [
       { icon: "💼", title: "Job", desc: "As per your qualification." },
@@ -259,8 +259,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💰", title: "Salary", desc: "Industry standard." },
     ],
   },
-  sarkared: {
-    story: "SarkarEd was born in 2024 — to teach India's youth career-oriented skills.\n\nWe saw that traditional education is not enough for employment — SarkarEd started vocational training.\n\nToday, SarkarEd teaches 3,000+ students digital marketing, AI, and web development.",
+  padhaipath: {
+    story: "Padhai Path was born in 2024 — to teach India's youth career-oriented skills.\n\nWe saw that traditional education is not enough for employment — Padhai Path started vocational training.\n\nToday, Padhai Path teaches 3,000+ students digital marketing, AI, and web development.",
     mission: "Our mission is to teach every Indian youth career-oriented skills.",
     values: [
       { icon: "🎓", title: "Courses", desc: "AI, web, marketing." },
@@ -269,8 +269,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💼", title: "Job", desc: "70% placement." },
     ],
   },
-  sarkarsarkar: {
-    story: "SarkarSarkar was born in 2025 — to bring government services to every Indian.\n\nWe saw that government services involve queues and delays — SarkarSarkar made them digital.\n\nToday, SarkarSarkar provides Aadhaar, PAN, passport, and other services to 5,000+ citizens.",
+  yojanasaathi: {
+    story: "Yojana Saathi was born in 2025 — to bring government services to every Indian.\n\nWe saw that government services involve queues and delays — Yojana Saathi made them digital.\n\nToday, Yojana Saathi provides Aadhaar, PAN, passport, and other services to 5,000+ citizens.",
     mission: "Our mission is to give every Indian easy access to government services — from home.",
     values: [
       { icon: "🏛️", title: "Services", desc: "Aadhaar, PAN, passport." },
@@ -279,8 +279,8 @@ const BRAND_ABOUT: Record<string, { story: string; mission: string; vision?: str
       { icon: "💰", title: "Schemes", desc: "Government schemes." },
     ],
   },
-  sarkarwellness: {
-    story: "SarkarWellness was born in 2024 — to combine Ayurveda and yoga with modern methods.\n\nWe saw that people are seeking natural ways for health — SarkarWellness built a platform for panchakarma, yoga, and nutrition.\n\nToday, SarkarWellness provides Ayurvedic treatments and wellness plans to 2,000+ customers.",
+  tandrust: {
+    story: "Tandrust was born in 2024 — to combine Ayurveda and yoga with modern methods.\n\nWe saw that people are seeking natural ways for health — Tandrust built a platform for panchakarma, yoga, and nutrition.\n\nToday, Tandrust provides Ayurvedic treatments and wellness plans to 2,000+ customers.",
     mission: "Our mission is to give every Indian natural and Ayurvedic health services.",
     values: [
       { icon: "🌿", title: "Treatment", desc: "Panchakarma, yoga." },

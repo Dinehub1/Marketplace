@@ -61,7 +61,7 @@ export function BrandHeader({ brand }: { brand: Brand }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // A brand with its own sitemap gets its own navigation - Doctors/Hospitals/
-  // Diagnostics for sarkarhealth, Plumbers/Electricians for sarkarghar - instead of
+  // Diagnostics for swasthpath, Plumbers/Electricians for mistrimitra - instead of
   // the same four generic links on all 28 sites. Brands without one keep the
   // generic list.
   const brandRoutes = routesFor(brand.slug);
@@ -291,7 +291,7 @@ export function BrandFooter({ brand }: { brand: Brand }) {
           <div className="pointer-events-none absolute inset-0 opacity-[0.09] dot-pattern" />
 
           <div className="relative mx-auto max-w-2xl">
-            {/* This block used to hard-code SarkarFood's food-delivery copy
+            {/* This block used to hard-code Swaad Ghar's food-delivery copy
                 ("Hungry? Order now!"), which the shared footer then rendered on
                 all 27 brands — so a legal, health or fintech site invited you to
                 order dinner. Copy now comes from the brand row. */}
@@ -383,8 +383,8 @@ export function BrandFooter({ brand }: { brand: Brand }) {
       >
         <p>
           © {new Date().getFullYear()} {brand.name}. All rights reserved. Powered by{" "}
-          <a href="https://sarkarmarketplace.dropby.co.in" className="font-[580]" style={{ color: "var(--brand-secondary)" }}>
-            Sarkar Platform
+          <a href="https://sheharbazaar.dropby.co.in" className="font-[580]" style={{ color: "var(--brand-secondary)" }}>
+            Dropby Platform
           </a>
         </p>
       </div>

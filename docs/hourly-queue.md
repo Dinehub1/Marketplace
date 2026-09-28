@@ -102,7 +102,7 @@ products are untouched. Five guard cases answer an honest **400** (1 photo "A co
 needs at least 2 photos", 5 photos, `pagesize=a0`, `layout=9x9`, `cell_px=abc`) rather
 than a 502. `npm run typecheck -w @hermes/web` exit 0 before the gated
 `npm run build && pm2 restart marketplace`; localhost:8080, /galaxy and
-sarkarmarketplace.dropby.co.in all 200 afterwards.
+sheharbazaar.dropby.co.in all 200 afterwards.
 Not done here: no screen yet — the toolbox grid still lists nine tiles, so the three
 products are engine-only until item 14. Also unfixed: posting to the public host from a
 script needs a browser User-Agent (Cloudflare answers a bare python-urllib POST with 403).
@@ -505,7 +505,7 @@ a 9,799-character document → **400** "translates up to 9000 in one job (about 
 Rows 141-145 are `done`/`failed` in `product_jobs` with the engine's `meta` (item 40's
 column) recording `engines`, `neurons`, `chars_in`. Regressions: `resume-checker` **145** and
 `pdf-tools merge` **146** both still 200. `npm run typecheck -w @hermes/web` exit 0, then the
-gated `npm run build && pm2 restart marketplace`; localhost:8080, sarkarmarketplace and
+gated `npm run build && pm2 restart marketplace`; localhost:8080, sheharbazaar and
 expo.dropby.co.in/tools all 200 after. Engine restarted as stop → port free → start (one
 listener on 8099, `health.pid 7384 == pm2 pid`).
 Measurements worth keeping: a ~500-character document takes 3.8-11 s and bills ~40-54
@@ -705,7 +705,7 @@ carrying every tool route (`tools/bg-remove`, `tools/collage`, `tools/exif-strip
 ## Parking lot (needs the user, do not start)
 - Apple review strategy: he chose to keep 12 identities. Guideline 4.3 rejects
   "multiple Bundle IDs of the same app"; before submitting the directory twins
-  (Indore directory / SarkarHealth / SarkarCars) re-check that decision with him.
+  (Indore directory / Swasth Path / Gaadi Ghar) re-check that decision with him.
 - Native builds: `eas build` needs his Expo/Apple login.
 - Expo Go tunnel from this VM fails (anonymous ngrok timeout) — see the skill.
 - **`translate-doc` pricing (from item 15):** the catalogue row says "Document Translation",
@@ -860,7 +860,7 @@ no range, 5 pages), **100** (`compress`) all 200; the 400s carry `pages must sel
 empty-selection cases are recorded as `failed` rows **95/96** (the route's own shape check answers
 before a row exists, which is the intent). Merge re-run = jobs **102**/**103**, 200.
 `npm run typecheck -w @hermes/web` exit 0, then the gated `npm run build && pm2 restart
-hermes-web`; `localhost:8080`, `/galaxy`, `sarkarmarketplace.dropby.co.in` and `expo.dropby.co.in`
+hermes-web`; `localhost:8080`, `/galaxy`, `sheharbazaar.dropby.co.in` and `expo.dropby.co.in`
 all 200 afterwards. Worker restarted as `pm2 stop` → port free → `pm2 start --only dropby-worker`
 (never a plain restart, see item 12): one listener on 8099, `health.pid 6604 == pm2 pid`.
 Still open next door: the **screen** (`apps/mobile/app/tools/pdf.tsx`) guards the range with
@@ -945,7 +945,7 @@ the price measured against the real per-image cost (item 16's job) rather than g
   `prompt is too long`**; `exif-strip` re-run afterwards = job **119**, still 200, so the route
   change broke nothing else. `npm run typecheck -w @hermes/web` exit 0, then the gated
   `npm run build && pm2 restart marketplace`; localhost:8080, `/galaxy`,
-  sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools all 200 after.
+  sheharbazaar.dropby.co.in and expo.dropby.co.in/tools all 200 after.
 - One caveat measured on the way: the **first** engine call this hour answered
   `500 {"error": "HTTP Error 400: Bad Request"}` (Cloudflare rejecting the request once) and the
   immediate retry answered 200 with a 569 KB JPEG. The engine collapses any CF failure into one
@@ -1197,7 +1197,7 @@ tests including a new measured range table; `tsc` **0** errors (core + web, 0 ne
 shots re-captured with their copy asserted (`app__pdf-tools__mobile-{light,dark}`,
 `-rotate`, `-numbers`) and the bad-input state captured at phone size
 (`%LOCALAPPDATA%\Temp\pdf-tools-badrange-light.png`). Gated `npm run build && pm2 restart
-hermes-web`; localhost:8080, `/galaxy`, sarkarmarketplace.dropby.co.in and
+hermes-web`; localhost:8080, `/galaxy`, sheharbazaar.dropby.co.in and
 expo.dropby.co.in/tools/pdf all 200 after. No engine restart was needed (the worker was not
 touched: one listener on 8099, `health.pid 6604 == pm2 pid`).
 
@@ -1232,7 +1232,7 @@ and job **132** the same before the worker restart; a bare `!5` still answers 40
 `odd` = 200, 5 → 3 pages; merge of two 5-page files = job **137**, 200, `pages_out 10`), so the
 old products are untouched. Gated `npm run build && pm2 restart marketplace` (the new sentence is
 in the built chunk and `!5 (exclude)` is gone from `.next`); localhost:8080, /galaxy,
-sarkarmarketplace.dropby.co.in and expo.dropby.co.in/tools/pdf all **200** after.
+sheharbazaar.dropby.co.in and expo.dropby.co.in/tools/pdf all **200** after.
 Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
 dropby-worker`; one listener on :8099, `health.pid 7200 == pm2 pid`, 11 products. No mobile
 change, so no `expo export` was needed (the screen already teaches `1-,!5`).
@@ -1616,7 +1616,7 @@ the same through `localhost:8080`. Row 154 in `product_jobs` carries `ai_provide
 answerable from the database. The R2 output re-downloaded is the paragraph itself ("Moti Mahal
 Delux Indore is a biryani restaurant in Pipliyahana. Phone: 08962410485."), the `businesses` row
 119465 now reads exactly that, and the **live service page**
-(`https://sarkarmarketplace.dropby.co.in/business/119465` → 200) renders it in an "About" card with
+(`https://sheharbazaar.dropby.co.in/business/119465` → 200) renders it in an "About" card with
 the sentence "Written from this business’s own details — … a fixed sentence shape filled from those
 facts, not a model’s account", plus the same text as JSON-LD `description`. A listing with no
 description renders **nothing** (business 110779: 0 occurrences of the sentence, no empty card).
@@ -1629,7 +1629,7 @@ untouched.
 Catalogue row inserted for `listing-description` (`price_paise 0`, `plan free`, `cost_model
 free_local`, sort 40) — without it the route's own check answers 404 "This product is not switched
 on yet". `npm run typecheck -w @hermes/web` exit 0, then the gated
-`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sarkarmarketplace.dropby.co.in,
+`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sheharbazaar.dropby.co.in,
 expo.dropby.co.in/tools and shots.dropby.co.in/log all 200 afterwards. **No engine restart** — no
 Python file changed (one listener on :8099, `health.pid 8164 == pm2 pid`).
 Still open from this item, and it is deliberate: there is **no tile and no screen** — this is the
@@ -1832,7 +1832,7 @@ The pre-change rows are untouched (`id 134-137`, including two `failed` ones, re
 and the failure path still writes without the column (job **140** `failed`,
 `error "bad request: merge needs at least two PDFs"`, `meta null`), so nothing that worked before
 changed shape. `npm run typecheck -w @hermes/web` exit 0, then the gated
-`npm run build && pm2 restart marketplace`; `localhost:8080` (200), `sarkarmarketplace.dropby.co.in`
+`npm run build && pm2 restart marketplace`; `localhost:8080` (200), `sheharbazaar.dropby.co.in`
 (200) and `expo.dropby.co.in/tools` (200) after — **the engine was not restarted** (one listener on
 :8099, pid 7200 == pm2 pid) because no engine file changed.
 Still open, now unblocked: **item 37's second half** — `metaFor(record)` is only produced once the
@@ -1987,7 +1987,7 @@ translates (en, hi, bn, mr, ta, ml, kn, pa, or, as, ur)`. Captures `app__transla
 phone page with its own QR (`/shots` → 200, 110,597 B; `/live` → 200, **43** codes, was 42).
 `tsc` via `node node_modules/typescript/bin/tsc -p …`: 0 errors in core and web, and the same
 9 pre-existing typed-route errors in mobile, none in the files this item touched. Gated
-`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sarkarmarketplace and
+`npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sheharbazaar and
 expo.dropby.co.in/tools all **200** after. No engine restart (no Python file changed: one
 listener on :8099, `health.pid 8164 == pm2 pid`, 12 products).
 **Still open, and it is his call (unchanged):** the tile. `lib/products.ts` has

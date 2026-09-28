@@ -1,4 +1,4 @@
-// Server-side booking helpers for the car-service vertical (sarkarcars).
+// Server-side booking helpers for the car-service vertical (gaadighar).
 //
 // Everything here runs on the server only — API routes import it; never a
 // client component.

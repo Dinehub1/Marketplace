@@ -13,7 +13,7 @@ One job, on a timer:
 ```
 dropby-hourly-build   cron: 20 * * * *   ENABLED
 workdir: C:\Users\Administrator\Marketplace
-skills:  sarkar-marketplace-operations, trending-oss-repos
+skills:  dropby-marketplace-operations, trending-oss-repos
 ```
 
 It is **not** directionless in the sense of broken — it is working *exactly* as configured, and doing it well:
@@ -52,7 +52,7 @@ same story — `fix(mobile)`, `fix(gallery)`, `docs(queue)` — competent, but i
 | `infra-sentinel` | `*/15 * * * *` | **off** | nobody watches the box |
 | `vault-guardian` | `0 */6 * * *` | **off** | nobody watches the data |
 | `log-rotator` | `0 3 * * *` | **off** | (mitigated: pm2-logrotate module is doing this) |
-| `market-scan`, `acc1-*` (5), `sarkar-pipeline` | various | **off** | trading + pipeline jobs parked |
+| `market-scan`, `acc1-*` (5), `dropby-pipeline` | various | **off** | trading + pipeline jobs parked |
 
 The hourly job takes this literally — its own prompt says *"never resume or touch the paused cron jobs"*.
 So the agent that could add direction has been instructed not to, and the jobs that would supply direction

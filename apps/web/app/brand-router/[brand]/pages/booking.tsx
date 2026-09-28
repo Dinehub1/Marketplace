@@ -118,7 +118,7 @@ export function BookingPage({ brand, initialVendorId }: { brand: Brand; initialV
       const creds = supaUrl && supaKey ? { url: supaUrl, key: supaKey } : null;
       // Same keyword ownership as lib/brand-categories.ts — the vertical's own
       // categories, matched as substrings against Google Maps' classifications.
-      const kws = BRAND_CATEGORY_KEYWORDS["sarkarcars"] ?? [];
+      const kws = BRAND_CATEGORY_KEYWORDS["gaadighar"] ?? [];
       const or = kws.map((k) => `category.ilike.*${encodeURIComponent(k)}*`).join(",");
       const rows = await (creds
         ? fetch(

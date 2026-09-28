@@ -15,27 +15,27 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
 
   // Brand-specific hero content
   const brandHero: Record<string, { headline: string; subheadline: string; highlights: string[] }> = {
-    "sarkardost": {
+    "padosi": {
       headline: "Indore's strength, your connection",
-      subheadline: "SarkarDost connects you with your community — services, opportunities and trusted local leaders, all in one place.",
+      subheadline: "Padosi connects you with your community — services, opportunities and trusted local leaders, all in one place.",
       highlights: [
         "📍 Local Indore search — shops, services, and experts",
         "🤝 Community trust — reviews, ratings and real feedback",
         "📢 Opportunities & updates — jobs, events and training",
       ],
     },
-    "sarkarconnect": {
+    "vyaparsetu": {
       headline: "B2B connections that work",
-      subheadline: "SarkarConnect links Indian businesses — from supplier to distributor, all on one platform.",
+      subheadline: "Vyapar Setu links Indian businesses — from supplier to distributor, all on one platform.",
       highlights: [
         "🔗 Verified business network — thousands of active traders",
         "📈 Deal tracking — a clear record from lead to close",
         "💼 Digital cards — present your business professionally",
       ],
     },
-    "sarkarhealth": {
+    "swasthpath": {
       headline: "Your health, our responsibility",
-      subheadline: "SarkarHealth is a complete healthcare solution for Indore — from doctor to medicine, all in one app.",
+      subheadline: "Swasth Path is a complete healthcare solution for Indore — from doctor to medicine, all in one app.",
       highlights: [
         "🩺 Video consultation — meet a doctor anywhere, anytime",
         "💊 Online medicine orders — get medicines delivered home",
@@ -78,29 +78,29 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
         "🔄 Cross-device sync — phone, tablet and laptop",
       ],
     },
-    "sarkar-ai": {
+    "ustaad-ai": {
       headline: "With AI, the government is your empire",
-      subheadline: "Sarkar AI — build AI-powered business tools without writing code. Create content, analyse data, all on one platform.",
+      subheadline: "Ustaad AI — build AI-powered business tools without writing code. Create content, analyse data, all on one platform.",
       highlights: ["🤖 AI content generator — posts, emails and ads in seconds", "📊 Smart analytics — insights and reports", "💬 AI chatbot — automated 24/7 support"],
     },
-    "sarkarfinance": {
+    "loansaathi": {
       headline: "Money when you need it — finance made easy",
-      subheadline: "SarkarFinance — loans, mutual funds and financial services, now digital and transparent.",
+      subheadline: "Loan Saathi — loans, mutual funds and financial services, now digital and transparent.",
       highlights: ["📈 Loan calculator — instant EMI and interest rates", "💳 Check credit score — free", "🏦 Digital banking — no branch visit needed"],
     },
-    "sarkarpay": {
+    "kadampay": {
       headline: "Payments in, business grows — fast and secure",
-      subheadline: "SarkarPay — UPI, QR codes and online payment solutions for your business.",
+      subheadline: "Kadam Pay — UPI, QR codes and online payment solutions for your business.",
       highlights: ["⚡ UPI payments — instant transfers, no delay", "📱 QR code — scan and pay", "🔒 100% secure — bank-grade encryption"],
     },
-    "sarkarmart": {
+    "haatmart": {
       headline: "Indore's own mart — local business, global reach",
-      subheadline: "SarkarMart — take your shop digital and reach all of Indore.",
+      subheadline: "Haat Mart — take your shop digital and reach all of Indore.",
       highlights: ["🛒 Online store — set up in minutes", "📦 Inventory management — auto-tracked stock", "📊 Sales dashboard — real-time analytics"],
     },
-    "sarkarlegal": {
+    "nyaysaathi": {
       headline: "Legal help, now easy — your legal companion",
-      subheadline: "SarkarLegal — talk to a lawyer, generate documents, get advice from home.",
+      subheadline: "Nyay Saathi — talk to a lawyer, generate documents, get advice from home.",
       highlights: ["⚖️ Online lawyer consultation — real-time", "📄 Document generator — agreements, notices", "🔍 Legal search — thousands of case laws in one place"],
     },
     "justdial-agent": {
@@ -108,9 +108,9 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
       subheadline: "JustDial Agent — make smart decisions from business data and generate leads.",
       highlights: ["📊 Business analytics — trends and insights", "🎯 Lead generation — find potential customers", "📱 Mobile dashboard — monitor from anywhere"],
     },
-    "sarkarmarketplace": {
+    "sheharbazaar": {
       headline: "Indore's largest directory — thousands of businesses, one platform",
-      subheadline: "SarkarMarketplace — find 3,233+ verified businesses in one place.",
+      subheadline: "Shehar Bazaar — find 3,233+ verified businesses in one place.",
       highlights: ["🔍 Smart search — by zip code and category", "⭐ Verified ratings — real customer reviews", "📍 Local discovery — find the best nearby"],
     },
     "ayurvedicwebsite": {
@@ -118,14 +118,14 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
       subheadline: "Mera Ayurvedic — 5,000 years of Ayurvedic tradition, with modern science.",
       highlights: ["🌿 Natural products — no chemicals", "👨‍⚕️ Ayurvedic consultation — online doctor", "💊 Personalised treatment — for your body type"],
     },
-    "sarkarghar": {
+    "mistrimitra": {
       headline: "Find a home, no tension — Indore's perfect home",
-      subheadline: "SarkarGhar — search real estate, rent or buy, all digital.",
+      subheadline: "Mistri Mitra — search real estate, rent or buy, all digital.",
       highlights: ["🏠 Smart search — by budget and location", "📊 Price analytics — know the market trend", "🔑 Virtual tour — see the home without going"],
     },
-    "sarkarskills": {
+    "hunarhub": {
       headline: "Build skills, change life — learn something new",
-      subheadline: "SarkarSkills — online courses, certification and career guidance in one place.",
+      subheadline: "Hunar Hub — online courses, certification and career guidance in one place.",
       highlights: ["📚 500+ courses — tech, business, creative", "🏅 Certificate — job-ready credentials", "👨‍🏫 Expert mentoring — one-on-one guidance"],
     },
     "hyperframes-realestate": {
@@ -138,42 +138,42 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
       subheadline: "SikshaHub — online classes, tutors and study material — without limits.",
       highlights: ["📖 Live classes — real-time interaction", "🎯 Practice tests — weekly mock exams", "👨‍🏫 Expert teachers — learn from top educators"],
     },
-    "sarkartravel": {
+    "safarsaathi": {
       headline: "Travel more, make memories — travel, worry less",
-      subheadline: "SarkarTravel — booking, planning and travel guides, all in one app.",
+      subheadline: "Safar Saathi — booking, planning and travel guides, all in one app.",
       highlights: ["✈️ Flight booking — find cheap tickets", "🏨 Hotel reservation — best deals", "🗺️ Travel planner — AI-based itinerary"],
     },
-    "sarkardukaan": {
+    "dukaandigital": {
       headline: "Your shop, now digital — a user-friendly online store",
-      subheadline: "SarkarDukaan — take your business digital and build an online store in minutes.",
+      subheadline: "Dukaan Digital — take your business digital and build an online store in minutes.",
       highlights: ["🛍️ Online store builder — drag and drop", "📦 Inventory tracking — auto-managed stock", "💳 Payment gateway — UPI, card, net banking"],
     },
-    "sarkarbazaar": {
+    "thokbazaar": {
       headline: "Indore's market, now online — local business, global reach",
-      subheadline: "SarkarBazaar — connects local traders with the global market.",
+      subheadline: "Thok Bazaar — connects local traders with the global market.",
       highlights: ["🏪 Multi-vendor marketplace — hundreds of sellers", "📦 Logistics support — delivery partner network", "📊 Market analytics — sales trends and insights"],
     },
-    "sarkarjobs": {
+    "rozgarpath": {
       headline: "Find a job, build a career — jobs that match",
-      subheadline: "SarkarJobs — AI-powered job matching, resume builder and career guidance.",
+      subheadline: "Rozgar Path — AI-powered job matching, resume builder and career guidance.",
       highlights: ["🎯 AI job match — by your skills", "📝 Resume builder — professional templates", "📊 Salary insight — industry benchmarks"],
     },
-    "sarkared": {
+    "padhaipath": {
       headline: "Learn, grow, become — skills that pay",
-      subheadline: "SarkarEd — online certification, skill development and career-focused courses.",
+      subheadline: "Padhai Path — online certification, skill development and career-focused courses.",
       highlights: ["🎓 Certificate courses — globally recognised", "💻 Live projects — real-world experience", "🤝 Placement support — interview prep"],
     },
-    "sarkarsarkar": {
+    "yojanasaathi": {
       headline: "Your government, in your hands — government services, now digital",
-      subheadline: "SarkarSarkar — government services, documents and rights — all in one window.",
+      subheadline: "Yojana Saathi — government services, documents and rights — all in one window.",
       highlights: ["🏛️ Digital services — Aadhaar, PAN, passport", "📄 Document generator — forms and applications", "🔍 RTI online — right to information, made easy"],
     },
-    "sarkarwellness": {
+    "tandrust": {
       headline: "Wellness from Ayurveda — ancient wellness, modern healing",
-      subheadline: "SarkarWellness — yoga, Ayurveda and natural treatment for you.",
+      subheadline: "Tandrust — yoga, Ayurveda and natural treatment for you.",
       highlights: ["🧘 Yoga classes — online and offline", "🌿 Ayurvedic treatment — personalised plans", "🧠 Mental wellness — meditation and counselling"],
     },
-    "sarkarfood": {
+    "swaadghar": {
       headline: "Indore's Best Food, Delivered to Your Door in 30 Minutes",
       subheadline: "Order from 200+ top-rated restaurants across Indore. From street food to fine dining — we bring it all, hot and fresh.",
       highlights: ["🚀 Live Order Tracking — Track your meal from kitchen to doorstep", "⚡ 30-Min Express Delivery — Hot, fresh food in half an hour", "🏪 200+ Restaurant Partners — Indore's best kitchens on one app"],
@@ -188,7 +188,7 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
 
   // Brand-specific stats
     const brandStats: Record<string, Array<{ v: string; label: string; icon: string }>> = {
-      sarkarhealth: [
+      swasthpath: [
         { v: "50+", label: "Verified doctors", icon: "🩺" },
         { v: "5,000+", label: "Active patients", icon: "👥" },
         { v: "4.9★", label: "Doctor rating", icon: "⭐" },
@@ -207,7 +207,7 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
 
   // Brand-specific steps
     const brandSteps: Record<string, Array<{ n: string; t: string; d: string }>> = {
-      sarkarhealth: [
+      swasthpath: [
         { n: "1", t: "Choose a doctor", d: "Find the right doctor by expertise and experience — read profiles, see ratings." },
         { n: "2", t: "Book an appointment", d: "Video or in-person — choose what suits you. Instant confirmation." },
         { n: "3", t: "Consult", d: "Meet the doctor, get a prescription, order medicine — all in one place." },
@@ -225,7 +225,7 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
 
   // Brand-specific community
     const brandCommunity: Record<string, Array<{ icon: string; t: string; d: string }>> = {
-      sarkarhealth: [
+      swasthpath: [
         { icon: "🏥", t: "Hospitals & clinics", d: "50+ partner hospitals — the largest network in Indore" },
         { icon: "👨‍⚕️", t: "Doctors", d: "MBBS, MD, BAMS — verified practitioners of every specialty" },
         { icon: "👨‍👩‍👧‍👦", t: "Families", d: "Patients of every age — complete care from children to elders" },

@@ -37,7 +37,7 @@ export const fetchCache = "default-no-store";
  * Per-page metadata.
  *
  * Without this every page on every brand inherited the root layout's
- * "SarkarDash — One Platform" title, which makes 320 category pages
+ * "Dropby — One Platform" title, which makes 320 category pages
  * indistinguishable to a search engine and effectively unrankable. The title
  * and description ARE the product here, so they are built from real counts.
  */
@@ -332,7 +332,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
       const category = await findCategory(catSlug, city.label);
       if (!category) notFound();
       // A vertical brand only owns its own categories. Without this,
-      // sarkarfood served /plumber-in-indore — the same page as ten other
+      // swaadghar served /plumber-in-indore — the same page as ten other
       // brands, competing with all of them for the same query.
       const index = await getCategoryIndex(city.label);
       const allowed = categoriesForBrand(brand.slug, index.map((c) => c.category));
@@ -362,7 +362,7 @@ export default async function BrandRouter({ params, searchParams }: { params: Pr
     const { VendorBookingsPage } = await import("./pages/vendor-bookings");
     return <VendorBookingsPage brand={brand} />;
   }
-  // The Request Quote page (`/quote`, `/request-quote`, and sarkarghar's
+  // The Request Quote page (`/quote`, `/request-quote`, and mistrimitra's
   // `/get-quote` alias) was removed on 2026-09-19. It was a four-step form that
   // collected a name, an email and a phone number and then said a quote would
   // arrive in 24 hours — nothing behind it sent, stored or priced anything, so

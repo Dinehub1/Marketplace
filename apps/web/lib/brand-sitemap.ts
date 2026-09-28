@@ -16,10 +16,10 @@
  *   form      — a lead/booking form that already exists in the app.
  *
  * Deliberately NOT included: routes that cannot be backed by real data or real
- * copy. sarkarjobs has no jobs table, sarkarsarkar has no scheme data, and the
+ * copy. rozgarpath has no jobs table, yojanasaathi has no scheme data, and the
  * SaaS brands have no authored documentation. Inventing those would break the
  * "no fake functionality, no fake claims" rule, so they are omitted rather than
- * shipped as empty pages. See docs/brand-plan-vs-reality.md.
+ * shipped as empty pages.
  */
 
 export type BrandRoute =
@@ -31,7 +31,7 @@ export type BrandRoute =
 const home = { path: "/", label: "Home", kind: "alias" as const, to: "/" };
 
 export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
-  sarkarhealth: [
+  swasthpath: [
     home,
     { path: "/doctors", label: "Doctors", kind: "category", match: ["doctor", "dental", "eye clinic", "clinic"], blurb: "Consult a doctor in Indore" },
     { path: "/hospitals", label: "Hospitals", kind: "category", match: ["hospital", "nursing home"], blurb: "Hospitals and nursing homes" },
@@ -41,20 +41,20 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarghar: [
+  mistrimitra: [
     home,
     { path: "/plumbers", label: "Plumbers", kind: "category", match: ["plumber"], blurb: "Plumbers near you" },
     { path: "/electricians", label: "Electricians", kind: "category", match: ["electrician"], blurb: "Electricians near you" },
     { path: "/carpenters", label: "Carpenters", kind: "category", match: ["carpenter", "furniture"], blurb: "Carpenters and furniture work" },
     { path: "/painters", label: "Painters", kind: "category", match: ["painter", "denting", "painting"], blurb: "Painting and denting work" },
     { path: "/service", label: "Service", kind: "detail", prefix: "/service" },
-    // sarkarghar's `/get-quote` alias was removed with the Request Quote page it
+    // mistrimitra's `/get-quote` alias was removed with the Request Quote page it
     // pointed at (2026-09-19) — a nav item is a promise, and this one led to a
     // form that priced nothing.
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarcars: [
+  gaadighar: [
     home,
     { path: "/used-cars", label: "Cars & dealers", kind: "category", match: ["car dealer", "tyre", "car accessories"], blurb: "Car dealers in Indore" },
     { path: "/services", label: "Service & repair", kind: "category", match: ["auto repair", "garage", "car wash"], blurb: "Repair, denting and detailing" },
@@ -63,7 +63,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarfood: [
+  swaadghar: [
     home,
     { path: "/restaurants", label: "Restaurants", kind: "category", match: ["restaurant", "fast food", "ice cream", "dessert", "cafe"], blurb: "Where to eat in Indore" },
     { path: "/sweets", label: "Sweets", kind: "category", match: ["sweet", "dessert"], blurb: "Sweet shops and mithai" },
@@ -72,7 +72,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkardukaan: [
+  dukaandigital: [
     home,
     { path: "/shops", label: "Shops", kind: "category", match: ["shop", "store", "market"], blurb: "Shops and stores in Indore" },
     { path: "/grocery", label: "Grocery", kind: "category", match: ["grocery", "kirana"], blurb: "Grocery and daily needs" },
@@ -81,7 +81,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarmart: [
+  haatmart: [
     home,
     { path: "/products", label: "Products", kind: "category", match: ["shop", "store", "wholesale"], blurb: "Products and suppliers" },
     { path: "/furniture", label: "Furniture", kind: "category", match: ["furniture"], blurb: "Furniture stores" },
@@ -89,7 +89,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarwellness: [
+  tandrust: [
     home,
     { path: "/gyms", label: "Gyms", kind: "category", match: ["gym", "fitness"], blurb: "Gyms and fitness centres" },
     { path: "/salons", label: "Salons", kind: "category", match: ["salon", "nail"], blurb: "Salons and beauty parlours" },
@@ -99,7 +99,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkared: [
+  padhaipath: [
     home,
     { path: "/schools", label: "Schools", kind: "category", match: ["school", "preschool"], blurb: "Schools in Indore" },
     { path: "/coaching", label: "Coaching", kind: "category", match: ["coaching", "training"], blurb: "Coaching and training centres" },
@@ -109,7 +109,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarskills: [
+  hunarhub: [
     home,
     { path: "/courses", label: "Courses", kind: "category", match: ["computer training", "training", "institute", "coaching"], blurb: "Skill courses in Indore" },
     { path: "/trainers", label: "Trainers", kind: "category", match: ["training", "coaching"], blurb: "Trainers and institutes" },
@@ -126,7 +126,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarlegal: [
+  nyaysaathi: [
     home,
     { path: "/advocates", label: "Advocates", kind: "category", match: ["lawyer", "advocate", "legal"], blurb: "Advocates and lawyers" },
     { path: "/notaries", label: "Notaries", kind: "category", match: ["notary", "stamp"], blurb: "Notary services" },
@@ -136,7 +136,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarfinance: [
+  loansaathi: [
     home,
     { path: "/loans", label: "Loans", kind: "category", match: ["loan", "financial"], blurb: "Loans and finance" },
     { path: "/insurance", label: "Insurance", kind: "category", match: ["insurance"], blurb: "Insurance agents and brokers" },
@@ -146,7 +146,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkartravel: [
+  safarsaathi: [
     home,
     { path: "/packages", label: "Packages", kind: "category", match: ["travel", "tour"], blurb: "Tour and travel packages" },
     { path: "/hotels", label: "Hotels", kind: "category", match: ["hotel", "guest house", "resort"], blurb: "Hotels and stays" },
@@ -156,7 +156,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarconnect: [
+  vyaparsetu: [
     home,
     { path: "/industries", label: "Industries", kind: "category", match: ["manufactur", "industrial"], blurb: "Manufacturers and industrial suppliers" },
     { path: "/suppliers", label: "Suppliers", kind: "category", match: ["wholesal", "distributor", "supplier"], blurb: "Wholesalers and distributors" },
@@ -166,7 +166,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarbazaar: [
+  thokbazaar: [
     home,
     { path: "/manufacturers", label: "Manufacturers", kind: "alias", to: "/categories" },
     { path: "/wholesalers", label: "Wholesalers", kind: "category", match: ["pharma wholesale", "wholesaler", "distributor", "wholesal"], blurb: "Wholesale and distribution" },
@@ -175,7 +175,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkardost: [
+  padosi: [
     home,
     { path: "/services", label: "Services", kind: "alias", to: "/services" },
     { path: "/professionals", label: "Professionals", kind: "category", match: ["service", "consultant", "agency"], blurb: "Local professionals" },
@@ -184,7 +184,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarsarkar: [
+  yojanasaathi: [
     home,
     { path: "/services", label: "Services", kind: "alias", to: "/services" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
@@ -217,7 +217,7 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
     { path: "/about", label: "About", kind: "alias", to: "/about" },
     { path: "/contact", label: "Contact", kind: "alias", to: "/contact" },
   ],
-  sarkarmarketplace: [
+  sheharbazaar: [
     home,
     { path: "/categories", label: "Categories", kind: "alias", to: "/categories" },
     { path: "/directory", label: "All businesses", kind: "alias", to: "/marketplace" },
@@ -227,12 +227,12 @@ export const BRAND_SITEMAP: Record<string, BrandRoute[]> = {
   ],
   // Product brands: the routes that can be backed by real capability copy.
   paisaflow: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  sarkarpay: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  kadampay: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   followup: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/how-it-works", label: "How it works", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   cloudplayer: [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  "sarkar-ai": [home, { path: "/capabilities", label: "Capabilities", kind: "alias", to: "/features" }, { path: "/use-cases", label: "Use cases", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  "ustaad-ai": [home, { path: "/capabilities", label: "Capabilities", kind: "alias", to: "/features" }, { path: "/use-cases", label: "Use cases", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
   "justdial-agent": [home, { path: "/features", label: "Features", kind: "alias", to: "/features" }, { path: "/how-it-works", label: "How it works", kind: "alias", to: "/features" }, { path: "/pricing", label: "Pricing", kind: "alias", to: "/pricing" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
-  sarkarjobs: [home, { path: "/employers", label: "Employers", kind: "category", match: ["coworking", "consultant"], blurb: "Employers and recruiters" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
+  rozgarpath: [home, { path: "/employers", label: "Employers", kind: "category", match: ["coworking", "consultant"], blurb: "Employers and recruiters" }, { path: "/about", label: "About", kind: "alias", to: "/about" }, { path: "/contact", label: "Contact", kind: "alias", to: "/contact" }],
 };
 
 /** Routes for a brand, or an empty list where no real-data sitemap is defined yet. */

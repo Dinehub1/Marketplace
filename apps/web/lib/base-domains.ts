@@ -63,7 +63,7 @@ export const DEVELOPER_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map(
 /** The apps' API hosts (see `proxy.ts`): `/api/*` and `/unlock/*` only. */
 export const API_HOSTS: readonly string[] = BRAND_BASE_DOMAINS.map((base) => `api.${base}`);
 
-/** "sarkarfood.dropby.co.in" → "sarkarfood"; null for root/reserved hosts. */
+/** "swaadghar.dropby.co.in" → "swaadghar"; null for root/reserved hosts. */
 export function brandSlugFromHost(hostname: string): string | null {
   const h = (hostname ?? "").split(":")[0].toLowerCase();
   for (const base of BRAND_BASE_DOMAINS) {

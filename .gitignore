@@ -50,7 +50,7 @@ yarn-error.log*
 # ── large local data dumps (not source) ───────────────────────────────────
 *.csv
 GMaps Data/
-sarkarmart-summary.txt
+haatmart-summary.txt
 
 # Build output, scratch dumps, and scrape duplicates - never source
 .next/

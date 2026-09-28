@@ -9,7 +9,7 @@ and against the providers' own pricing pages.
 |---|---|---|
 | Supabase `xpfmqpmhmcouwzebfwhb` | SET (service role, publishable, access token) | 44 tables, 24,043 businesses, `product_jobs`, orders |
 | Cloudflare R2 (`cashcard-data-storage`) | SET (account, keys, public URL, `R2_PREFIX=marketplace`) | every product's input and output file |
-| Cloudflare Tunnel | running | `sarkarmarketplace.`, `expo.`, `shots.`, `hermes.`, `dashboard.` |
+| Cloudflare Tunnel | running | `sheharbazaar.`, `expo.`, `shots.`, `hermes.`, `dashboard.` |
 | Nextel WhatsApp API | SET (key, endpoint, sender) | OTP + notifications — but see the template gap below |
 | GeoGhost scraper | running (Windows task) | the directory's data supply |
 | GitHub `Dinehub1/Marketplace` | SET, and **push works** | source of truth; 10 commits pushed today |

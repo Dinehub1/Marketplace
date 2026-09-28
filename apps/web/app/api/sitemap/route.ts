@@ -40,7 +40,7 @@ function resolveBrand(req: NextRequest): string | null {
   const q = (new URL(req.url).searchParams.get("brand") ?? "").toLowerCase();
   if (/^[a-z0-9-]+$/.test(q)) return q;
   if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase();
+    return (process.env.DEFAULT_BRAND ?? "sheharbazaar").toLowerCase();
   }
   return null;
 }

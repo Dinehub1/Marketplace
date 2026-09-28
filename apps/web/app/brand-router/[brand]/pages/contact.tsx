@@ -17,7 +17,7 @@ export function ContactPage({ brand }: { brand: Brand }) {
         <div className="relative mx-auto max-w-5xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-medium mb-6" style={{ borderColor: "var(--hairline)", color: "var(--brand-secondary)" }}>Contact</div>
           <h1 className="heading-xl mb-6"><span style={{ color: "var(--brand-secondary)" }}>{isCustomerSite ? "We're here to help" : "Your business is our priority"}</span></h1>
-          <p className="text-lg opacity-60 max-w-2xl mx-auto">{isCustomerSite ? "Have a question or need help finding a business or service? Our team replies within 24 hours." : "Reach out to us to join SarkarConnect, build connections, or with any question. Our team replies within 24 hours."}</p>
+          <p className="text-lg opacity-60 max-w-2xl mx-auto">{isCustomerSite ? "Have a question or need help finding a business or service? Our team replies within 24 hours." : "Reach out to us to join Vyapar Setu, build connections, or with any question. Our team replies within 24 hours."}</p>
         </div>
       </section>
 

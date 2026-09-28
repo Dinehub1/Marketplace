@@ -1,0 +1,11 @@
+# robots.txt for Ustaad AI - AI-Powered Government Services Portal
+# https://ustaadai.dropby.co.in/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ustaadai.dropby.co.in/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1

@@ -51,12 +51,12 @@ try:
 except Exception:  # pragma: no cover - the gallery still works, just heavier
     HAVE_PIL = False
 
-GROUP_ORDER = ["app", "marketplace", "hermes", "sarkarhealth", "shopfront", "other"]
+GROUP_ORDER = ["app", "marketplace", "hermes", "swasthpath", "shopfront", "other"]
 GROUP_LABELS = {
     "app": "DropBy app",
-    "marketplace": "Sarkar Marketplace (web)",
+    "marketplace": "Shehar Bazaar (web)",
     "hermes": "Hermes dashboard",
-    "sarkarhealth": "Sarkar Health",
+    "swasthpath": "Swasth Path",
     "shopfront": "Shopfronts",
     "other": "Other",
 }
@@ -481,7 +481,7 @@ SCREEN_INFO = {
         "asserts": ["Business details"],
     },
     "doctors": {
-        "title": "SarkarHealth doctors",
+        "title": "Swasth Path doctors",
         "what": "The doctors vertical over the same directory data — the one brand where the data really "
                 "is the product.",
         "asserts": None,
@@ -494,16 +494,16 @@ SCREEN_INFO = {
     },
     "marketplace-home": {
         "title": "Marketplace web home",
-        "what": "sarkarmarketplace.dropby.co.in — the directory's SEO surface, where the 24k listings are "
+        "what": "sheharbazaar.dropby.co.in — the directory's SEO surface, where the 24k listings are "
                 "crawlable.",
         "asserts": None,
     },
 }
 
 GROUP_TILE = {
-    "marketplace": ("Marketplace (web)", "sarkarmarketplace.dropby.co.in — the directory site, not an app"),
+    "marketplace": ("Marketplace (web)", "sheharbazaar.dropby.co.in — the directory site, not an app"),
     "hermes": ("Hermes dashboard", "the operator panel on :9300"),
-    "sarkarhealth": ("Sarkar Health (web)", "the doctors vertical's web surface"),
+    "swasthpath": ("Swasth Path (web)", "the doctors vertical's web surface"),
     "shopfront": ("Shopfronts", "shop pages"),
     "other": ("Other captures", "files that follow no app naming convention"),
 }
@@ -989,15 +989,15 @@ LIVE_ROUTES = {
         "Pick any photo: the background should come off and the PNG download.",
         "Then try Signature &amp; stamp and draw with a finger.",
     ]),
-    "sarkarhealth": ("/", [
+    "swasthpath": ("/", [
         "Search “dentist” or “clinic” and open a doctor.",
         "Tap the phone number — on the phone it should start a call.",
     ]),
-    "sarkarmarketplace": ("/", [
+    "sheharbazaar": ("/", [
         "Search a locality, then open any business.",
         "Check the phone and WhatsApp buttons — they must dial the listing's real number.",
     ]),
-    "sarkarcars": ("/", [
+    "gaadighar": ("/", [
         "Search “car wash” or “denting” and open a garage.",
         "Same test: the number on the page should be the number that dials.",
     ]),
@@ -1045,19 +1045,19 @@ LIVE_ROUTES = {
 LIVE_WEB = [
     {
         "name": "Marketplace website",
-        "url": "https://sarkarmarketplace.dropby.co.in/",
+        "url": "https://sheharbazaar.dropby.co.in/",
         "note": "24,028 listings · the SEO surface",
         "try": ["Search a locality on the phone and check the results load quickly."],
     },
     {
         "name": "A category page",
-        "url": "https://sarkarmarketplace.dropby.co.in/plumber-in-indore",
+        "url": "https://sheharbazaar.dropby.co.in/plumber-in-indore",
         "note": "146 plumbers in Indore",
         "try": ["This is what Google sends people to — the phone is how most of them arrive."],
     },
     {
         "name": "A business page",
-        "url": "https://sarkarmarketplace.dropby.co.in/business/110779",
+        "url": "https://sheharbazaar.dropby.co.in/business/110779",
         "note": "one listing in full",
         "try": ["Tap the phone number and the WhatsApp button on the phone."],
     },
@@ -1065,7 +1065,7 @@ LIVE_WEB = [
         # Job 10 is a real passport-photo job (₹49), so the price on the page matches
         # what the card promises. Job 33 is an invoice job and shows ₹299.
         "name": "The paywall (money path)",
-        "url": "https://sarkarmarketplace.dropby.co.in/unlock/10",
+        "url": "https://sheharbazaar.dropby.co.in/unlock/10",
         "note": "the ₹49 passport job · WhatsApp OTP",
         "try": [
             "The preview you see is watermarked on purpose; the paid file is the clean one.",

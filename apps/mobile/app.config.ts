@@ -12,7 +12,7 @@ import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targe
  *
  *   APP_TARGET=breathe npx expo start
  *   APP_TARGET=toolbox eas build --profile preview
- *   APP_TARGET=sarkarmarketplace eas build --profile production   # the default
+ *   APP_TARGET=sheharbazaar eas build --profile production   # the default
  *
  * Everything a store listing is judged on — name, bundle id, slug, icon, accent,
  * permission set, and the screen it opens on — is derived from that one word. Retyping
@@ -25,7 +25,7 @@ import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targe
  */
 
 const APP_TARGET =
-  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "sarkarmarketplace";
+  process.env.APP_TARGET ?? process.env.EXPO_PUBLIC_APP_TARGET ?? "sheharbazaar";
 
 const target = byId(APP_TARGET);
 if (!target) {
@@ -84,9 +84,9 @@ const BUNDLE_ID = process.env.BRAND_BUNDLE_ID ?? target.bundleId;
  * marketplace keeps its hand-chosen green ramp: it is already shipped, and repainting a
  * live app is a design decision, not a side effect of adding targets.
  */
-const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "sarkarmarketplace" ? "#22543d" : target.color);
-const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "sarkarmarketplace" ? "#38a169" : target.color);
-const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "sarkarmarketplace" ? "#9ae6b4" : tint(target.color, 0.55));
+const BRAND_PRIMARY = process.env.BRAND_PRIMARY ?? (target.id === "sheharbazaar" ? "#22543d" : target.color);
+const BRAND_SECONDARY = process.env.BRAND_SECONDARY ?? (target.id === "sheharbazaar" ? "#38a169" : target.color);
+const BRAND_ACCENT = process.env.BRAND_ACCENT ?? (target.id === "sheharbazaar" ? "#9ae6b4" : tint(target.color, 0.55));
 
 /** Lighten a hex colour toward white by `amount` (0..1). Keeps the hue, lifts the value. */
 function tint(hex: string, amount: number): string {
@@ -155,7 +155,7 @@ const config: ExpoConfig = {
   owner: "brandcollabs",
   // The marketplace keeps its original slug, `sarkar-marketplace`: its EAS project is
   // named after it, and the slug is also what existing store tooling knows it by.
-  slug: process.env.EXPO_SLUG ?? (target.id === "sarkarmarketplace" ? "sarkar-marketplace" : target.id),
+  slug: process.env.EXPO_SLUG ?? (target.id === "sheharbazaar" ? "sarkar-marketplace" : target.id),
   scheme: BRAND_SLUG,
   version: "1.0.0",
   orientation: "portrait",
@@ -315,7 +315,7 @@ const config: ExpoConfig = {
     supabaseKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
     // The platform moved off cashcard.live; the marketplace lives on a
     // subdomain because dropby.co.in's apex belongs to another app.
-    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sarkarmarketplace.dropby.co.in",
+    webBaseUrl: process.env.EXPO_PUBLIC_WEB_BASE_URL ?? "https://sheharbazaar.dropby.co.in",
     // The app's API host (OTP, jobs, uploads, ad events, the paywall page); see lib/config.ts.
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://api.dropby.co.in",
     // The resolved target, read back at runtime by lib/target.ts. This is the one wire

@@ -12,7 +12,7 @@ import {
  *
  * Every base domain this platform answers on is declared once, in
  * `lib/base-domains.ts`. This file used to keep its own copy of the domain list,
- * the admin hosts and the Hermes hosts — which is exactly how `sarkar.<domain>`
+ * the admin hosts and the Hermes hosts — which is exactly how `sarkar.<domain>` (the retired alias)
  * and the role subdomains drift apart between the two files. It now imports them.
  *
  * `dropby.co.in` is the domain the platform is moving to; `cashcard.live` is kept
@@ -33,6 +33,31 @@ const BYPASS_PREFIXES = [
   // Retired prebuilt sites, kept on disk and served directly rather than routed.
   "/sites/",
 ];
+
+const LEGACY_BRAND_REDIRECTS: Record<string, string> = {
+  "sarkar": "sheharbazaar",
+  "sarkar-ai": "ustaad-ai",
+  "sarkarai": "ustaadai",
+  "sarkarbazaar": "thokbazaar",
+  "sarkarcars": "gaadighar",
+  "sarkarconnect": "vyaparsetu",
+  "sarkardost": "padosi",
+  "sarkardukaan": "dukaandigital",
+  "sarkared": "padhaipath",
+  "sarkarfinance": "loansaathi",
+  "sarkarfood": "swaadghar",
+  "sarkarghar": "mistrimitra",
+  "sarkarhealth": "swasthpath",
+  "sarkarjobs": "rozgarpath",
+  "sarkarlegal": "nyaysaathi",
+  "sarkarmarketplace": "sheharbazaar",
+  "sarkarmart": "haatmart",
+  "sarkarpay": "kadampay",
+  "sarkarsarkar": "yojanasaathi",
+  "sarkarskills": "hunarhub",
+  "sarkartravel": "safarsaathi",
+  "sarkarwellness": "tandrust",
+};
 
 export async function proxy(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
@@ -91,20 +116,22 @@ export async function proxy(request: NextRequest) {
   }
 
   // Local development: localhost has no brand subdomain, so default to
-  // sarkarmarketplace (override with DEFAULT_BRAND in .env). Every other host
+  // sheharbazaar (override with DEFAULT_BRAND in .env). Every other host
   // derives its brand from the subdomain — one helper, shared with the server
   // components and the Supabase client that need the same answer.
   const brandSlug =
     hostname === "localhost" || hostname === "127.0.0.1"
-      ? (process.env.DEFAULT_BRAND ?? "sarkarmarketplace").toLowerCase()
+      ? (process.env.DEFAULT_BRAND ?? "sheharbazaar").toLowerCase()
       : brandSlugFromHost(hostname);
 
   if (!brandSlug) return NextResponse.next();
 
-  // Legacy alias: sarkar.<base> (old standalone marketplace) -> sarkarmarketplace
-  if (brandSlug === "sarkar") {
+  // Retired names: the old brand subdomains keep answering and 308 to the new ones,
+  // so indexed URLs and shared links survive the rename.
+  const renamedTo = LEGACY_BRAND_REDIRECTS[brandSlug];
+  if (renamedTo) {
     return NextResponse.redirect(
-      `https://sarkarmarketplace.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
+      `https://${renamedTo}.${CANONICAL_BASE}${pathname}${request.nextUrl.search}`,
       308,
     );
   }
@@ -128,7 +155,7 @@ export async function proxy(request: NextRequest) {
   //
   // The prebuilt pages in public/sites are retired: they were landing pages with
   // dead # links and no live data, and worse, they hijacked brand-semantic routes
-  // (/doctors on sarkarhealth resolved to /sites/sarkarhealth/doctors, a file that
+  // (/doctors on swasthpath resolved to /sites/swasthpath/doctors, a file that
   // does not exist, so the route answered 404 no matter what the app defined).
   // Requests under /sites/ itself still pass straight through (see BYPASS_PREFIXES).
   const url = request.nextUrl.clone();

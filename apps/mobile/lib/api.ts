@@ -56,8 +56,8 @@ export function listBusinesses(opts: {
    */
   const orGroups: string[] = [];
 
-  // The target's scope. This is the difference between SarkarHealth listing doctors and
-  // SarkarCars listing garages, and all three directory apps listing the same 24,048
+  // The target's scope. This is the difference between Swasth Path listing doctors and
+  // Gaadi Ghar listing garages, and all three directory apps listing the same 24,048
   // businesses — which is one app published three times.
   const scope = TARGET.scope;
   if (scope?.include?.length) {

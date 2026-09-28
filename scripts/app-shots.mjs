@@ -46,7 +46,7 @@ const SHOTS_DIR =
     ? 'C:/Users/Administrator/shots'
     : path.join(REPO, 'shots'));
 const APP_BASE = (process.env.APP_BASE || 'https://expo.dropby.co.in').replace(/\/$/, '');
-const WEB_BASE = (process.env.WEB_BASE || 'https://sarkarmarketplace.dropby.co.in').replace(/\/$/, '');
+const WEB_BASE = (process.env.WEB_BASE || 'https://sheharbazaar.dropby.co.in').replace(/\/$/, '');
 const HARNESS = path.join(HERE, 'screenshot.mjs');
 
 /**

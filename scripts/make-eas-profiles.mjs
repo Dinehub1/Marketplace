@@ -28,7 +28,7 @@ const { TARGETS } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs'))
 const eas = JSON.parse(fs.readFileSync(EAS, 'utf8'));
 
 /** The marketplace is the existing listing and keeps the plain profile names. */
-const DEFAULT_TARGET = 'sarkarmarketplace';
+const DEFAULT_TARGET = 'sheharbazaar';
 
 let added = 0;
 for (const t of TARGETS) {

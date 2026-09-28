@@ -9,7 +9,7 @@
  *     must not publish a category twice (two of our own pages competing for one
  *     query is the self-cannibalisation this file exists to prevent);
  *   • the directory apps on iOS and Android, which filter the same `businesses`
- *     table down to their own slice so SarkarHealth lists doctors and SarkarCars
+ *     table down to their own slice so Swasth Path lists doctors and Gaadi Ghar
  *     lists garages instead of all of them listing the same 24,048 rows.
  *
  * Before this module existed the mobile scope was retyped by hand in
@@ -28,7 +28,7 @@
  * Maps' own classification — 425 distinct values and growing, which is why this is
  * keyword-based rather than an exhaustive list).
  *
- * A brand not listed here (sarkarmarketplace, sarkarbazaar, and the non-directory
+ * A brand not listed here (sheharbazaar, thokbazaar, and the non-directory
  * brands) shows the FULL directory — that is the intended fallback, not an oversight.
  * Categories matching nothing still appear on those brands, so no business is ever
  * hidden everywhere.
@@ -36,13 +36,13 @@
 
 /** Brand slug -> substring patterns matched against `businesses.category`. */
 export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
-  sarkarhealth: [
+  swasthpath: [
     "hospital", "clinic", "dental", "dentist", "pharma", "doctor", "medical",
     "nursing", "physio", "diagnos", "radiolog", "oncolog", "dialysis",
     "optometr", "orthoped", "psychiat", "psycholog", "surgery", "ultrasound",
     "veterinar", "immunis", "rehabilit", "speech therap", "fertility", "eye ",
     "gynec", "ayurved", "homeopath", "pathology", "blood bank",
-    // Medical aesthetics belongs to the medical brand: sarkarwellness owns
+    // Medical aesthetics belongs to the medical brand: tandrust owns
     // salons and spas, not clinics. "skin" and "cosmetic" on their own used to
     // pull "skin clinic" / "cosmetic clinic" onto wellness - see the note there.
     "cosmetic clinic", "skin clinic", "derma",
@@ -51,10 +51,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // ("real estate", "property", "realty", "builder") moved to
   // hyperframes-realestate on 2026-08-10 — two brands cannot both own
   // /real-estate-agency-in-indore without competing with each other.
-  sarkarghar: [
+  mistrimitra: [
     "plumb", "electric", "furniture", "interior", "architect",
     "carpenter", "mason", "tile", "paint",
-    // "roof" alone matched "rooftop restaurant", which belongs to sarkarfood.
+    // "roof" alone matched "rooftop restaurant", which belongs to swaadghar.
     "roofing", "roof repair", "roof waterproofing",
     "civil contractor",
     "construction", "glass", "sanitary",
@@ -68,7 +68,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "packers", "movers", "carpet cleaning", "sofa cleaning", "deep cleaning",
     "housekeeping",
   ],
-  sarkarfood: [
+  swaadghar: [
     "restaurant", "cafe", "coffee", "bakery", "dhaba", "biryani", "pizza",
     "ice cream", "juice", "food", "kebab", "sweet", "caterer", "catering",
     "bar &", "lounge", "tandoor", "dessert", "microbrewery",
@@ -76,10 +76,10 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "tea stall", "chaat", "food court", "cloud kitchen",
   ],
   // Salons, spas, fitness. NOT clinics and NOT shops: bare "skin"/"cosmetic"
-  // matched "skin clinic" (sarkarhealth) and "cosmetics store" (sarkardukaan),
-  // and "sports academy" matched coaching academies owned by sarkared. Every
+  // matched "skin clinic" (swasthpath) and "cosmetics store" (dukaandigital),
+  // and "sports academy" matched coaching academies owned by padhaipath. Every
   // one of those was two brands publishing the same category page.
-  sarkarwellness: [
+  tandrust: [
     // "=spa" is whole-word: as a bare substring it matched "spare parts",
     // putting vehicle parts on the wellness brand.
     "salon", "gym", "=spa", "yoga", "beauty", "massage", "wellness", "fitness",
@@ -89,13 +89,13 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   ],
   // Electronics and appliance retail/repair.
   // Bare "store" and "shop" were removed on 2026-08-10: they matched ANY
-  // category containing those words, so sarkarmart was silently co-claiming
+  // category containing those words, so haatmart was silently co-claiming
   // furniture store, glass shop, ice cream shop, coffee shop, dessert shop,
   // sanitaryware shop, electrical goods store and home decor store from
-  // sarkarghar and sarkarfood — eight categories with two owners each.
+  // mistrimitra and swaadghar — eight categories with two owners each.
   // Bare "computer"/"laptop" came out the same way on 2026-09-14: they matched
-  // "computer training institute", which sarkared owns.
-  sarkarmart: [
+  // "computer training institute", which padhaipath owns.
+  haatmart: [
     "ac repair", "air conditioner", "appliance", "mobile phone", "electronics",
     "computer repair", "computer store", "computer shop", "laptop repair",
     "laptop store", "printer repair", "printer store", "repair shop",
@@ -109,7 +109,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   ],
 
   // Property transactions — agencies, agents, developers, realty firms.
-  // Distinct from sarkarghar, which owns the trades that work ON a home.
+  // Distinct from mistrimitra, which owns the trades that work ON a home.
   "hyperframes-realestate": [
     "real estate", "property", "realty", "estate agent", "apartment builder",
     "housing",
@@ -119,21 +119,21 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // claimed. Manufacturers are deliberately excluded: "bag manufacturer" and
   // "garment manufacturer" are factories, not shops, and this brand is about
   // shops going online.
-  sarkardukaan: [
+  dukaandigital: [
     "grocery", "supermarket", "clothing", "boutique", "jewell", "footwear",
     "shoe store", "stationery", "gift shop", "toy store", "book store",
     "perfume", "watch store", "department store", "general store",
     "sports goods", "pet store", "music store", "handicraft",
     // "cosmetics" alone also matched "cosmetics store" AND "cosmetic clinic";
-    // the shop form is named explicitly so the clinic stays with sarkarhealth.
+    // the shop form is named explicitly so the clinic stays with swasthpath.
     "cosmetics store", "cosmetic store", "cosmetics shop", "cosmetic shop",
     // orphan sweep 2026-09-14: retail the dukaan should own.
-    // "sweet shop" is deliberately NOT here - sarkarfood owns sweets, and both
+    // "sweet shop" is deliberately NOT here - swaadghar owns sweets, and both
     // brands listing it meant two of our pages competing for one query.
     "candle", "utensil", "household", "dry fruit", "kirana", "fancy store",
     "gift center", "cake shop", "ice cream parlour",
   ],
-  sarkartravel: [
+  safarsaathi: [
     "hotel", "guest house", "hostel", "travel", "tour ", "resort", "lodge",
     // orphan sweep 2026-09-14: local mobility a visitor books
     "cab service", "taxi", "cabs", "travel agency", "tour operator",
@@ -147,8 +147,8 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   // booking funnel.
   // Bare "painting" was removed on 2026-09-14: it matched "painting
   // contractor", "interior painting service" and "painting restoration
-  // service", all of which are sarkarghar's.
-  sarkarcars: [
+  // service", all of which are mistrimitra's.
+  gaadighar: [
     "car wash", "car cleaning", "car detail", "vehicle detail", "detailing",
     "car service", "vehicle service", "car repair", "auto repair",
     "automobile repair", "mechanic", "denting", "car painting", "car care",
@@ -157,15 +157,15 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "car rental", "bike rental", "car dealer", "car accessories", "tyre",
     "wheel alignment", "car stereo", "car audio",
   ],
-  sarkarfinance: [
+  loansaathi: [
     "bank", "insurance", "stock brok", "mutual fund", "chartered account",
     "accounting", "tax ", "financial", "money transfer", "loan", "paytm",
     "credit", "nbfc", "fintech",
   ],
-  sarkarlegal: [
+  nyaysaathi: [
     "law firm", "legal", "advocate", "notary", "lawyer",
   ],
-  sarkared: [
+  padhaipath: [
     "school", "college", "university", "institute", "academy", "coaching",
     "tutor", "education", "training", "preschool", "language school",
     "driving school",
@@ -175,7 +175,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
     "e-learning", "e‑learning", "e-learning centre", "e‑learning centre",
     "tuition", "library", "study centre", "computer training",
   ],
-  sarkarjobs: [
+  rozgarpath: [
     "recruit", "human resources", "staffing", "placement", "hr ",
   ],
 
@@ -186,7 +186,7 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
    * Deliberately excluded from every other brand's keywords so no category ends
    * up with two owners (the whole point of this file).
    */
-  sarkarconnect: [
+  vyaparsetu: [
     "digital marketing", "marketing agency", "advertising", "seo service",
     "it services", "software", "web design", "web development", "app develop",
     "graphic design", "3d printing", "printing press", "printing service",
@@ -203,9 +203,9 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
   /**
    * Manufacturers, wholesalers and industrial supply - the B2B supply side of
    * the same orphan sweep. A "garment manufacturer" is a factory, not a
-   * sarkardukaan shop, which is why it belongs here and not in retail.
+   * dukaandigital shop, which is why it belongs here and not in retail.
    */
-  sarkarbazaar: [
+  thokbazaar: [
     "manufacturer", "manufacturing", "wholesale", "wholesaler", "distributor",
     "supplier", "trading company", "traders", "mill", "factory", "industry",
     "industrial", "packaging", "plastic", "steel", "iron", "metal",
@@ -220,26 +220,26 @@ export const BRAND_CATEGORY_KEYWORDS: Record<string, string[]> = {
  * Categories a brand must NOT claim, even though one of its keywords matches.
  *
  * Substring matching cannot express "bank but not blood bank". Without this,
- * `blood bank` sat on sarkarfinance (via "bank"), `auto repair shop` on
- * sarkarmart (via "repair shop") and `martial arts academy` on sarkared (via
+ * `blood bank` sat on loansaathi (via "bank"), `auto repair shop` on
+ * haatmart (via "repair shop") and `martial arts academy` on padhaipath (via
  * "academy") *as well as* on the brand that should own them — two of our own
  * pages competing for one query, which is the self-cannibalisation this table
  * exists to prevent. Exclusions are evaluated before the keyword match counts.
  */
 export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
-  sarkarmart: ["auto repair", "computer training", "laptop training"],
-  sarkared: ["martial arts"],
-  sarkarfinance: ["blood bank"],
-  // An electrician is a trade (sarkarghar); the shop selling the goods is
-  // sarkarmart's. "electric" matched "electrical goods store" for both.
+  haatmart: ["auto repair", "computer training", "laptop training"],
+  padhaipath: ["martial arts"],
+  loansaathi: ["blood bank"],
+  // An electrician is a trade (mistrimitra); the shop selling the goods is
+  // haatmart's. "electric" matched "electrical goods store" for both.
   // "paint" likewise matched "car denting painting" - the paintshop that works
-  // on a vehicle is sarkarcars'.
-  sarkarghar: [
+  // on a vehicle is gaadighar'.
+  mistrimitra: [
     "electrical goods", "electrical store",
     "car denting", "car painting", "vehicle painting",
   ],
-  // A clinic named "legal aid clinic" is sarkarlegal's, not a medical one.
-  sarkarhealth: ["legal aid clinic", "ayurvedic spa"],
+  // A clinic named "legal aid clinic" is nyaysaathi's, not a medical one.
+  swasthpath: ["legal aid clinic", "ayurvedic spa"],
 };
 
 /**
@@ -252,26 +252,26 @@ export const BRAND_CATEGORY_EXCLUDES: Record<string, string[]> = {
  * supplier" or "pvc pipe supplier" matched two or three brands at once, and a
  * category owned twice is two of our own pages competing for one query. The
  * specialist verticals are listed first, the catch-all B2B brands last, so
- * sarkarconnect and sarkarbazaar only ever receive what nobody else claims.
+ * vyaparsetu and thokbazaar only ever receive what nobody else claims.
  */
 export const BRAND_PRECEDENCE: readonly string[] = [
-  "sarkarhealth", "sarkarghar", "sarkarfood", "sarkarwellness", "sarkarmart",
-  "sarkardukaan", "sarkartravel", "sarkarcars", "sarkarfinance", "sarkarlegal",
-  "sarkared", "sarkarjobs", "hyperframes-realestate", "sarkarconnect",
-  "sarkarbazaar",
+  "swasthpath", "mistrimitra", "swaadghar", "tandrust", "haatmart",
+  "dukaandigital", "safarsaathi", "gaadighar", "loansaathi", "nyaysaathi",
+  "padhaipath", "rozgarpath", "hyperframes-realestate", "vyaparsetu",
+  "thokbazaar",
 ];
 
 /**
  * The single brand that publishes the entire directory.
  *
- * Was {sarkarmarketplace, sarkarbazaar, justdial-agent}. Three brands serving
+ * Was {sheharbazaar, thokbazaar, justdial-agent}. Three brands serving
  * the identical 320 category pages meant /plumber-in-indore existed three times
  * over, competing with itself — Google picks one canonical and can suppress the
  * others, which risks suppressing the one you actually want ranking. Narrowed
  * to one owner on 2026-08-10 at the user's direction.
  */
 export const FULL_DIRECTORY_BRANDS: ReadonlySet<string> = new Set([
-  "sarkarmarketplace",
+  "sheharbazaar",
 ]);
 
 /**

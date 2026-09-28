@@ -3,7 +3,7 @@ import type { Brand } from "@/lib/brands";
 import type { ByBrandSlug, ServiceItem } from "@/lib/brand-content";
 
 const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
-  sarkarconnect: [
+  vyaparsetu: [
     { icon: "🔗", title: "B2B Connect", desc: "Connect with suppliers, buyers, and distributors — in the largest network of your industry." },
     { icon: "💼", title: "Digital Card", desc: "Your business's professional digital card — share via QR code, connect instantly." },
     { icon: "📋", title: "Product Catalog", desc: "List your products in a detailed catalog — with images, prices, and descriptions." },
@@ -11,7 +11,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🤖", title: "AI Matching", desc: "Our AI finds partners that match your needs — saving time and money." },
     { icon: "📊", title: "Analytics Dashboard", desc: "See your network's performance, deal success, and growth trends." },
   ],
-  sarkarhealth: [
+  swasthpath: [
       { icon: "🩺", title: "Doctor Consultation", desc: "MBBS, MD, Ayurvedic — book video or in-person consultations with any specialist." },
       { icon: "💊", title: "Medicine Delivery", desc: "All branded and generic medicines — at your doorstep, with savings up to 40%." },
       { icon: "🏥", title: "Lab Tests", desc: "Blood, urine, ECG, X-Ray — sample collection from your home and digital reports." },
@@ -22,7 +22,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
       { icon: "👵", title: "Senior Citizen Care", desc: "Elderly care at home — medication management, nursing support, regular check-ups, and companionship services." },
       { icon: "👶", title: "Pediatrician", desc: "Infant and child care from experienced pediatricians — vaccination, growth monitoring, illness treatment." },
     ],
-  sarkardost: [
+  padosi: [
     { icon: "🏪", title: "Local Business Listing", desc: "List your shop, office, or service on Indore's largest digital directory." },
     { icon: "📢", title: "Lead Generation", desc: "Get potential customer details directly — instant notifications on WhatsApp and SMS." },
     { icon: "📊", title: "Business Analytics", desc: "Deep insight into your listing's performance, customer interactions, and competition." },
@@ -62,7 +62,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📊", title: "Dashboard", desc: "Data on your productivity — suggestions to improve." },
     { icon: "🔒", title: "Encryption", desc: "Everything you have is encrypted — security first." },
   ],
-  "sarkar-ai": [
+  "ustaad-ai": [
     { icon: "🤖", title: "AI Assistant", desc: "An intelligent assistant available 24/7 — questions, advice, tasks." },
     { icon: "⚡", title: "Instant Answers", desc: "Response in milliseconds — no waiting." },
     { icon: "🧠", title: "Context Understanding", desc: "AI remembers the context of conversations — intelligent dialogue." },
@@ -70,7 +70,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🌐", title: "Multilingual", desc: "Hindi, English, and 10+ languages — in your language." },
     { icon: "🔗", title: "API Access", desc: "API for developers — integrate AI into your apps." },
   ],
-  sarkarfood: [
+  swaadghar: [
     { icon: "🍔", title: "Online Order", desc: "50+ restaurants — browse, order, and relax." },
     { icon: "⚡", title: "Fast Delivery", desc: "Hot food in 30 minutes — within the promised time." },
     { icon: "💰", title: "Budget Menu", desc: "Starting at ₹99 — for every pocket." },
@@ -78,7 +78,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📍", title: "Live Tracking", desc: "Live order status — from partner to your door." },
     { icon: "🎁", title: "Rewards", desc: "Points on every order — earn free food." },
   ],
-  sarkarfinance: [
+  loansaathi: [
     { icon: "🏦", title: "Personal Loan", desc: "₹10,000 to ₹10 lakh — instant approval, minimal documents." },
     { icon: "📱", title: "Online Application", desc: "Complete process from home — photo upload, verification." },
     { icon: "💳", title: "EMI Calculator", desc: "Know in advance — how much EMI, how much interest." },
@@ -86,7 +86,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🤝", title: "Financial Advice", desc: "Registered advisors — loans, insurance, investment." },
     { icon: "🔒", title: "Security", desc: "Bank-level encryption — your data is safe." },
   ],
-  sarkarpay: [
+  kadampay: [
     { icon: "💰", title: "Payment Gateway", desc: "UPI, card, net banking — all modes in one place." },
     { icon: "⚡", title: "Instant Settlement", desc: "T+0 — sales credited to your bank instantly." },
     { icon: "📊", title: "Dashboard", desc: "Daily sales, refunds, chargebacks — in one place." },
@@ -94,7 +94,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📈", title: "Analytics", desc: "Sales trends, best hours — decide with data." },
     { icon: "🌐", title: "International", desc: "Accept payments in foreign currency too." },
   ],
-  sarkarmart: [
+  haatmart: [
     { icon: "🛍️", title: "Online Store", desc: "200+ local brands — unique products." },
     { icon: "🚚", title: "Delivery", desc: "Across the city within 24 hours." },
     { icon: "💸", title: "Cashback", desc: "5-20% cashback on every purchase." },
@@ -102,7 +102,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🎁", title: "Offers", desc: "Weekend deals and special discounts." },
     { icon: "🔄", title: "Returns", desc: "Easy returns within 7 days." },
   ],
-  sarkarlegal: [
+  nyaysaathi: [
     { icon: "⚖️", title: "Consultation", desc: "Experienced lawyers — civil, criminal, corporate." },
     { icon: "📋", title: "Documents", desc: "Agreements, affidavits — free templates." },
     { icon: "🏛️", title: "Court", desc: "Representation in Indore courts." },
@@ -118,7 +118,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🏆", title: "Ranking", desc: "Top the charts with premium listing." },
     { icon: "🤝", title: "B2B", desc: "Connect with suppliers and buyers." },
   ],
-  sarkarmarketplace: [
+  sheharbazaar: [
     { icon: "🧭", title: "Directory", desc: "3,233+ businesses — in every category." },
     { icon: "🔍", title: "Search", desc: "Name, category, location — find instantly." },
     { icon: "📱", title: "Mobile", desc: "Access from any device." },
@@ -134,7 +134,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🌿", title: "Supplements", desc: "Ashwagandha, Brahmi, Triphala." },
     { icon: "💰", title: "Pricing", desc: "Starting at ₹99 — for every pocket." },
   ],
-  sarkarghar: [
+  mistrimitra: [
     { icon: "🏠", title: "Listings", desc: "500+ properties — apartments, villas, plots." },
     { icon: "🔍", title: "Search", desc: "By location, budget, size." },
     { icon: "📊", title: "Pricing", desc: "AI estimate — know before buying." },
@@ -142,7 +142,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🏦", title: "Loan", desc: "Bank loan assistance." },
     { icon: "📱", title: "Tour", desc: "360° virtual tour." },
   ],
-  sarkarskills: [
+  hunarhub: [
     { icon: "🛠️", title: "Training", desc: "Digital marketing, AI, e-commerce." },
     { icon: "🎓", title: "Certificate", desc: "On completion of training." },
     { icon: "👨‍🏫", title: "Trainers", desc: "With 10+ years of experience." },
@@ -166,7 +166,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📊", title: "Reports", desc: "Progress for parents." },
     { icon: "💰", title: "Fees", desc: "From ₹199/month." },
   ],
-  sarkartravel: [
+  safarsaathi: [
     { icon: "✈️", title: "Booking", desc: "Flights, hotels, packages — domestic and international." },
     { icon: "💰", title: "Rates", desc: "Compare — save thousands of rupees." },
     { icon: "📅", title: "Flexibility", desc: "Change or cancel dates." },
@@ -174,7 +174,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📱", title: "Support", desc: "24/7 support." },
     { icon: "🛡️", title: "Insurance", desc: "Travel insurance — safety at every step." },
   ],
-  sarkardukaan: [
+  dukaandigital: [
     { icon: "🛒", title: "Store", desc: "Online shop — ready in minutes." },
     { icon: "📱", title: "Management", desc: "Everything from your phone." },
     { icon: "🚚", title: "Delivery", desc: "Across the city." },
@@ -182,7 +182,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📊", title: "Stock", desc: "Track inventory." },
     { icon: "📈", title: "Analytics", desc: "Sales data." },
   ],
-  sarkarbazaar: [
+  thokbazaar: [
     { icon: "🏪", title: "Merchants", desc: "1,000+ local merchants." },
     { icon: "🌐", title: "Export", desc: "Local products worldwide." },
     { icon: "📱", title: "App", desc: "Easy ordering app." },
@@ -190,7 +190,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🚚", title: "Shipping", desc: "Across India." },
     { icon: "🤝", title: "Network", desc: "B2B connections." },
   ],
-  sarkarjobs: [
+  rozgarpath: [
     { icon: "💼", title: "Jobs", desc: "Matches based on your qualification." },
     { icon: "🏢", title: "Companies", desc: "500+ verified employers." },
     { icon: "📝", title: "Resume", desc: "Professional templates." },
@@ -198,7 +198,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📊", title: "Tests", desc: "Skill assessment." },
     { icon: "💰", title: "Salary", desc: "Industry standard comparison." },
   ],
-  sarkared: [
+  padhaipath: [
     { icon: "🎓", title: "Courses", desc: "Digital marketing, AI, web." },
     { icon: "👨‍🏫", title: "Trainers", desc: "10+ years of experience." },
     { icon: "📜", title: "Certificate", desc: "Certificate — power in your career." },
@@ -206,7 +206,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "📱", title: "Online", desc: "Anytime, anywhere." },
     { icon: "💰", title: "Installments", desc: "From ₹499/month." },
   ],
-  sarkarsarkar: [
+  yojanasaathi: [
     { icon: "🏛️", title: "Services", desc: "Aadhaar, PAN, passport, ration." },
     { icon: "📋", title: "Application", desc: "Help filling out forms." },
     { icon: "📱", title: "Tracking", desc: "Status live." },
@@ -214,7 +214,7 @@ const BRAND_SERVICES: ByBrandSlug<ServiceItem> = {
     { icon: "🤝", title: "Complaint", desc: "Register grievance." },
     { icon: "📞", title: "Helpline", desc: "Immediate assistance." },
   ],
-  sarkarwellness: [
+  tandrust: [
     { icon: "🌿", title: "Treatment", desc: "Panchakarma, yoga, pranayama." },
     { icon: "👨‍⚕️", title: "Consultation", desc: "Personalized plan from a Vaidya." },
     { icon: "🧘", title: "Yoga", desc: "Daily classes." },

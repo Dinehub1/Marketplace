@@ -3,7 +3,7 @@ import type { Brand } from "@/lib/brands";
 import type { ByBrandSlug, PricingPlan } from "@/lib/brand-content";
 
 const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
-  sarkarconnect: [
+  vyaparsetu: [
     {
       name: "Starter",
       price: "Free",
@@ -48,7 +48,7 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
       tagline: "For large businesses",
     },
   ],
-  sarkarhealth: [
+  swasthpath: [
     {
       name: "Basic",
       price: "Free",
@@ -93,7 +93,7 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
       tagline: "Complete protection for the whole family",
     },
   ],
-  sarkardost: [
+  padosi: [
     {
       name: "Needy Business",
       price: "Free",
@@ -160,30 +160,30 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
     { name: "Pro", price: "₹149", period: "/mo", features: ["Unlimited notes", "AI notes", "Cross-device sync", "Smart search"], highlighted: true, tagline: "⭐ Best value" },
     { name: "Team", price: "₹399", period: "/mo", features: ["5 members", "Team notes", "Shared reminders", "API access"], highlighted: false, tagline: "For teams" },
   ],
-  "sarkar-ai": [
+  "ustaad-ai": [
     { name: "Starter", price: "Free", period: "", features: ["100 queries/month", "Basic AI", "Hindi support"], highlighted: false, tagline: "Try AI" },
     { name: "Pro", price: "₹499", period: "/mo", features: ["Unlimited queries", "Context understanding", "Task automation", "API access"], highlighted: true, tagline: "⭐ For professional use" },
     { name: "Enterprise", price: "₹1,999", period: "/mo", features: ["Custom model", "Dedicated support", "SLA", "Batch processing"], highlighted: false, tagline: "For large organizations" },
   ],
-  sarkarfood: [
+  swaadghar: [
     { name: "Customer", price: "Free", period: "", features: ["Order tracking", "Ratings and reviews", "Basic offers"], highlighted: false, tagline: "For food lovers" },
     { name: "Premium", price: "₹99", period: "/mo", features: ["Free delivery", "Exclusive offers", "Priority support", "10% cashback"], highlighted: true, tagline: "⭐ For regular customers" },
   ],
-  sarkarfinance: [
+  loansaathi: [
     { name: "Basic", price: "Free", period: "", features: ["Credit score check", "Loan calculator", "Basic advice"], highlighted: false, tagline: "Financial awareness" },
     { name: "Premium", price: "₹299", period: "/mo", features: ["Instant loan", "Financial advice", "EMI tracker", "Credit repair"], highlighted: true, tagline: "⭐ Best service" },
   ],
-  sarkarpay: [
+  kadampay: [
     { name: "Starter", price: "Free", period: "", features: ["Accept UPI", "Basic dashboard", "₹50,000/month limit"], highlighted: false, tagline: "For small merchants" },
     { name: "Business", price: "₹499", period: "/mo", features: ["All modes", "Unlimited transactions", "Analytics", "API access"], highlighted: true, tagline: "⭐ For growing businesses" },
     { name: "Enterprise", price: "₹1,499", period: "/mo", features: ["Custom branding", "Dedicated support", "SLA", "Multi-currency"], highlighted: false, tagline: "For large organizations" },
   ],
-  sarkarmart: [
+  haatmart: [
     { name: "Starter", price: "Free", period: "", features: ["Basic listing", "5 products", "Community"], highlighted: false, tagline: "To get started" },
     { name: "Seller", price: "₹399", period: "/mo", features: ["Unlimited products", "Delivery network", "Analytics", "Cashback"], highlighted: true, tagline: "⭐ For active sellers" },
     { name: "Premium", price: "₹999", period: "/mo", features: ["Premium placement", "Advertising", "API access", "Dedicated support"], highlighted: false, tagline: "For large sellers" },
   ],
-  sarkarlegal: [
+  nyaysaathi: [
     { name: "Basic", price: "Free", period: "", features: ["Consultation (15 minutes)", "Document templates", "Legal articles"], highlighted: false, tagline: "Basic information" },
     { name: "Pro", price: "₹499", period: "/mo", features: ["Unlimited consultations", "Document preparation", "Court assistance"], highlighted: true, tagline: "⭐ Full legal assistance" },
   ],
@@ -191,7 +191,7 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
     { name: "Starter", price: "Free", period: "", features: ["Basic listing", "5 leads/month", "Rating profile"], highlighted: false, tagline: "To get started" },
     { name: "Premium", price: "₹799", period: "/mo", features: ["Premium placement", "Unlimited leads", "Analytics", "API access"], highlighted: true, tagline: "⭐ For growing businesses" },
   ],
-  sarkarmarketplace: [
+  sheharbazaar: [
     { name: "Starter", price: "Free", period: "", features: ["Basic listing", "3 categories", "Community"], highlighted: false, tagline: "To get started" },
     { name: "Business", price: "₹599", period: "/mo", features: ["Unlimited listings", "Analytics", "Lead generation"], highlighted: true, tagline: "⭐ For active merchants" },
   ],
@@ -199,11 +199,11 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
     { name: "Customer", price: "Free", period: "", features: ["Browse products", "Basic advice", "Order tracking"], highlighted: false, tagline: "For buyers" },
     { name: "VIP", price: "₹199", period: "/mo", features: ["15% off", "Free shipping", "Ayurvedic consultation", "Exclusive products"], highlighted: true, tagline: "⭐ For regular customers" },
   ],
-  sarkarghar: [
+  mistrimitra: [
     { name: "Explorer", price: "Free", period: "", features: ["Browse properties", "Basic filters", "Contact"], highlighted: false, tagline: "For searchers" },
     { name: "Premium", price: "₹499", period: "/mo", features: ["Virtual tour", "Loan assistance", "Priority", "Analytics"], highlighted: true, tagline: "⭐ For serious buyers" },
   ],
-  sarkarskills: [
+  hunarhub: [
     { name: "Starter", price: "Free", period: "", features: ["Basic course", "Community", "Basic content"], highlighted: false, tagline: "To get started" },
     { name: "Pro", price: "₹500", period: "/mo", features: ["All courses", "Certificate", "Placement assistance", "Live sessions"], highlighted: true, tagline: "⭐ For your career" },
   ],
@@ -215,31 +215,31 @@ const BRAND_PLANS: ByBrandSlug<PricingPlan> = {
     { name: "Starter", price: "Free", period: "", features: ["Basic content", "5 videos/month", "Community"], highlighted: false, tagline: "To get started" },
     { name: "Pro", price: "₹199", period: "/mo", features: ["All content", "Unlimited videos", "Live tuition", "Progress report"], highlighted: true, tagline: "⭐ For complete preparation" },
   ],
-  sarkartravel: [
+  safarsaathi: [
     { name: "Basic", price: "Free", period: "", features: ["Rate comparison", "Basic booking", "Travel suggestions"], highlighted: false, tagline: "For travelers" },
     { name: "Premium", price: "₹299", period: "/mo", features: ["Special rates", "Insurance", "24/7 support", "Flexible booking"], highlighted: true, tagline: "⭐ For frequent travelers" },
   ],
-  sarkardukaan: [
+  dukaandigital: [
     { name: "Starter", price: "Free", period: "", features: ["Basic store", "5 products", "UPI payment"], highlighted: false, tagline: "To get started" },
     { name: "Pro", price: "₹399", period: "/mo", features: ["Unlimited products", "Delivery network", "Analytics", "Custom domain"], highlighted: true, tagline: "⭐ For growing shopkeepers" },
   ],
-  sarkarbazaar: [
+  thokbazaar: [
     { name: "Starter", price: "Free", period: "", features: ["Basic listing", "3 products", "Local reach"], highlighted: false, tagline: "To get started" },
     { name: "Business", price: "₹599", period: "/mo", features: ["Unlimited products", "B2B network", "Export assistance", "Analytics"], highlighted: true, tagline: "⭐ For active merchants" },
   ],
-  sarkarjobs: [
+  rozgarpath: [
     { name: "Candidate", price: "Free", period: "", features: ["Create profile", "5 applications/month", "Basic resume"], highlighted: false, tagline: "For job seekers" },
     { name: "Pro", price: "₹199", period: "/mo", features: ["Unlimited applications", "Premium resume", "Career advice", "Priority"], highlighted: true, tagline: "⭐ For serious candidates" },
   ],
-  sarkared: [
+  padhaipath: [
     { name: "Starter", price: "Free", period: "", features: ["Basic course", "Community", "Basic content"], highlighted: false, tagline: "To get started" },
     { name: "Pro", price: "₹499", period: "/mo", features: ["All courses", "Certificate", "Placement", "Live sessions"], highlighted: true, tagline: "⭐ For your career" },
   ],
-  sarkarsarkar: [
+  yojanasaathi: [
     { name: "Citizen", price: "Free", period: "", features: ["Service list", "Application assistance", "Status tracking"], highlighted: false, tagline: "For all citizens" },
     { name: "Premium", price: "₹199", period: "/mo", features: ["Priority assistance", "Home visit", "Document pickup", "Dedicated support"], highlighted: true, tagline: "⭐ For full facilities" },
   ],
-  sarkarwellness: [
+  tandrust: [
     { name: "Basic", price: "Free", period: "", features: ["Health advice", "Yoga videos", "Nutrition plan"], highlighted: false, tagline: "Health awareness" },
     { name: "Premium", price: "₹499", period: "/mo", features: ["Ayurvedic consultation", "Personalized plan", "Panchakarma booking", "Yoga classes"], highlighted: true, tagline: "⭐ Complete health management" },
   ],

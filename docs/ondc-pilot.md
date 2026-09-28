@@ -1,7 +1,6 @@
 # ONDC Pilot — Scope, Economics, and Build Plan
 
-> Status: proposal, not yet approved. Written 2026-08-15.
-> Companion to `audit-and-business-model.md` and `research-verticals-and-design.md`.
+> Status: proposal, not yet approved. Written 2026-08-15. The audit it originally built on has been retired; see `product-plan.md` and `app-business-plan.md`.
 
 ## Two corrections to the earlier ONDC thinking
 

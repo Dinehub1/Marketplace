@@ -1,0 +1,11 @@
+# robots.txt for Yojana Saathi - Government Services Portal
+# https://yojanasaathi.in/robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://yojanasaathi.in/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
