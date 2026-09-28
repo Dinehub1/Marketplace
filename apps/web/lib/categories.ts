@@ -137,7 +137,7 @@ export async function businessExists(id: number): Promise<boolean> {
   try {
     const res = await fetch(`${url}/rest/v1/businesses?select=id&id=eq.${id}`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
-      next: { revalidate: 300 },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return false;
     return ((await res.json()) as unknown[]).length > 0;

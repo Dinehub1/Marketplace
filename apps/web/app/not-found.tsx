@@ -2,7 +2,10 @@ import Link from "next/link";
 import { getBrandFromHost } from "@/lib/brands";
 import { BrandHeader, BrandFooter } from "./brand-router/[brand]/brand-header";
 
-export const dynamic = "force-dynamic";
+// Reads the Host header, so it is dynamic anyway. force-dynamic would also
+// bypass the cached brand lookup, and subdomain scanners land here thousands of
+// times a day.
+export const fetchCache = "default-no-store";
 
 /**
  * Genuine 404 page.

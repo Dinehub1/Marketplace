@@ -70,7 +70,7 @@ async function getBusiness(id: number) {
     if (!url || !key) return null;
     const res = await fetch(`${url}/rest/v1/businesses?id=eq.${id}&select=*`, {
       headers: { apikey: key, Authorization: `Bearer ${key}` },
-      next: { revalidate: 300 },
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     return (await asRows<BusinessRow & { socials?: SocialMap }>(res))[0] ?? null;
