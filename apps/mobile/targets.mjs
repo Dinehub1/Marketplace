@@ -104,11 +104,24 @@ export const TARGETS = [
   },
   {
     id: "shop-toolkit",
-    name: "Shop Toolkit: Bills & Catalogue",
+    // The listing claims the one job this build can actually do.
+    //
+    // It was "Shop Toolkit: Bills & Catalogue", and the catalogue does not exist: six of
+    // this target's seven products are `route: null`. A store name that promises a
+    // catalogue is a promise the binary cannot keep, and `check-fleet` printing "1/7"
+    // was the only place that gap was visible. The six stay in `products` — the app names
+    // them and labels them COMING SOON on its own front door, which is honesty, not
+    // advertising — but the *listing* narrows to the GST bill. That is the rule
+    // `status-and-next-plan.md` states: narrow the name and screenshots to what exists,
+    // or build the jobs, before this one goes to a store.
+    name: "Shop Toolkit: GST Bills",
     bundleId: "com.brandcollabs.shoptoolkit",
-    tagline: "Invoices, catalogue and orders for your shop",
+    tagline: "Numbered GST bills with a UPI QR, made on your phone",
     storeCategory: "Business",
-    aso: ["invoice maker", "gst bill", "catalogue maker", "udyam"],
+    // Every keyword describes a job the invoice product actually runs. "catalogue maker"
+    // and "udyam" went with the catalogue: a keyword is how the store finds the app, so a
+    // keyword for something it cannot do buys an install that uninstalls.
+    aso: ["invoice maker", "gst bill", "bill book", "upi qr invoice", "shop bill"],
     color: "#166534",
     permissions: ["CAMERA", "FILES", "CONTACTS"],
     products: ["invoice-maker", "catalogue", "order-loop", "digital-card", "booking-page", "bill-tracker", "fee-tracker"],
@@ -120,7 +133,12 @@ export const TARGETS = [
     bundleId: "com.brandcollabs.toolbox",
     tagline: "Photos, documents and small jobs in one app",
     storeCategory: "Tools",
-    aso: ["background remover", "photo editor", "id photo", "tools"],
+    // "id photo" was here and it is not this app's job: passport-photo has its own target
+    // and its own listing, and a keyword for someone else's job buys the wrong install.
+    // Every keyword below names a product in this target that has a screen — the six that
+    // are built. The nine `route: null` products stay in the grid as COMING SOON and are
+    // deliberately not advertised here.
+    aso: ["background remover", "photos to pdf", "photo collage", "signature maker", "remove background"],
     color: "#475569",
     permissions: ["CAMERA", "PHOTOS"],
     // exif-strip, photos-to-pdf and collage are listed here because they are part of
