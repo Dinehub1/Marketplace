@@ -14,14 +14,17 @@
  * Works on web and native: expo-image-picker opens the file dialog in a browser
  * and the camera roll on a phone, so this screen is testable without a device.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View,
 } from "react-native";
 
 import { API_BASE_URL } from "@/lib/config";
-import { runJob } from "@/lib/tools";
+import { buyUnlock, iapAvailable, storePrice } from "@/lib/iap";
+import { openResult, runJob } from "@/lib/tools";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
+
+const PRODUCT = "passport-photo";
 
 const SIZES = [
   { id: "passport", label: "Passport", spec: "35 × 45 mm", note: "India, most forms" },
@@ -42,7 +45,22 @@ export default function PassportPhoto() {
   // the screen cannot promise one number and the gateway take another.
   const [pricePaise, setPricePaise] = useState(4900);
   const [error, setError] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
+  const [cleanUrl, setCleanUrl] = useState<string | null>(null);
   const rupees = Math.round(pricePaise / 100);
+
+  // In the phone apps the sheet is sold through the store (the web paywall is the website's).
+  // The store sets its own localized price, so that is the one shown when it can be read.
+  const native = Platform.OS !== "web";
+  const canBuy = native && iapAvailable(PRODUCT);
+  const [storePriceText, setStorePriceText] = useState<string | null>(null);
+  useEffect(() => {
+    if (!canBuy) return;
+    let live = true;
+    storePrice(PRODUCT).then((p) => { if (live) setStorePriceText(p); });
+    return () => { live = false; };
+  }, [canBuy]);
+  const priceText = storePriceText ?? `₹${rupees}`;
 
   async function pick() {
     setError(null);
@@ -72,8 +90,9 @@ export default function PassportPhoto() {
       // Through runJob, like every other product: it stages the photo straight to
       // storage, so a full-resolution camera shot is not capped by the API host's
       // request size, and it falls back to a direct upload on an older server.
+      setCleanUrl(null);
       const job = await runJob({
-        product: "passport-photo",
+        product: PRODUCT,
         fields: { size },
         files: [{
           field: "file",
@@ -106,20 +125,44 @@ export default function PassportPhoto() {
     }
   }
 
-  /** Open the paywall in the browser: OTP + Razorpay Checkout live there, not in
-   *  the app, so no card details and no native payment SDK ever touch the binary. */
+  /**
+   * Unlock the clean sheet.
+   *
+   * On the web this is the website, so the Razorpay paywall page is the right checkout. In
+   * the iOS/Android apps a digital file must be bought through the store's billing
+   * (Apple 3.1.1, Play Payments policy), so the phone never opens the web paywall: it buys
+   * through the store, and the server releases the file only after RevenueCat confirms the
+   * purchase (see lib/iap.ts).
+   */
   async function unlock() {
-    if (!jobId) return;
-    const url = `${API_BASE_URL}/unlock/${jobId}`;
-    try {
-      if (Platform.OS === "web") {
-        (window as any).open(url, "_blank");
-        return;
+    if (!jobId || paying) return;
+    setError(null);
+
+    if (!native) {
+      try {
+        (window as any).open(`${API_BASE_URL}/unlock/${jobId}`, "_blank");
+      } catch (e: any) {
+        setError(e?.message || "Could not open the payment page.");
       }
-      const WebBrowser = require("expo-web-browser");
-      await WebBrowser.openBrowserAsync(url);
-    } catch (e: any) {
-      setError(e?.message || "Could not open the payment page.");
+      return;
+    }
+
+    if (!canBuy) {
+      setError("Purchases aren't available in this version of the app.");
+      return;
+    }
+
+    setPaying(true);
+    try {
+      const r = await buyUnlock(jobId, PRODUCT);
+      if (r.ok) {
+        setCleanUrl(r.outputUrl);
+        await openResult(r.outputUrl, "passport-photo.jpg").catch(() => {});
+      } else if (!r.cancelled) {
+        setError(r.error);
+      }
+    } finally {
+      setPaying(false);
     }
   }
 
@@ -127,7 +170,7 @@ export default function PassportPhoto() {
     <ScrollView style={s.root} contentContainerStyle={s.wrap}>
       <View style={s.badgeRow}>
         <Text style={s.badge}>PRINT-READY · 300 DPI</Text>
-        <Text style={s.price}>₹{rupees}</Text>
+        <Text style={s.price}>{priceText}</Text>
       </View>
 
       <Text style={s.h1}>Passport photo{"\n"}in 30 seconds</Text>
@@ -183,17 +226,34 @@ export default function PassportPhoto() {
               {sheet.spec ? ` · ${sheet.spec}` : ""}
             </Text>
           ) : null}
-          <Text style={s.watermarkNote}>
-            The preview above is watermarked. Pay ₹{rupees} to download the clean 300 dpi sheet.
-          </Text>
-          <Pressable
-            onPress={unlock}
-            disabled={!jobId}
-            accessibilityRole="button"
-            style={({ pressed }) => [s.primary, pressed && s.pressed, !jobId && s.dim]}
-          >
-            <Text style={s.primaryText}>Download clean sheet · ₹{rupees}</Text>
-          </Pressable>
+          {cleanUrl ? (
+            <Pressable
+              onPress={() => void openResult(cleanUrl, "passport-photo.jpg")}
+              accessibilityRole="button"
+              style={({ pressed }) => [s.primary, pressed && s.pressed]}
+            >
+              <Text style={s.primaryText}>Open clean sheet</Text>
+            </Pressable>
+          ) : (
+            <>
+              <Text style={s.watermarkNote}>
+                The preview above is watermarked. Pay {priceText} to download the clean 300 dpi sheet.
+              </Text>
+              <Pressable
+                onPress={unlock}
+                disabled={!jobId || paying || (native && !canBuy)}
+                accessibilityRole="button"
+                style={({ pressed }) => [s.primary, pressed && s.pressed, (!jobId || paying || (native && !canBuy)) && s.dim]}
+              >
+                {paying
+                  ? <ActivityIndicator color="#fff" />
+                  : <Text style={s.primaryText}>Download clean sheet · {priceText}</Text>}
+              </Pressable>
+              {native && !canBuy ? (
+                <Text style={s.watermarkNote}>{"Purchases aren't available in this version of the app."}</Text>
+              ) : null}
+            </>
+          )}
         </View>
       ) : (
         <Pressable

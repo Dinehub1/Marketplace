@@ -16,12 +16,20 @@
  */
 const adsEnabled = process.env.EXPO_PUBLIC_ADS_ENABLED === "1";
 
+/**
+ * `react-native-purchases` (store billing via RevenueCat) follows the same rule, with
+ * `EXPO_PUBLIC_IAP_ENABLED`: linked only into the apps that sell something in-app. Linking
+ * it everywhere would merge Play's BILLING permission into fourteen apps that never charge,
+ * which is a line in each listing and one more way the fleet looks like one app. The JS
+ * side is safe unlinked: `lib/iap.ts` requires it lazily and reports "not available".
+ */
+const iapEnabled = process.env.EXPO_PUBLIC_IAP_ENABLED === "1";
+
+const off = { platforms: { android: null, ios: null } };
+
 module.exports = {
-  dependencies: adsEnabled
-    ? {}
-    : {
-        "react-native-google-mobile-ads": {
-          platforms: { android: null, ios: null },
-        },
-      },
+  dependencies: {
+    ...(adsEnabled ? {} : { "react-native-google-mobile-ads": off }),
+    ...(iapEnabled ? {} : { "react-native-purchases": off }),
+  },
 };

@@ -53,6 +53,9 @@ export const TARGETS = [
     permissions: ["CAMERA", "PHOTOS"],
     products: ["passport-photo"],
     firstScreen: "camera",
+    // Sells the clean sheet through Apple / Google billing (lib/iap.ts). A digital good
+    // bought inside the app cannot go through the Razorpay web paywall.
+    iap: true,
   },
   {
     id: "pdf-tools",

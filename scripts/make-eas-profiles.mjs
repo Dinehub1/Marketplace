@@ -49,7 +49,9 @@ for (const t of TARGETS) {
   const profile = {
     extends: 'production',
     channel: t.id,
-    env: { APP_TARGET: t.id },
+    // A target that sells in-app links the store-billing SDK; its RevenueCat public keys
+    // come from EAS environment variables on that app's own project, not from this file.
+    env: { APP_TARGET: t.id, ...(t.iap ? { EXPO_PUBLIC_IAP_ENABLED: '1' } : {}) },
   };
   const before = JSON.stringify(eas.build[t.id]);
   eas.build[t.id] = profile;

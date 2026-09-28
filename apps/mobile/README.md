@@ -44,6 +44,26 @@ Nothing is committed. `app.config.ts` reads these from the build environment:
 `lib/config.ts` throws at boot if the Supabase values are missing, rather than
 rendering an empty directory that looks like a data problem.
 
+### In-app purchases
+
+A digital file sold inside the iOS/Android apps (the passport sheet) goes through Apple /
+Google billing via RevenueCat — never the Razorpay web paywall, which is for the website
+(Apple 3.1.1, Play Payments policy). A target opts in with `iap: true` in `targets.mjs`;
+`npm run eas:profiles` then sets `EXPO_PUBLIC_IAP_ENABLED=1` on its profile, which links
+`react-native-purchases` (see `react-native.config.js`) and requires, on that app's EAS
+project:
+
+| variable | what it is |
+| --- | --- |
+| `EXPO_PUBLIC_REVENUECAT_IOS_KEY` | RevenueCat **public** Apple SDK key (`appl_…`) |
+| `EXPO_PUBLIC_REVENUECAT_ANDROID_KEY` | RevenueCat **public** Google SDK key (`goog_…`) |
+
+The server needs `REVENUECAT_SECRET_KEY` (see `.env.example`): the phone buys, and
+`/api/job/<id>/iap-unlock` releases the file only after RevenueCat confirms the purchase.
+Store setup: a **consumable** product `passport_sheet` in App Store Connect and Play Console,
+attached to both apps in RevenueCat. `npm run check:iap` asserts the verification rules.
+Purchases need a dev/EAS build; Expo Go and the web export show "not available".
+
 In development `EXPO_PUBLIC_WEB_BASE_URL` must be a LAN address
 (`http://192.168.x.x:3001`) — on a phone or simulator, `localhost` is the device.
 
