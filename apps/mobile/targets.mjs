@@ -156,7 +156,7 @@ export const TARGETS = [
   {
     id: "swasthpath",
     name: "Swasth Path: Doctors in Indore",
-    bundleId: "com.brandcollabs.sarkarhealth",
+    bundleId: "com.brandcollabs.swasthpath",
     tagline: "Find and call doctors and clinics in Indore",
     storeCategory: "Medical",
     aso: ["doctors in indore", "clinic", "hospital", "chemist"],

@@ -83,12 +83,12 @@ NyaySaathi, SafarSaathi, LoanSathi, SwaadGhar, Sheher Bazaar, Tandurust), "Dukaa
 | subtitles-voice | Subtitles & Voice-over | com.brandcollabs.subtitlesvoice | not built |
 | sheharbazaar | Indore Business Directory | com.brandcollabs.indoredirectory | not built |
 | gaadighar | Car Service & Dealers Indore | com.brandcollabs.carsindore | not built |
+| swasthpath | Swasth Path: Doctors in Indore | com.brandcollabs.swasthpath | not built |
 
 ### Needs work
 
 | id | Store name | What is missing |
 |---|---|---|
-| swasthpath | Swasth Path: Doctors in Indore | Bundle id is still `com.brandcollabs.sarkarhealth` — change it before the first upload (it cannot change after) |
 | resume-builder | Resume Builder & ATS Check | 2 of 3 jobs built; `application-writer` shows "coming soon" |
 | shop-toolkit | Shop Toolkit: GST Bills | 1 of 7 jobs built (the GST bill); submit last — a mostly "coming soon" app risks Play's minimum-functionality rule |
 | toolbox | Everyday Tools & Photo Fix | 6 of 15 tools built; same risk as above |

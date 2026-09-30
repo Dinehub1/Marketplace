@@ -133,7 +133,7 @@ export const APPS: DeveloperApp[] = [
   {
     id: "swasthpath",
     name: "Swasth Path: Doctors in Indore",
-    bundleId: "com.brandcollabs.sarkarhealth",
+    bundleId: "com.brandcollabs.swasthpath",
     blurb: "Find doctors, clinics and hospitals in Indore and call them directly.",
     platform: "Android & iOS",
   },

@@ -54,14 +54,12 @@ has to be added or removed, and the `hermes` tunnel ingress has a matching `*.dr
 
 These are permanent identifiers. Changing them after a store or Expo registration breaks the app's identity:
 
-- Bundle id `com.brandcollabs.sarkarhealth` (`apps/mobile/targets.mjs`, `apps/web/app/developer/catalog.ts`).
+- Bundle id: `com.brandcollabs.swasthpath` (`apps/mobile/targets.mjs`, `apps/web/app/developer/catalog.ts`), updated from legacy `sarkarhealth` prior to initial store upload.
 - Legacy bundle id `live.cashcard.sarkarmarketplace` and EAS slug `sarkar-marketplace` (its EAS project cannot change slug).
 - The `apps` table row `sarkar-marketplace`, which mirrors that EAS slug.
 - `supabase/migrations/*` written before this rename, which are history.
 - Business names in the scraped data (`combined_indore_master*.csv`) that contain the ordinary word "sarkar".
 - "sarkari" (Hindi for governmental) in SEO keywords such as "sarkari naukri".
-
-If the bundle id has not been submitted to a store yet, it can still be changed; decide before the first upload.
 
 ## Vercel
 
