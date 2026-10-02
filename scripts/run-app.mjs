@@ -49,7 +49,11 @@ const portValueIdx = portIdx > -1 ? portIdx + 1 : -1;
 const positional = argv.filter((a, i) => !a.startsWith('--') && i !== portValueIdx);
 const id = positional[0];
 
-const openOn = (t) => (FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen');
+const openOn = (t) => {
+  if (t.id === 'dining') return 'root / (apps/dining)';
+  if (t.id === 'gatted') return 'root / (apps/gatted)';
+  return FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen';
+};
 
 if (!id) {
   console.log('\nTwenty apps, one codebase. Pick one:\n');

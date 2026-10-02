@@ -20,6 +20,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "tokens": "node packages/tokens/scripts/extract.mjs",
     "mobile": "npm run start -w @hermes/mobile --",
+    "dining": "node scripts/run-app.mjs dining",
+    "gatted": "node scripts/run-app.mjs gatted",
     "app": "node scripts/run-app.mjs",
     "mobile:ios": "npm run ios -w @hermes/mobile --",
     "mobile:android": "npm run android -w @hermes/mobile --",
