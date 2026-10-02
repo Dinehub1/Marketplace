@@ -54,12 +54,14 @@
     "_comment_check_multipart": "The FLUX.2 image models take multipart form data rather than JSON, and Python's standard library has no encoder for it, so services/tools/multipart.py builds the body by hand. scripts/check-multipart.py parses it back and asserts every part — boundary, headers, binary safety, part order — with no token and no network.",
     "check:multipart": "node scripts/py-check.mjs scripts/check-multipart.py",
     "icons": "node scripts/make-app-icons.mjs",
+    "icons:ai": "node scripts/apply-ai-icons.mjs",
+    "icons:preview": "node scripts/preview-app-icons.mjs",
+    "graphics": "node scripts/make-store-graphics.mjs",
     "_comment_sounds": "Merge's four sounds are synthesized here rather than downloaded, so they are ours outright and the recipe is readable. It refuses to write a file that is silent, which is the bug the first version of this script shipped.",
     "sounds": "node scripts/make-game-sounds.mjs",
     "_comment_wellness_sounds": "The six wellness screens' cues, bed and spoken phrases — 26 files generated from scripts/lib/wav.mjs and scripts/lib/voice.mjs (a formant voice synthesizer). Seeded noise makes it deterministic, and it refuses a file that is silent, clips, or is long enough to talk over the next phase. See docs/wellness-sound.md.",
     "sounds:wellness": "node scripts/make-wellness-sounds.mjs",
     "_comment_icon_preview": "make-app-icons.mjs proves the files exist; only a person can say whether the art is any good. This draws every mark three ways — as the store tile, as the adaptive foreground, and at the 60px a home screen gives it — into one contact sheet to be looked at before a store build.",
-    "icons:preview": "node scripts/preview-app-icons.mjs",
     "eas:profiles": "node scripts/make-eas-profiles.mjs"
   },
   "devDependencies": {
