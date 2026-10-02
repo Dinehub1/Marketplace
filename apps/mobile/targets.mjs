@@ -269,6 +269,32 @@ export const TARGETS = [
     firstScreen: "game",
     ads: { rewarded: "undo the last move", interstitial: "between rounds" },
   },
+  {
+    id: "gatted",
+    name: "Padosi Gate: Society & Visitor",
+    bundleId: "com.brandcollabs.padosigate",
+    tagline: "Smart society gate pass, visitor approvals & parcel log",
+    storeCategory: "Lifestyle",
+    aso: ["society gate", "visitor approval", "apartment guard", "society pass"],
+    color: "#4f46e5",
+    permissions: ["CAMERA"],
+    products: [],
+    family: "gatted",
+    firstScreen: "dashboard",
+  },
+  {
+    id: "dining",
+    name: "Swaad Ghar: Table & Event Passes",
+    bundleId: "com.brandcollabs.swaadghar",
+    tagline: "Table reservations, curated food events & restaurant vouchers",
+    storeCategory: "Food & Drink",
+    aso: ["table reservation", "dining passes", "restaurant menu", "event tickets"],
+    color: "#ea580c",
+    permissions: [],
+    products: [],
+    family: "dining",
+    firstScreen: "directory",
+  },
 ];
 
 export const byId = (id) => TARGETS.find((t) => t.id === id);
@@ -313,6 +339,10 @@ export const FIRST_ROUTE = {
   "word-duel": "/word-duel",
   "block-clear": "/block-clear",
   "merge-tiles": "/merge-tiles",
+
+  // Gatted & Dining
+  gatted: "/gatted",
+  dining: "/dining",
 };
 
 /**
@@ -347,6 +377,8 @@ export const EAS_PROJECT_ID = {
   "word-duel": "a70ffaa6-8ba5-4521-a197-489c68e07998",
   "block-clear": "de3f9135-c585-4310-af61-11edf629cf7f",
   "merge-tiles": "9f7bdccd-a12b-44d1-96e6-bd473d45fb0e",
+  gatted: null,
+  dining: null,
 };
 
 /** The EAS project id for a target, or null when its project has not been created. */
@@ -366,6 +398,7 @@ export const firstRouteFor = (target) =>
  */
 export const familyOf = (target) => {
   if (!target) return "product";
+  if (target.family) return target.family;
   if (target.directory) return "directory";
   if (target.game) return "game";
   if (target.products.length) return "product";

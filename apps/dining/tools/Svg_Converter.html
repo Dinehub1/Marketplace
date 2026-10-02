@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Layout Converter - React Native | DropBy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .upload-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .upload-zone:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-zone.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .upload-text {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .upload-hint {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .analysis-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 24px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .sections-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .section-item {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .section-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .section-color {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .section-info {
+            flex: 1;
+        }
+
+        .section-id {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .section-path {
+            font-size: 12px;
+            color: #999;
+            font-family: monospace;
+        }
+
+        .section-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .bbox-display {
+            grid-column: 1 / -1;
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #667eea;
+        }
+
+        .bbox-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: #f8f9ff;
+            border-radius: 15px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .preview-box {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .preview-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-height: 400px;
+            overflow: auto;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .sql-output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #1e293b;
+            border-radius: 10px;
+            color: #10b981;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow: auto;
+        }
+
+        .sql-output pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .copy-btn {
+            padding: 8px 15px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #059669;
+        }
+
+        .preview-container {
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #svgPreviewContainer {
+            max-width: 100%;
+            margin: 20px auto;
+        }
+
+        #svgPreviewContainer svg {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .bbox-overlay {
+            position: absolute;
+            border: 3px solid #10b981;
+            background: rgba(16, 185, 129, 0.2);
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+
+        .bbox-overlay:hover {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: #059669;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .bbox-overlay.selected {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+
+        .bbox-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .bbox-overlay.selected .bbox-label {
+            background: #3b82f6;
+        }
+
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 2px solid #10b981;
+            border-radius: 50%;
+        }
+
+        .resize-handle.nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .resize-handle.ne { top: -6px; right: -6px; cursor: ne-resize; }
+        .resize-handle.sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+        .resize-handle.se { bottom: -6px; right: -6px; cursor: se-resize; }
+        .resize-handle.n { top: -6px; left: 50%; margin-left: -6px; cursor: n-resize; }
+        .resize-handle.s { bottom: -6px; left: 50%; margin-left: -6px; cursor: s-resize; }
+        .resize-handle.w { top: 50%; left: -6px; margin-top: -6px; cursor: w-resize; }
+        .resize-handle.e { top: 50%; right: -6px; margin-top: -6px; cursor: e-resize; }
+
+        .bbox-coords {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-family: monospace;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 SVG Layout Converter for React Native</h1>
+            <p>Transform Figma SVGs into DropBy React Native venue layouts (no bbox, ID-based targeting)</p>
+        </div>
+
+        <div class="content">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your Figma SVG here</div>
+                <div class="upload-hint">or click to browse</div>
+                <input type="file" id="fileInput" class="file-input" accept=".svg">
+            </div>
+
+            <div class="analysis-section" id="analysisSection">
+                <div class="alert alert-info">
+                    <span>ℹ️</span>
+                    <span><strong>React Native Mode:</strong> Review and configure each section below. The tool will extract section IDs for direct SVG element targeting (no bbox needed - React Native SVG handles clicks natively).</span>
+                </div>
+
+                <h2 class="section-title">📊 SVG Information</h2>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-label">ViewBox</div>
+                        <div class="info-value" id="viewBoxValue">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Sections Found</div>
+                        <div class="info-value" id="sectionsCount">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Total Paths</div>
+                        <div class="info-value" id="pathsCount">-</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">File Size</div>
+                        <div class="info-value" id="fileSize">-</div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">🎯 Configure Sections</h2>
+                <div class="sections-list" id="sectionsList"></div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="transformBtn">
+                        ✨ Transform SVG
+                    </button>
+                    <button class="btn btn-secondary" id="resetBtn">
+                        🔄 Upload New SVG
+                    </button>
+                </div>
+
+                <div class="preview-section" id="previewSection">
+                    <div class="alert alert-success">
+                        <span>✅</span>
+                        <span><strong>React Native SVG Ready!</strong> Download your SVG and use the polygon keys (IDs) below in your database. Each section can be targeted directly by ID in React Native.</span>
+                    </div>
+
+                    <h2 class="section-title">📋 Database Configuration</h2>
+                    <div class="alert alert-info">
+                        <span>💡</span>
+                        <div>
+                            <strong>Section IDs (polygon_key values for database):</strong><br>
+                            These IDs match the SVG element IDs for direct targeting<br>
+                            <span id="polygonKeysList"></span>
+                        </div>
+                    </div>
+
+                    <h2 class="section-title">👁️ SVG Preview</h2>
+                    <div class="alert alert-info">
+                        <span>ℹ️</span>
+                        <span>This is your clean, transformed SVG ready for React Native</span>
+                    </div>
+                    <div id="finalSvgPreview" style="max-width: 100%; overflow: auto; border: 2px solid #667eea; border-radius: 10px; padding: 20px; background: white; margin-bottom: 30px;"></div>
+
+                    <button class="copy-btn" onclick="copySQLToClipboard()">📋 Copy SQL to Clipboard</button>
+                    <div class="sql-output" id="sqlOutput"></div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-success" id="downloadBtn">
+                            ⬇️ Download Transformed SVG
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let originalSVG = null;
+        let parsedData = null;
+        let transformedSVG = null;
+        let fileName = '';
+
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const analysisSection = document.getElementById('analysisSection');
+        const sectionsList = document.getElementById('sectionsList');
+        const previewSection = document.getElementById('previewSection');
+
+        // Upload handlers
+        uploadZone.addEventListener('click', () => fileInput.click());
+        
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.svg')) {
+                handleFile(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            fileName = file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalSVG = e.target.result;
+                analyzeSVG(originalSVG);
+                document.getElementById('fileSize').textContent = formatBytes(file.size);
+            };
+            reader.readAsText(file);
+        }
+
+        function analyzeSVG(svgContent) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(svgContent, 'image/svg+xml');
+            const svgElement = doc.querySelector('svg');
+
+            if (!svgElement) {
+                alert('Invalid SVG file!');
+                return;
+            }
+
+            const viewBox = svgElement.getAttribute('viewBox') || '0 0 1080 1350';
+            document.getElementById('viewBoxValue').textContent = viewBox;
+
+            // Find all potential sections
+            const sections = findSections(svgElement);
+            
+            document.getElementById('sectionsCount').textContent = sections.length;
+            document.getElementById('pathsCount').textContent = svgElement.querySelectorAll('path').length;
+
+            parsedData = {
+                viewBox,
+                sections,
+                svgElement
+            };
+
+            renderSectionsList(sections);
+            analysisSection.style.display = 'block';
+        }
+
+        function findSections(svgElement) {
+            const sections = [];
+            const processed = new Set();
+
+            // Look for groups with all-caps IDs or specific patterns
+            const allGroups = svgElement.querySelectorAll('g[id]');
+            
+            allGroups.forEach(group => {
+                const id = group.getAttribute('id');
+                
+                // Skip container groups
+                if (id.includes('Frame') || id.includes('Group') || id.match(/^Group\s+\d+$/)) {
+                    return;
+                }
+
+                // Look for all-caps IDs or specific patterns
+                if (id === id.toUpperCase() || id.match(/^[A-Z]+$/)) {
+                if (!processed.has(id)) {
+                    const shapeData = detectShapeType(group);
+                    const bbox = shapeData.bbox;
+                    const color = extractColor(group);
+                    const path = getElementPath(group, svgElement);
+                    
+                    sections.push({
+                        id,
+                        originalId: id,
+                        name: formatName(id),
+                        polygonKey: id,
+                        shapeType: shapeData.type,
+                        polygonPoints: shapeData.points,
+                        bbox,
+                        color,
+                        path,
+                        element: group
+                    });
+                    
+                    processed.add(id);
+                }
+                }
+            });
+
+            return sections;
+        }
+
+        function detectShapeType(element) {
+            // Check for circle
+            const circle = element.querySelector('circle');
+            if (circle) {
+                const cx = parseFloat(circle.getAttribute('cx') || 0);
+                const cy = parseFloat(circle.getAttribute('cy') || 0);
+                const r = parseFloat(circle.getAttribute('r') || 0);
+                return {
+                    type: 'circle',
+                    points: `${cx},${cy},${r}`,
+                    bbox: {
+                        x: cx - r,
+                        y: cy - r,
+                        width: r * 2,
+                        height: r * 2
+                    }
+                };
+            }
+
+            // Check for ellipse
+            const ellipse = element.querySelector('ellipse');
+            if (ellipse) {
+                const cx = parseFloat(ellipse.getAttribute('cx') || 0);
+                const cy = parseFloat(ellipse.getAttribute('cy') || 0);
+                const rx = parseFloat(ellipse.getAttribute('rx') || 0);
+                const ry = parseFloat(ellipse.getAttribute('ry') || 0);
+                return {
+                    type: 'ellipse',
+                    points: `${cx},${cy},${rx},${ry}`,
+                    bbox: {
+                        x: cx - rx,
+                        y: cy - ry,
+                        width: rx * 2,
+                        height: ry * 2
+                    }
+                };
+            }
+
+            // Check for polygon
+            const polygon = element.querySelector('polygon');
+            if (polygon) {
+                const points = polygon.getAttribute('points') || '';
+                const coords = points.trim().split(/[\s,]+/).filter(v => v);
+                const pairs = [];
+                for (let i = 0; i < coords.length; i += 2) {
+                    pairs.push({ x: parseFloat(coords[i]), y: parseFloat(coords[i + 1]) });
+                }
+                
+                const bbox = calculatePolygonBbox(pairs);
+                return {
+                    type: 'polygon',
+                    points: pairs.map(p => `${p.x},${p.y}`).join(' '),
+                    bbox
+                };
+            }
+
+            // Default to rectangle
+            const bbox = calculateBoundingBox(element);
+            return {
+                type: 'rectangle',
+                points: null,
+                bbox
+            };
+        }
+
+        function calculatePolygonBbox(pairs) {
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            pairs.forEach(p => {
+                minX = Math.min(minX, p.x);
+                minY = Math.min(minY, p.y);
+                maxX = Math.max(maxX, p.x);
+                maxY = Math.max(maxY, p.y);
+            });
+            return {
+                x: Math.round(minX * 1000) / 1000,
+                y: Math.round(minY * 1000) / 1000,
+                width: Math.round((maxX - minX) * 1000) / 1000,
+                height: Math.round((maxY - minY) * 1000) / 1000
+            };
+        }
+
+        function calculateBoundingBox(element) {
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+            const paths = element.querySelectorAll('path, rect, circle, ellipse, polygon');
+            
+            paths.forEach(path => {
+                if (path.tagName === 'path') {
+                    const d = path.getAttribute('d');
+                    if (d) {
+                        const coords = extractCoordinatesFromPath(d);
+                        coords.forEach(([x, y]) => {
+                            minX = Math.min(minX, x);
+                            minY = Math.min(minY, y);
+                            maxX = Math.max(maxX, x);
+                            maxY = Math.max(maxY, y);
+                        });
+                    }
+                }
+                // Handle other shapes...
+            });
+
+            // Round to 3 decimal places
+            return {
+                x: Math.round(minX * 1000) / 1000,
+                y: Math.round(minY * 1000) / 1000,
+                width: Math.round((maxX - minX) * 1000) / 1000,
+                height: Math.round((maxY - minY) * 1000) / 1000
+            };
+        }
+
+        function extractCoordinatesFromPath(d) {
+            const coords = [];
+            const numbers = d.match(/[\d.]+/g);
+            
+            if (numbers) {
+                for (let i = 0; i < numbers.length - 1; i += 2) {
+                    coords.push([parseFloat(numbers[i]), parseFloat(numbers[i + 1])]);
+                }
+            }
+            
+            return coords;
+        }
+
+        function extractColor(element) {
+            const path = element.querySelector('path[fill]:not([fill="none"]):not([fill="white"])');
+            return path ? path.getAttribute('fill') : '#cccccc';
+        }
+
+        function getElementPath(element, root) {
+            const path = [];
+            let current = element;
+            
+            while (current && current !== root) {
+                if (current.id) {
+                    path.unshift(current.id);
+                }
+                current = current.parentElement;
+            }
+            
+            return path.join(' > ');
+        }
+
+        function formatName(id) {
+            return id
+                .split(/(?=[A-Z])|_|-/)
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ');
+        }
+
+        function renderSectionsList(sections) {
+            sectionsList.innerHTML = sections.map((section, index) => `
+                <div class="section-item">
+                    <div class="section-header">
+                        <div class="section-color" style="background-color: ${section.color}"></div>
+                        <div class="section-info">
+                            <div class="section-id">${section.id}</div>
+                            <div class="section-path">${section.path}</div>
+                        </div>
+                    </div>
+                    <div class="section-controls">
+                        <div class="form-group">
+                            <label>Polygon Key (for database)</label>
+                            <input type="text" value="${section.polygonKey}" 
+                                   onchange="updateSectionData(${index}, 'polygonKey', this.value)"
+                                   placeholder="e.g., STAGE, MVP, VIP">
+                        </div>
+                        <div class="form-group">
+                            <label>Display Name</label>
+                            <input type="text" value="${section.name}" 
+                                   onchange="updateSectionData(${index}, 'name', this.value)"
+                                   placeholder="e.g., Backstage Access">
+                        </div>
+                        <div class="form-group">
+                            <label>Shape Type</label>
+                            <select onchange="updateSectionData(${index}, 'shapeType', this.value)">
+                                <option value="rectangle" ${section.shapeType === 'rectangle' ? 'selected' : ''}>Rectangle</option>
+                                <option value="circle" ${section.shapeType === 'circle' ? 'selected' : ''}>Circle</option>
+                                <option value="ellipse" ${section.shapeType === 'ellipse' ? 'selected' : ''}>Ellipse</option>
+                                <option value="polygon" ${section.shapeType === 'polygon' ? 'selected' : ''}>Polygon</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateSectionData(index, field, value) {
+            parsedData.sections[index][field] = value;
+        }
+
+        document.getElementById('transformBtn').addEventListener('click', transformSVG);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        function transformSVG() {
+            const parser = new DOMParser();
+            const serializer = new XMLSerializer();
+            const doc = parser.parseFromString(originalSVG, 'image/svg+xml');
+            const svgElement = doc.querySelector('svg');
+
+            // Remove width and height attributes
+            svgElement.removeAttribute('width');
+            svgElement.removeAttribute('height');
+
+            // Create new clean SVG 
+            const newSvg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            newSvg.setAttribute('viewBox', parsedData.viewBox);
+            newSvg.setAttribute('fill', 'none');
+            newSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+            // Add each section to root level
+            parsedData.sections.forEach(section => {
+                const sectionGroup = section.element.cloneNode(true);
+                sectionGroup.setAttribute('id', section.polygonKey);
+                sectionGroup.setAttribute('data-id', section.polygonKey);
+                sectionGroup.setAttribute('class', 'section');
+                
+                newSvg.appendChild(sectionGroup);
+            });
+
+            transformedSVG = serializer.serializeToString(newSvg);
+            
+            // Debug log
+            console.log('✅ SVG Transformed successfully!');
+            console.log('Sections:', parsedData.sections.length);
+            console.log('SVG Size:', transformedSVG.length, 'characters');
+            
+            generateSQL();
+            showPreview();
+        }
+
+        function generateSQL() {
+            const polygonKeys = parsedData.sections.map(s => `<code>${s.polygonKey}</code>`).join(', ');
+            document.getElementById('polygonKeysList').innerHTML = polygonKeys;
+
+            const sql = `-- SVG Layout Converter Output for React Native
+-- Generated: ${new Date().toLocaleString()}
+-- Original File: ${fileName}
+
+-- 🚀 React Native SVG Integration
+-- The transformed SVG includes:
+--   • id="SECTION_ID" for targeting elements
+--   • data-id="SECTION_ID" for data access
+--   • class="section" for section identification
+
+-- Step 1: Upload transformed SVG to Supabase Storage
+-- Step 2: Create event_layout record with SVG URL
+-- Step 3: Run the INSERT statements below
+
+${parsedData.sections.map(section => `
+-- Section: ${section.name} (${section.shapeType || 'rectangle'})
+-- SVG Element ID: ${section.polygonKey}
+INSERT INTO event_layout_sections (
+  layout_id,          -- Replace with your layout_id from event_layouts table
+  polygon_key,        -- This matches the SVG section ID (${section.polygonKey})
+  name,
+  shape_type,         -- Shape type: ${section.shapeType || 'rectangle'}
+  capacity_total,     -- Set your capacity
+  capacity_booked,
+  is_selectable,
+  status,
+  metadata
+) VALUES (
+  'YOUR_LAYOUT_ID',   -- 🔴 REPLACE THIS
+  '${section.polygonKey}',
+  '${section.name}',
+  '${section.shapeType || 'rectangle'}',
+  100,                -- 🔴 SET CAPACITY
+  0,
+  true,
+  'active',
+  '{"color": "${section.color}", "original_bbox": {"x": ${section.bbox.x}, "y": ${section.bbox.y}, "width": ${section.bbox.width}, "height": ${section.bbox.height}}}'::jsonb
+);`).join('\n\n')}
+
+-- ✅ React Native SVG Usage:
+-- 1. Import SVG: import VenueLayout from './venue-layout.svg'
+-- 2. Render: <VenueLayout width={width} height={height} />
+-- 3. Target sections by ID using the polygon_key from database
+-- 4. Handle clicks using polygon_key to match database records
+-- 5. Change colors dynamically with fill prop
+`;
+
+            document.getElementById('sqlOutput').innerHTML = `<pre>${sql}</pre>`;
+        }
+
+        function showPreview() {
+            // Display the transformed SVG
+            const finalPreview = document.getElementById('finalSvgPreview');
+            if (finalPreview && transformedSVG) {
+                finalPreview.innerHTML = transformedSVG;
+                
+                // Make the preview responsive
+                const svgElement = finalPreview.querySelector('svg');
+                if (svgElement) {
+                    svgElement.style.maxWidth = '100%';
+                    svgElement.style.height = 'auto';
+                    svgElement.style.display = 'block';
+                }
+            }
+            
+            previewSection.style.display = 'block';
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copySQLToClipboard() {
+            const sql = document.getElementById('sqlOutput').textContent;
+            navigator.clipboard.writeText(sql).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (!transformedSVG) {
+                alert('Please transform the SVG first!');
+                return;
+            }
+            
+            try {
+                const blob = new Blob([transformedSVG], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const downloadName = fileName.replace('.svg', '') + '-transformed.svg';
+                a.download = downloadName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                
+                // Show success feedback
+                const btn = document.getElementById('downloadBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Downloaded!';
+                btn.style.background = '#10b981';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Download failed: ' + error.message);
+            }
+        });
+
+        function reset() {
+            location.reload();
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
+
+    

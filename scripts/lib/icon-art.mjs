@@ -338,6 +338,20 @@ export const MARKS = {
   'merge-tiles': {
     glyph: `${P('M3.6 3.6h9.8v9.8H3.6z')}${P('M10.6 10.6h9.8v9.8h-9.8z')}${F('M10.6 10.6h2.8v2.8h-2.8z')}`,
   },
+
+  /**
+   * Padosi Gate (Gatted) — shield with gate bars.
+   */
+  gatted: {
+    glyph: `${P('M12 3 4 6.5v6c0 5.5 3.5 10.5 8 12 4.5-1.5 8-6.5 8-12v-6z')}${P('M9 10v6')}${P('M12 8.5v7.5')}${P('M15 10v6')}`,
+  },
+
+  /**
+   * Swaad Ghar (Dining) — covered cloche / plate.
+   */
+  dining: {
+    glyph: `${P('M3.5 18.5h17')}${P('M4.5 15.5a7.5 7.5 0 0 1 15 0')}${P('M12 4.5v3.5')}${F('M12 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z')}`,
+  },
 };
 
 /**

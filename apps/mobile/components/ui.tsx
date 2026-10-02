@@ -449,6 +449,139 @@ export function Disclosure({
   );
 }
 
+/* ── StatCard ──────────────────────────────────────────────────────────────
+   Displays metrics, numbers, or counters with an icon and label.
+   Used across dashboards (Shop Toolkit, Gaadi Ghar, Japa Saathi, Wellness). */
+
+export function StatCard({
+  value,
+  label,
+  icon,
+  subtext,
+  tone = "ink",
+  onPress,
+  style,
+}: {
+  value: string | number;
+  label: string;
+  icon?: ReactNode;
+  subtext?: string;
+  tone?: PaletteKey;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const { c, elevation } = useTheme();
+
+  const content = (
+    <View
+      style={[
+        {
+          backgroundColor: c.surfaceRaised,
+          borderRadius: radius.lg,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: c.hairline,
+          padding: space.md,
+          gap: space.xs,
+        },
+        elevation(1),
+        style,
+      ]}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Text variant="callout" tone="ink2" numberOfLines={1}>
+          {label}
+        </Text>
+        {icon ? <View>{icon}</View> : null}
+      </View>
+      <Text variant="title1" tone={tone} style={{ fontWeight: "700" }}>
+        {value}
+      </Text>
+      {subtext ? (
+        <Text variant="meta" tone="ink3" numberOfLines={1}>
+          {subtext}
+        </Text>
+      ) : null}
+    </View>
+  );
+
+  if (onPress) {
+    return (
+      <Press onPress={onPress} haptic="light">
+        {content}
+      </Press>
+    );
+  }
+
+  return content;
+}
+
+/* ── ListItem ──────────────────────────────────────────────────────────────
+   Standard row with leading mark/icon, title, subtitle, and trailing accessories.
+   Used for activity feeds, visitor lists, menu items, settings, and navigation. */
+
+export function ListItem({
+  title,
+  subtitle,
+  icon,
+  right,
+  showChevron = true,
+  onPress,
+  style,
+}: {
+  title: string;
+  subtitle?: string;
+  icon?: ReactNode;
+  right?: ReactNode;
+  showChevron?: boolean;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const content = (
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          alignItems: "center",
+          gap: space.sm,
+          minHeight: minTouchTarget,
+          paddingVertical: space.sm,
+          paddingHorizontal: space.sm,
+          borderRadius: radius.md,
+        },
+        style,
+      ]}
+    >
+      {icon ? <View style={{ alignItems: "center", justifyContent: "center" }}>{icon}</View> : null}
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text variant="body" tone="ink" numberOfLines={1}>
+          {title}
+        </Text>
+        {subtitle ? (
+          <Text variant="callout" tone="ink2" numberOfLines={1}>
+            {subtitle}
+          </Text>
+        ) : null}
+      </View>
+      {right ? <View>{right}</View> : null}
+      {showChevron && onPress ? (
+        <Text variant="callout" tone="ink3">
+          ›
+        </Text>
+      ) : null}
+    </View>
+  );
+
+  if (onPress) {
+    return (
+      <Press onPress={onPress} haptic="light">
+        {content}
+      </Press>
+    );
+  }
+
+  return content;
+}
+
 const styles = StyleSheet.create({
   button: {
     minHeight: minTouchTarget,

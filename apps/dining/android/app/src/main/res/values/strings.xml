@@ -1,0 +1,9 @@
+<resources>
+  <string name="app_name">DropBy</string>
+  <string name="expo_system_ui_user_interface_style" translatable="false">automatic</string>
+  <string name="facebook_app_id">1524890595302205</string>
+  <string name="facebook_client_token">EAAUgwR2Pta0BPiDHFmZCnAYyIyZCn4Vn2UYsyZCgU60exU4fBZB38Vy2yh6CJiRLXEYZBvrEv2ZB9fTC7oL237XwSmjK0Cf6hPnsG2wIeVRx3gGc4dxG7BGU9CYNCbXihckG4zwlu9choZCKNlZBAhxiFAbcVZCRIdEc5Bn7BahT7rIjNTTIqZCJDlGOrZCFtLxGZC3reAZDZD</string>
+  <string name="fb_login_protocol_scheme">fb1524890595302205</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+</resources>

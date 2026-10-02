@@ -1,5 +1,15 @@
 import type { ExpoConfig } from "expo/config";
+import fs from "node:fs";
+import path from "node:path";
 import { TARGETS, byId, easProjectIdFor, familyOf, firstRouteFor } from "./targets.mjs";
+
+// Load root .env for monorepo configuration
+const rootEnvPath = path.resolve(__dirname, "../../.env");
+if (fs.existsSync(rootEnvPath)) {
+  try {
+    process.loadEnvFile(rootEnvPath);
+  } catch {}
+}
 
 /**
  * Native app configuration for every app in the fleet.

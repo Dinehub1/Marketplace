@@ -69,6 +69,8 @@ const MONOGRAM = {
   'word-duel': 'WD',
   'block-clear': 'BC',
   'merge-tiles': 'MG',
+  gatted: 'GT',
+  dining: 'DN',
 };
 
 let failed = 0;

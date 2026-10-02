@@ -1,5 +1,14 @@
 import type { NextConfig } from "next";
+import fs from "node:fs";
 import path from "node:path";
+
+// Load root .env for monorepo configuration
+const rootEnvPath = path.resolve(__dirname, "../../.env");
+if (fs.existsSync(rootEnvPath)) {
+  try {
+    process.loadEnvFile(rootEnvPath);
+  } catch {}
+}
 
 const nextConfig: NextConfig = {
   reactCompiler: true,

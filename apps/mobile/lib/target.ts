@@ -17,7 +17,7 @@ import { scopeForBrand, type BrandScope } from "@hermes/core";
  * this app may show is derived at runtime from `@hermes/core`'s ownership table, so the
  * app and the brand websites cannot disagree about who owns a category.
  */
-export type TargetFamily = "directory" | "wellness" | "product" | "game";
+export type TargetFamily = "directory" | "wellness" | "product" | "game" | "gatted" | "dining";
 
 export type Target = {
   id: string;

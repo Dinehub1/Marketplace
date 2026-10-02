@@ -55,6 +55,14 @@ function routesFor(t: Target): string[] {
     case "product":
       for (const p of builtProductsFor(t.products)) if (p.route) out.add(p.route);
       break;
+    case "gatted":
+      out.add("/gatted");
+      out.add("/gatted/*");
+      break;
+    case "dining":
+      out.add("/dining");
+      out.add("/dining/*");
+      break;
   }
   return [...out];
 }

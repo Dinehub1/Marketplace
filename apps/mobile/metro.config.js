@@ -1,5 +1,13 @@
-const { getDefaultConfig } = require("expo/metro-config");
+const fs = require("fs");
 const path = require("path");
+
+// Load root .env for monorepo configuration
+const rootEnvPath = path.resolve(__dirname, "../../.env");
+if (fs.existsSync(rootEnvPath)) {
+  try {
+    process.loadEnvFile(rootEnvPath);
+  } catch {}
+}
 
 const config = getDefaultConfig(__dirname);
 

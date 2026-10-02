@@ -123,10 +123,51 @@ console.log('  Open Expo Go and enter the second address, or scan the QR printed
 console.log('  Stop the server with Ctrl-C.');
 console.log('');
 
+// ── load root .env ─────────────────────────────────────────────────────────────
+const rootEnvPath = path.join(REPO, '.env');
+if (fs.existsSync(rootEnvPath)) {
+  try {
+    process.loadEnvFile(rootEnvPath);
+  } catch (err) {
+    console.warn('Warning: failed to load root .env:', err);
+  }
+}
+
 // ── run ─────────────────────────────────────────────────────────────────────────
-const r = spawnSync(process.execPath, [EXPO_CLI, 'start', '--port', String(port)], {
-  cwd: MOBILE,
-  env: { ...process.env, APP_TARGET: target.id },
+const appDir =
+  target.id === 'gatted'
+    ? path.join(REPO, 'apps', 'gatted')
+    : target.id === 'dining'
+    ? path.join(REPO, 'apps', 'dining')
+    : MOBILE;
+
+const expoArgs = ['start', '--port', String(port)];
+if (argv.includes('--dev-client')) {
+  expoArgs.push('--dev-client');
+} else {
+  expoArgs.push('--go');
+}
+
+const targetEnv = { ...process.env };
+if (target.id === 'gatted') {
+  if (process.env.EXPO_PUBLIC_GATTED_SUPABASE_URL) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_URL = process.env.EXPO_PUBLIC_GATTED_SUPABASE_URL;
+  }
+  if (process.env.EXPO_PUBLIC_GATTED_SUPABASE_ANON_KEY) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_GATTED_SUPABASE_ANON_KEY;
+  }
+} else if (target.id === 'dining') {
+  if (process.env.EXPO_PUBLIC_DINING_SUPABASE_URL) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_URL = process.env.EXPO_PUBLIC_DINING_SUPABASE_URL;
+  }
+  if (process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY;
+  }
+}
+
+const r = spawnSync(process.execPath, [EXPO_CLI, ...expoArgs], {
+  cwd: appDir,
+  env: { ...targetEnv, APP_TARGET: target.id },
   stdio: 'inherit',
 });
 process.exit(r.status ?? 1);
