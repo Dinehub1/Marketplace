@@ -19,6 +19,9 @@ dist/
 # native code, remove these two lines in the same commit and say why.
 apps/mobile/ios/
 apps/mobile/android/
+apps/gatted/ios/
+apps/gatted/android/
+apps/*/package-lock.json
 *.jks
 *.p8
 *.p12
