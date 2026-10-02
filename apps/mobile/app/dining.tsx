@@ -131,7 +131,7 @@ export default function DiningScreen() {
         <Card style={styles.bannerCard}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <Text variant="title3" tone="ink">
-              Tonight's Reservation
+              Tonight&apos;s Reservation
             </Text>
             <Badge label="Confirmed" tone="positive" />
           </View>

@@ -36,7 +36,7 @@ export default function ManageProperties() {
         fetchSocieties();
     }, []);
 
-    const fetchSocieties = async () => {
+    async function fetchSocieties() {
         try {
             // Get societies with counts
             const { data: societiesData, error } = await supabase

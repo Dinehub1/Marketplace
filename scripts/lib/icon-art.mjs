@@ -90,6 +90,14 @@ export const MARKS = {
    * ring with a gap, and a wisp rising through the gap. Two forms, no concentric symmetry, and it
    * reads as "air" rather than as a target.
    */
+  wellness: {
+    // Lotus blossom symbolising daily wellness practices (breathing, movement, mindfulness)
+    glyph:
+      `${P('M12 4.2c1.8 2.6 3 5 3 7.8 0 3-2 5.5-3 6.5-1-1-3-3.5-3-6.5 0-2.8 1.2-5.2 3-7.8z')}` +
+      `${P('M8.5 11c-2.4-.4-4.8 1.4-5.2 3.8-.4 2.2 1 4.5 3.2 5.2 2 .7 4.2-.2 5.5-1.5')}` +
+      `${P('M15.5 11c2.4-.4 4.8 1.4 5.2 3.8.4 2.2-1 4.5-3.2 5.2-2 .7-4.2-.2-5.5-1.5')}`,
+  },
+
   breathe: {
     glyph:
       `${P('M19.4 5.9A9.2 9.2 0 1 0 19.4 18.2')}` +

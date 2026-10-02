@@ -1,3 +1,4 @@
+const { getDefaultConfig } = require("expo/metro-config");
 const fs = require("fs");
 const path = require("path");
 

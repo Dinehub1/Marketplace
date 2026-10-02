@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Animated,
@@ -70,11 +70,12 @@ export default function SearchScreen() {
   }, []);
 
   // Debounced search function
-  const debouncedFilter = useCallback(
-    debounce((query: string, tab: string) => {
-      filterResults(query, tab);
-      setShowResults(query.length > 0);
-    }, 300),
+  const debouncedFilter = useMemo(
+    () =>
+      debounce((query: string, tab: string) => {
+        filterResults(query, tab);
+        setShowResults(query.length > 0);
+      }, 300),
     [allResults]
   );
 

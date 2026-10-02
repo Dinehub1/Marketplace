@@ -57,10 +57,7 @@ const FeaturedEventsCarouselComponent: React.FC<Props> = ({ events }) => {
   const userInteracting = useRef(false);
   const isJumping = useRef(false);
   const currentScrollOffset = useRef(0);
-
-  if (!events?.length) return null;
-
-  const eventCount = events.length;
+  const eventCount = events?.length || 0;
 
   // Memoized: Triple the events for infinite loop effect
   const infiniteEvents = useMemo(() => {
@@ -391,6 +388,8 @@ const FeaturedEventsCarouselComponent: React.FC<Props> = ({ events }) => {
       </TouchableOpacity>
     );
   }, [scrollX, formatDate, formatTime, formatPrice, getVenueDisplay]);
+
+  if (!events || events.length === 0) return null;
 
   return (
     <View style={styles.container}>

@@ -61,7 +61,7 @@ export default function ManageUsers() {
         }
     };
 
-    const fetchSocieties = async () => {
+    async function fetchSocieties() {
         const { data, error } = await supabase
             .from('societies')
             .select('id, name')
@@ -70,9 +70,9 @@ export default function ManageUsers() {
         if (!error && data) {
             setSocieties(data);
         }
-    };
+    }
 
-    const fetchUsers = async () => {
+    async function fetchUsers() {
         setLoading(true);
         try {
             // Fetch profiles and their roles with society info

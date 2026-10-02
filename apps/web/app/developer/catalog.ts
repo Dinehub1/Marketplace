@@ -179,6 +179,20 @@ export const APPS: DeveloperApp[] = [
     blurb: "Slide the tiles and double the numbers until the board is full.",
     platform: "Android & iOS",
   },
+  {
+    id: "gatted",
+    name: "Padosi Gate: Society & Visitor",
+    bundleId: "com.brandcollabs.padosigate",
+    blurb: "Smart society gate pass, visitor approvals & parcel log.",
+    platform: "Android & iOS",
+  },
+  {
+    id: "dining",
+    name: "Swaad Ghar: Table & Event Passes",
+    bundleId: "com.brandcollabs.swaadghar",
+    blurb: "Table reservations, curated food events & restaurant vouchers.",
+    platform: "Android & iOS",
+  },
 ];
 
 /**

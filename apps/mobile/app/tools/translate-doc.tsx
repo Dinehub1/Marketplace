@@ -100,6 +100,36 @@ function translationOutOf(markdown: string, target: string): string {
   return (i >= 0 ? markdown.slice(i + head.length) : markdown).trim();
 }
 
+function LangRow({
+  code,
+  onPick,
+  s,
+}: {
+  code: string;
+  onPick: (c: string) => void;
+  s: ReturnType<typeof makeStyles>;
+}) {
+  return (
+    <View style={s.chips}>
+      {TRANSLATE_LANGS.map((c) => {
+        const on = c === code;
+        return (
+          <Pressable
+            key={c}
+            onPress={() => onPick(c)}
+            accessibilityRole="button"
+            accessibilityState={{ selected: on }}
+            accessibilityLabel={langName(c)}
+            style={[s.chip, on && s.chipOn]}
+          >
+            <Text style={[s.chipText, on && s.chipTextOn]}>{langLabel(c)}</Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 export default function DocumentTranslation() {
   const ui = useProductUI("translate-doc");
   const s = useMemo(() => makeStyles(ui), [ui]);
@@ -180,28 +210,6 @@ export default function DocumentTranslation() {
     setTarget(source);
   }
 
-  function LangRow({ code, onPick }: { code: string; onPick: (c: string) => void }) {
-    return (
-      <View style={s.chips}>
-        {TRANSLATE_LANGS.map((c) => {
-          const on = c === code;
-          return (
-            <Pressable
-              key={c}
-              onPress={() => onPick(c)}
-              accessibilityRole="button"
-              accessibilityState={{ selected: on }}
-              accessibilityLabel={langName(c)}
-              style={[s.chip, on && s.chipOn]}
-            >
-              <Text style={[s.chipText, on && s.chipTextOn]}>{langLabel(c)}</Text>
-            </Pressable>
-          );
-        })}
-      </View>
-    );
-  }
-
   const done = !!job?.outputUrl;
 
   return (
@@ -245,7 +253,7 @@ export default function DocumentTranslation() {
       </View>
 
       <Text style={s.label}>Translate from</Text>
-      <LangRow code={source} onPick={setSource} />
+      <LangRow code={source} onPick={setSource} s={s} />
 
       <View style={s.swapRow}>
         <Pressable style={s.swap} onPress={swap} accessibilityRole="button">
@@ -254,7 +262,7 @@ export default function DocumentTranslation() {
       </View>
 
       <Text style={s.label}>Translate into</Text>
-      <LangRow code={target} onPick={setTarget} />
+      <LangRow code={target} onPick={setTarget} s={s} />
 
       {source === target ? (
         <Text style={s.warn}>

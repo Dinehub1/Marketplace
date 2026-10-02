@@ -233,7 +233,7 @@ export default function RestaurantDetailScreen() {
     }
 
     return {
-      id: String(offer.id || Math.random()),
+      id: String(offer.id ?? `${title}-${subtitle}`),
       type: 'discount',
       title,
       subtitle,
