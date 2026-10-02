@@ -295,12 +295,107 @@ export const TARGETS = [
     family: "dining",
     firstScreen: "directory",
   },
+  {
+    id: "cycle-tracker",
+    name: "CycleAI: Menstrual & Health Tracker",
+    bundleId: "com.brandcollabs.cycletracker",
+    tagline: "Track menstrual cycles, symptoms and ovulation",
+    storeCategory: "Health & Fitness",
+    aso: ["cycle tracker", "period tracker", "ovulation calendar", "menstrual health"],
+    color: "#5e19e6",
+    permissions: [],
+    products: [],
+    family: "cycle-tracker",
+    firstScreen: "calendar",
+  },
+  {
+    id: "money-map",
+    name: "Money Map: Smart Budget & Expenses",
+    bundleId: "com.brandcollabs.moneymap",
+    tagline: "Daily expense tracking, income visualizer & budgets",
+    storeCategory: "Finance",
+    aso: ["expense tracker", "budget planner", "money manager", "spending tracker"],
+    color: "#059669",
+    permissions: [],
+    products: [],
+    family: "money-map",
+    firstScreen: "dashboard",
+  },
+  {
+    id: "doctor-appointment",
+    name: "Swasth Clinic: Doctor Appointments",
+    bundleId: "com.brandcollabs.doctorapp",
+    tagline: "Book clinic appointments and consultations near you",
+    storeCategory: "Medical",
+    aso: ["doctor appointment", "clinic booking", "consultation", "find doctor"],
+    color: "#0284c7",
+    permissions: ["LOCATION"],
+    products: [],
+    family: "doctor-appointment",
+    firstScreen: "directory",
+  },
+  {
+    id: "highwaypass",
+    name: "HighwayPass: Toll Passes & FASTag",
+    bundleId: "com.brandcollabs.highwaypass",
+    tagline: "Digital toll pass, fast renewals & highway trip billing",
+    storeCategory: "Travel & Local",
+    aso: ["toll pass", "fastag pass", "highway pass", "toll plaza"],
+    color: "#2563eb",
+    permissions: [],
+    products: [],
+    family: "highwaypass",
+    firstScreen: "dashboard",
+  },
+  {
+    id: "somkefree",
+    name: "SmokeFree: Quit Smoking Tracker",
+    bundleId: "com.brandcollabs.smokefree",
+    tagline: "Track smoke-free days, health recovery & money saved",
+    storeCategory: "Health & Fitness",
+    aso: ["quit smoking", "smoke free", "craving tracker", "cessation counter"],
+    color: "#10b981",
+    permissions: [],
+    products: [],
+    family: "somkefree",
+    firstScreen: "dashboard",
+  },
+  {
+    id: "quick-driver",
+    name: "Quick Driver: Delivery & Ride",
+    bundleId: "com.brandcollabs.quickdriver",
+    tagline: "Driver partner orders, routing & earnings dashboard",
+    storeCategory: "Business",
+    aso: ["driver app", "delivery partner", "cab driver", "quick driver"],
+    color: "#0284c7",
+    permissions: ["LOCATION", "CAMERA"],
+    products: [],
+    family: "quick-driver",
+    firstScreen: "dashboard",
+  },
 ];
 
 export const byId = (id) => TARGETS.find((t) => t.id === id);
 export const productTargets = () => TARGETS.filter((t) => t.products.length);
 export const directoryTargets = () => TARGETS.filter((t) => t.directory);
 export const gameTargets = () => TARGETS.filter((t) => t.game);
+
+/**
+ * Standalone app workspaces: their source code lives in apps/<id>, NOT in apps/mobile.
+ * targets.mjs serves as their fleet/store manifest.
+ */
+export const STANDALONE_APPS = [
+  "dining",
+  "gatted",
+  "cycle-tracker",
+  "money-map",
+  "doctor-appointment",
+  "highwaypass",
+  "somkefree",
+  "quick-driver",
+];
+export const isStandalone = (target) =>
+  STANDALONE_APPS.includes(typeof target === "string" ? target : target?.id);
 
 /**
  * Where each target opens — the route the app boots into.
@@ -340,9 +435,15 @@ export const FIRST_ROUTE = {
   "block-clear": "/block-clear",
   "merge-tiles": "/merge-tiles",
 
-  // Gatted & Dining
-  gatted: "/gatted",
-  dining: "/dining",
+  // Standalone workspaces (boot from apps/<id>, not in apps/mobile)
+  gatted: null,
+  dining: null,
+  "cycle-tracker": null,
+  "money-map": null,
+  "doctor-appointment": null,
+  highwaypass: null,
+  somkefree: null,
+  "quick-driver": null,
 };
 
 /**
@@ -379,6 +480,12 @@ export const EAS_PROJECT_ID = {
   "merge-tiles": "9f7bdccd-a12b-44d1-96e6-bd473d45fb0e",
   gatted: null,
   dining: null,
+  "cycle-tracker": null,
+  "money-map": null,
+  "doctor-appointment": null,
+  highwaypass: null,
+  somkefree: null,
+  "quick-driver": null,
 };
 
 /** The EAS project id for a target, or null when its project has not been created. */

@@ -52,6 +52,12 @@ const id = positional[0];
 const openOn = (t) => {
   if (t.id === 'dining') return 'root / (apps/dining)';
   if (t.id === 'gatted') return 'root / (apps/gatted)';
+  if (t.id === 'cycle-tracker') return 'root / (apps/cycle-tracker)';
+  if (t.id === 'money-map') return 'root / (apps/money-map)';
+  if (t.id === 'doctor-appointment') return 'root / (apps/doctor-appointment)';
+  if (t.id === 'highwaypass') return 'root / (apps/highwaypass)';
+  if (t.id === 'somkefree') return 'root / (apps/somkefree)';
+  if (t.id === 'quick-driver') return 'root / (apps/quick-driver)';
   return FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen';
 };
 
@@ -143,6 +149,18 @@ const appDir =
     ? path.join(REPO, 'apps', 'gatted')
     : target.id === 'dining'
     ? path.join(REPO, 'apps', 'dining')
+    : target.id === 'cycle-tracker'
+    ? path.join(REPO, 'apps', 'cycle-tracker')
+    : target.id === 'money-map'
+    ? path.join(REPO, 'apps', 'money-map')
+    : target.id === 'doctor-appointment'
+    ? path.join(REPO, 'apps', 'doctor-appointment')
+    : target.id === 'highwaypass'
+    ? path.join(REPO, 'apps', 'highwaypass')
+    : target.id === 'somkefree'
+    ? path.join(REPO, 'apps', 'somkefree')
+    : target.id === 'quick-driver'
+    ? path.join(REPO, 'apps', 'quick-driver')
     : MOBILE;
 
 const expoArgs = ['start', '--port', String(port)];

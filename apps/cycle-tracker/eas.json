@@ -1,0 +1,40 @@
+{
+  "cli": {
+    "version": ">= 16.32.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "channel": "preview"
+    },
+    "testflight": {
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "APP_ENV": "production"
+      }
+    },
+    "production": {
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_AI_MODEL": "google/gemini-2.0-flash-001",
+        "EXPO_PUBLIC_AI_BASE_URL": "https://openrouter.ai/api/v1/chat/completions"
+      }
+    }
+  },
+  "submit": {
+    "production": {},
+    "testflight": {
+      "ios": {
+        "appleTeamId": "YOUR_TEAM_ID"
+      }
+    }
+  }
+}

@@ -43,7 +43,7 @@ const ONLY = onlyIdx > -1 ? process.argv[onlyIdx + 1] : null;
  */
 const REQUIRE_READY = process.argv.includes('--require-ready');
 
-const { TARGETS } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs')).href);
+const { TARGETS, isStandalone } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs')).href);
 
 /** Every route the app can actually open, derived from the file tree. */
 function routeFiles() {
@@ -90,6 +90,50 @@ const rows = [];
 
 for (const t of TARGETS) {
   if (ONLY && t.id !== ONLY) continue;
+
+  if (isStandalone(t)) {
+    const standaloneDir = path.join(REPO, 'apps', t.id);
+    if (!fs.existsSync(standaloneDir)) {
+      failures.push(`${t.id}: standalone workspace directory missing at apps/${t.id}`);
+      rows.push([t.id, '—', '—', '—', 'DIR MISSING']);
+      continue;
+    }
+    const appJsonPath = path.join(standaloneDir, 'app.json');
+    const pkgPath = path.join(standaloneDir, 'package.json');
+    if (!fs.existsSync(pkgPath)) {
+      failures.push(`${t.id}: package.json missing in standalone workspace apps/${t.id}`);
+    }
+    let appJson = {};
+    if (fs.existsSync(appJsonPath)) {
+      try {
+        appJson = JSON.parse(fs.readFileSync(appJsonPath, 'utf8'));
+      } catch {
+        failures.push(`${t.id}: unparseable app.json in apps/${t.id}`);
+      }
+    }
+    const expoCfg = appJson.expo || appJson;
+    const slug = expoCfg.slug || t.id;
+    const bundle = expoCfg.ios?.bundleIdentifier || expoCfg.android?.package || t.bundleId;
+    const name = expoCfg.name || t.name;
+
+    const dup = (map, value, what) => {
+      if (!value) return failures.push(`${t.id}: no ${what}`);
+      if (map.has(value)) failures.push(`${t.id}: ${what} "${value}" is already used by ${map.get(value)}`);
+      else map.set(value, t.id);
+    };
+    dup(seen.slug, slug, 'slug');
+    dup(seen.bundle, bundle, 'bundle id');
+    dup(seen.name, name, 'name');
+
+    rows.push([
+      t.id,
+      bundle,
+      `apps/${t.id}`,
+      '—',
+      'ok (standalone)',
+    ]);
+    continue;
+  }
 
   const r = spawnSync(process.execPath, [EXPO_CLI, 'config', '--type', 'public', '--json'], {
     cwd: MOBILE,
@@ -177,8 +221,8 @@ console.log(`\n${line(['target', 'bundle id', 'first screen', 'built', 'state'])
 console.log('-'.repeat(w.reduce((a, b) => a + b, 0)));
 for (const r of rows) console.log(line(r));
 
-const publishable = rows.filter((r) => r[4] === 'ok').length;
-const owed = rows.filter((r) => r[4] !== 'ok');
+const publishable = rows.filter((r) => r[4].startsWith('ok')).length;
+const owed = rows.filter((r) => !r[4].startsWith('ok'));
 
 console.log(
   `\n✓ ${rows.length} targets resolve: unique name, slug and bundle id; art on disk; every declared route exists.`,
