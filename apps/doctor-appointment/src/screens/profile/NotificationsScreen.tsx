@@ -209,7 +209,7 @@ export const NotificationsScreen: React.FC = () => {
               <Ionicons name="notifications-off-outline" size={48} color={Colors.gray300} />
               <Text style={styles.emptyTitle}>No notifications</Text>
               <Text style={styles.emptyDescription}>
-                You'll see your notifications here when you receive them
+                You&apos;ll see your notifications here when you receive them
               </Text>
             </View>
           )}

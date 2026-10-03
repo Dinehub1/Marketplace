@@ -71,6 +71,16 @@ const MONOGRAM = {
   'merge-tiles': 'MG',
   gatted: 'GT',
   dining: 'DN',
+  arcade: 'ARC',
+  sudoku: 'SDK',
+  'math-sprint': 'MTH',
+  crossword: 'CW',
+  'cycle-tracker': 'CYC',
+  'money-map': 'MM',
+  'doctor-appointment': 'DOC',
+  highwaypass: 'HWY',
+  smokefree: 'SF',
+  'quick-driver': 'QD',
 };
 
 let failed = 0;

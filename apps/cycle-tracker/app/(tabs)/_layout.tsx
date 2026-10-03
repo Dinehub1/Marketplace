@@ -7,7 +7,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
 
-function TabBarIcon({ name, color, focused }: { name: IoniconsName; color: string; focused: boolean }) {
+function TabBarIcon({ name, color, focused }: { name: IoniconsName; color: any; focused: boolean }) {
   return (
     <View style={[styles.iconContainer, focused && styles.iconContainerFocused]}>
       <Ionicons
@@ -21,7 +21,8 @@ function TabBarIcon({ name, color, focused }: { name: IoniconsName; color: strin
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const theme = colorScheme === 'dark' ? 'dark' : 'light';
+  const colors = Colors[theme];
 
   return (
     <Tabs

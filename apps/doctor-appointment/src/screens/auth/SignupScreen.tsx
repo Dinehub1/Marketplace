@@ -28,7 +28,7 @@ interface SignupForm {
 
 export const SignupScreen: React.FC = () => {
   const navigation = useNavigation();
-  const { signup } = useAuth();
+  const { register: signup } = useAuth();
   
   const [form, setForm] = useState<SignupForm>({
     firstName: '',

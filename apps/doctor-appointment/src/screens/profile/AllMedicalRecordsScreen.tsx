@@ -150,7 +150,7 @@ export const AllMedicalRecordsScreen: React.FC = () => {
             onPress={() => setSelectedFilter(filter.value as FilterCategory)}
           >
             <Ionicons 
-              name={filter.icon} 
+              name={filter.icon as any} 
               size={16} 
               color={selectedFilter === filter.value ? Colors.white : Colors.textSecondary} 
             />
@@ -285,7 +285,7 @@ export const AllMedicalRecordsScreen: React.FC = () => {
         showBackButton 
         onBackPress={() => navigation.goBack()}
         rightIcon="add"
-        onRightPress={handleAddRecord}
+        onRightIconPress={handleAddRecord}
       />
       
       {renderSearchBar()}

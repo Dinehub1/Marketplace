@@ -30,7 +30,7 @@ type BookingData = CreateAppointmentData & {
 };
 
 export const BookAppointmentScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute();
   
   const [selectedDate, setSelectedDate] = useState<string>('');

@@ -20,7 +20,7 @@ import { Colors, Fonts, Spacing } from '../../constants';
 import { Doctor, doctorsService } from '../../services/doctorsService';
 
 export const DoctorsScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSpecialization, setSelectedSpecialization] = useState('All');
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -135,7 +135,7 @@ export const DoctorsScreen: React.FC = () => {
       <Header 
         title="Find Doctors" 
         rightIcon="heart"
-        onRightPress={() => navigation.navigate('FavoriteDoctors' as never)}
+        onRightIconPress={() => navigation.navigate('FavoriteDoctors' as never)}
       />
       
       <KeyboardAvoidingView 

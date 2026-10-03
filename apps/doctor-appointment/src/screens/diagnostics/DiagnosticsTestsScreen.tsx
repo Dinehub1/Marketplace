@@ -38,7 +38,7 @@ export const DiagnosticsTestsScreen: React.FC = () => {
         </View>
 
         {/* Content */}
-        <Text style={styles.title}>You haven't booked any tests yet</Text>
+        <Text style={styles.title}>You haven&apos;t booked any tests yet</Text>
         <Text style={styles.description}>Get started with your first health checkup</Text>
 
         {/* Action Button */}

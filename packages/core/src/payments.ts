@@ -13,7 +13,7 @@ export type MonorepoProject =
   | "highwaypass"
   | "money-map"
   | "cycle-tracker"
-  | "somkefree"
+  | "smokefree"
   | "web"
   | string;
 

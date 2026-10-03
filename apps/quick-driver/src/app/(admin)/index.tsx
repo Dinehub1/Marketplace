@@ -38,7 +38,7 @@ export default function AdminLiveOpsScreen() {
             </Card>
             <Card style={styles.stat}>
               <ThemedText type="subtitle">{inr(18240)}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">Today's bookings</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">Today&apos;s bookings</ThemedText>
             </Card>
           </View>
 

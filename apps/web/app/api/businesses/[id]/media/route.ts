@@ -43,6 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Photo storage is not configured yet" }, { status: 503, headers: noStore });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form: any = await req.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Expected a file upload" }, { status: 400, headers: noStore });
 

@@ -29,7 +29,7 @@
 | **CashCard (Venue Wallet)** | `cashcard-v15` | Dedicated Capacitor App / B2B | Docker offline mode, custom backend | Keep B2B isolated; brand listing under Kadam Pay |
 | **Gatted (Gated Community)** | `Gatted-2026` + `Gattedsuperadminpanel` | Dedicated App + Admin Panel | Supabase (separate schema) | Rotate leaked Nextel key; purge `.env` from repo history |
 | **Cycle Tracker** | `Cycle-Tracker-App` | Dedicated App (Wellness Family) | Client-side SQLite/AsyncStorage | Remove duplicate copy in `caoffee-shop`; audit sensitive health data policy |
-| **Quit Smoking** | `somkefree` | Dedicated App (Wellness Family) | Local state / Notification scheduler | Target check against Apple 4.3 guideline |
+| **Quit Smoking** | `smokefree` | Dedicated App (Wellness Family) | Local state / Notification scheduler | Target check against Apple 4.3 guideline |
 | **Water Reminder** | `Ai-water-reminder` | Feature integration | Marketplace Wellness app | Merge features into existing Wellness app rather than spamming a thin listing |
 | **QuickDriver** | `QD APP/Quick_driver` | Client Project (`quickdriver.in`) | Mocked backend / Expo 57 | Client deliverable: keep separate from public repo |
 

@@ -707,6 +707,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Storage is not configured yet" }, { status: 503, headers: noStore });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form: any = await req.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Expected a file upload" }, { status: 400, headers: noStore });
 
@@ -833,7 +834,7 @@ export async function POST(req: NextRequest) {
     if ("error" in res) return res.error;
     staged = res.claims;
   }
-  const uploads = spec.dataOnly || staged ? [] : form.getAll("file").filter((f: any): f is File => f instanceof File);
+  const uploads = spec.dataOnly || staged ? [] : form.getAll("file").filter((f: unknown): f is File => f instanceof File);
   const inputFiles: InputFile[] = staged ?? uploads;
   const badInputs = spec.dataOnly ? null : checkInputs(product, spec, inputFiles);
   if (badInputs) return badInputs;

@@ -26,6 +26,8 @@ interface DoctorCardProps {
   doctor: Doctor;
   onPress: () => void;
   variant?: 'default' | 'compact';
+  onBookAppointment?: () => void;
+  showFavoriteButton?: boolean;
 }
 
 export const DoctorCard: React.FC<DoctorCardProps> = ({

@@ -83,7 +83,9 @@ export const OTPInput: React.FC<OTPInputProps> = ({
         }}
       >
         <TextInput
-          ref={(ref) => (inputRefs.current[index] = ref)}
+          ref={(ref) => {
+            inputRefs.current[index] = ref;
+          }}
           style={[
             styles.input,
             hasValue && styles.inputWithValue,

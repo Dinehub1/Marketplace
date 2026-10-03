@@ -105,7 +105,7 @@ export const AddMedicalRecordScreen: React.FC = () => {
               { backgroundColor: category.color + '20' }
             ]}>
               <Ionicons 
-                name={category.icon} 
+                name={category.icon as any} 
                 size={24} 
                 color={category.color} 
               />
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     borderRadius: Spacing.borderRadius.lg,
     borderWidth: 1,
     borderColor: Colors.gray200,
-    backgroundColor: Colors.gray50,
+    backgroundColor: (Colors as any).gray50 || '#F9FAFB',
   },
   privacyOptionContent: {
     flexDirection: 'row',

@@ -83,3 +83,4 @@ shots/
 # service versions. Per-machine, and the pooler URL is a connection address that
 # does not belong in a public repo.
 supabase/.temp/
+eval-repos/

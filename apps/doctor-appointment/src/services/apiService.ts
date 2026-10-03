@@ -45,7 +45,7 @@ class ApiService {
   private async executeQuery<T>(query: string, params: any[] = []): Promise<T[]> {
     try {
       console.info('🗄️ Database Query:', query, params);
-      const result = await sql(query, params);
+      const result = await (sql as any)(query, params);
       console.info('✅ Database Result:', result);
       return result as T[];
     } catch (error) {

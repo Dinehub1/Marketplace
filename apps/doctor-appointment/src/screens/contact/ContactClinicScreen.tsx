@@ -251,7 +251,7 @@ export const ContactClinicScreen: React.FC = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Send a Message</Text>
           <Text style={styles.sectionDescription}>
-            Have a question or need assistance? Send us a message and we'll get back to you soon.
+            Have a question or need assistance? Send us a message and we&apos;ll get back to you soon.
           </Text>
           <Button
             title="Send Message"
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   contactMethodCard: {
     width: '47%',
     alignItems: 'center',
-    backgroundColor: Colors.gray50,
+    backgroundColor: (Colors as any).gray50 || '#F9FAFB',
     borderRadius: Spacing.borderRadius.lg,
     padding: Spacing.lg,
   },

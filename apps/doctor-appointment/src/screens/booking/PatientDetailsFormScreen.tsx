@@ -159,7 +159,7 @@ export const PatientDetailsFormScreen: React.FC = () => {
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Basic Information</Text>
       <Text style={styles.stepDescription}>
-        Please provide the patient's basic information.
+        Please provide the patient&apos;s basic information.
       </Text>
       
       <View style={styles.formContainer}>

@@ -121,7 +121,6 @@ export default function IssuesScreen() {
                 .update({
                     status: newStatus as 'open' | 'in-progress' | 'resolved' | 'closed' | 'rejected',
                     updated_at: new Date().toISOString(),
-                    resolved_at: newStatus === 'resolved' ? new Date().toISOString() : null,
                 })
                 .eq('id', id);
 

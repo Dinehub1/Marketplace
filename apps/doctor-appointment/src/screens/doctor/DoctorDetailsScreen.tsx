@@ -18,7 +18,7 @@ import { doctorsService, Doctor as DoctorType } from '../../services/doctorsServ
 type Doctor = DoctorType;
 
 export const DoctorDetailsScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute();
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);

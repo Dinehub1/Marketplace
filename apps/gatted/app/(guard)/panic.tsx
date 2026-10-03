@@ -47,7 +47,7 @@ export default function PanicScreen() {
                 title: '🚨 EMERGENCY ALERT',
                 message: `Emergency alert triggered by ${profile?.full_name || 'Guard'}.\n\nLocation: Main Gate\nTime: ${new Date().toLocaleString('en-IN')}\n\n${notes ? `Notes: ${notes}` : 'No additional details provided.'}`,
                 target_type: 'role' as const,
-                target_role: 'manager' as const,
+                priority: 'urgent',
                 created_by: profile?.id,
             });
 

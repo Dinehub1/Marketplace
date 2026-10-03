@@ -77,7 +77,9 @@ function rowToTrip(row: any): Trip {
       id: row.driver.id,
       name: row.driver.name,
       rating: Number(row.driver.rating) || 4.9,
+      trips: row.driver.trips || row.driver.total_rides || 0,
       totalRides: row.driver.total_rides || 0,
+      years: row.driver.years || 5,
       carType: (row.driver.car_preference as any) || 'all',
       phone: row.driver.phone || '',
     };
@@ -265,7 +267,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               .from('qd_trips')
               .update({ status: 'assigned', eta_min: 6 })
               .eq('id', tripId)
-              .catch(() => {});
+              .then(undefined, () => {});
           },
         ],
         [
@@ -276,7 +278,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               .from('qd_trips')
               .update({ status: 'arrived' })
               .eq('id', tripId)
-              .catch(() => {});
+              .then(undefined, () => {});
           },
         ],
       ];
@@ -295,7 +297,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         .from('qd_trips')
         .update({ status: 'cancelled' })
         .eq('id', id)
-        .catch(() => {});
+        .then(undefined, () => {});
     },
     [clearTimers, updateTrip]
   );
@@ -309,7 +311,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         .from('qd_trips')
         .update({ status: 'completed', rating, tip })
         .eq('id', id)
-        .catch(() => {});
+        .then(undefined, () => {});
     },
     [clearTimers, updateTrip]
   );

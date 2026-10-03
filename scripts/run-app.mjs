@@ -56,7 +56,7 @@ const openOn = (t) => {
   if (t.id === 'money-map') return 'root / (apps/money-map)';
   if (t.id === 'doctor-appointment') return 'root / (apps/doctor-appointment)';
   if (t.id === 'highwaypass') return 'root / (apps/highwaypass)';
-  if (t.id === 'somkefree') return 'root / (apps/somkefree)';
+  if (t.id === 'smokefree') return 'root / (apps/smokefree)';
   if (t.id === 'quick-driver') return 'root / (apps/quick-driver)';
   return FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen';
 };

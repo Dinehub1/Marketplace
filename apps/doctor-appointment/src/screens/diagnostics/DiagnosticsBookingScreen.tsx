@@ -118,7 +118,7 @@ export const DiagnosticsBookingScreen: React.FC = () => {
     <View style={styles.stepContent}>
       <Text style={styles.stepTitle}>Patient Details</Text>
       <Text style={styles.stepDescription}>
-        Please provide the patient's information for the health checkup.
+        Please provide the patient&apos;s information for the health checkup.
       </Text>
       
       <View style={styles.relationshipContainer}>

@@ -62,7 +62,7 @@ const ProgressRing = ({ percentage, size = 60, strokeWidth = 6, color, secondary
           transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </Svg>
-      <View style={StyleSheet.absoluteFillObject}>
+      <View style={StyleSheet.absoluteFill}>
         {isComplete ? (
           <IconSymbol name="checkmark" color={color} size={size * 0.4} style={styles.progressRingIcon} />
         ) : (

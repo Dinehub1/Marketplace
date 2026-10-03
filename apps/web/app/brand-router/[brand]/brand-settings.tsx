@@ -20,7 +20,7 @@ export async function BrandSettings({ brand }: { brand: Brand }) {
   // same OTP-verified identity model claims use) or (b) an operator email from
   // BRAND_ADMIN_EMAILS. Until Phase 1 lands a real brand_owners table this is
   // the stand-in gate, and it fails closed.
-  async function updateBrand(formData: any) {
+  async function updateBrand(formData: FormData) {
     "use server";
     const s = await createClient();
     const { data: { user: u } } = await s.auth.getUser();

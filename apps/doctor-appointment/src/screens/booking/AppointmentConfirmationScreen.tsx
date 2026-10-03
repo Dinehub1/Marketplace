@@ -26,7 +26,7 @@ interface AppointmentData {
 }
 
 export const AppointmentConfirmationScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute();
   
   const appointmentData = (route.params as any) as AppointmentData;
@@ -99,7 +99,7 @@ export const AppointmentConfirmationScreen: React.FC = () => {
           </View>
           <Text style={styles.successTitle}>Appointment Booked!</Text>
           <Text style={styles.successMessage}>
-            Your appointment has been successfully booked. You'll receive a confirmation shortly.
+            Your appointment has been successfully booked. You&apos;ll receive a confirmation shortly.
           </Text>
         </View>
 
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.gray200,
     borderRadius: Spacing.borderRadius.md,
-    backgroundColor: Colors.gray50,
+    backgroundColor: (Colors as any).gray50 || '#F9FAFB',
   },
   actionButtonText: {
     marginLeft: Spacing.sm,

@@ -32,6 +32,7 @@ const WELLNESS_ROUTES = [
   "/water",
   "/japa",
   "/sleep",
+  "/sounds",
   "/progress",
   "/profile",
 ];
@@ -50,7 +51,18 @@ function routesFor(t: Target): string[] {
       WELLNESS_ROUTES.forEach((r) => out.add(r));
       break;
     case "game":
-      // The whole app is the game: the first route is all it owns.
+      // The arcade suite launcher includes all playable games.
+      if (t.id === "arcade") {
+        out.add("/games");
+        out.add("/sudoku");
+        out.add("/math-sprint");
+        out.add("/crossword");
+        out.add("/sounds");
+        out.add("/merge-tiles");
+        out.add("/block-clear");
+        out.add("/tap-sprint");
+        out.add("/word-duel");
+      }
       break;
     case "product":
       for (const p of builtProductsFor(t.products)) if (p.route) out.add(p.route);
@@ -64,6 +76,20 @@ function routesFor(t: Target): string[] {
       out.add("/dining/*");
       break;
   }
+
+  // In development, allow testing all games and screens regardless of active target
+  if (__DEV__) {
+    out.add("/games");
+    out.add("/sudoku");
+    out.add("/math-sprint");
+    out.add("/crossword");
+    out.add("/sounds");
+    out.add("/merge-tiles");
+    out.add("/block-clear");
+    out.add("/tap-sprint");
+    out.add("/word-duel");
+  }
+
   return [...out];
 }
 

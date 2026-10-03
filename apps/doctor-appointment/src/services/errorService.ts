@@ -210,7 +210,7 @@ class ErrorService {
         ...(this.shouldShowRetry(error.code) ? [
           {
             text: 'Retry',
-            style: 'default',
+            style: 'default' as const,
             onPress: () => {
               // Emit retry event or callback
               console.log('Retry requested for error:', error.code);

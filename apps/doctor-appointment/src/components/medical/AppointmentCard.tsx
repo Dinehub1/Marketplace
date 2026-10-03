@@ -15,7 +15,7 @@ interface Appointment {
   doctorSpecialty: string;
   appointmentDate: string;
   appointmentTime: string;
-  status: keyof typeof APPOINTMENT_STATUS;
+  status: keyof typeof APPOINTMENT_STATUS | 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show' | string;
   appointmentType: 'consultation' | 'follow_up' | 'emergency';
   symptoms?: string;
 }
@@ -156,7 +156,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
         </View>
       )}
 
-      {showActions && status === 'scheduled' && (
+      {showActions && (status.toLowerCase() === 'scheduled' || status === 'SCHEDULED') && (
         <View style={styles.actions}>
           {onReschedule && (
             <Button

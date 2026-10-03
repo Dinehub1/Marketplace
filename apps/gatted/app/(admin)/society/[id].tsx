@@ -64,7 +64,6 @@ export default function SocietyBlocks() {
                 .from('blocks')
                 .select('*')
                 .eq('society_id', id)
-                .eq('is_archived', false)
                 .order('name');
 
             const blocksWithCounts = await Promise.all(
@@ -72,8 +71,7 @@ export default function SocietyBlocks() {
                     const { count } = await supabase
                         .from('units')
                         .select('id', { count: 'exact', head: true })
-                        .eq('block_id', block.id)
-                        .eq('is_archived', false);
+                        .eq('block_id', block.id);
                     return { ...block, unit_count: count || 0 };
                 })
             );

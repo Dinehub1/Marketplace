@@ -71,10 +71,11 @@ export async function POST(req: NextRequest) {
       },
       { status: 200, headers: noStore }
     );
-  } catch (err: any) {
-    console.error("[create-order] Error:", err?.message || err);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to create Razorpay order";
+    console.error("[create-order] Error:", message);
     return NextResponse.json(
-      { error: err?.message || "Failed to create Razorpay order" },
+      { error: message },
       { status: 500, headers: noStore }
     );
   }

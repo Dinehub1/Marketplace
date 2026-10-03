@@ -553,7 +553,7 @@ const HealthInsightsScreen = () => {
                         <View style={styles.tipTextContainer}>
                             <Text style={[styles.tipTitle, { color: colors.text }]}>{loggingStreak}-Day Streak! 🎉</Text>
                             <Text style={[styles.tipDescription, { color: colors.textSecondary }]}>
-                                You've been logging consistently. Keep it up for better predictions!
+                                You&apos;ve been logging consistently. Keep it up for better predictions!
                             </Text>
                         </View>
                     </View>

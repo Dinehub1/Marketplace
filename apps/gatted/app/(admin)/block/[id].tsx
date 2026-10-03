@@ -52,7 +52,6 @@ export default function BlockUnits() {
                 .from('units')
                 .select('*')
                 .eq('block_id', id)
-                .eq('is_archived', false)
                 .order('floor', { ascending: true })
                 .order('unit_number', { ascending: true });
 

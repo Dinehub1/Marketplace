@@ -25,7 +25,7 @@ interface AppState {
     fetchActivePass: () => Promise<void>;
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
+export const useAppStore = create<AppState>()((set, get) => ({
     session: null,
     loading: true,
     activePass: null,

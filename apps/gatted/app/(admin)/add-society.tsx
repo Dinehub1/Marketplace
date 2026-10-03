@@ -75,7 +75,6 @@ export default function AddSociety() {
                     .insert({
                         name: societyName.trim(),
                         city: city.trim() || 'Unknown',
-                        is_archived: false,
                     });
                 if (error) throw error;
                 Alert.alert('Success', 'Society created', [

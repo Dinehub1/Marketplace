@@ -112,7 +112,7 @@ export default function DriverHomeScreen() {
           .from('qd_drivers')
           .update({ is_online: goOnline, updated_at: new Date().toISOString() })
           .eq('id', driverId)
-          .catch(() => {});
+          .then(undefined, () => {});
       }
     },
     [driverId]
@@ -213,7 +213,7 @@ export default function DriverHomeScreen() {
           updated_at: new Date().toISOString(),
         })
         .eq('id', job.id)
-        .catch(() => {});
+        .then(undefined, () => {});
     }
   };
 
@@ -225,7 +225,7 @@ export default function DriverHomeScreen() {
         .from('qd_trips')
         .update({ status: 'arrived', updated_at: new Date().toISOString() })
         .eq('id', job.id)
-        .catch(() => {});
+        .then(undefined, () => {});
     }
   };
 
@@ -238,7 +238,7 @@ export default function DriverHomeScreen() {
           .from('qd_trips')
           .update({ status: 'ongoing', updated_at: new Date().toISOString() })
           .eq('id', job.id)
-          .catch(() => {});
+          .then(undefined, () => {});
       }
     } else {
       setOtpError(true);
@@ -253,7 +253,7 @@ export default function DriverHomeScreen() {
         .from('qd_trips')
         .update({ status: 'completed', updated_at: new Date().toISOString() })
         .eq('id', job.id)
-        .catch(() => {});
+        .then(undefined, () => {});
     }
   };
 

@@ -165,7 +165,7 @@ export const LoginScreen: React.FC = () => {
 
         {/* Sign Up Link */}
         <View style={styles.signupSection}>
-          <Text style={styles.signupText}>Don't have an account? </Text>
+          <Text style={styles.signupText}>Don&apos;t have an account? </Text>
           <TouchableOpacity onPress={handleSignupPress}>
             <Text style={styles.signupLink}>Sign Up</Text>
           </TouchableOpacity>

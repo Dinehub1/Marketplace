@@ -233,7 +233,7 @@ export const appointmentsAPI = {
         INNER JOIN users p ON a.patient_id = p.id
         INNER JOIN users d ON a.doctor_id = d.id
         INNER JOIN doctor_profiles dp ON d.id = dp.user_id
-        WHERE a.${sql(column)} = ${userId}
+        WHERE a.${(sql as any)(column)} = ${userId}
         ORDER BY a.appointment_date DESC, a.appointment_time DESC
       `;
 

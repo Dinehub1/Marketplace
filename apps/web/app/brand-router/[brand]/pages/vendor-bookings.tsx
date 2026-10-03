@@ -150,7 +150,7 @@ export function VendorBookingsPage({ brand }: { brand: Brand }) {
     } finally { setBusy(false); }
   }
 
-  async function addService(form: any) {
+  async function addService(form: FormData) {
     setError(""); setBusy(true);
     try {
       const res = await fetch("/api/vendor/services", {

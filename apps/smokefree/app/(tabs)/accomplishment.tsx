@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   certificateImage: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     opacity: 0.1,
   },
   certificateBadgeText: {

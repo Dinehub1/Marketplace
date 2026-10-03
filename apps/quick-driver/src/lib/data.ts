@@ -132,10 +132,14 @@ export function calcFare(input: FareInput): FareBreakdown {
 }
 
 export type Driver = {
+  id?: string;
   name: string;
   rating: number;
   trips: number;
+  totalRides?: number;
   years: number;
+  carType?: string;
+  phone?: string;
 };
 
 export const DRIVER_POOL: Driver[] = [

@@ -42,7 +42,6 @@ export default function ManageProperties() {
             const { data: societiesData, error } = await supabase
                 .from('societies')
                 .select('*')
-                .eq('is_archived', false)
                 .order('name');
 
             if (error) throw error;
@@ -54,13 +53,11 @@ export default function ManageProperties() {
                         supabase
                             .from('blocks')
                             .select('id', { count: 'exact', head: true })
-                            .eq('society_id', society.id)
-                            .eq('is_archived', false),
+                            .eq('society_id', society.id),
                         supabase
                             .from('units')
                             .select('id', { count: 'exact', head: true })
-                            .eq('society_id', society.id)
-                            .eq('is_archived', false),
+                            .eq('society_id', society.id),
                         supabase
                             .from('user_roles')
                             .select('id', { count: 'exact', head: true })

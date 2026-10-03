@@ -30,7 +30,6 @@ export const RootNavigator: React.FC = () => {
       key={authKey}
       screenOptions={{ 
         headerShown: false,
-        animationEnabled: true,
       }}
     >
       {isLoggedIn ? (
