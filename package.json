@@ -43,6 +43,7 @@
     "test:shots": "node scripts/test-marker-retry.mjs",
     "check:targets": "node scripts/check-targets.mjs",
     "check:fleet": "node scripts/check-fleet.mjs",
+    "ingest:jev": "node scripts/jev-batch-ingest.mjs",
     "_comment_check_game": "The two gates above are about the store listing. This one is about the game: it loads apps/mobile/lib/block-clear.ts in plain Node and asserts the rules, so it runs anywhere — the screenshot probes need Playwright and a preview, and those only exist on the capture VM.",
     "check:game": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-block-clear.mjs",
     "_comment_check_merge": "The second game engine, same shape: apps/mobile/lib/merge-tiles.ts is loaded in plain Node and the merge rule is asserted on hand-written lines. `check:games` is what a change to either engine should run — a tile game whose 2,2,4 slides to 8 scores the same as one that does not, and a screenshot cannot tell them apart.",
