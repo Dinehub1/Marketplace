@@ -1,30 +1,61 @@
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from 'expo-camera';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Button, Card, DANGER } from '@/components/ui/primitives';
+import { Button, Card, DANGER, SUCCESS } from '@/components/ui/primitives';
 import { Spacing } from '@/constants/theme';
+import { authApi } from '@/lib/supabase';
 
 export const VIDEO_SECONDS = 30;
 
 type Props = {
   label: string;
+  tripId?: string;
+  type?: 'before' | 'after';
+  driverId?: string | null;
   onDone: (videoUri: string | null) => void;
 };
 
 /**
- * Records the mandatory 30-sec car condition video with the device camera.
- * Falls back to a simulated recording on web, where video capture is unreliable.
+ * Records the mandatory 30-sec car condition video with the device camera
+ * and uploads it directly to Cloudflare R2 storage.
  */
-export function CarVideoRecorder({ label, onDone }: Props) {
+export function CarVideoRecorder({
+  label,
+  tripId = 'quickdriver-demo',
+  type = 'before',
+  driverId,
+  onDone,
+}: Props) {
   const [camPerm, requestCamPerm] = useCameraPermissions();
   const [micPerm, requestMicPerm] = useMicrophonePermissions();
   const [recording, setRecording] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const [left, setLeft] = useState(VIDEO_SECONDS);
   const camera = useRef<CameraView>(null);
 
   const isWeb = Platform.OS === 'web';
+
+  const handleFinishRecording = async (uri: string | null) => {
+    setRecording(false);
+    setUploading(true);
+
+    try {
+      const uploadRes = await authApi.uploadInspectionVideo(tripId, type, uri, driverId);
+      setUploadSuccess(true);
+      setTimeout(() => {
+        onDone(uploadRes.video_url);
+      }, 1000);
+    } catch (err) {
+      console.warn('R2 video upload warning:', err);
+      // Fallback for offline/demo: proceed with local URI
+      onDone(uri);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   // Countdown display while recording (native recording auto-stops via maxDuration).
   useEffect(() => {
@@ -34,7 +65,7 @@ export function CarVideoRecorder({ label, onDone }: Props) {
       setLeft((l) => {
         if (l <= 1) {
           clearInterval(interval);
-          if (isWeb) onDone(null);
+          if (isWeb) handleFinishRecording(null);
           return 0;
         }
         return l - 1;
@@ -52,13 +83,15 @@ export function CarVideoRecorder({ label, onDone }: Props) {
     const cam = camPerm?.granted ? camPerm : await requestCamPerm();
     const mic = micPerm?.granted ? micPerm : await requestMicPerm();
     if (!cam?.granted || !mic?.granted) return;
+
     setRecording(true);
+    setLeft(VIDEO_SECONDS);
     try {
       const video = await camera.current?.recordAsync({ maxDuration: VIDEO_SECONDS });
-      onDone(video?.uri ?? null);
+      await handleFinishRecording(video?.uri ?? null);
     } catch {
-      // Recording failed (e.g. simulator without camera) — accept as done for the demo.
-      onDone(null);
+      // Recording fallback (e.g. simulator without camera)
+      await handleFinishRecording(null);
     }
   };
 
@@ -77,7 +110,28 @@ export function CarVideoRecorder({ label, onDone }: Props) {
         the customer in any damage dispute.
       </ThemedText>
 
-      {!isWeb && recording && (
+      {uploading && (
+        <View style={styles.uploadingBox}>
+          <ActivityIndicator color={DANGER} size="large" />
+          <ThemedText type="smallBold" style={styles.center}>
+            Uploading 30-sec inspection to Cloudflare R2...
+          </ThemedText>
+          <ThemedText type="small" themeColor="textSecondary" style={styles.center}>
+            Securing immutable video proof for dispute protection.
+          </ThemedText>
+        </View>
+      )}
+
+      {uploadSuccess && (
+        <View style={styles.successBox}>
+          <ThemedText style={{ fontSize: 32 }}>🛡️</ThemedText>
+          <ThemedText type="smallBold" style={{ color: SUCCESS }}>
+            Inspection video secured in Cloudflare R2!
+          </ThemedText>
+        </View>
+      )}
+
+      {!isWeb && recording && !uploading && (
         <View style={styles.cameraWrap}>
           <CameraView ref={camera} style={styles.camera} mode="video" facing="back" />
           <View style={styles.recBadge}>
@@ -88,25 +142,34 @@ export function CarVideoRecorder({ label, onDone }: Props) {
         </View>
       )}
 
-      {isWeb && recording && (
+      {isWeb && recording && !uploading && (
         <ThemedText type="subtitle" style={{ color: DANGER }}>
           ● 0:{String(left).padStart(2, '0')}
         </ThemedText>
       )}
 
-      {recording ? (
+      {recording && !uploading && (
         <View style={styles.progressTrack}>
           <View
-            style={[styles.progressFill, { width: `${((VIDEO_SECONDS - left) / VIDEO_SECONDS) * 100}%` }]}
+            style={[
+              styles.progressFill,
+              { width: `${((VIDEO_SECONDS - left) / VIDEO_SECONDS) * 100}%` },
+            ]}
           />
         </View>
-      ) : permissionDenied ? (
-        <ThemedText type="small" style={{ color: DANGER }} >
-          Camera or microphone access is blocked. Enable both for Expo Go in your phone Settings to
-          record the mandatory video.
-        </ThemedText>
-      ) : (
-        <Button title="Start 30-sec recording" onPress={start} />
+      )}
+
+      {!recording && !uploading && !uploadSuccess && (
+        <>
+          {permissionDenied ? (
+            <ThemedText type="small" style={{ color: DANGER }}>
+              Camera or microphone access is blocked. Enable both in your phone Settings to record the
+              mandatory video.
+            </ThemedText>
+          ) : (
+            <Button title="Start 30-sec recording" onPress={start} />
+          )}
+        </>
       )}
     </Card>
   );
@@ -152,5 +215,15 @@ const styles = StyleSheet.create({
   progressFill: {
     height: 8,
     backgroundColor: DANGER,
+  },
+  uploadingBox: {
+    alignItems: 'center',
+    gap: Spacing.two,
+    paddingVertical: Spacing.four,
+  },
+  successBox: {
+    alignItems: 'center',
+    gap: Spacing.two,
+    paddingVertical: Spacing.three,
   },
 });

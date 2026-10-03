@@ -1,6 +1,15 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
 import { Driver, DRIVER_POOL, FareBreakdown, ServiceId } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
 export type TripStatus =
   | 'finding'
@@ -50,45 +59,146 @@ type AppState = {
 
 const AppContext = createContext<AppState | null>(null);
 
-const SEED_TRIPS: Trip[] = [
-  {
-    id: 'past-2',
-    service: 'hourly',
-    serviceTitle: 'Hourly Driver',
-    pickup: 'Vijay Nagar, Indore',
-    drop: 'Sarafa Bazaar, Indore',
-    fare: { lines: [], total: 447 },
-    status: 'completed',
-    driver: DRIVER_POOL[1],
-    otp: '4821',
-    videoBefore: true,
-    videoAfter: true,
-    createdAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
-    rating: 5,
-  },
-  {
-    id: 'past-1',
-    service: 'outstation',
-    serviceTitle: 'Outstation',
-    pickup: 'Indore',
-    drop: 'Ujjain',
-    fare: { lines: [], total: 1420 },
-    status: 'completed',
-    driver: DRIVER_POOL[2],
-    otp: '9034',
-    videoBefore: true,
-    videoAfter: true,
-    createdAt: Date.now() - 9 * 24 * 60 * 60 * 1000,
-    rating: 4,
-  },
-];
+const generateUUID = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
+
+function rowToTrip(row: any): Trip {
+  let driver: Driver | undefined = undefined;
+  if (row.driver) {
+    driver = {
+      id: row.driver.id,
+      name: row.driver.name,
+      rating: Number(row.driver.rating) || 4.9,
+      totalRides: row.driver.total_rides || 0,
+      carType: (row.driver.car_preference as any) || 'all',
+      phone: row.driver.phone || '',
+    };
+  }
+
+  return {
+    id: row.id,
+    service: row.service as ServiceId,
+    serviceTitle: row.service_title,
+    pickup: row.pickup,
+    drop: row.drop_location,
+    fare: row.fare_breakdown || { lines: [], total: Number(row.fare_total) || 0 },
+    status: row.status as TripStatus,
+    driver,
+    etaMin: row.status === 'assigned' ? 6 : row.status === 'arrived' ? 0 : undefined,
+    otp: row.otp || '1234',
+    videoBefore: !!row.video_before_url,
+    videoAfter: !!row.video_after_url,
+    createdAt: row.created_at ? new Date(row.created_at).getTime() : Date.now(),
+    rating: row.rating ?? undefined,
+    tip: row.tip ? Number(row.tip) : undefined,
+  };
+}
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [phone, setPhone] = useState<string | null>(null);
   const [role, setRole] = useState<Role>('customer');
   const [walletBalance, setWalletBalance] = useState(250);
-  const [trips, setTrips] = useState<Trip[]>(SEED_TRIPS);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const timers = useRef<Record<string, ReturnType<typeof setTimeout>[]>>({});
+
+  // 1. Initial auth state and trips fetch from Supabase
+  useEffect(() => {
+    async function loadInitialData() {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData?.session;
+        if (session?.user) {
+          const userPhone = session.user.phone || session.user.user_metadata?.phone || null;
+          if (userPhone) setPhone(userPhone.replace('+91', ''));
+
+          // Load profile role
+          const { data: profile } = await supabase
+            .from('qd_profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profile?.role) {
+            setRole(profile.role as Role);
+          }
+          if (profile?.wallet_balance) {
+            setWalletBalance(Number(profile.wallet_balance));
+          }
+
+          // Fetch user's existing trips from Supabase
+          const { data: dbTrips, error: tripsErr } = await supabase
+            .from('qd_trips')
+            .select('*, driver:qd_drivers(*)')
+            .order('created_at', { ascending: false });
+
+          if (!tripsErr && dbTrips && dbTrips.length > 0) {
+            setTrips(dbTrips.map(rowToTrip));
+          }
+        }
+      } catch (err) {
+        console.warn('Error loading initial QuickDriver data:', err);
+      }
+    }
+
+    loadInitialData();
+
+    // 2. Realtime listener for live trip updates (finding -> assigned -> arrived -> ongoing -> completed)
+    const channel = supabase
+      .channel('qd_trips_realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'qd_trips' },
+        async (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newRow = payload.new;
+            // Fetch associated driver details if assigned
+            if (newRow.driver_id) {
+              const { data: driverData } = await supabase
+                .from('qd_drivers')
+                .select('*')
+                .eq('id', newRow.driver_id)
+                .single();
+              newRow.driver = driverData;
+            }
+            const incomingTrip = rowToTrip(newRow);
+            setTrips((prev) => [
+              incomingTrip,
+              ...prev.filter((t) => t.id !== incomingTrip.id),
+            ]);
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedRow = payload.new;
+            if (updatedRow.driver_id) {
+              const { data: driverData } = await supabase
+                .from('qd_drivers')
+                .select('*')
+                .eq('id', updatedRow.driver_id)
+                .single();
+              updatedRow.driver = driverData;
+            }
+            const updatedTrip = rowToTrip(updatedRow);
+            setTrips((prev) =>
+              prev.map((t) => (t.id === updatedTrip.id ? { ...t, ...updatedTrip } : t))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            const deletedId = (payload.old as any).id;
+            setTrips((prev) => prev.filter((t) => t.id !== deletedId));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const updateTrip = useCallback((id: string, patch: Partial<Trip>) => {
     setTrips((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
@@ -99,31 +209,80 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     delete timers.current[id];
   }, []);
 
-  // Simulated dispatch: replace with realtime backend (WebSocket) later.
+  // 3. Book Trip: Creates in Supabase, emits realtime event, with local optimistic UI
   const bookTrip = useCallback(
     (input: BookingInput) => {
-      const id = `trip-${Date.now()}`;
-      const trip: Trip = {
+      const tripId = generateUUID();
+      const otp = String(Math.floor(1000 + Math.random() * 9000));
+
+      const optimisticTrip: Trip = {
         ...input,
-        id,
+        id: tripId,
         status: 'finding',
-        otp: String(Math.floor(1000 + Math.random() * 9000)),
+        otp,
         videoBefore: false,
         videoAfter: false,
         createdAt: Date.now(),
       };
-      setTrips((prev) => [trip, ...prev]);
 
+      setTrips((prev) => [optimisticTrip, ...prev]);
+
+      // Fire Supabase Insert in background
+      (async () => {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const userId = sessionData?.session?.user?.id || null;
+
+          const { error } = await supabase.from('qd_trips').insert({
+            id: tripId,
+            customer_id: userId,
+            service: input.service,
+            service_title: input.serviceTitle,
+            pickup: input.pickup,
+            drop_location: input.drop,
+            fare_total: input.fare.total,
+            fare_breakdown: input.fare,
+            status: 'finding',
+            otp,
+          });
+
+          if (error) {
+            console.warn('Supabase booking error:', error.message);
+          }
+        } catch (err) {
+          console.warn('Failed to persist trip to Supabase:', err);
+        }
+      })();
+
+      // Local simulated progression fallback if testing in standalone mode
       const driver = DRIVER_POOL[Math.floor(Math.random() * DRIVER_POOL.length)];
       const schedule: [number, () => void][] = [
-        [4000, () => updateTrip(id, { status: 'assigned', driver, etaMin: 6 })],
-        [9000, () => updateTrip(id, { etaMin: 3 })],
-        [14000, () => updateTrip(id, { status: 'arrived', etaMin: 0, videoBefore: true })],
-        [22000, () => updateTrip(id, { status: 'ongoing' })],
-        [36000, () => updateTrip(id, { status: 'completed', videoAfter: true })],
+        [
+          5000,
+          () => {
+            updateTrip(tripId, { status: 'assigned', driver, etaMin: 6 });
+            supabase
+              .from('qd_trips')
+              .update({ status: 'assigned', eta_min: 6 })
+              .eq('id', tripId)
+              .catch(() => {});
+          },
+        ],
+        [
+          12000,
+          () => {
+            updateTrip(tripId, { status: 'arrived', etaMin: 0, videoBefore: true });
+            supabase
+              .from('qd_trips')
+              .update({ status: 'arrived' })
+              .eq('id', tripId)
+              .catch(() => {});
+          },
+        ],
       ];
-      timers.current[id] = schedule.map(([ms, fn]) => setTimeout(fn, ms));
-      return id;
+
+      timers.current[tripId] = schedule.map(([ms, fn]) => setTimeout(fn, ms));
+      return tripId;
     },
     [updateTrip]
   );
@@ -132,6 +291,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     (id: string) => {
       clearTimers(id);
       updateTrip(id, { status: 'cancelled' });
+      supabase
+        .from('qd_trips')
+        .update({ status: 'cancelled' })
+        .eq('id', id)
+        .catch(() => {});
     },
     [clearTimers, updateTrip]
   );
@@ -139,8 +303,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const finishTrip = useCallback(
     (id: string, rating: number, tip: number) => {
       clearTimers(id);
-      updateTrip(id, { rating, tip });
+      updateTrip(id, { rating, tip, status: 'completed' });
       if (tip > 0) setWalletBalance((b) => Math.max(b - tip, 0));
+      supabase
+        .from('qd_trips')
+        .update({ status: 'completed', rating, tip })
+        .eq('id', id)
+        .catch(() => {});
     },
     [clearTimers, updateTrip]
   );
@@ -148,7 +317,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const activeTrip = useMemo(
     () =>
       trips.find(
-        (t) => !['completed', 'cancelled'].includes(t.status) || (t.status === 'completed' && t.rating === undefined)
+        (t) =>
+          !['completed', 'cancelled'].includes(t.status) ||
+          (t.status === 'completed' && t.rating === undefined)
       ) ?? null,
     [trips]
   );
@@ -161,7 +332,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setPhone(p);
         setRole(r);
       },
-      signOut: () => setPhone(null),
+      signOut: async () => {
+        await supabase.auth.signOut().catch(() => {});
+        setPhone(null);
+      },
       walletBalance,
       trips,
       activeTrip,

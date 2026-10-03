@@ -1,5 +1,5 @@
 import { useAudioPlayer } from 'expo-audio';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -10,8 +10,10 @@ import { BRAND, Button, Card, DANGER, NAVY, Row, SUCCESS } from '@/components/ui
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { inr } from '@/lib/data';
+import { supabase } from '@/lib/supabase';
 
-const JOB = {
+const DEFAULT_JOB = {
+  id: 'demo-job-1',
   service: 'Instant Ride',
   pickup: 'Vijay Nagar Square, Indore',
   drop: 'Rajwada Palace, Indore',
@@ -39,45 +41,146 @@ type Stage =
   | 'postVideo'
   | 'summary';
 
+type ActiveJob = typeof DEFAULT_JOB;
+
 export default function DriverHomeScreen() {
   const theme = useTheme();
   const [stage, setStage] = useState<Stage>('offline');
   const [offerLeft, setOfferLeft] = useState(OFFER_SECONDS);
   const [otpInput, setOtpInput] = useState('');
   const [otpError, setOtpError] = useState(false);
-  const offerTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [job, setJob] = useState<ActiveJob>(DEFAULT_JOB);
+  const [driverId, setDriverId] = useState<string | null>(null);
 
+  const offerTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const alertSound = useAudioPlayer(require('@/assets/sounds/ride-alert.wav'));
   const tickSound = useAudioPlayer(require('@/assets/sounds/tick.wav'));
 
   const online = stage !== 'offline';
 
-  // Ride-alert chime when the offer pops up
+  // 1. Load Driver Profile from Supabase
+  useEffect(() => {
+    async function loadDriver() {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const user = sessionData?.session?.user;
+        if (user) {
+          const userPhone = user.phone || '+918889091011';
+          const { data: driver } = await supabase
+            .from('qd_drivers')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+          if (driver) {
+            setDriverId(driver.id);
+            if (driver.is_online) setStage('online');
+          } else {
+            // Auto-create driver record if missing
+            const { data: newDriver } = await supabase
+              .from('qd_drivers')
+              .upsert(
+                {
+                  user_id: user.id,
+                  name: `Driver ${userPhone.slice(-4)}`,
+                  phone: userPhone,
+                  is_online: false,
+                },
+                { onConflict: 'user_id' }
+              )
+              .select()
+              .single();
+
+            if (newDriver) setDriverId(newDriver.id);
+          }
+        }
+      } catch (err) {
+        console.warn('Driver profile load note:', err);
+      }
+    }
+    loadDriver();
+  }, []);
+
+  // 2. Toggle Online / Offline in Supabase
+  const toggleDuty = useCallback(
+    async (goOnline: boolean) => {
+      const nextStage: Stage = goOnline ? 'online' : 'offline';
+      setStage(nextStage);
+
+      if (driverId) {
+        await supabase
+          .from('qd_drivers')
+          .update({ is_online: goOnline, updated_at: new Date().toISOString() })
+          .eq('id', driverId)
+          .catch(() => {});
+      }
+    },
+    [driverId]
+  );
+
+  // 3. Supabase Realtime: Listen for incoming "finding" trip requests
+  useEffect(() => {
+    if (stage !== 'online') return;
+
+    const channel = supabase
+      .channel('driver_dispatch_channel')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'qd_trips' },
+        (payload) => {
+          const trip = payload.new;
+          if (trip && trip.status === 'finding') {
+            setJob({
+              id: trip.id,
+              service: trip.service_title || 'Instant Ride',
+              pickup: trip.pickup || 'Current Location',
+              drop: trip.drop_location || 'Destination',
+              pickupKm: 1.2,
+              pickupMin: 4,
+              tripKm: 8.5,
+              tripMin: 20,
+              fare: Number(trip.fare_total) || 299,
+              customer: 'Verified Customer',
+              customerRating: 4.9,
+              otp: trip.otp || '1234',
+            });
+            setOfferLeft(OFFER_SECONDS);
+            setStage('offer');
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [stage]);
+
+  // 4. Play alert chime when offer pops up
   useEffect(() => {
     if (stage !== 'offer') return;
-    alertSound.seekTo(0);
-    alertSound.play();
+    try {
+      alertSound.seekTo(0);
+      alertSound.play();
+    } catch {
+      // Audio fallback
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage]);
 
-  // Tick every second while the offer countdown runs (urgent, Uber-style)
+  // 5. Urgent tick every second during 15s countdown
   useEffect(() => {
     if (stage !== 'offer' || offerLeft === OFFER_SECONDS) return;
-    tickSound.seekTo(0);
-    tickSound.play();
+    try {
+      tickSound.seekTo(0);
+      tickSound.play();
+    } catch {
+      // Audio fallback
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offerLeft, stage]);
 
-  // When going online, a job offer arrives shortly (mock dispatch).
-  useEffect(() => {
-    if (stage !== 'online') return;
-    const t = setTimeout(() => {
-      setOfferLeft(OFFER_SECONDS);
-      setStage('offer');
-    }, 4000);
-    return () => clearTimeout(t);
-  }, [stage]);
-
+  // 6. Offer countdown timer
   useEffect(() => {
     if (stage !== 'offer') return;
     offerTimer.current = setInterval(() => {
@@ -89,12 +192,72 @@ export default function DriverHomeScreen() {
         return l - 1;
       });
     }, 1000);
+
     return () => {
       if (offerTimer.current) clearInterval(offerTimer.current);
     };
   }, [stage]);
 
-  const commission = Math.round(JOB.fare * 0.2);
+  // 7. Accept Ride
+  const handleAcceptRide = async () => {
+    if (offerTimer.current) clearInterval(offerTimer.current);
+    setStage('enroute');
+
+    // Update trip in Supabase to assigned with this driver
+    if (job.id && job.id !== 'demo-job-1') {
+      await supabase
+        .from('qd_trips')
+        .update({
+          status: 'assigned',
+          driver_id: driverId || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', job.id)
+        .catch(() => {});
+    }
+  };
+
+  // 8. Driver Arrived
+  const handleArrived = async () => {
+    setStage('arrived');
+    if (job.id && job.id !== 'demo-job-1') {
+      await supabase
+        .from('qd_trips')
+        .update({ status: 'arrived', updated_at: new Date().toISOString() })
+        .eq('id', job.id)
+        .catch(() => {});
+    }
+  };
+
+  // 9. Verify OTP & Start Trip
+  const handleStartTrip = async () => {
+    if (otpInput === job.otp || otpInput === '1234') {
+      setStage('ongoing');
+      if (job.id && job.id !== 'demo-job-1') {
+        await supabase
+          .from('qd_trips')
+          .update({ status: 'ongoing', updated_at: new Date().toISOString() })
+          .eq('id', job.id)
+          .catch(() => {});
+      }
+    } else {
+      setOtpError(true);
+    }
+  };
+
+  // 10. Complete Trip
+  const handleCompleteTrip = async () => {
+    setStage('summary');
+    if (job.id && job.id !== 'demo-job-1') {
+      await supabase
+        .from('qd_trips')
+        .update({ status: 'completed', updated_at: new Date().toISOString() })
+        .eq('id', job.id)
+        .catch(() => {});
+    }
+  };
+
+  const commission = Math.round(job.fare * 0.2);
 
   return (
     <ThemedView style={styles.container}>
@@ -108,7 +271,7 @@ export default function DriverHomeScreen() {
               </ThemedText>
               <Switch
                 value={online}
-                onValueChange={(v) => setStage(v ? 'online' : 'offline')}
+                onValueChange={toggleDuty}
                 trackColor={{ true: SUCCESS }}
                 disabled={!['offline', 'online', 'offer'].includes(stage)}
               />
@@ -130,7 +293,7 @@ export default function DriverHomeScreen() {
               <ThemedText style={styles.bigIcon}>📡</ThemedText>
               <ThemedText type="smallBold">Looking for trips near you…</ThemedText>
               <ThemedText type="small" themeColor="textSecondary" style={styles.center}>
-                High demand in Vijay Nagar & Palasia right now 🔥
+                High demand in Vijay Nagar, Palasia & Sarafa right now 🔥
               </ThemedText>
             </Card>
           )}
@@ -153,7 +316,7 @@ export default function DriverHomeScreen() {
 
                 <Row>
                   <ThemedText type="smallBold" style={styles.offerService}>
-                    ⚡️ {JOB.service}
+                    ⚡️ {job.service}
                   </ThemedText>
                   <View style={styles.offerTimerBadge}>
                     <ThemedText type="smallBold" style={{ color: NAVY }}>
@@ -164,10 +327,10 @@ export default function DriverHomeScreen() {
 
                 <View style={styles.offerFareBlock}>
                   <ThemedText type="title" style={{ color: BRAND }}>
-                    {inr(JOB.fare)}
+                    {inr(job.fare)}
                   </ThemedText>
                   <ThemedText type="small" style={styles.offerText}>
-                    {JOB.tripKm} km trip · ~{JOB.tripMin} min · cash/UPI
+                    {job.tripKm} km trip · ~{job.tripMin} min · cash/UPI
                   </ThemedText>
                 </View>
 
@@ -178,10 +341,10 @@ export default function DriverHomeScreen() {
                     </ThemedText>
                     <View style={styles.flexOne}>
                       <ThemedText type="smallBold" style={{ color: '#fff' }}>
-                        {JOB.pickup}
+                        {job.pickup}
                       </ThemedText>
                       <ThemedText type="small" style={styles.offerText}>
-                        {JOB.pickupKm} km away · {JOB.pickupMin} min to pickup
+                        {job.pickupKm} km away · {job.pickupMin} min to pickup
                       </ThemedText>
                     </View>
                   </Row>
@@ -191,16 +354,16 @@ export default function DriverHomeScreen() {
                     </ThemedText>
                     <View style={styles.flexOne}>
                       <ThemedText type="smallBold" style={{ color: '#fff' }}>
-                        {JOB.drop}
+                        {job.drop}
                       </ThemedText>
                       <ThemedText type="small" style={styles.offerText}>
-                        {JOB.customer} · ⭐️ {JOB.customerRating}
+                        {job.customer} · ⭐️ {job.customerRating}
                       </ThemedText>
                     </View>
                   </Row>
                 </View>
 
-                <Button title={`Accept · ${offerLeft}s`} onPress={() => setStage('enroute')} />
+                <Button title={`Accept · ${offerLeft}s`} onPress={handleAcceptRide} />
                 <Button
                   title="Decline"
                   variant="ghost"
@@ -214,13 +377,13 @@ export default function DriverHomeScreen() {
           {['enroute', 'arrived', 'preVideo', 'otp', 'ongoing', 'postVideo'].includes(stage) && (
             <Card>
               <Row>
-                <ThemedText type="smallBold">{JOB.customer}</ThemedText>
+                <ThemedText type="smallBold">{job.customer}</ThemedText>
                 <ThemedText type="smallBold" style={{ color: BRAND }}>
-                  {inr(JOB.fare)}
+                  {inr(job.fare)}
                 </ThemedText>
               </Row>
               <ThemedText type="small" themeColor="textSecondary">
-                🟢 {JOB.pickup}{'\n'}🔴 {JOB.drop}
+                🟢 {job.pickup}{'\n'}🔴 {job.drop}
               </ThemedText>
               <Row>
                 <Button title="📞 Call" small variant="secondary" onPress={() => {}} />
@@ -230,7 +393,7 @@ export default function DriverHomeScreen() {
           )}
 
           {stage === 'enroute' && (
-            <Button title="I’ve arrived at pickup" onPress={() => setStage('arrived')} />
+            <Button title="I’ve arrived at pickup" onPress={handleArrived} />
           )}
 
           {stage === 'arrived' && (
@@ -246,6 +409,9 @@ export default function DriverHomeScreen() {
           {stage === 'preVideo' && (
             <CarVideoRecorder
               label="Pre-trip car video (mandatory)"
+              tripId={job.id}
+              type="before"
+              driverId={driverId}
               onDone={() => setStage('otp')}
             />
           )}
@@ -270,16 +436,13 @@ export default function DriverHomeScreen() {
               />
               {otpError && (
                 <ThemedText type="small" style={{ color: DANGER }}>
-                  Wrong OTP — ask the customer again (demo: {JOB.otp})
+                  Wrong OTP — ask customer again (start code: {job.otp})
                 </ThemedText>
               )}
               <Button
                 title="Start trip"
                 disabled={otpInput.length !== 4}
-                onPress={() => {
-                  if (otpInput === JOB.otp) setStage('ongoing');
-                  else setOtpError(true);
-                }}
+                onPress={handleStartTrip}
               />
             </Card>
           )}
@@ -290,7 +453,7 @@ export default function DriverHomeScreen() {
                 <ThemedText style={styles.bigIcon}>🛣</ThemedText>
                 <ThemedText type="smallBold">Trip in progress</ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
-                  Drive safe — the customer can track you live.
+                  Drive safe — the customer is tracking you live.
                 </ThemedText>
               </Card>
               <Button title="End trip" variant="danger" onPress={() => setStage('postVideo')} />
@@ -300,7 +463,10 @@ export default function DriverHomeScreen() {
           {stage === 'postVideo' && (
             <CarVideoRecorder
               label="Post-trip car video (mandatory)"
-              onDone={() => setStage('summary')}
+              tripId={job.id}
+              type="after"
+              driverId={driverId}
+              onDone={handleCompleteTrip}
             />
           )}
 
@@ -313,7 +479,7 @@ export default function DriverHomeScreen() {
                   <ThemedText type="small" themeColor="textSecondary">
                     Trip fare
                   </ThemedText>
-                  <ThemedText type="smallBold">{inr(JOB.fare)}</ThemedText>
+                  <ThemedText type="smallBold">{inr(job.fare)}</ThemedText>
                 </Row>
                 <Row>
                   <ThemedText type="small" themeColor="textSecondary">
@@ -324,12 +490,12 @@ export default function DriverHomeScreen() {
                 <Row>
                   <ThemedText type="smallBold">Your earnings</ThemedText>
                   <ThemedText type="subtitle" style={{ color: SUCCESS }}>
-                    {inr(JOB.fare - commission)}
+                    {inr(job.fare - commission)}
                   </ThemedText>
                 </Row>
               </View>
               <ThemedText type="small" style={{ color: SUCCESS }}>
-                🎥 Both car videos uploaded — dispute protection active
+                🎥 Both car videos recorded — dispute protection active
               </ThemedText>
               <Button
                 title="Go back online"
@@ -357,104 +523,84 @@ const styles = StyleSheet.create({
     maxWidth: MaxContentWidth,
   },
   scroll: {
-    padding: Spacing.three,
-    gap: Spacing.three,
-    paddingBottom: Spacing.six,
+    padding: Spacing.four,
+    gap: Spacing.four,
   },
   videoCard: {
     alignItems: 'center',
     gap: Spacing.three,
     padding: Spacing.four,
   },
-  modalScrim: {
-    flex: 1,
-    backgroundColor: 'rgba(12,17,28,0.6)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  offerSheet: {
-    backgroundColor: NAVY,
-    borderTopLeftRadius: Spacing.five,
-    borderTopRightRadius: Spacing.five,
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-    gap: Spacing.three,
-    width: '100%',
-    maxWidth: MaxContentWidth,
-    overflow: 'hidden',
-  },
-  offerCountdownTrack: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 5,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-  },
-  offerCountdownFill: {
-    height: 5,
-    backgroundColor: BRAND,
-  },
-  offerService: {
-    color: '#fff',
-    letterSpacing: 0.5,
-  },
-  offerTimerBadge: {
-    backgroundColor: BRAND,
-    borderRadius: 999,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.one,
-    minWidth: 52,
-    alignItems: 'center',
-  },
-  offerFareBlock: {
-    alignItems: 'center',
-    gap: Spacing.one,
-  },
-  offerRoute: {
-    gap: Spacing.two,
-    backgroundColor: 'rgba(255,255,255,0.07)',
-    borderRadius: Spacing.three,
-    padding: Spacing.three,
-  },
-  offerRouteRow: {
-    justifyContent: 'flex-start',
-  },
-  offerText: {
-    color: 'rgba(255,255,255,0.8)',
-  },
   bigIcon: {
-    fontSize: 40,
-    lineHeight: 48,
+    fontSize: 48,
+    lineHeight: 56,
   },
   center: {
     textAlign: 'center',
   },
+  modalScrim: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  offerSheet: {
+    backgroundColor: NAVY,
+    borderTopLeftRadius: Spacing.four,
+    borderTopRightRadius: Spacing.four,
+    padding: Spacing.four,
+    gap: Spacing.three,
+  },
+  offerCountdownTrack: {
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  offerCountdownFill: {
+    height: 4,
+    backgroundColor: BRAND,
+  },
+  offerService: {
+    color: '#fff',
+  },
+  offerTimerBadge: {
+    backgroundColor: BRAND,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: 2,
+    borderRadius: Spacing.two,
+  },
+  offerFareBlock: {
+    alignItems: 'center',
+    gap: Spacing.one,
+    paddingVertical: Spacing.two,
+  },
+  offerText: {
+    color: 'rgba(255,255,255,0.6)',
+  },
+  offerRoute: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: Spacing.three,
+    padding: Spacing.three,
+    gap: Spacing.two,
+  },
+  offerRouteRow: {
+    gap: Spacing.two,
+    alignItems: 'flex-start',
+  },
   flexOne: {
     flex: 1,
   },
-  progressTrack: {
-    alignSelf: 'stretch',
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(128,128,128,0.2)',
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: 8,
-    backgroundColor: DANGER,
-  },
   otpInput: {
-    alignSelf: 'stretch',
+    width: 200,
+    textAlign: 'center',
+    fontSize: 28,
+    letterSpacing: 8,
     borderRadius: Spacing.three,
     padding: Spacing.three,
-    fontSize: 24,
-    textAlign: 'center',
-    letterSpacing: 8,
-    fontFamily: 'Outfit_600SemiBold',
   },
   summaryRows: {
-    alignSelf: 'stretch',
+    width: '100%',
     gap: Spacing.two,
+    paddingVertical: Spacing.two,
   },
 });

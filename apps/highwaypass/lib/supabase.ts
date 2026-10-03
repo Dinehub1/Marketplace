@@ -50,7 +50,11 @@ export const authApi = {
     sendOtp: async (phone: string) => {
         const resp = await fetch(`${edgeFunctionUrl}/send-otp`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                apikey: supabaseAnonKey,
+                Authorization: `Bearer ${supabaseAnonKey}`,
+            },
             body: JSON.stringify({ phone }),
         });
         const data = await resp.json();
@@ -61,7 +65,11 @@ export const authApi = {
     verifyOtp: async (phone: string, otp: string) => {
         const resp = await fetch(`${edgeFunctionUrl}/verify-otp`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                apikey: supabaseAnonKey,
+                Authorization: `Bearer ${supabaseAnonKey}`,
+            },
             body: JSON.stringify({ phone, otp }),
         });
         const data = await resp.json();
