@@ -1,6 +1,6 @@
 import { useAppStore } from '@/lib/store';
 import { colors, radii, spacing } from '@/lib/theme';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { useCallback } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
