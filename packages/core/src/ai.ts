@@ -46,8 +46,9 @@ export interface JevChoiceResult {
 
 export interface JevNoulResult {
   type: 'noul';
-  p_true: number;
-  decision: boolean;
+  p_true?: number;
+  noul?: number;
+  decision?: boolean;
 }
 
 export interface JevScoreResult {
@@ -63,12 +64,16 @@ export interface JevDecisionsResponse {
   id: string;
   model: string;
   decisions: Record<string, JevAnswer>;
+  answers?: Record<string, any>;
   usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+    input_tokens?: number;
+    output_tokens?: number;
     cost?: number;
   };
+  provider?: string;
 }
 
 export interface JevDecisionsOptions {
@@ -127,7 +132,14 @@ export async function callJevDecisions(
     throw new Error(`[Jev] API error ${response.status}: ${errorText}`);
   }
 
-  return (await response.json()) as JevDecisionsResponse;
+  const data = (await response.json()) as any;
+  if (!data.decisions && data.answers) {
+    data.decisions = { ...data.answers };
+  }
+  if (!data.answers && data.decisions) {
+    data.answers = { ...data.decisions };
+  }
+  return data as JevDecisionsResponse;
 }
 
 export interface ChatMessage {

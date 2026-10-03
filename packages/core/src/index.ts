@@ -29,6 +29,7 @@
  */
 export * from "./brand-scope.ts";
 export * from "./ai.ts";
+export * from "./payments.ts";
 
 export type CategoryStat = {
   category: string; // the real value as stored, e.g. "Furniture Store"
