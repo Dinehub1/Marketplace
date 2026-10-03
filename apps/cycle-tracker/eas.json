@@ -23,9 +23,7 @@
       "channel": "production",
       "autoIncrement": true,
       "env": {
-        "APP_ENV": "production",
-        "EXPO_PUBLIC_AI_MODEL": "google/gemini-2.0-flash-001",
-        "EXPO_PUBLIC_AI_BASE_URL": "https://openrouter.ai/api/v1/chat/completions"
+        "APP_ENV": "production"
       }
     }
   },

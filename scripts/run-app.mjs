@@ -31,7 +31,7 @@ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MOBILE = path.join(REPO, 'apps', 'mobile');
 const EXPO_CLI = path.join(REPO, 'node_modules', 'expo', 'bin', 'cli');
 
-const { TARGETS, FIRST_ROUTE, familyOf } = await import(
+const { TARGETS, FIRST_ROUTE, familyOf, isStandalone } = await import(
   pathToFileURL(path.join(MOBILE, 'targets.mjs')).href
 );
 
@@ -144,24 +144,9 @@ if (fs.existsSync(rootEnvPath)) {
 }
 
 // ── run ─────────────────────────────────────────────────────────────────────────
-const appDir =
-  target.id === 'gatted'
-    ? path.join(REPO, 'apps', 'gatted')
-    : target.id === 'dining'
-    ? path.join(REPO, 'apps', 'dining')
-    : target.id === 'cycle-tracker'
-    ? path.join(REPO, 'apps', 'cycle-tracker')
-    : target.id === 'money-map'
-    ? path.join(REPO, 'apps', 'money-map')
-    : target.id === 'doctor-appointment'
-    ? path.join(REPO, 'apps', 'doctor-appointment')
-    : target.id === 'highwaypass'
-    ? path.join(REPO, 'apps', 'highwaypass')
-    : target.id === 'somkefree'
-    ? path.join(REPO, 'apps', 'somkefree')
-    : target.id === 'quick-driver'
-    ? path.join(REPO, 'apps', 'quick-driver')
-    : MOBILE;
+const appDir = isStandalone?.(target)
+  ? path.join(REPO, 'apps', target.id)
+  : MOBILE;
 
 const expoArgs = ['start', '--port', String(port)];
 if (argv.includes('--dev-client')) {
@@ -185,7 +170,15 @@ if (target.id === 'gatted') {
   if (process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY) {
     targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY;
   }
+} else if (target.id === 'highwaypass') {
+  if (process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_URL) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_URL = process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_URL;
+  }
+  if (process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_ANON_KEY) {
+    targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_ANON_KEY;
+  }
 }
+
 
 const r = spawnSync(process.execPath, [EXPO_CLI, ...expoArgs], {
   cwd: appDir,
