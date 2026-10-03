@@ -3,8 +3,11 @@ import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://eyizlmtdteyimqqxetni.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5aXpsbXRkdGV5aW1xcXhldG5pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMzU3NDUsImV4cCI6MjA4NzcxMTc0NX0.1zyKLK0P-DjogsrhsnD7BJISqU8KNWpmStnHYSQ76nY';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://xpfmqpmhmcouwzebfwhb.supabase.co';
+const supabaseAnonKey =
+    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    'sb_publishable_XN_U25XfcBdLbXVJhraMsQ_1RQtM_Nc';
 
 // Platform-aware storage adapter:
 // - SSR (Node.js): in-memory no-op (window doesn't exist during pre-render)

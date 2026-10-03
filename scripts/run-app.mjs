@@ -170,14 +170,8 @@ if (target.id === 'gatted') {
   if (process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY) {
     targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_DINING_SUPABASE_ANON_KEY;
   }
-} else if (target.id === 'highwaypass') {
-  if (process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_URL) {
-    targetEnv.EXPO_PUBLIC_SUPABASE_URL = process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_URL;
-  }
-  if (process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_ANON_KEY) {
-    targetEnv.EXPO_PUBLIC_SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_HIGHWAYPASS_SUPABASE_ANON_KEY;
-  }
 }
+
 
 
 const r = spawnSync(process.execPath, [EXPO_CLI, ...expoArgs], {
