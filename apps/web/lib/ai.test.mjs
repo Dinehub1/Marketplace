@@ -21,7 +21,8 @@ import {
 
 const KEY_NAMES = [
   "CLOUDFLARE_AI_TOKEN", "CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_R2_ACCOUNT_ID",
-  "GEMINI_API_KEY", "GROQ_API_KEY",
+  "DEEPSEEK_API_KEY", "EXPO_PUBLIC_DEEPSEEK_API_KEY",
+  "OPENROUTER_API_KEY", "EXPO_PUBLIC_OPENROUTER_API_KEY", "EXPO_PUBLIC_AI_API_KEY",
 ];
 
 /** Run a body with every AI key removed from the environment — the state of this box today. */
@@ -169,7 +170,7 @@ test("with zero keys the text chain falls through to the template and the record
     assert.equal(outcome.answer.text, "Advi Plumbing Pvt. Ltd. is a plumber in Airport Road.");
     assert.deepEqual(
       outcome.record.attempts.map((a) => `${a.provider}:${a.outcome}`),
-      ["workers-ai-text:skipped", "gemini:skipped", "groq:skipped", "rules:ok"],
+      ["workers-ai-text:skipped", "deepseek:skipped", "openrouter:skipped", "rules:ok"],
     );
     for (const attempt of outcome.record.attempts.slice(0, 3)) {
       assert.match(attempt.detail, /is not set|token/i, `${attempt.provider} must say why it was skipped`);
@@ -178,7 +179,7 @@ test("with zero keys the text chain falls through to the template and the record
     assert.equal(meta.ai_provider, "rules");
     assert.equal(meta.ai_ok, true);
     assert.equal(meta.ai_capability, "text");
-    assert.deepEqual(meta.ai_tries, ["workers-ai-text:skipped", "gemini:skipped", "groq:skipped", "rules:ok"]);
+    assert.deepEqual(meta.ai_tries, ["workers-ai-text:skipped", "deepseek:skipped", "openrouter:skipped", "rules:ok"]);
   });
 });
 
@@ -272,7 +273,7 @@ test("a chain that runs out fails with every reason, never with an empty answer"
     assert.match(outcome.record.detail, /no provider in the vision chain could serve this/);
     assert.match(outcome.record.detail, /workers-ai-vision \(skipped/);
     assert.match(outcome.record.detail, /tesseract \(skipped: tesseract is not installed/);
-    assert.equal(outcome.record.attempts.length, 3);
+    assert.equal(outcome.record.attempts.length, 2);
 
     const meta = metaFor(outcome.record);
     assert.equal(meta.ai_provider, "none");

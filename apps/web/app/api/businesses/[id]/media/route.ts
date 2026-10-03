@@ -43,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Photo storage is not configured yet" }, { status: 503, headers: noStore });
   }
 
-  const form = await req.formData().catch(() => null);
+  const form: any = await req.formData().catch(() => null);
   if (!form) return NextResponse.json({ error: "Expected a file upload" }, { status: 400, headers: noStore });
 
   const phone = toIndiaPhone(String(form.get("phone") ?? ""));

@@ -15,24 +15,27 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const envPath = path.resolve(__dirname, "../.env");
-if (fs.existsSync(envPath)) {
-  for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
-    const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
-    if (m && !process.env[m[1]]) {
-      process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
+const rootEnvPath = path.resolve(__dirname, "../../../.env");
+const webEnvPath = path.resolve(__dirname, "../.env");
+for (const envPath of [rootEnvPath, webEnvPath]) {
+  if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+      const m = line.match(/^([A-Z0-9_]+)=(.*)$/);
+      if (m && !process.env[m[1]]) {
+        process.env[m[1]] = m[2].trim().replace(/^["']|["']$/g, "");
+      }
     }
   }
 }
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
   console.error("Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY");
   process.exit(1);
 }
 
-// Templates the app sends today.
+// Templates the app sends today (verified from Nextel dashboard)
 const SEED = [
   {
     template_id: "auth",
@@ -40,9 +43,13 @@ const SEED = [
     language: "en",
     category: "AUTHENTICATION",
     status: "approved",
-    body: "Your verification code is {{1}}.",
+    body: "{{1}} is your verification code. For your security, do not share this code. Expires in 10 minutes.",
     variables: 1,
-    raw: { type: "buttonTemplate", templateLanguage: "en" },
+    raw: {
+      type: "buttonTemplate",
+      templateLanguage: "en",
+      buttons: [{ type: "copy_code", text: "Copy code" }],
+    },
   },
 ];
 

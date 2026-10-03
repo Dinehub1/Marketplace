@@ -139,11 +139,11 @@ export class ProviderError extends Error {
  * chain fails with a sentence instead of pretending.
  */
 export const CHAINS: Record<Capability, string[]> = {
-  text: ["workers-ai-text", "gemini", "groq", "rules"],
-  "text-cheap": ["workers-ai-bulk", "gemini", "groq", "rules"],
-  vision: ["workers-ai-vision", "gemini-vision", "tesseract"],
-  translate: ["workers-ai-translate", "gemini", "workers-ai-m2m100"],
-  stt: ["workers-ai-whisper", "groq-whisper", "whisper-cpp"],
+  text: ["workers-ai-text", "deepseek", "openrouter", "rules"],
+  "text-cheap": ["workers-ai-bulk", "deepseek", "openrouter", "rules"],
+  vision: ["workers-ai-vision", "tesseract"],
+  translate: ["workers-ai-translate", "deepseek", "openrouter", "workers-ai-m2m100"],
+  stt: ["workers-ai-whisper", "whisper-cpp"],
   tts: ["workers-ai-melotts", "workers-ai-aura", "piper"],
   image: ["workers-ai-flux", "workers-ai-sdxl"],
   search: ["supabase-like"],
@@ -592,74 +592,26 @@ function workersAi(spec: CfSpec): Provider {
   };
 }
 
-/** Gemini Flash — the free text/vision fallback (docs/resources-and-apis.md §2.4). */
-function gemini(id: string, model: string): Provider {
-  return {
-    id,
-    kind: "remote",
-    cost: `${model} — free tier (~1,500 requests/day, no card)`,
-    capabilities: ["text", "text-cheap", "vision", "translate"],
-    available() {
-      return (process.env.GEMINI_API_KEY ?? "").trim()
-        ? { ok: true }
-        : { ok: false, reason: "GEMINI_API_KEY is not set (free key, docs/resources-and-apis.md §2.4)" };
-    },
-    async run(input, ctx) {
-      const key = (process.env.GEMINI_API_KEY ?? "").trim();
-      if (!key) throw new ProviderError("GEMINI_API_KEY is not set");
-      const parts: Record<string, unknown>[] = [];
-      const instruction = asString(input.prompt) ?? asString(input.text);
-      if (instruction) {
-        parts.push({
-          text:
-            ctx.capability === "translate" && input.target
-              ? `${instruction}\n\nTranslate into ${input.target}. Reply with the translation only.`
-              : instruction,
-        });
-      }
-      if (input.bytes && ctx.capability === "vision") {
-        parts.push({ inlineData: { mimeType: input.mime ?? "image/jpeg", data: bytesToBase64(input.bytes) } });
-      }
-      if (!parts.length) throw new ProviderError(`${id} needs a prompt, text or an image`);
-
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        body: JSON.stringify({ contents: [{ parts }] }),
-        signal: ctx.signal,
-      });
-      if (!res.ok) {
-        const detail = await res.text().catch(() => "");
-        throw new ProviderError(`Gemini ${res.status}: ${detail.slice(0, 160).replace(/\s+/g, " ")}`, res.status);
-      }
-      const json = await readJson(res);
-      const text = asString(dig(json, "candidates", 0, "content", "parts", 0, "text"));
-      if (!text) throw new ProviderError("Gemini returned no text");
-      return { text, meta: { provider: id, model, usage: dig(json, "usageMetadata") ?? undefined } };
-    },
-  };
-}
-
-/** Groq — fast free text, and a free Whisper for speech-to-text. */
-const groqProvider: Provider = {
-  id: "groq",
+/** DeepSeek API — direct chat completions and reasoning. */
+const deepseekProvider: Provider = {
+  id: "deepseek",
   kind: "remote",
-  cost: "llama-3.3-70b-versatile — free tier (30 req/min)",
-  capabilities: ["text", "text-cheap"],
+  cost: "deepseek-chat — $0.14 in / $0.28 out per M tokens",
+  capabilities: ["text", "text-cheap", "translate"],
   available: () =>
-    (process.env.GROQ_API_KEY ?? "").trim()
+    (process.env.DEEPSEEK_API_KEY ?? process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY ?? "").trim()
       ? { ok: true }
-      : { ok: false, reason: "GROQ_API_KEY is not set (free key, docs/resources-and-apis.md §2.5)" },
+      : { ok: false, reason: "DEEPSEEK_API_KEY is not set" },
   async run(input, ctx) {
-    const key = (process.env.GROQ_API_KEY ?? "").trim();
-    if (!key) throw new ProviderError("GROQ_API_KEY is not set");
+    const key = (process.env.DEEPSEEK_API_KEY ?? process.env.EXPO_PUBLIC_DEEPSEEK_API_KEY ?? "").trim();
+    if (!key) throw new ProviderError("DEEPSEEK_API_KEY is not set");
     const prompt = asString(input.prompt) ?? asString(input.text);
-    if (!prompt) throw new ProviderError("groq needs ?prompt=");
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    if (!prompt) throw new ProviderError("deepseek needs ?prompt=");
+    const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "deepseek-chat",
         messages: [{ role: "user", content: ctx.capability === "translate" && input.target ? `${prompt}\n\nTranslate into ${input.target}. Reply with the translation only.` : prompt }],
         max_tokens: input.maxTokens ?? 1024,
       }),
@@ -667,46 +619,48 @@ const groqProvider: Provider = {
     });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
-      throw new ProviderError(`Groq ${res.status}: ${detail.slice(0, 160).replace(/\s+/g, " ")}`, res.status);
+      throw new ProviderError(`DeepSeek ${res.status}: ${detail.slice(0, 160).replace(/\s+/g, " ")}`, res.status);
     }
     const json = await readJson(res);
     const text = asString(dig(json, "choices", 0, "message", "content"));
-    if (!text) throw new ProviderError("Groq returned no text");
-    return { text, meta: { provider: "groq", model: dig(json, "model") ?? "llama-3.3-70b-versatile", usage: dig(json, "usage") ?? undefined } };
+    if (!text) throw new ProviderError("DeepSeek returned no text");
+    return { text, meta: { provider: "deepseek", model: "deepseek-chat", usage: dig(json, "usage") ?? undefined } };
   },
 };
 
-const groqWhisper: Provider = {
-  id: "groq-whisper",
+/** OpenRouter API — multi-model gateway fallback. */
+const openrouterProvider: Provider = {
+  id: "openrouter",
   kind: "remote",
-  cost: "whisper-large-v3 on Groq — free tier",
-  capabilities: ["stt"],
-  timeoutMs: 120_000,
+  cost: "openrouter gateway",
+  capabilities: ["text", "text-cheap", "translate"],
   available: () =>
-    (process.env.GROQ_API_KEY ?? "").trim()
+    (process.env.OPENROUTER_API_KEY ?? process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ?? process.env.EXPO_PUBLIC_AI_API_KEY ?? "").trim()
       ? { ok: true }
-      : { ok: false, reason: "GROQ_API_KEY is not set (the free tier also serves Whisper)" },
+      : { ok: false, reason: "OPENROUTER_API_KEY is not set" },
   async run(input, ctx) {
-    const key = (process.env.GROQ_API_KEY ?? "").trim();
-    if (!key) throw new ProviderError("GROQ_API_KEY is not set");
-    if (!input.bytes) throw new ProviderError("speech-to-text needs the audio bytes");
-    const form = new FormData();
-    form.append("file", new Blob([input.bytes as unknown as BlobPart], { type: input.mime ?? "audio/mpeg" }), "audio");
-    form.append("model", "whisper-large-v3");
-    const res = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+    const key = (process.env.OPENROUTER_API_KEY ?? process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ?? process.env.EXPO_PUBLIC_AI_API_KEY ?? "").trim();
+    if (!key) throw new ProviderError("OPENROUTER_API_KEY is not set");
+    const prompt = asString(input.prompt) ?? asString(input.text);
+    if (!prompt) throw new ProviderError("openrouter needs ?prompt=");
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}` },
-      body: form,
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: process.env.EXPO_PUBLIC_AI_MODEL || "deepseek/deepseek-chat",
+        messages: [{ role: "user", content: ctx.capability === "translate" && input.target ? `${prompt}\n\nTranslate into ${input.target}. Reply with the translation only.` : prompt }],
+        max_tokens: input.maxTokens ?? 1024,
+      }),
       signal: ctx.signal,
     });
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
-      throw new ProviderError(`Groq transcription ${res.status}: ${detail.slice(0, 160).replace(/\s+/g, " ")}`, res.status);
+      throw new ProviderError(`OpenRouter ${res.status}: ${detail.slice(0, 160).replace(/\s+/g, " ")}`, res.status);
     }
     const json = await readJson(res);
-    const text = asString(json.text);
-    if (!text) throw new ProviderError("Groq returned no transcript");
-    return { text, meta: { provider: "groq-whisper", model: "whisper-large-v3" } };
+    const text = asString(dig(json, "choices", 0, "message", "content"));
+    if (!text) throw new ProviderError("OpenRouter returned no text");
+    return { text, meta: { provider: "openrouter", model: dig(json, "model") ?? "deepseek/deepseek-chat", usage: dig(json, "usage") ?? undefined } };
   },
 };
 
@@ -715,28 +669,16 @@ const groqWhisper: Provider = {
 export const PROVIDERS: Provider[] = [
   workersAi({ id: "workers-ai-text", model: "@cf/qwen/qwen3-30b-a3b-fp8", shape: "chat", cost: "$0.051 in / $0.34 out per M tokens", capabilities: ["text"] }),
   workersAi({ id: "workers-ai-bulk", model: "@cf/ibm-granite/granite-4.0-h-micro", shape: "chat", cost: "$0.017 in / $0.112 out per M tokens", capabilities: ["text-cheap"] }),
-  // Measured 2026-09-17 with a real token: this model answers 403
-  // "Model Agreement: Prior to using this model, you must submit the prompt 'agree'", i.e. a
-  // one-time click in the Cloudflare dashboard, not a code problem. The alternative in the
-  // chain table, @cf/moondream/moondream3.1-9B-A2B, is not JSON-callable from a route: every
-  // JSON shape (byte array, nested array, data URL, plain base64) answers 400 "Type mismatch of
-  // '/image': 'string' not in 'array','binary'" and multipart is refused as "Request body is not
-  // valid json". So the vision chain is honest about needing a key *and* that one click.
   workersAi({ id: "workers-ai-vision", model: "@cf/meta/llama-3.2-11b-vision-instruct", shape: "chat", cost: "rate card per image", capabilities: ["vision"] }),
   workersAi({ id: "workers-ai-translate", model: "@cf/ai4bharat/indictrans2-en-indic-1B", shape: "translation", cost: "$0.34 per M tokens", capabilities: ["translate"] }),
   workersAi({ id: "workers-ai-m2m100", model: "@cf/meta/m2m100-1.2b", shape: "translation", cost: "rate card per M tokens", capabilities: ["translate"] }),
   workersAi({ id: "workers-ai-whisper", model: "@cf/openai/whisper", shape: "transcript", cost: "$0.00045 per audio minute", capabilities: ["stt"], timeoutMs: 120_000 }),
   workersAi({ id: "workers-ai-melotts", model: "@cf/myshell-ai/melotts", shape: "audio", cost: "$0.0002 per audio minute", capabilities: ["tts"], timeoutMs: 60_000 }),
-  // Measured 2026-09-17: melotts answers 500 (AiError 3043, twice in a row) while aura-1 answers
-  // 200 with real audio/mpeg for {text} — so the documented fallback is the one that works
-  // today, and the chain falls through to it on its own (see scripts/ai-router-report.mjs §4).
   workersAi({ id: "workers-ai-aura", model: "@cf/deepgram/aura-1", shape: "audio", bodyKey: "text", cost: "rate card per 1k characters (CF-hosted Deepgram)", capabilities: ["tts"], timeoutMs: 60_000 }),
   workersAi({ id: "workers-ai-flux", model: "@cf/black-forest-labs/flux-1-schnell", shape: "image", cost: "≈$0.0005 per image (172.8 neurons ≈ ₹0.17)", capabilities: ["image"], timeoutMs: 180_000 }),
   workersAi({ id: "workers-ai-sdxl", model: "@cf/bytedance/stable-diffusion-xl-lightning", shape: "image", cost: "rate card per image", capabilities: ["image"], timeoutMs: 180_000 }),
-  gemini("gemini", "gemini-2.0-flash"),
-  gemini("gemini-vision", "gemini-2.0-flash"),
-  groqProvider,
-  groqWhisper,
+  deepseekProvider,
+  openrouterProvider,
   rulesProvider,
   supabaseSearch,
   tesseractProvider,
