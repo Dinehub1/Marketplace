@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "MoneyMap",
+    "name": "Money Map",
     "slug": "MoneyMap",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "moneymap",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.brandcollabs.moneymap"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#059669"
+      },
+      "package": "com.brandcollabs.moneymap"
     },
     "web": {
       "bundler": "metro",
@@ -30,7 +32,10 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "backgroundColor": "#0b1110"
+          }
         }
       ]
     ],
