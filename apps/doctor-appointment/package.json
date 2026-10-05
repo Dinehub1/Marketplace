@@ -55,11 +55,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/react": "~19.1.0",
+    "@types/react": "~19.2.2",
     "@types/react-native-vector-icons": "^6.4.18",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~9.2.0",
-    "typescript": "~5.8.3"
+    "eslint-config-expo": "~57.0.2",
+    "typescript": "~6.0.3"
   },
   "private": true
 }

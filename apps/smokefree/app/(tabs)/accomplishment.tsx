@@ -11,12 +11,12 @@ import * as Sharing from 'expo-sharing';
 import React, { useCallback, useRef, useState } from 'react';
 import { Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, { type ViewShotRef } from 'react-native-view-shot';
 
 export default function AccomplishmentScreen() {
   const insets = useSafeAreaInsets();
   const colorScheme = useColorScheme();
-  const certificateRef = useRef<ViewShot>(null);
+  const certificateRef = useRef<ViewShotRef>(null);
 
   const cardBackgroundColor = Colors[colorScheme ?? 'light'].surface;
   const textColor = Colors[colorScheme ?? 'light'].text;
