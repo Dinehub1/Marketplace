@@ -10,8 +10,9 @@
  *
  * Three readings per app, because that is the only honest test:
  *   tile@200   the icon as the store shows it
- *   glyph@200  the mark alone, on light grey — the Android adaptive foreground's real appearance
- *   glyph@60   the mark at the size a home screen shows it, which is where detail dies
+ *   glyph@200  the adaptive foreground (white mark) on the adaptive backgroundColor, as a launcher
+ *              composes it — not on neutral grey, where an accent-on-accent mark would look fine
+ *   glyph@60   the same at the size a home screen shows it, which is where detail dies
  *
  * Usage:  node scripts/preview-app-icons.mjs [out.png]
  * Exit:   0 written, 1 nothing to draw
@@ -57,6 +58,13 @@ const cols = Math.min(shown.length, PER_ROW) * 3;
 const width = PAD * 2 + cols * CELL + (cols - 1) * GAP;
 const height = PAD * 2 + rows * (CELL + LABEL_H + GAP) - GAP;
 
+/**
+ * The Android adaptive backgroundColor, mirroring BRAND_PRIMARY in apps/mobile/app.config.ts: the
+ * target's colour, except sheharbazaar.
+ */
+const adaptiveBg = (t) => (t.id === 'sheharbazaar' ? '#22543d' : t.color);
+const ADAPTIVE = { glyphOnly: true, inset: 0.42, ink: '#ffffff' };
+
 const tiles = [];
 shown.forEach((t, n) => {
   const row = Math.floor(n / PER_ROW);
@@ -71,12 +79,12 @@ shown.forEach((t, n) => {
     )}</svg>`,
   );
 
-  // 2. The mark alone, which is the adaptive icon's foreground and the splash mark.
+  // 2. The adaptive icon: `make-app-icons.mjs`'s white foreground over its backgroundColor.
   const gx = x0 + CELL + GAP;
-  tiles.push(`<rect x="${gx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="#f4f4f5"/>`);
+  tiles.push(`<rect x="${gx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="${adaptiveBg(t)}"/>`);
   tiles.push(
     `<svg x="${gx}" y="${y0}" width="${CELL}" height="${CELL}" viewBox="0 0 ${GLYPH} ${GLYPH}">${strip(
-      TILE_SVG(t.color, GLYPH, { id: t.id, glyphOnly: true }),
+      TILE_SVG(t.color, GLYPH, { id: t.id, ...ADAPTIVE }),
     )}</svg>`,
   );
 
@@ -85,10 +93,10 @@ shown.forEach((t, n) => {
   const sx = x0 + (CELL + GAP) * 2;
   const box = CELL * 0.34;
   const inset = (CELL - box) / 2;
-  tiles.push(`<rect x="${sx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="#f4f4f5"/>`);
+  tiles.push(`<rect x="${sx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="${adaptiveBg(t)}"/>`);
   tiles.push(
     `<svg x="${sx + inset}" y="${y0 + inset}" width="${box}" height="${box}" viewBox="0 0 ${GLYPH} ${GLYPH}">${strip(
-      TILE_SVG(t.color, GLYPH, { id: t.id, glyphOnly: true }),
+      TILE_SVG(t.color, GLYPH, { id: t.id, ...ADAPTIVE }),
     )}</svg>`,
   );
 

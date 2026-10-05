@@ -110,8 +110,10 @@ for (const t of TARGETS) {
     .toFile(path.join(dir, 'icon.png'));
 
   // Android adaptive foreground: transparent, and inset to 0.42 rather than 0.52 because the
-  // launcher crops the outer third and then may magnify what is left.
-  await sharp(Buffer.from(TILE_SVG(t.color, 1024, { ...opts, glyphOnly: true, inset: 0.42 })))
+  // launcher crops the outer third and then may magnify what is left. The ink is white, not the
+  // accent: app.config.ts sets the adaptive backgroundColor to the accent (sheharbazaar: a dark
+  // green), and an accent glyph on an accent ground is an empty square on the launcher.
+  await sharp(Buffer.from(TILE_SVG(t.color, 1024, { ...opts, glyphOnly: true, inset: 0.42, ink: '#ffffff' })))
     .png()
     .toFile(path.join(dir, 'adaptive-icon.png'));
 
@@ -123,6 +125,45 @@ for (const t of TARGETS) {
   written.push(t.id);
   if (MARKS[t.id]) drawn.push(t.id);
   else monogrammed.push(t.id);
+}
+
+/*
+ * ── Standalone apps that take their art from here ────────────────────────────────────────
+ *
+ * A standalone app (its own folder under apps/, its own app.json) does not read
+ * apps/mobile/assets/targets, so its art is written straight into its own assets/images under the
+ * filenames its app.json already uses. Only apps whose art is generated are listed; the others
+ * ship hand-made art that this script must not overwrite.
+ *
+ * Their adaptive foreground is white, not the accent: app.json sets the adaptive backgroundColor
+ * to the accent, and an accent glyph on an accent ground is an empty square on the launcher.
+ */
+const STANDALONE_ART = { 'money-map': path.join(REPO, 'apps', 'money-map', 'assets', 'images') };
+const standaloneFiles = [];
+
+for (const [id, dir] of Object.entries(STANDALONE_ART)) {
+  const t = TARGETS.find((x) => x.id === id);
+  const opts = { id, monogram: MONOGRAM[id] };
+  await sharp(Buffer.from(TILE_SVG(t.color, 1024, opts)))
+    .flatten({ background: t.color })
+    .png()
+    .toFile(path.join(dir, 'icon.png'));
+  await sharp(Buffer.from(TILE_SVG(t.color, 1024, { ...opts, glyphOnly: true, inset: 0.42, ink: '#ffffff' })))
+    .png()
+    .toFile(path.join(dir, 'adaptive-icon.png'));
+  await sharp(Buffer.from(TILE_SVG(t.color, 512, { ...opts, glyphOnly: true, inset: 0.5 })))
+    .png()
+    .toFile(path.join(dir, 'splash-icon.png'));
+  await sharp(Buffer.from(TILE_SVG(t.color, 48, opts)))
+    .flatten({ background: t.color })
+    .png()
+    .toFile(path.join(dir, 'favicon.png'));
+  standaloneFiles.push(
+    [path.join(dir, 'icon.png'), 1024, false],
+    [path.join(dir, 'adaptive-icon.png'), 1024, true],
+    [path.join(dir, 'splash-icon.png'), 512, true],
+    [path.join(dir, 'favicon.png'), 48, false],
+  );
 }
 
 /*
@@ -157,7 +198,16 @@ for (const id of written) {
   }
 }
 
+for (const [full, size, wantsAlpha] of standaloneFiles) {
+  const meta = await sharp(full).metadata();
+  const name = path.relative(REPO, full);
+  if (meta.width !== size || meta.height !== size) problems.push(`${name}: ${meta.width}×${meta.height}, expected ${size}×${size}`);
+  if (wantsAlpha && !meta.hasAlpha) problems.push(`${name}: no alpha channel, but the platform expects transparency here`);
+  if (!wantsAlpha && meta.hasAlpha) problems.push(`${name}: has an alpha channel — a store icon must be opaque`);
+}
+
 console.log(`\n▸ wrote ${written.length} icon sets to apps/mobile/assets/targets/`);
+if (standaloneFiles.length) console.log(`  and ${Object.keys(STANDALONE_ART).join(', ')} into its own assets/images`);
 console.log(`  ${drawn.length} drawn marks, ${monogrammed.length} monograms`);
 if (monogrammed.length) {
   console.log(`  still a monogram: ${monogrammed.join(', ')}`);

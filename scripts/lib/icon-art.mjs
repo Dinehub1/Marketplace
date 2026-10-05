@@ -360,6 +360,18 @@ export const MARKS = {
   dining: {
     glyph: `${P('M3.5 18.5h17')}${P('M4.5 15.5a7.5 7.5 0 0 1 15 0')}${P('M12 4.5v3.5')}${F('M12 4.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z')}`,
   },
+
+  /**
+   * Money Map — a folded map with a rising route across it, ending at a destination dot.
+   *
+   * The name, drawn literally: a map of where the money goes, and the route climbs because the app
+   * is about getting ahead of a month. The first draft kept the map's two fold lines, and at 60 px
+   * they crossed the route into a hash; dropping them leaves the zig-zag outline to say "map" on its
+   * own. The dot is pulled in from the top edge so the launcher's crop never clips it.
+   */
+  'money-map': {
+    glyph: `${P('M3 6.5 9 4.5l6 2 6-2v13l-6 2-6-2-6 2z')}${P('M6 15.6 9.4 12l3.2 1.9 3.9-4.3')}${EF(17.6, 9.3, 1.9)}`,
+  },
 };
 
 /**
@@ -407,7 +419,9 @@ export function TILE_SVG(color, size, opts = {}) {
 
 /** The mark itself, scaled into the tile. Shared by the tile and the preview sheet. */
 export function renderGlyph(mark, color, size, opts = {}) {
-  const ink = opts.glyphOnly ? color : '#ffffff';
+  // `opts.ink` overrides the default: a glyph-only mark that sits on the app's own colour (an
+  // adaptive foreground over a `backgroundColor` of that colour) has to be white to be seen at all.
+  const ink = opts.ink ?? (opts.glyphOnly ? color : '#ffffff');
   // 0.52 of the tile for a normal icon, 0.44 for the adaptive foreground: the launcher may crop
   // the outer 34% of an adaptive icon, and a mark that filled the tile would lose its edges.
   const span = size * (opts.glyphOnly ? (opts.inset ?? 0.44) : 0.52);
