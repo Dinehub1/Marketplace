@@ -33,6 +33,61 @@ const { LOGOS, LOGO_SVG } = await import(
 const appTile = (target, size) =>
   LOGOS[target.id] ? LOGO_SVG(target.id, target.color, size) : TILE_SVG(target.color, size, { id: target.id });
 
+const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+
+/**
+ * The rendered width of one line, measured by rasterising it and trimming the margin.
+ *
+ * Counting characters is how "Swaad Ghar: Table & Event Passes" ran under the showcase card: glyph
+ * widths vary too much by letter, weight and fallback font for an estimate to hold, and the only
+ * renderer whose opinion matters is the one that writes the PNG.
+ */
+const widthCache = new Map();
+async function textWidth(text, size, weight, spacing = 0) {
+  const key = `${text}|${size}|${weight}|${spacing}`;
+  if (widthCache.has(key)) return widthCache.get(key);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${Math.ceil(size * text.length + 40)}" height="${Math.ceil(size * 2)}">
+    <text x="10" y="${size * 1.4}" font-family="${FONT}" font-size="${size}" font-weight="${weight}" letter-spacing="${spacing}" fill="#000">${text}</text></svg>`;
+  const { info } = await sharp(Buffer.from(svg)).flatten({ background: '#ffffff' }).trim().toBuffer({ resolveWithObject: true });
+  widthCache.set(key, info.width);
+  return info.width;
+}
+
+/**
+ * Fit escaped text into `maxWidth`: shrink toward `min`, and if one line still does not fit, break
+ * at the word boundary that balances two lines best, shrinking those too if needed.
+ */
+async function fitText(text, { size, min, weight, spacing = 0, maxWidth }) {
+  for (let s = size; s >= min; s -= 2) {
+    if ((await textWidth(text, s, weight, spacing)) <= maxWidth) return { lines: [text], size: s };
+  }
+  const words = text.split(' ');
+  let best = null;
+  for (let i = 1; i < words.length; i++) {
+    const lines = [words.slice(0, i).join(' '), words.slice(i).join(' ')];
+    const widest = Math.max(...(await Promise.all(lines.map((l) => textWidth(l, size, weight, spacing)))));
+    if (!best || widest < best.widest) best = { lines, widest };
+  }
+  if (!best) return { lines: [text], size: min };
+  for (let s = size; s > min; s -= 2) {
+    const widths = await Promise.all(best.lines.map((l) => textWidth(l, s, weight, spacing)));
+    if (Math.max(...widths) <= maxWidth) return { lines: best.lines, size: s };
+  }
+  return { lines: best.lines, size: min };
+}
+
+/** One `<text>` per line, baselines `lead` apart, starting at `y`. */
+function textLines({ lines, size }, y, lead, attrs) {
+  return lines
+    .map((l, i) => `<text x="0" y="${y + i * lead}" font-family="${FONT}" font-size="${size}" ${attrs}>${l}</text>`)
+    .join('\n    ');
+}
+
+/** A pill sized to its label: `pad` either side of the measured text. */
+async function pillWidth(label, size, weight, spacing, pad, min) {
+  return Math.max(min, (await textWidth(label, size, weight, spacing)) + pad * 2);
+}
+
 function escapeXml(unsafe) {
   return String(unsafe)
     .replace(/&/g, '&amp;')
@@ -45,7 +100,7 @@ function escapeXml(unsafe) {
 /**
  * Builds an SVG string for Google Play Store Feature Graphic (1024×500).
  */
-function FEATURE_GRAPHIC_SVG(target) {
+async function FEATURE_GRAPHIC_SVG(target) {
   const primary = target.color;
   const top = lighten(primary, 0.22);
   const bottom = darken(primary, 0.45);
@@ -55,6 +110,17 @@ function FEATURE_GRAPHIC_SVG(target) {
   const tagline = escapeXml(target.tagline);
   const category = escapeXml(target.storeCategory?.toUpperCase() || 'MOBILE APP');
   const asoTag = escapeXml(target.aso && target.aso[0] ? `#${target.aso[0].replace(/\s+/g, '')}` : '');
+
+  // The left column runs from x=80 to the showcase plate at x=690, less a 24 px gutter.
+  const title = await fitText(name, { size: 44, min: 34, weight: 800, spacing: -0.8, maxWidth: 586 });
+  const titleLead = Math.round(title.size * 1.12);
+  const titleEnd = 90 + (title.lines.length - 1) * titleLead;
+  const sub = await fitText(tagline, { size: 22, min: 18, weight: 400, maxWidth: 586 });
+  const subLead = Math.round(sub.size * 1.3);
+  const subY = titleEnd + 50;
+  const pillY = subY + (sub.lines.length - 1) * subLead + 45;
+  const catW = await pillWidth(category, 12, 700, 1.2, 20, 130);
+  const asoW = asoTag ? await pillWidth(asoTag, 14, 600, 0, 22, 180) : 0;
 
   // Embedded app tile icon (140×140)
   const iconTile = appTile(target, 140);
@@ -95,25 +161,21 @@ function FEATURE_GRAPHIC_SVG(target) {
   <!-- Left Content Column -->
   <g transform="translate(80, 100)">
     <!-- Category Pill -->
-    <rect x="0" y="0" width="130" height="32" rx="16" fill="#ffffff" fill-opacity="0.2"/>
-    <rect x="0" y="0" width="130" height="32" rx="16" fill="none" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1"/>
-    <text x="65" y="21" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2" text-anchor="middle">${category}</text>
+    <rect x="0" y="0" width="${catW}" height="32" rx="16" fill="#ffffff" fill-opacity="0.2"/>
+    <rect x="0" y="0" width="${catW}" height="32" rx="16" fill="none" stroke="#ffffff" stroke-opacity="0.4" stroke-width="1"/>
+    <text x="${catW / 2}" y="21" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2" text-anchor="middle">${category}</text>
 
     <!-- App Title -->
-    <text x="0" y="90" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="800" letter-spacing="-0.8">
-      ${name}
-    </text>
+    ${textLines(title, 90, titleLead, 'fill="#ffffff" font-weight="800" letter-spacing="-0.8"')}
 
     <!-- Tagline -->
-    <text x="0" y="140" fill="#ffffff" fill-opacity="0.9" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="400">
-      ${tagline}
-    </text>
+    ${textLines(sub, subY, subLead, 'fill="#ffffff" fill-opacity="0.9" font-weight="400"')}
 
     <!-- Keyword Pill / Badge -->
     ${asoTag ? `
-    <g transform="translate(0, 185)">
-      <rect x="0" y="0" width="180" height="36" rx="18" fill="#000000" fill-opacity="0.25"/>
-      <text x="90" y="23" fill="${accentLight}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" text-anchor="middle">${asoTag}</text>
+    <g transform="translate(0, ${pillY})">
+      <rect x="0" y="0" width="${asoW}" height="36" rx="18" fill="#000000" fill-opacity="0.25"/>
+      <text x="${asoW / 2}" y="23" fill="${accentLight}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" text-anchor="middle">${asoTag}</text>
     </g>` : ''}
   </g>
 
@@ -140,7 +202,7 @@ function FEATURE_GRAPHIC_SVG(target) {
 /**
  * Builds an SVG string for Store Promotional Showcase Poster (1080×1920).
  */
-function PROMO_POSTER_SVG(target) {
+async function PROMO_POSTER_SVG(target) {
   const primary = target.color;
   const top = lighten(primary, 0.28);
   const bottom = darken(primary, 0.52);
@@ -149,6 +211,16 @@ function PROMO_POSTER_SVG(target) {
   const name = escapeXml(target.name);
   const tagline = escapeXml(target.tagline);
   const category = escapeXml(target.storeCategory?.toUpperCase() || 'APPLICATION');
+
+  // The header runs from x=100 to a 100 px right margin.
+  const title = await fitText(name, { size: 64, min: 52, weight: 900, spacing: -1.2, maxWidth: 880 });
+  const titleLead = Math.round(title.size * 1.1);
+  const subY = 130 + (title.lines.length - 1) * titleLead + 70;
+  const sub = await fitText(tagline, { size: 28, min: 24, weight: 400, maxWidth: 880 });
+  const catW = await pillWidth(category, 15, 700, 1.5, 24, 160);
+  // The name on the mockup's screen is centred in 564 px of glass, so it shrinks rather than wraps.
+  let screenSize = 32;
+  while (screenSize > 22 && (await textWidth(name, screenSize, 800)) > 520) screenSize -= 2;
 
   // Large app tile icon (220×220)
   const iconTile = appTile(target, 220);
@@ -182,18 +254,14 @@ function PROMO_POSTER_SVG(target) {
   <!-- Top Brand Header -->
   <g transform="translate(100, 160)">
     <!-- Category Tag -->
-    <rect x="0" y="0" width="160" height="42" rx="21" fill="#ffffff" fill-opacity="0.18"/>
-    <text x="80" y="27" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" text-anchor="middle">${category}</text>
+    <rect x="0" y="0" width="${catW}" height="42" rx="21" fill="#ffffff" fill-opacity="0.18"/>
+    <text x="${catW / 2}" y="27" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" letter-spacing="1.5" text-anchor="middle">${category}</text>
 
     <!-- Big Headline -->
-    <text x="0" y="130" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="64" font-weight="900" letter-spacing="-1.2">
-      ${name}
-    </text>
+    ${textLines(title, 130, titleLead, 'fill="#ffffff" font-weight="900" letter-spacing="-1.2"')}
 
     <!-- Subtitle / Tagline -->
-    <text x="0" y="200" fill="#ffffff" fill-opacity="0.88" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="400">
-      ${tagline}
-    </text>
+    ${textLines(sub, subY, Math.round(sub.size * 1.3), 'fill="#ffffff" fill-opacity="0.88" font-weight="400"')}
   </g>
 
   <!-- Central Device Mockup Container -->
@@ -212,7 +280,7 @@ function PROMO_POSTER_SVG(target) {
       ${iconTile}
     </g>
 
-    <text x="300" y="460" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="32" font-weight="800" text-anchor="middle">
+    <text x="300" y="460" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="800" text-anchor="middle" font-size="${screenSize}">
       ${name}
     </text>
 
@@ -261,14 +329,14 @@ for (const target of shown) {
   fs.mkdirSync(dir, { recursive: true });
 
   // 1. Google Play Feature Graphic (1024×500)
-  const fgSvg = FEATURE_GRAPHIC_SVG(target);
+  const fgSvg = await FEATURE_GRAPHIC_SVG(target);
   await sharp(Buffer.from(fgSvg))
     .flatten({ background: target.color })
     .png()
     .toFile(path.join(dir, 'feature-graphic.png'));
 
   // 2. High-res Promo Poster (1080×1920)
-  const promoSvg = PROMO_POSTER_SVG(target);
+  const promoSvg = await PROMO_POSTER_SVG(target);
   await sharp(Buffer.from(promoSvg))
     .flatten({ background: target.color })
     .png()
