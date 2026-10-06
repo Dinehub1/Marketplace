@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createPayPalOrder, paypalConfigured } from "@/lib/paypal";
+import { createPayPalOrder, paypalConfigured, paypalSku } from "@/lib/paypal";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
-import type { SupportedCurrency } from "@hermes/core";
 
 const noStore = { "Cache-Control": "no-store" };
 
@@ -12,13 +11,12 @@ const noStore = { "Cache-Control": "no-store" };
  * (web, dining, doctor-appointment, etc.)
  *
  * Body: {
- *   amount: number,           // e.g. 9.99
- *   currency?: string,        // "USD", "EUR", "GBP" (default "USD")
- *   receipt?: string,
- *   project?: string,
- *   description?: string,
- *   notes?: Record<string, string>
+ *   sku: string,              // a key of PAYPAL_SKUS in lib/paypal.ts, e.g. "dining:event-pass"
+ *   receipt?: string
  * }
+ *
+ * The price, currency and description come from PAYPAL_SKUS, never from the body: this route is
+ * public, and an amount the caller sends is an amount the buyer picks.
  */
 export async function POST(req: NextRequest) {
   if (!paypalConfigured) {
@@ -37,27 +35,27 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const amount = Number(body.amount);
+  const sku = String(body.sku || "").trim();
+  const item = paypalSku(sku);
 
-  if (!Number.isFinite(amount) || amount <= 0) {
+  if (!item) {
     return NextResponse.json(
-      { error: "Invalid amount: amount must be greater than 0" },
+      { error: "Unknown sku: nothing is sold under that code" },
       { status: 400, headers: noStore }
     );
   }
 
-  const project = String(body.project || "web").toLowerCase().trim();
-  const receipt = String(body.receipt || `pp_${project}_${Date.now()}`);
-  const currency = (String(body.currency || "USD").toUpperCase()) as SupportedCurrency;
-  const description = String(body.description || `Payment for ${project}`);
+  const project = sku.split(":")[0] || "web";
+  const receipt = String(body.receipt || `pp_${project}_${Date.now()}`).slice(0, 127);
 
   try {
     const order = await createPayPalOrder({
-      amount,
-      currency,
+      amount: Number(item.amount),
+      currency: item.currency,
       referenceId: receipt,
-      description,
-      customId: JSON.stringify({ project, ...(body.notes || {}) }),
+      description: item.description,
+      // capture-order prices the order again from this, so it must be the sku and only the sku.
+      customId: sku,
     });
 
     return NextResponse.json(
@@ -65,8 +63,9 @@ export async function POST(req: NextRequest) {
         ok: true,
         order_id: order.id,
         status: order.status,
-        currency,
-        amount,
+        sku,
+        currency: item.currency,
+        amount: item.amount,
         links: order.links,
       },
       { status: 200, headers: noStore }

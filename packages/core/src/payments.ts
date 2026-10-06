@@ -56,7 +56,8 @@ export function getGatewayForTransaction(params: {
   if (params.platform !== "web" && params.purchaseType === "digital_inapp") {
     return "revenuecat";
   }
-  if (params.preferPayPal || (params.isInternational && params.preferPayPal)) {
+  // PayPal is the international gateway; Razorpay stays the default for Indian customers.
+  if (params.preferPayPal || params.isInternational) {
     return "paypal";
   }
   return "razorpay";

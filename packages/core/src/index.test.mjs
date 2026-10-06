@@ -205,6 +205,16 @@ test("payments: routing enforces App Store compliance and gateway separation", (
   );
   assert.equal(isIAPRequired("realworld_service", "ios"), false);
 
+  // International customers route to PayPal unless the purchase is a mobile digital one
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "realworld_service", platform: "android", isInternational: true }),
+    "paypal",
+  );
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "digital_inapp", platform: "ios", isInternational: true }),
+    "revenuecat",
+  );
+
   // Web checkouts never require IAP
   assert.equal(isIAPRequired("web_service", "web"), false);
   assert.equal(

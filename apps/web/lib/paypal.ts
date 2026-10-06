@@ -14,6 +14,26 @@ const PAYPAL_BASE =
 
 export const paypalConfigured = Boolean(CLIENT_ID && CLIENT_SECRET);
 
+/**
+ * What each PayPal-sold item costs, decided here and never by the caller.
+ *
+ * The order routes are public, so an amount taken from the request body is an amount the buyer
+ * chose: a $0.01 order for anything would create, approve and capture cleanly. Callers send a
+ * `sku`; the server prices it, stamps the sku into the order's `custom_id` (which PayPal returns
+ * unchanged and the buyer cannot edit), and capture re-checks the order against this table before
+ * moving any money. An unknown sku is refused, so an empty table sells nothing rather than
+ * anything.
+ */
+export type PayPalSku = { amount: string; currency: SupportedCurrency; description: string };
+
+export const PAYPAL_SKUS: Record<string, PayPalSku> = {
+  // e.g. "dining:event-pass": { amount: "9.99", currency: "USD", description: "Swaad Ghar event pass" },
+};
+
+export function paypalSku(sku: string): PayPalSku | null {
+  return Object.prototype.hasOwnProperty.call(PAYPAL_SKUS, sku) ? PAYPAL_SKUS[sku] : null;
+}
+
 /** In-memory cache for OAuth bearer token */
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
@@ -110,6 +130,30 @@ export async function createPayPalOrder(opts: {
   }
 
   return (await res.json()) as PayPalOrder;
+}
+
+/** The order as PayPal holds it: amount, custom_id and status are PayPal's, not the caller's. */
+export async function getPayPalOrder(paypalOrderId: string): Promise<{
+  id: string;
+  status: string;
+  customId: string | null;
+  amount: { currency_code: string; value: string } | null;
+}> {
+  const token = await getAccessToken();
+  const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${encodeURIComponent(paypalOrderId)}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(`PayPal order lookup failed: ${res.status} ${detail.slice(0, 300)}`);
+  }
+  const data = (await res.json()) as {
+    id: string;
+    status: string;
+    purchase_units?: Array<{ custom_id?: string; amount?: { currency_code: string; value: string } }>;
+  };
+  const unit = data.purchase_units?.[0];
+  return { id: data.id, status: data.status, customId: unit?.custom_id ?? null, amount: unit?.amount ?? null };
 }
 
 /**
