@@ -12,51 +12,22 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { createOfferRedemption, createRestaurantBooking, processSuccessfulPayment } from '../../config/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCurrentTheme, useThemeColors } from '../../hooks/useThemeColors';
+import { bookTableWithRazorpay, toLocalDate } from '../../services/dineinCheckout';
 import { metaAnalytics } from '../../utils/metaAnalytics';
-import { processAdvancePayment } from '../../utils/mockPaymentGateway';
 
 const { width } = Dimensions.get('window');
 
-interface PaymentMethod {
-  id: string;
-  name: string;
-  icon: string;
-  type: 'card' | 'upi' | 'wallet' | 'netbanking';
-  details?: string;
-}
-
-const paymentMethods: PaymentMethod[] = [
-  {
-    id: '1',
-    name: 'UPI',
-    icon: 'qr-code',
-    type: 'upi',
-    details: 'Pay with any UPI app'
-  },
-  {
-    id: '2',
-    name: 'Credit/Debit Card',
-    icon: 'card',
-    type: 'card',
-    details: 'Visa, Mastercard, RuPay'
-  },
-  {
-    id: '3',
-    name: 'Paytm Wallet',
-    icon: 'wallet',
-    type: 'wallet',
-    details: 'Balance: ₹2,450'
-  },
-  {
-    id: '4',
-    name: 'Net Banking',
-    icon: 'card-outline',
-    type: 'netbanking',
-    details: 'All major banks supported'
-  },
+/**
+ * What Razorpay's sheet offers. Shown for reassurance only: the customer picks inside Razorpay's
+ * own sheet, so nothing here is selectable and nothing here holds a balance.
+ */
+const ACCEPTED_METHODS: { name: string; icon: keyof typeof Ionicons.glyphMap; details: string }[] = [
+  { name: 'UPI', icon: 'qr-code-outline', details: 'Google Pay, PhonePe, Paytm and any UPI app' },
+  { name: 'Credit / Debit Card', icon: 'card-outline', details: 'Visa, Mastercard, RuPay' },
+  { name: 'Net Banking', icon: 'business-outline', details: 'All major banks' },
+  { name: 'Wallets', icon: 'wallet-outline', details: 'Paytm, Mobikwik and more' },
 ];
 
 export default function PaymentScreen() {
@@ -64,7 +35,6 @@ export default function PaymentScreen() {
   const currentTheme = useCurrentTheme();
   const { user } = useAuth();
   const params = useLocalSearchParams();
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('1');
   const [isProcessing, setIsProcessing] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -87,14 +57,14 @@ export default function PaymentScreen() {
     mealPeriod,
     guests,
     specialRequests,
-    bookingType,
     selectedOfferId,
     selectedOfferTitle,
   } = params;
 
   // For dine-in, use the correct cover charge passed from booking page
   const guestCountNum = parseInt(guests?.toString() || '2');
-  const totalAmount = bookingType === 'dine-in' ? Number(tablePrice) : Number(tablePrice) + Math.round(Number(tablePrice) * 0.15);
+  // Display only: dinein-checkout prices the booking itself, and Razorpay's sheet shows that amount.
+  const totalAmount = Number(tablePrice) || 0;
   const bookingDate = new Date(date as string);
 
   React.useEffect(() => {
@@ -123,154 +93,91 @@ export default function PaymentScreen() {
     ]).start();
 
     try {
-      if (bookingType === 'dine-in') {
-        console.log('💳 Payment params received:', { restaurantId, restaurantName, timeSlot, totalAmount });
-        
-        // Create dine-in booking with new system
-        const bookingData = {
-          user_id: user?.id,
+      const result = await bookTableWithRazorpay(
+        {
+          user_id: user?.id ?? null,
+          restaurant_id: String(restaurantId),
+          booking_date: toLocalDate(String(date)),
+          booking_time: String(timeSlot),
+          party_size: guestCountNum,
+          meal_period: mealPeriod ? String(mealPeriod) : null,
+          special_requests: specialRequests ? String(specialRequests) : null,
+          offer_id: selectedOfferId ? String(selectedOfferId) : null,
+          customer_name: user?.full_name ?? null,
+          customer_phone: user?.phone_number ?? null,
+          customer_email: user?.email ?? null,
+        },
+        { restaurantName: String(restaurantName ?? ''), themeColor: greenTheme.primary }
+      );
+
+      if (result.status === 'cancelled') {
+        // The booking stays pending and unconfirmed; the customer can simply try again.
+        setIsProcessing(false);
+        return;
+      }
+
+      const paidAmount = result.amount;
+      const { booking } = result;
+
+      // Track successful purchase in Meta (MOST IMPORTANT EVENT!)
+      metaAnalytics.logPurchase(
+        booking.id,
+        'restaurant_booking',
+        paidAmount,
+        'INR',
+        {
           restaurant_id: restaurantId,
+          restaurant_name: restaurantName,
+          party_size: guestCountNum,
           booking_date: date,
           booking_time: timeSlot,
-          party_size: guestCountNum,
-          customer_name: user?.full_name || 'Test Customer',
-          customer_phone: user?.phone_number || '+1234567890',
-          customer_email: user?.email || 'test@example.com',
-          special_requests: specialRequests || null,
-          meal_period: mealPeriod,
-          advance_payment: totalAmount,
-          total_cover_charge: totalAmount,
-          cover_charge_per_person: totalAmount / guestCountNum,
-          duration_minutes: 120,
-          offer_id: selectedOfferId || null,
-        };
-
-        console.log('📝 Creating booking with new system:', bookingData);
-        const { data: bookingResult, error: bookingError } = await createRestaurantBooking(bookingData);
-        
-        if (bookingError) {
-          throw new Error(`Booking creation failed: ${bookingError.message}`);
+          payment_method: 'razorpay',
         }
+      );
 
-        const { booking, transaction } = bookingResult;
+      // 🔔 Send test notification for the booking
+      await sendBookingTestNotification({
+        bookingId: booking.id,
+        restaurantName: restaurantName as string,
+        bookingDate: date as string,
+        bookingTime: timeSlot as string,
+        partySize: guestCountNum,
+        customerName: user?.full_name || 'Guest',
+      }, 60); // Send notification after 60 seconds for testing
 
-        // Process payment through mock gateway
-        const selectedMethod = paymentMethods.find(m => m.id === selectedPaymentMethod);
-        const paymentResult = await processAdvancePayment({
-          amount: totalAmount,
-          paymentMethod: selectedPaymentMethod,
-          userId: user?.id,
-          restaurantId: restaurantId,
-          bookingId: booking.id
-        });
-
-        if (!paymentResult.success) {
-          throw new Error(paymentResult.error.message);
-        }
-
-        // Update transaction status
-        await processSuccessfulPayment(transaction.id, paymentResult.data);
-
-        // Track successful purchase in Meta (MOST IMPORTANT EVENT!)
-        metaAnalytics.logPurchase(
-          booking.id,
-          'restaurant_booking',
-          totalAmount,
-          'INR',
-          {
-            restaurant_id: restaurantId,
-            restaurant_name: restaurantName,
-            party_size: guestCountNum,
-            booking_date: date,
-            booking_time: timeSlot,
-            payment_method: selectedMethod?.name || 'unknown',
-          }
+      if (result.status === 'confirming') {
+        Alert.alert(
+          'Payment received',
+          'Your payment went through and your table is being confirmed. You will see it in My Bookings shortly.'
         );
-
-        // If booking has an offer, create redemption record
-        if (selectedOfferId) {
-          console.log('🎁 Processing offer redemption for offer:', selectedOfferId);
-          
-          const { error: redemptionError } = await createOfferRedemption(
-            selectedOfferId,
-            user.id,
-            date,
-            'All Day'
-          );
-          
-          if (redemptionError) {
-            console.error('Offer redemption creation failed:', redemptionError);
-          } else {
-            console.log('✅ Offer redemption record created');
-          }
-        }
-
-        // 🔔 Send test notification for the booking
-        await sendBookingTestNotification({
-          bookingId: booking.id,
-          restaurantName: restaurantName as string,
-          bookingDate: date as string,
-          bookingTime: timeSlot as string,
-          partySize: guestCountNum,
-          customerName: user?.full_name || 'Guest',
-        }, 60); // Send notification after 60 seconds for testing
-
-        // Navigate to confirmation with booking ID
-        router.push({
-          pathname: '/restaurant/booking-confirmation',
-          params: {
-            restaurantName,
-            tableName,
-            tablePrice: totalAmount.toString(),
-            date,
-            timeSlot,
-            guests,
-            specialRequests,
-            totalAmount: totalAmount.toString(),
-            paymentMethod: selectedMethod?.name,
-            bookingId: booking.id,
-            bookingType: 'dine-in',
-            transactionId: paymentResult.data.transaction_id,
-          }
-        });
-      } else {
-        // Simulate regular table booking (legacy flow)
-        setTimeout(() => {
-          setIsProcessing(false);
-          router.push({
-            pathname: '/restaurant/booking-confirmation',
-            params: {
-              restaurantName,
-              tableName,
-              tablePrice,
-              date,
-              timeSlot,
-              guests,
-              specialRequests,
-              totalAmount: totalAmount.toString(),
-              paymentMethod: paymentMethods.find(m => m.id === selectedPaymentMethod)?.name,
-              bookingId: `BK${Date.now()}`,
-            }
-          });
-        }, 2000);
       }
-    } catch (error) {
+
+      // Navigate to confirmation with booking ID
+      router.push({
+        pathname: '/restaurant/booking-confirmation',
+        params: {
+          restaurantName,
+          tableName,
+          tablePrice: paidAmount.toString(),
+          date,
+          timeSlot,
+          guests,
+          specialRequests,
+          totalAmount: paidAmount.toString(),
+          paymentMethod: 'Razorpay',
+          bookingId: booking.id,
+          bookingType: 'dine-in',
+          transactionId: result.paymentId ?? '',
+        }
+      });
+    } catch (error: any) {
       console.error('Payment processing error:', error);
       Alert.alert(
         'Payment Failed',
-        'There was an error processing your payment. Please try again.',
+        error?.message || 'There was an error processing your payment. Please try again.',
         [{ text: 'OK' }]
       );
       setIsProcessing(false);
-    }
-  };
-
-  const getPaymentIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'qr-code': return 'qr-code-outline';
-      case 'card': return 'card-outline';
-      case 'wallet': return 'wallet-outline';
-      default: return 'card-outline';
     }
   };
 
@@ -329,50 +236,22 @@ export default function PaymentScreen() {
         <View style={styles.paymentMethodsCard}>
           <View style={styles.cardHeader}>
             <Ionicons name="card-outline" size={20} color={greenTheme.primary} />
-            <Text style={styles.cardTitle}>Choose Payment Method</Text>
+            <Text style={styles.cardTitle}>Pay securely with Razorpay</Text>
           </View>
 
           <View style={styles.methodsList}>
-            {paymentMethods.map((method) => (
-              <TouchableOpacity
-                key={method.id}
-                onPress={() => setSelectedPaymentMethod(method.id)}
-                style={[
-                  styles.methodItem,
-                  selectedPaymentMethod === method.id && styles.selectedMethod
-                ]}
-              >
+            {ACCEPTED_METHODS.map((method) => (
+              <View key={method.name} style={styles.methodItem}>
                 <View style={styles.methodLeft}>
-                  <View style={[
-                    styles.methodIcon,
-                    selectedPaymentMethod === method.id && styles.selectedMethodIcon
-                  ]}>
-                    <Ionicons 
-                      name={getPaymentIcon(method.icon) as any} 
-                      size={20} 
-                      color={selectedPaymentMethod === method.id ? '#FFFFFF' : greenTheme.primary}
-                    />
+                  <View style={styles.methodIcon}>
+                    <Ionicons name={method.icon} size={20} color={greenTheme.primary} />
                   </View>
                   <View style={styles.methodInfo}>
-                    <Text style={[
-                      styles.methodName,
-                      selectedPaymentMethod === method.id && styles.selectedMethodText
-                    ]}>
-                      {method.name}
-                    </Text>
+                    <Text style={styles.methodName}>{method.name}</Text>
                     <Text style={styles.methodDetails}>{method.details}</Text>
                   </View>
                 </View>
-                
-                <View style={[
-                  styles.radioButton,
-                  selectedPaymentMethod === method.id && styles.selectedRadio
-                ]}>
-                  {selectedPaymentMethod === method.id && (
-                    <View style={styles.radioInner} />
-                  )}
-                </View>
-              </TouchableOpacity>
+              </View>
             ))}
           </View>
         </View>
@@ -384,7 +263,7 @@ export default function PaymentScreen() {
             <Text style={styles.securityTitle}>Secure Payment</Text>
           </View>
           <Text style={styles.securityText}>
-            Your payment information is encrypted and secure. We use industry-standard security measures to protect your data.
+            Payments are processed by Razorpay. Swaad Ghar never sees or stores your card, UPI or bank details.
           </Text>
           <View style={styles.securityFeatures}>
             <View style={styles.securityFeature}>

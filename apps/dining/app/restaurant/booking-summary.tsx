@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
+  Alert,
   Animated,
   Dimensions,
   Image,
@@ -12,7 +13,9 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { useAuth } from '../../contexts/AuthContext';
 import { useCurrentTheme, useThemeColors } from '../../hooks/useThemeColors';
+import { bookTableWithRazorpay, toLocalDate } from '../../services/dineinCheckout';
 import { sendBookingTestNotification } from '../../utils/testNotifications';
 
 const { width } = Dimensions.get('window');
@@ -21,6 +24,7 @@ export default function BookingSummaryScreen() {
   const theme = useThemeColors();
   const currentTheme = useCurrentTheme();
   const params = useLocalSearchParams();
+  const { user } = useAuth();
   const [specialRequests, setSpecialRequests] = useState('');
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -99,72 +103,43 @@ export default function BookingSummaryScreen() {
     });
   };
 
+  // A booking with nothing to pay still goes through dinein-checkout: the server re-prices it
+  // from the offer, and confirms it only if it really is free (otherwise Razorpay opens).
   const handleDirectBookingCreation = async () => {
     try {
-      console.log('📋 Creating direct booking for zero payment...');
-      
-      // Import booking function
-      const { createRestaurantBooking } = await import('../../config/supabase');
-      
-      // Get user from auth context (fallback to dummy data for now)
-      const user = {
-        id: '23513b33-681c-4f0e-a411-1766f4b1279e', // Use real user ID from your test
-        name: 'Test User',
-        phone: '+1234567890',
-        email: 'test@example.com'
-      };
-      
-      const coverChargePerPerson = totalAdvanceAmount > 0 ? totalAdvanceAmount / parseInt(guests as string) : 0;
-      
-      const bookingData = {
-        user_id: user.id,
-        restaurant_id: restaurantId as string,
-        booking_date: new Date(date as string).toISOString().split('T')[0],
-        booking_time: timeSlot as string,
-        party_size: parseInt(guests as string),
-        customer_name: user.name,
-        customer_phone: user.phone,
-        customer_email: user.email,
-        special_requests: (specialRequests as string) || '',
-        meal_period: mealPeriod as string,
-        advance_payment: totalAdvanceAmount,
-        total_cover_charge: totalAdvanceAmount,
-        cover_charge_per_person: coverChargePerPerson,
-        offer_id: (selectedOfferId as string) || null
-      };
+      const result = await bookTableWithRazorpay(
+        {
+          user_id: user?.id ?? null,
+          restaurant_id: String(restaurantId),
+          booking_date: toLocalDate(String(date)),
+          booking_time: String(timeSlot),
+          party_size: parseInt(String(guests), 10),
+          meal_period: mealPeriod ? String(mealPeriod) : null,
+          special_requests: specialRequests ? String(specialRequests) : null,
+          offer_id: selectedOfferId ? String(selectedOfferId) : null,
+          customer_name: user?.full_name ?? null,
+          customer_phone: user?.phone_number ?? null,
+          customer_email: user?.email ?? null,
+        },
+        { restaurantName: String(restaurantName ?? '') }
+      );
+      if (result.status === 'cancelled') return;
 
-      console.log('📝 Direct booking data:', bookingData);
-      
-      const result = await createRestaurantBooking(bookingData);
-      
-      console.log('📋 Booking result:', result);
-      
-      if (result.data) {
-        if (result.data.autoConfirmed) {
-          console.log('✅ Booking confirmed automatically (zero payment)');
-        } else {
-          console.log('✅ Booking created successfully');
-        }
-        
-        // 🔔 Send test notification for the booking
-        await sendBookingTestNotification({
-          bookingId: result.data.booking.id,
-          restaurantName: restaurantName as string,
-          bookingDate: date as string,
-          bookingTime: timeSlot as string,
-          partySize: parseInt(guests as string),
-          customerName: user.name,
-        }, 60); // Send notification after 60 seconds for testing
-        
-        // Navigate to success page or orders
-        router.push('/orders');
-      } else {
-        console.error('❌ Booking creation failed:', result.error);
-        alert('Booking failed: ' + ((result.error as any)?.message || 'Unknown error'));
-      }
+      // 🔔 Send test notification for the booking
+      await sendBookingTestNotification({
+        bookingId: result.booking.id,
+        restaurantName: restaurantName as string,
+        bookingDate: date as string,
+        bookingTime: timeSlot as string,
+        partySize: parseInt(guests as string),
+        customerName: user?.full_name || 'Guest',
+      }, 60); // Send notification after 60 seconds for testing
+
+      // Navigate to success page or orders
+      router.push('/orders');
     } catch (error) {
       console.error('❌ Error creating direct booking:', error);
-      alert('Booking failed: ' + (error as Error).message);
+      Alert.alert('Booking failed', (error as Error).message);
     }
   };
 

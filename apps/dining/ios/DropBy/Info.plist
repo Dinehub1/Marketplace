@@ -72,6 +72,9 @@
       <string>fb-messenger-api</string>
       <string>fbauth2</string>
       <string>fbshareextension</string>
+      <string>tez</string>
+      <string>phonepe</string>
+      <string>paytmmp</string>
     </array>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>

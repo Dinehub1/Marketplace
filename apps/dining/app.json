@@ -19,6 +19,11 @@
           {
             "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
           }
+        ],
+        "LSApplicationQueriesSchemes": [
+          "paytmmp",
+          "phonepe",
+          "tez"
         ]
       }
     },
