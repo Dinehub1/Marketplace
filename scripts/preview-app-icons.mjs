@@ -29,6 +29,11 @@ const OUT = process.argv[2]
 
 const { TARGETS } = await import(pathToFileURL(path.join(REPO, 'apps', 'mobile', 'targets.mjs')).href);
 const { TILE_SVG } = await import(pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-art.mjs')).href);
+const { LOGOS, LOGO_SVG } = await import(pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-logos.mjs')).href);
+/** Mirrors `svgFor` in make-app-icons.mjs: a full-colour logo when one exists, else the mark. */
+const tileSvg = (t) => (LOGOS[t.id] ? LOGO_SVG(t.id, t.color, GLYPH) : TILE_SVG(t.color, GLYPH, { id: t.id }));
+const adaptiveSvg = (t) =>
+  LOGOS[t.id] ? LOGO_SVG(t.id, t.color, GLYPH, 'adaptive') : TILE_SVG(t.color, GLYPH, { id: t.id, ...ADAPTIVE });
 
 /**
  * The marks to show. Defaults to the whole fleet, because a contact sheet that omits half the apps
@@ -75,7 +80,7 @@ shown.forEach((t, n) => {
   // 1. The tile, exactly as `make-app-icons.mjs` writes `icon.png`.
   tiles.push(
     `<svg x="${x0}" y="${y0}" width="${CELL}" height="${CELL}" viewBox="0 0 ${GLYPH} ${GLYPH}">${strip(
-      TILE_SVG(t.color, GLYPH, { id: t.id }),
+      tileSvg(t),
     )}</svg>`,
   );
 
@@ -84,7 +89,7 @@ shown.forEach((t, n) => {
   tiles.push(`<rect x="${gx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="${adaptiveBg(t)}"/>`);
   tiles.push(
     `<svg x="${gx}" y="${y0}" width="${CELL}" height="${CELL}" viewBox="0 0 ${GLYPH} ${GLYPH}">${strip(
-      TILE_SVG(t.color, GLYPH, { id: t.id, ...ADAPTIVE }),
+      adaptiveSvg(t),
     )}</svg>`,
   );
 
@@ -96,7 +101,7 @@ shown.forEach((t, n) => {
   tiles.push(`<rect x="${sx}" y="${y0}" width="${CELL}" height="${CELL}" rx="14" fill="${adaptiveBg(t)}"/>`);
   tiles.push(
     `<svg x="${sx + inset}" y="${y0 + inset}" width="${box}" height="${box}" viewBox="0 0 ${GLYPH} ${GLYPH}">${strip(
-      TILE_SVG(t.color, GLYPH, { id: t.id, ...ADAPTIVE }),
+      adaptiveSvg(t),
     )}</svg>`,
   );
 

@@ -45,6 +45,20 @@ const { TARGETS } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs'))
 const { MARKS, TILE_SVG } = await import(
   pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-art.mjs')).href
 );
+const { LOGOS, LOGO_SVG } = await import(
+  pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-logos.mjs')).href
+);
+
+/**
+ * The three files for one target. A full-colour logo from `icon-logos.mjs` wins when it exists;
+ * otherwise the monoline mark (or monogram) from `icon-art.mjs`, exactly as before.
+ */
+function svgFor(t, size, variant, opts) {
+  if (LOGOS[t.id]) return LOGO_SVG(t.id, t.color, size, variant);
+  if (variant === 'adaptive') return TILE_SVG(t.color, size, { ...opts, glyphOnly: true, inset: 0.42, ink: '#ffffff' });
+  if (variant === 'splash') return TILE_SVG(t.color, size, { ...opts, glyphOnly: true, inset: 0.5 });
+  return TILE_SVG(t.color, size, opts);
+}
 
 /**
  * A short mark per target, used **only** when a target has no drawn art yet.
@@ -104,7 +118,7 @@ for (const t of TARGETS) {
   // has one at all (transparency in an app icon is an ITMS-90717 warning and a review rejection).
   // Flattening onto the app's own colour makes the output RGB with no channel to argue about, and
   // it is also the right colour if a renderer ever rounds a corner and reveals a pixel.
-  await sharp(Buffer.from(TILE_SVG(t.color, 1024, opts)))
+  await sharp(Buffer.from(svgFor(t, 1024, 'icon', opts)))
     .flatten({ background: t.color })
     .png()
     .toFile(path.join(dir, 'icon.png'));
@@ -113,17 +127,17 @@ for (const t of TARGETS) {
   // launcher crops the outer third and then may magnify what is left. The ink is white, not the
   // accent: app.config.ts sets the adaptive backgroundColor to the accent (sheharbazaar: a dark
   // green), and an accent glyph on an accent ground is an empty square on the launcher.
-  await sharp(Buffer.from(TILE_SVG(t.color, 1024, { ...opts, glyphOnly: true, inset: 0.42, ink: '#ffffff' })))
+  await sharp(Buffer.from(svgFor(t, 1024, 'adaptive', opts)))
     .png()
     .toFile(path.join(dir, 'adaptive-icon.png'));
 
   // Splash: the mark alone, on the splash background from `app.config.ts`.
-  await sharp(Buffer.from(TILE_SVG(t.color, 512, { ...opts, glyphOnly: true, inset: 0.5 })))
+  await sharp(Buffer.from(svgFor(t, 512, 'splash', opts)))
     .png()
     .toFile(path.join(dir, 'splash-icon.png'));
 
   written.push(t.id);
-  if (MARKS[t.id]) drawn.push(t.id);
+  if (LOGOS[t.id] || MARKS[t.id]) drawn.push(t.id);
   else monogrammed.push(t.id);
 }
 
@@ -131,39 +145,65 @@ for (const t of TARGETS) {
  * ── Standalone apps that take their art from here ────────────────────────────────────────
  *
  * A standalone app (its own folder under apps/, its own app.json) does not read
- * apps/mobile/assets/targets, so its art is written straight into its own assets/images under the
- * filenames its app.json already uses. Only apps whose art is generated are listed; the others
- * ship hand-made art that this script must not overwrite.
+ * apps/mobile/assets/targets, so its art is written straight into the files its app.json names.
+ * The paths are read from the config rather than listed here because the apps came from different
+ * Expo templates: some use adaptive-icon.png, some android-icon-foreground.png plus a background
+ * and a monochrome layer, and a hard-coded list is how one of them silently keeps the old art.
  *
- * Their adaptive foreground is white, not the accent: app.json sets the adaptive backgroundColor
- * to the accent, and an accent glyph on an accent ground is an empty square on the launcher.
+ * The logo's art is white, so the adaptive backgroundColor is forced to the accent: several of
+ * these configs shipped the template's #ffffff or #E6F4FE, on which the foreground is invisible.
+ * A `backgroundImage` layer gets the logo's own gradient ground; a `monochromeImage` (Android 13
+ * themed icons, which read alpha only) gets the foreground's silhouette in white.
  */
-const STANDALONE_ART = { 'money-map': path.join(REPO, 'apps', 'money-map', 'assets', 'images') };
+const STANDALONE_APPS = [
+  'money-map',
+  'cycle-tracker',
+  'dining',
+  'doctor-appointment',
+  'gatted',
+  'highwaypass',
+  'smokefree',
+  'quick-driver',
+];
 const standaloneFiles = [];
 
-for (const [id, dir] of Object.entries(STANDALONE_ART)) {
+for (const id of STANDALONE_APPS) {
   const t = TARGETS.find((x) => x.id === id);
+  const appDir = path.join(REPO, 'apps', id);
+  const configPath = path.join(appDir, 'app.json');
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  const expo = config.expo;
   const opts = { id, monogram: MONOGRAM[id] };
-  await sharp(Buffer.from(TILE_SVG(t.color, 1024, opts)))
-    .flatten({ background: t.color })
-    .png()
-    .toFile(path.join(dir, 'icon.png'));
-  await sharp(Buffer.from(TILE_SVG(t.color, 1024, { ...opts, glyphOnly: true, inset: 0.42, ink: '#ffffff' })))
-    .png()
-    .toFile(path.join(dir, 'adaptive-icon.png'));
-  await sharp(Buffer.from(TILE_SVG(t.color, 512, { ...opts, glyphOnly: true, inset: 0.5 })))
-    .png()
-    .toFile(path.join(dir, 'splash-icon.png'));
-  await sharp(Buffer.from(TILE_SVG(t.color, 48, opts)))
-    .flatten({ background: t.color })
-    .png()
-    .toFile(path.join(dir, 'favicon.png'));
-  standaloneFiles.push(
-    [path.join(dir, 'icon.png'), 1024, false],
-    [path.join(dir, 'adaptive-icon.png'), 1024, true],
-    [path.join(dir, 'splash-icon.png'), 512, true],
-    [path.join(dir, 'favicon.png'), 48, false],
-  );
+  const at = (rel) => path.join(appDir, rel);
+  const write = async (rel, size, variant, wantsAlpha) => {
+    let img = sharp(Buffer.from(svgFor(t, size, variant, opts)));
+    if (!wantsAlpha) img = img.flatten({ background: t.color });
+    await img.png().toFile(at(rel));
+    standaloneFiles.push([at(rel), size, wantsAlpha]);
+  };
+
+  await write(expo.icon, 1024, 'icon', false);
+  if (expo.web?.favicon) await write(expo.web.favicon, 48, 'icon', false);
+  const splash = (expo.plugins ?? []).find((p) => Array.isArray(p) && p[0] === 'expo-splash-screen');
+  if (splash?.[1]?.image) await write(splash[1].image, 512, 'splash', true);
+
+  const adaptive = expo.android?.adaptiveIcon;
+  if (adaptive) {
+    await write(adaptive.foregroundImage, 1024, 'adaptive', true);
+    if (adaptive.backgroundImage) await write(adaptive.backgroundImage, 1024, 'ground', false);
+    if (adaptive.monochromeImage) {
+      const alpha = await sharp(at(adaptive.foregroundImage)).ensureAlpha().extractChannel(3).toBuffer();
+      await sharp({ create: { width: 1024, height: 1024, channels: 3, background: '#ffffff' } })
+        .joinChannel(alpha)
+        .png()
+        .toFile(at(adaptive.monochromeImage));
+      standaloneFiles.push([at(adaptive.monochromeImage), 1024, true]);
+    }
+    adaptive.backgroundColor = t.color;
+  }
+  // An Icon Composer bundle (`.icon`) overrides `icon` on iOS; the template's is the Expo logo.
+  if (typeof expo.ios?.icon === 'string' && expo.ios.icon.endsWith('.icon')) expo.ios.icon = expo.icon;
+  fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
 }
 
 /*
@@ -207,7 +247,7 @@ for (const [full, size, wantsAlpha] of standaloneFiles) {
 }
 
 console.log(`\n▸ wrote ${written.length} icon sets to apps/mobile/assets/targets/`);
-if (standaloneFiles.length) console.log(`  and ${Object.keys(STANDALONE_ART).join(', ')} into its own assets/images`);
+if (standaloneFiles.length) console.log(`  and ${STANDALONE_APPS.length} standalone apps, into the files their app.json names`);
 console.log(`  ${drawn.length} drawn marks, ${monogrammed.length} monograms`);
 if (monogrammed.length) {
   console.log(`  still a monogram: ${monogrammed.join(', ')}`);
