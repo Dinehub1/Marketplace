@@ -10,7 +10,7 @@
  * 2. promo-banner.png (1080×1920): High-resolution store screenshot hero promotional card.
  *    - Phone-scale showcase slide with headline, value prop, and device frame aesthetic.
  *
- * Usage: node scripts/make-store-graphics.mjs
+ * Usage: node scripts/make-store-graphics.mjs [target-id ...]   (no ids: every target)
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -25,6 +25,13 @@ const { TARGETS } = await import(pathToFileURL(path.join(MOBILE, 'targets.mjs'))
 const { lighten, darken, TILE_SVG } = await import(
   pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-art.mjs')).href
 );
+const { LOGOS, LOGO_SVG } = await import(
+  pathToFileURL(path.join(REPO, 'scripts', 'lib', 'icon-logos.mjs')).href
+);
+
+/** The store icon tile, so the graphic shows the same logo as the launcher. */
+const appTile = (target, size) =>
+  LOGOS[target.id] ? LOGO_SVG(target.id, target.color, size) : TILE_SVG(target.color, size, { id: target.id });
 
 function escapeXml(unsafe) {
   return String(unsafe)
@@ -50,7 +57,7 @@ function FEATURE_GRAPHIC_SVG(target) {
   const asoTag = escapeXml(target.aso && target.aso[0] ? `#${target.aso[0].replace(/\s+/g, '')}` : '');
 
   // Embedded app tile icon (140×140)
-  const iconTile = TILE_SVG(primary, 140, { id: target.id });
+  const iconTile = appTile(target, 140);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
   <defs>
@@ -144,7 +151,7 @@ function PROMO_POSTER_SVG(target) {
   const category = escapeXml(target.storeCategory?.toUpperCase() || 'APPLICATION');
 
   // Large app tile icon (220×220)
-  const iconTile = TILE_SVG(primary, 220, { id: target.id });
+  const iconTile = appTile(target, 220);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
   <defs>
@@ -240,10 +247,16 @@ function PROMO_POSTER_SVG(target) {
 </svg>`;
 }
 
-console.log(`Generating store feature graphics and promo posters for ${TARGETS.length} apps...`);
+const wanted = process.argv.slice(2);
+const shown = wanted.length ? TARGETS.filter((t) => wanted.includes(t.id)) : TARGETS;
+if (wanted.length && shown.length !== wanted.length) {
+  console.error(`✗ unknown target id in: ${wanted.join(', ')}`);
+  process.exit(1);
+}
+console.log(`Generating store feature graphics and promo posters for ${shown.length} apps...`);
 
 let count = 0;
-for (const target of TARGETS) {
+for (const target of shown) {
   const dir = path.join(OUT_ROOT, target.id);
   fs.mkdirSync(dir, { recursive: true });
 
@@ -264,4 +277,4 @@ for (const target of TARGETS) {
   count++;
 }
 
-console.log(`✓ Successfully generated 1024×500 feature graphics and 1080×1920 promo posters for all ${count} targets in apps/mobile/assets/targets/!`);
+console.log(`✓ Successfully generated 1024×500 feature graphics and 1080×1920 promo posters for ${count} target(s) in apps/mobile/assets/targets/!`);
