@@ -13,6 +13,7 @@ import {
   cleanBusinessName, telHref, waHref, titleize, cleanArea, formatCount,
   isPageRange, PDF_PAGES_HELP, PDF_PAGES_HINT,
   parseBillNo, shopKeyOf, advanceCounter, nextBillNo, counterLabel,
+  formatPaise, formatRupees, formatCurrency, isIAPRequired, getGatewayForTransaction,
 } from "./index.ts";
 
 test("category slugs are stable permalinks", () => {
@@ -164,4 +165,54 @@ test("a counter belongs to one shop, and a typed GSTIN is the strongest key", ()
   assert.equal(shopKeyOf("", "27ABCDE"), null);
   assert.equal(shopKeyOf("", ""), null, "no shop, no counter");
   assert.notEqual(shopKeyOf("Sharma Traders"), shopKeyOf("Sharma Traders Indore"));
+});
+
+test("payments: formatPaise and formatRupees convert precisely", () => {
+  assert.equal(formatPaise(100), 10000);
+  assert.equal(formatPaise(49.99), 4999);
+  assert.equal(formatRupees(10000), 100);
+  assert.equal(formatRupees(4999), 49.99);
+});
+
+test("payments: formatCurrency outputs clean symbols across regions", () => {
+  assert.equal(formatCurrency(499, "INR"), "₹499");
+  assert.equal(formatCurrency(9.99, "USD"), "$9.99");
+  assert.equal(formatCurrency(12.5, "EUR"), "€12.50");
+  assert.equal(formatCurrency(8.75, "GBP"), "£8.75");
+});
+
+test("payments: routing enforces App Store compliance and gateway separation", () => {
+  // Mobile digital in-app feature MUST route to RevenueCat (StoreKit / Play Billing)
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "digital_inapp", platform: "ios" }),
+    "revenuecat",
+  );
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "digital_inapp", platform: "android" }),
+    "revenuecat",
+  );
+  assert.equal(isIAPRequired("digital_inapp", "ios"), true);
+  assert.equal(isIAPRequired("digital_inapp", "android"), true);
+
+  // Real-world bookings (rides, dining, clinics) route to Razorpay or PayPal
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "realworld_service", platform: "ios" }),
+    "razorpay",
+  );
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "realworld_service", platform: "ios", preferPayPal: true }),
+    "paypal",
+  );
+  assert.equal(isIAPRequired("realworld_service", "ios"), false);
+
+  // Web checkouts never require IAP
+  assert.equal(isIAPRequired("web_service", "web"), false);
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "web_service", platform: "web", preferPayPal: true }),
+    "paypal",
+  );
+  assert.equal(
+    getGatewayForTransaction({ purchaseType: "web_service", platform: "web" }),
+    "razorpay",
+  );
 });
