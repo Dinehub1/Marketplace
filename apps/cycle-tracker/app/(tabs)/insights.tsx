@@ -11,7 +11,9 @@ import {
 } from 'react-native';
 
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/theme';
+import { useRouter } from 'expo-router';
 import { useAIPrediction } from '@/hooks/use-ai';
+import { useSubscription } from '@/hooks/use-subscription';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useCycleData, useUserProfile } from '@/hooks/use-storage';
 import { CyclePhase, MoodType } from '@/types';
@@ -60,7 +62,9 @@ const HealthInsightsScreen = () => {
     const colors = Colors[colorScheme ?? 'light'];
     const { cycleData, cycleStats, cycleStatus } = useCycleData();
     const { profile } = useUserProfile();
-    const { prediction, loading: aiLoading, error: aiError, refresh: refreshAI } = useAIPrediction(cycleData, profile);
+    const router = useRouter();
+    const { isPro } = useSubscription();
+    const { prediction, loading: aiLoading, error: aiError, refresh: refreshAI } = useAIPrediction(cycleData, profile, isPro);
 
     const phase = cycleStatus?.phase ?? 'follicular';
     const currentPhase = phaseConfig[phase];
@@ -175,7 +179,21 @@ const HealthInsightsScreen = () => {
                         )}
                     </View>
 
-                    {!hasEnoughForAI ? (
+                    {!isPro ? (
+                        <View style={styles.emptySection}>
+                            <Ionicons name="lock-closed" size={28} color={colors.primary} ></Ionicons>
+                            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                                AI predictions, fertile window estimates{'\n'}and pattern insights are part of Pro
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => router.push('/paywall')}
+                                style={[styles.unlockButton, { backgroundColor: colors.primary }]}
+                                accessibilityRole="button"
+                            >
+                                <Text style={styles.unlockButtonText}>Unlock with Pro</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ) : !hasEnoughForAI ? (
                         <View style={styles.emptySection}>
                             <Ionicons name="sparkles-outline" size={32} color={colors.textTertiary} ></Ionicons>
                             <Text style={[styles.emptyText, { color: colors.textTertiary }]}>
@@ -873,6 +891,17 @@ const styles = StyleSheet.create({
     },
 
     // ─── AI Predictions ─────────────────────────────────────────────
+    unlockButton: {
+        marginTop: 12,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 999,
+    },
+    unlockButtonText: {
+        color: '#ffffff',
+        fontSize: 15,
+        fontWeight: '700',
+    },
     aiLoadingContainer: {
         alignItems: 'center',
         paddingVertical: Spacing.xl,

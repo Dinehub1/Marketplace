@@ -5,7 +5,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
 
-export function useAIPrediction(cycleData: CycleData, profile: UserProfile) {
+/**
+ * AI predictions are a Pro feature, and each fetch is a paid model call, so `enabled` is false for
+ * free users: nothing is fetched or served from cache for them.
+ */
+export function useAIPrediction(cycleData: CycleData, profile: UserProfile, enabled = true) {
     const [prediction, setPrediction] = useState<AIPrediction | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,6 +28,11 @@ export function useAIPrediction(cycleData: CycleData, profile: UserProfile) {
     // Load prediction (cache-first)
     const loadPrediction = useCallback(async () => {
         if (fetchingRef.current) return;
+
+        if (!enabled) {
+            setPrediction(null);
+            return;
+        }
 
         // Need minimum data
         if (!cycleData.lastPeriodStart || cycleData.entries.length < 1) {
@@ -56,7 +65,7 @@ export function useAIPrediction(cycleData: CycleData, profile: UserProfile) {
             setLoading(false);
             fetchingRef.current = false;
         }
-    }, [cycleData, profile, isCacheFresh]);
+    }, [cycleData, profile, isCacheFresh, enabled]);
 
     // Auto-load on mount and data changes
     useEffect(() => {
@@ -65,7 +74,7 @@ export function useAIPrediction(cycleData: CycleData, profile: UserProfile) {
 
     // Manual refresh (bypasses cache)
     const refresh = useCallback(async () => {
-        if (fetchingRef.current) return;
+        if (fetchingRef.current || !enabled) return;
         if (!cycleData.lastPeriodStart || cycleData.entries.length < 1) return;
 
         fetchingRef.current = true;
@@ -83,7 +92,7 @@ export function useAIPrediction(cycleData: CycleData, profile: UserProfile) {
             setLoading(false);
             fetchingRef.current = false;
         }
-    }, [cycleData, profile]);
+    }, [cycleData, profile, enabled]);
 
     return { prediction, loading, error, refresh };
 }

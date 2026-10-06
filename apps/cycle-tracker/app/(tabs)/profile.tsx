@@ -15,6 +15,7 @@ import {
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useCycleData, useOnboarding, useUserProfile } from '@/hooks/use-storage';
+import { useSubscription } from '@/hooks/use-subscription';
 
 interface GoalOption {
     id: string;
@@ -61,6 +62,8 @@ export default function ProfileScreen() {
             setTempName(profile.name);
         }
     }, [profile.name, editingName]);
+
+    const { isPro } = useSubscription();
 
     const handleGoalSelect = async (goalId: string) => {
         await updateProfile({ goal: goalId as any });
@@ -245,6 +248,7 @@ export default function ProfileScreen() {
                     <Text style={[styles.sectionTitle, { color: colors.text }]}>Settings</Text>
 
                     {[
+                        { icon: 'sparkles-outline', label: isPro ? 'CycleAI Pro · Active' : 'CycleAI Pro', route: '/paywall' },
                         { icon: 'notifications-outline', label: 'Notifications', route: '/notifications' },
                         { icon: 'people-outline', label: 'Partner Sync', route: '/partner-sync' },
                         { icon: 'shield-checkmark-outline', label: 'Privacy & Security', route: '/privacy' },

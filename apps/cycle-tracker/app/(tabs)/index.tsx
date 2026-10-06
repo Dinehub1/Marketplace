@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BorderRadius, Colors, Spacing, Typography } from '@/constants/theme';
 import { useAIPrediction } from '@/hooks/use-ai';
+import { useSubscription } from '@/hooks/use-subscription';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { getPregnancyWeek, useCycleData, useUserProfile } from '@/hooks/use-storage';
 import { CyclePhase } from '@/types';
@@ -48,7 +49,8 @@ export default function TodayScreen() {
 
   const { cycleData, cycleStatus, loading, refresh: refreshCycle } = useCycleData();
   const { profile, refresh: refreshProfile } = useUserProfile();
-  const { prediction: aiPrediction, loading: aiLoading, error: aiError } = useAIPrediction(cycleData, profile);
+  const { isPro } = useSubscription();
+  const { prediction: aiPrediction, loading: aiLoading, error: aiError } = useAIPrediction(cycleData, profile, isPro);
   const [refreshing, setRefreshing] = useState(false);
 
   // Refresh data when screen comes into focus
@@ -234,6 +236,17 @@ export default function TodayScreen() {
                 Next period: {new Date(aiPrediction.nextPeriodDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 {' · '}{aiPrediction.confidence}% confidence
               </Text>
+            )}
+            {!isPro && (
+              <TouchableOpacity
+                onPress={() => router.push('/paywall')}
+                accessibilityRole="button"
+                accessibilityLabel="Unlock AI insights with CycleAI Pro"
+              >
+                <Text style={[styles.insightText, { color: colors.primary, marginTop: 6, fontSize: 13, fontWeight: '600' }]}>
+                  ✨ Unlock AI insights with Pro
+                </Text>
+              </TouchableOpacity>
             )}
           </View>
         </View>

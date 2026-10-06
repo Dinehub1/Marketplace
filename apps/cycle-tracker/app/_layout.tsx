@@ -15,6 +15,7 @@ import 'react-native-reanimated';
 
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { SubscriptionProvider } from '@/hooks/use-subscription';
 import { useOnboarding, useUserProfile } from '@/hooks/use-storage';
 import { getPin } from '@/services/storage';
 
@@ -125,6 +126,7 @@ export default function RootLayout() {
   const headerTintColor = colors.primary;
 
   return (
+    <SubscriptionProvider>
     <ThemeProvider value={isDark ? CycleTrackerDarkTheme : CycleTrackerLightTheme}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Stack>
@@ -181,6 +183,13 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
+            name="paywall"
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+            }}
+          />
+          <Stack.Screen
             name="article"
             options={{
               headerShown: false,
@@ -191,5 +200,6 @@ export default function RootLayout() {
       </View>
       <StatusBar style={isDark ? 'light' : 'dark'} />
     </ThemeProvider>
+    </SubscriptionProvider>
   );
 }

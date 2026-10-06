@@ -35,17 +35,29 @@ export const TIERS: SubscriptionTier[] = [
     title: 'Monthly Pro',
     price: '$3.99 / mo',
     period: 'monthly',
-    description: 'Full AI cycle predictions, fertile window alerts & symptom insights.',
+    description: 'AI cycle predictions, fertile window estimates & personalised insights.',
   },
   {
     id: 'cycle_pro_annual',
     title: 'Annual Pro',
     price: '$29.99 / yr',
     period: 'annual',
-    description: 'Save 37% + 7-day free trial. Full unlimited AI health reports.',
+    description: 'Everything in Monthly, billed once a year.',
     badge: 'BEST VALUE',
   },
 ];
+
+/**
+ * A plan as the paywall shows it. `price` is the store's own localized string when RevenueCat is
+ * configured: Apple and Google both reject a paywall whose price differs from the one they charge,
+ * so the TIERS prices are only a development stand-in.
+ */
+export interface Plan extends SubscriptionTier {
+  /** Numeric price in the store currency, for the annual saving; null in the dev fallback. */
+  amount: number | null;
+  /** The intro offer as the store describes it (e.g. "7-day free trial"), or null. */
+  trial: string | null;
+}
 
 const ENTITLEMENT = 'pro_access';
 const DEV_STORAGE_KEY = 'cycle_tracker_dev_sub_state';
@@ -106,6 +118,34 @@ export async function getSubscriptionStatus(): Promise<SubscriptionState> {
     }
   }
   return __DEV__ ? devState() : FREE;
+}
+
+/**
+ * The plans to sell, priced by the store. Only plans RevenueCat actually offers are returned, so
+ * a product missing from the store never shows up as a button that cannot be bought.
+ */
+export async function getPlans(): Promise<Plan[]> {
+  if (!configured) {
+    return __DEV__ ? TIERS.map((t) => ({ ...t, amount: null, trial: null })) : [];
+  }
+  const offerings = await (await sdk()).getOfferings();
+  const packages = offerings.current?.availablePackages ?? [];
+  const plans: Plan[] = [];
+  for (const tier of TIERS) {
+    const pkg = packages.find((p) => p.identifier === tier.id || p.product.identifier === tier.id);
+    if (!pkg) continue;
+    const intro = pkg.product.introPrice;
+    plans.push({
+      ...tier,
+      price: `${pkg.product.priceString} / ${tier.period === 'annual' ? 'yr' : 'mo'}`,
+      amount: pkg.product.price,
+      trial:
+        intro && intro.price === 0
+          ? `${intro.periodNumberOfUnits}-${intro.periodUnit.toLowerCase()} free trial`
+          : null,
+    });
+  }
+  return plans;
 }
 
 /**
