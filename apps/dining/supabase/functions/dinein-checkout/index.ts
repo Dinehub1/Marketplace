@@ -1,6 +1,6 @@
 // dinein-checkout — create a dine-in booking and take its advance through Razorpay.
 //
-//   POST { action: "create", booking: {...} }
+//   POST { action: "create", booking: {...} }   (Authorization: the customer's session token)
 //     Prices the booking on the server (party size × the offer's cover charge), inserts it, and
 //     either confirms it at once (nothing to pay) or creates a Razorpay order for the app to open.
 //     → { status: "confirmed", booking }
@@ -11,9 +11,10 @@
 //     order, amount and currency to match what this function charged before confirming.
 //     → { status: "confirmed" | "already_confirmed", booking_id }
 //
-// The app calls this with its anon key (supabase.functions.invoke). The database guards in
-// migrations/20261006120000_dinein_razorpay.sql stop that key from confirming bookings or recording
-// advance payments directly, so this function, holding the service role, is the only way in.
+// The app calls this through supabase.functions.invoke, which sends the customer's session token;
+// `create` refuses a request without one. The database guards in
+// migrations/20261006120000_dinein_razorpay.sql stop the app's keys from confirming bookings or
+// recording advance payments directly, so this function, holding the service role, is the only way in.
 import {
   bookingEndTime,
   confirmPaidBooking,
@@ -51,7 +52,7 @@ Deno.serve(async (req) => {
 
   const body = await req.json().catch(() => null);
   try {
-    if (body?.action === 'create') return await create(body.booking ?? {});
+    if (body?.action === 'create') return await create(body.booking ?? {}, req.headers.get('Authorization'));
     if (body?.action === 'verify') return await verify(body);
     return json({ error: 'Unknown action' }, 400);
   } catch (err) {
@@ -60,23 +61,37 @@ Deno.serve(async (req) => {
   }
 });
 
-async function create(input: Record<string, unknown>) {
+/**
+ * The customer behind this request, from their Supabase Auth session. The gateway's JWT check
+ * also passes the bare anon key, which carries no user, so it is resolved here and a request
+ * without a signed-in user is refused. Any user_id in the body is ignored.
+ */
+async function signedInProfileId(db: ReturnType<typeof serviceClient>, authorization: string | null) {
+  const token = authorization?.replace(/^Bearer\s+/i, '') ?? '';
+  if (!token) return null;
+  const { data, error } = await db.auth.getUser(token);
+  if (error || !data.user) return null;
+  const { data: profile } = await db.from('users').select('id').eq('auth_user_id', data.user.id).maybeSingle();
+  return profile?.id ?? null;
+}
+
+async function create(input: Record<string, unknown>, authorization: string | null) {
   const restaurantId = String(input.restaurant_id ?? '');
   const offerId = input.offer_id ? String(input.offer_id) : null;
-  const userId = input.user_id ? String(input.user_id) : null;
   const date = String(input.booking_date ?? '');
   const time = String(input.booking_time ?? '');
   const partySize = Number(input.party_size);
 
   if (!UUID.test(restaurantId)) return json({ error: 'Invalid restaurant' }, 400);
   if (offerId && !UUID.test(offerId)) return json({ error: 'Invalid offer' }, 400);
-  if (!userId || !UUID.test(userId)) return json({ error: 'Please sign in to book a table' }, 401);
   if (!DATE.test(date) || !TIME.test(time)) return json({ error: 'Invalid date or time' }, 400);
   if (!Number.isInteger(partySize) || partySize < 1 || partySize > 50) {
     return json({ error: 'Invalid party size' }, 400);
   }
 
   const db = serviceClient();
+  const userId = await signedInProfileId(db, authorization);
+  if (!userId) return json({ error: 'Please sign in to book a table' }, 401);
 
   const { data: restaurant } = await db
     .from('restaurants')

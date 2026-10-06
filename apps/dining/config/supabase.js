@@ -1,4 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient } from '@supabase/supabase-js';
+import { AppState, Platform } from 'react-native';
 
 // Supabase configuration from environment variables
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -11,8 +13,25 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.error('   Please check your .env file');
 }
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
+// Create Supabase client. Sign-in is real Supabase Auth (phone OTP), so the session is kept in
+// AsyncStorage and refreshed while the app is in the foreground; every request then carries the
+// customer's own token rather than only the public anon key.
+export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '', {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
+});
+
+// Refresh tokens only while the app is active, as Supabase recommends for React Native.
+if (Platform.OS !== 'web') {
+  AppState.addEventListener('change', (state) => {
+    if (state === 'active') supabase.auth.startAutoRefresh();
+    else supabase.auth.stopAutoRefresh();
+  });
+}
 
 // Real Supabase helper functions for user management
 export const createUser = async (userData) => {

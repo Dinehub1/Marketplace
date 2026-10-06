@@ -1,13 +1,20 @@
+/**
+ * Phone sign-in for Swaad Ghar, through Supabase Auth.
+ *
+ * Supabase Auth generates the code, stores it, rate-limits attempts and expires it; the
+ * dinein-send-sms hook (supabase/functions) delivers it over the Nextel WhatsApp template. This
+ * file used to do all of that on the device, with the Nextel key bundled in the app and a 123456
+ * bypass, which meant the server never knew who anyone was. A successful verifyOtp now yields a
+ * real session (persisted by config/supabase.js), and link_my_profile() ties it to the
+ * public.users row that bookings and payments reference.
+ *
+ * For development without WhatsApp, add a test number and fixed code in the Supabase dashboard
+ * (Authentication → Sign In / Providers → Phone → Test phone numbers) rather than a code bypass.
+ */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createUser, getUserByPhoneNumber, supabase } from '../config/supabase';
-
-const NEXTEL_API_KEY = process.env.NEXTEL_API_KEY || 'MFZPSnRHL3BiOHNsdnZMMTYwK0xrUT09';
-const NEXTEL_ENDPOINT = (
-  process.env.NEXTEL_ENDPOINT || 'https://api.nextel.io/API_V2/Whatsapp/send_template'
-).replace(/\/+$/, '');
+import { supabase } from '../config/supabase';
 
 const STORAGE_USER_KEY = 'currentUser';
-const STORAGE_OTP_PREFIX = 'dining_otp_';
 
 export interface DiningUser {
   id: string;
@@ -28,9 +35,6 @@ export interface DiningUser {
   };
 }
 
-// In-memory OTP storage fallback
-const otpCache = new Map<string, { code: string; expiresAt: number }>();
-
 /**
  * Normalize phone number to standard E.164 (+91XXXXXXXXXX) and 12-digit Nextel format (91XXXXXXXXXX)
  */
@@ -45,8 +49,18 @@ export function normalizePhone(raw: string): { e164: string; nextel: string } | 
   return null;
 }
 
+/** Supabase Auth's messages are written for developers; these are the ones customers hit. */
+function friendly(message: string | undefined, fallback: string): string {
+  const m = (message || '').toLowerCase();
+  if (m.includes('expired') || m.includes('invalid')) return 'Invalid or expired OTP. Please try again.';
+  if (m.includes('rate') || m.includes('too many') || m.includes('seconds')) {
+    return 'Too many attempts. Please wait a minute and try again.';
+  }
+  return message || fallback;
+}
+
 /**
- * Send OTP via Nextel WhatsApp with development fallback
+ * Ask Supabase Auth to send a sign-in code to this number (delivered on WhatsApp).
  */
 export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; message: string }> {
   const phone = normalizePhone(phoneNumber);
@@ -54,64 +68,14 @@ export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; 
     throw new Error('Please enter a valid 10-digit Indian mobile number');
   }
 
-  // Generate 6-digit OTP
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
-  const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
+  const { error } = await supabase.auth.signInWithOtp({ phone: phone.e164 });
+  if (error) throw new Error(friendly(error.message, 'Could not send the code. Please try again.'));
 
-  // Store in memory cache
-  otpCache.set(phone.e164, { code, expiresAt });
-  try {
-    await AsyncStorage.setItem(
-      `${STORAGE_OTP_PREFIX}${phone.e164}`,
-      JSON.stringify({ code, expiresAt })
-    );
-  } catch {}
-
-  console.log(`📱 [Dining OTP] Generated OTP for ${phone.e164}: ${code}`);
-
-  // Send via Nextel WhatsApp template
-  let delivered = false;
-  if (NEXTEL_API_KEY) {
-    try {
-      const url = `${NEXTEL_ENDPOINT}/${NEXTEL_API_KEY}`;
-      const payload = {
-        type: 'buttonTemplate',
-        templateId: 'auth',
-        templateLanguage: 'en',
-        sender_phone: phone.nextel, // Recipient phone for Nextel API
-        templateArgs: [code],
-      };
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.ok) {
-        const body = await res.json().catch(() => ({}));
-        if (body.status === '200' || body.status === '202' || body.messageId) {
-          delivered = true;
-          console.log(`✅ [Dining OTP] Delivered via WhatsApp to ${phone.e164}`);
-        } else {
-          console.warn(`⚠️ [Dining OTP] Nextel response:`, body);
-        }
-      } else {
-        console.warn(`⚠️ [Dining OTP] Nextel HTTP error: ${res.status}`);
-      }
-    } catch (err) {
-      console.warn(`⚠️ [Dining OTP] Failed to send WhatsApp message:`, err);
-    }
-  }
-
-  return {
-    success: true,
-    message: delivered ? 'OTP sent via WhatsApp!' : 'OTP generated! (Check terminal or use 123456 in dev)',
-  };
+  return { success: true, message: 'OTP sent via WhatsApp!' };
 }
 
 /**
- * Verify OTP and resolve/create user in Supabase
+ * Check the code with Supabase Auth, then link (or create) this person's Swaad Ghar profile.
  */
 export async function verifyOTP(phoneNumber: string, code: string): Promise<DiningUser> {
   const phone = normalizePhone(phoneNumber);
@@ -120,86 +84,54 @@ export async function verifyOTP(phoneNumber: string, code: string): Promise<Dini
   }
 
   const cleanCode = code.trim();
-  if (cleanCode.length !== 6) {
+  if (!/^\d{6}$/.test(cleanCode)) {
     throw new Error('Please enter a valid 6-digit OTP');
   }
 
-  // Check stored OTP
-  let valid = false;
-  let cached = otpCache.get(phone.e164);
-  if (!cached) {
-    try {
-      const raw = await AsyncStorage.getItem(`${STORAGE_OTP_PREFIX}${phone.e164}`);
-      if (raw) cached = JSON.parse(raw);
-    } catch {}
+  const { data, error } = await supabase.auth.verifyOtp({ phone: phone.e164, token: cleanCode, type: 'sms' });
+  if (error || !data.session) {
+    throw new Error(friendly(error?.message, 'Invalid or expired OTP. Please try again.'));
   }
 
-  if (cached && cached.expiresAt > Date.now() && cached.code === cleanCode) {
-    valid = true;
-    otpCache.delete(phone.e164);
+  const profile = await linkProfile();
+  if (!profile) {
+    await supabase.auth.signOut();
+    throw new Error('Signed in, but your profile could not be loaded. Please try again.');
   }
+  return profile;
+}
 
-  // Development bypass: allow '123456' in dev/Expo Go
-  if (__DEV__ && cleanCode === '123456') {
-    valid = true;
-    console.log(`🛠️ [Dining OTP] Accepted dev bypass code 123456 for ${phone.e164}`);
+/** The signed-in person's public.users row, linked to their auth identity on first sign-in. */
+async function linkProfile(): Promise<DiningUser | null> {
+  const { data, error } = await supabase.rpc('link_my_profile');
+  if (error || !data) {
+    console.error('[Dining Auth] link_my_profile failed:', error?.message);
+    return null;
   }
-
-  if (!valid) {
-    throw new Error('Invalid or expired OTP. Please try again.');
-  }
-
-  // Find or create user in Supabase
-  console.log(`🔍 [Dining OTP] Finding user by phone ${phone.e164}...`);
-  const { data: existingUser, error: findError } = await getUserByPhoneNumber(phone.e164);
-
-  if (existingUser) {
-    console.log(`✅ [Dining OTP] Found existing user: ${existingUser.id}`);
-    await AsyncStorage.setItem(STORAGE_USER_KEY, JSON.stringify(existingUser));
-    return existingUser;
-  }
-
-  console.log(`🆕 [Dining OTP] Creating new user for ${phone.e164}...`);
-  const newUserData = {
-    phone_number: phone.e164,
-    full_name: `User ${phone.e164.slice(-4)}`,
-    email: null,
-    is_verified: true,
-    role: 'user',
-    is_active: true,
-    preferred_cuisines: [],
-    notification_preferences: {
-      email: true,
-      push: true,
-      sms: false,
-    },
-  };
-
-  const { data: createdUser, error: createError } = await createUser(newUserData);
-  if (createError) {
-    // If concurrent insert occurred, retry fetch
-    if (createError.code === '23505') {
-      const { data: retryUser } = await getUserByPhoneNumber(phone.e164);
-      if (retryUser) {
-        await AsyncStorage.setItem(STORAGE_USER_KEY, JSON.stringify(retryUser));
-        return retryUser;
-      }
-    }
-    throw new Error(createError.message || 'Failed to create user account');
-  }
-
-  await AsyncStorage.setItem(STORAGE_USER_KEY, JSON.stringify(createdUser));
-  return createdUser;
+  const profile = data as DiningUser;
+  await AsyncStorage.setItem(STORAGE_USER_KEY, JSON.stringify(profile)).catch(() => {});
+  return profile;
 }
 
 /**
- * Load current session user from AsyncStorage
+ * The current user, if there is a live Supabase session.
+ *
+ * A profile cached by an older build (which signed in without Supabase Auth) has no session
+ * behind it, so it is discarded and the customer signs in once more.
  */
 export async function getStoredUser(): Promise<DiningUser | null> {
+  const { data } = await supabase.auth.getSession();
+  if (!data.session) {
+    await AsyncStorage.removeItem(STORAGE_USER_KEY).catch(() => {});
+    return null;
+  }
+
+  // Prefer a fresh profile; fall back to the cached one when offline.
+  const fresh = await linkProfile();
+  if (fresh) return fresh;
   try {
     const raw = await AsyncStorage.getItem(STORAGE_USER_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as DiningUser;
+    return raw ? (JSON.parse(raw) as DiningUser) : null;
   } catch {
     return null;
   }
@@ -209,7 +141,6 @@ export async function getStoredUser(): Promise<DiningUser | null> {
  * Sign out and clear stored session
  */
 export async function signOutUser(): Promise<void> {
-  try {
-    await AsyncStorage.removeItem(STORAGE_USER_KEY);
-  } catch {}
+  await supabase.auth.signOut().catch(() => {});
+  await AsyncStorage.removeItem(STORAGE_USER_KEY).catch(() => {});
 }
