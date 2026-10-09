@@ -1,4 +1,4 @@
-import { cleanBusinessName, telHref, waHref } from "@/lib/categories";
+import { cleanBusinessName, formatCount, telHref, waHref } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import { CategoryCover } from "@/components/category-cover";
 
@@ -74,7 +74,7 @@ export function BusinessCard({
                 {rating.toFixed(1)}
                 {b.reviews_count != null && (
                   <span style={{ opacity: 0.66, fontWeight: 520 }}>
-                    ({b.reviews_count.toLocaleString("en-IN")})
+                    ({formatCount(b.reviews_count)})
                   </span>
                 )}
               </span>

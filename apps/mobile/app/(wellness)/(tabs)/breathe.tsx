@@ -61,7 +61,7 @@
  * which is the same substitution `lib/motion.ts` documents.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, TextInput, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -77,7 +77,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { Button, Card, Chip as UiChip, Text } from "@/components/ui";
+import { Button, Card, Chip as UiChip, Press, Text } from "@/components/ui";
 import { HeaderAction } from "@/components/wellness-shell";
 import { SoundSwitchRow, SoundToggle } from "@/components/sound-toggle";
 import { InsightPanel } from "@/components/charts";
@@ -567,7 +567,7 @@ export default function Breathe() {
         <SyncBadge sync={store.sync} pending={store.pending} lastSyncedAt={store.lastSyncedAt} />
       </View>
 
-      <Pressable
+      <Press
         onPress={seq.running ? seq.pause : seq.paused ? seq.resume : begin}
         accessibilityRole="button"
         accessibilityLabel={circleLabel}
@@ -618,7 +618,7 @@ export default function Breathe() {
             {seq.status === "idle" ? "TAP TO BEGIN" : seq.paused ? "PAUSED — TAP TO RESUME" : "TAP TO PAUSE"}
           </Text>
         </View>
-      </Pressable>
+      </Press>
 
       {/* The primary action stays in one position and changes label, so the control a person
           reaches for without looking is always in the same place. */}
@@ -781,7 +781,7 @@ export default function Breathe() {
               />
             </View>
           ) : null}
-          <Pressable
+          <Press
             onPress={() => setEditing((v) => !v)}
             accessibilityRole="button"
             accessibilityLabel={`Your phrase: ${phraseIn}, then ${phraseOut}. Tap to change.`}
@@ -792,7 +792,7 @@ export default function Breathe() {
             <Text variant="meta" tone="ink4">
               Tap to change — one line for the in-breath, one for the out-breath
             </Text>
-          </Pressable>
+          </Press>
         </>
       ) : null}
 

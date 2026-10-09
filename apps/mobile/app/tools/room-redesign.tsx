@@ -18,14 +18,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   canDownloadFile,
   formatBytes,
@@ -121,7 +116,7 @@ export default function RoomRedesign() {
         furniture, materials and light.
       </Text>
 
-      <Pressable style={s.frame} onPress={() => void choose()} accessibilityRole="button">
+      <Press style={s.frame} onPress={() => void choose()} accessibilityRole="button">
         {shown ? (
           <Image source={{ uri: shown }} style={s.photo} resizeMode="cover" />
         ) : (
@@ -130,7 +125,7 @@ export default function RoomRedesign() {
             <Text style={s.emptyHint}>Stand back and get the whole room in the frame</Text>
           </View>
         )}
-      </Pressable>
+      </Press>
       <Text style={s.help}>
         {file
           ? `${file.name}${file.size ? ` · ${formatBytes(file.size)}` : ""}${done ? "" : " · tap the photo to change it"}`
@@ -139,7 +134,7 @@ export default function RoomRedesign() {
 
       <Text style={s.section}>The look</Text>
       {LOOKS.map((l) => (
-        <Pressable
+        <Press
           key={l.id}
           onPress={() => {
             setLook(l.id);
@@ -154,7 +149,7 @@ export default function RoomRedesign() {
             <Text style={s.lookHint}>{l.hint}</Text>
           </View>
           <View style={[s.dot, look === l.id && { backgroundColor: ui.accent, borderColor: ui.accent }]} />
-        </Pressable>
+        </Press>
       ))}
 
       <View style={s.note}>
@@ -172,7 +167,7 @@ export default function RoomRedesign() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (!file || busy) && s.dim]}
         onPress={() => void restyle()}
         disabled={!file || busy}
@@ -186,11 +181,11 @@ export default function RoomRedesign() {
             {done ? `Try ${chosen?.label ?? "another look"}` : "Restyle this room"}
           </Text>
         )}
-      </Pressable>
+      </Press>
 
       {done && outputUrl ? (
         <View style={s.result}>
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => openResult(outputUrl, `room-${look}.jpg`)}
             accessibilityRole="button"
@@ -198,7 +193,7 @@ export default function RoomRedesign() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? `Download room-${look}.jpg` : `Open room-${look}.jpg`}
             </Text>
-          </Pressable>
+          </Press>
           <Text style={s.hint}>
             The {chosen?.label.toLowerCase()} look
             {meta?.input_px && meta?.sent_px

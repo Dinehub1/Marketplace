@@ -17,14 +17,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+  ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { canDownloadFile, openResult, runJob, type JobResult } from "@/lib/tools";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
@@ -121,7 +116,7 @@ export default function Voiceover() {
 
       <View style={s.starters}>
         {STARTERS.map((st) => (
-          <Pressable
+          <Press
             key={st.label}
             style={s.starter}
             onPress={() => {
@@ -131,7 +126,7 @@ export default function Voiceover() {
             accessibilityRole="button"
           >
             <Text style={s.starterText}>{st.label}</Text>
-          </Pressable>
+          </Press>
         ))}
       </View>
 
@@ -150,7 +145,7 @@ export default function Voiceover() {
       {missing ? <Text style={s.missing}>{missing}</Text> : null}
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (!!missing || busy) && s.dim]}
         onPress={() => void makeVoice()}
         disabled={!!missing || busy}
@@ -158,12 +153,12 @@ export default function Voiceover() {
         accessibilityState={{ disabled: !!missing || busy }}
       >
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>Make the voice-over</Text>}
-      </Pressable>
+      </Press>
 
       {outputUrl ? (
         <View style={s.result}>
           <Text style={s.label}>The clip</Text>
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => openResult(outputUrl, "voiceover.mp3")}
             accessibilityRole="button"
@@ -171,7 +166,7 @@ export default function Voiceover() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? "Download voiceover.mp3" : "Open voiceover.mp3"}
             </Text>
-          </Pressable>
+          </Press>
           <Text style={s.hint}>
             {meta?.words ?? trimmed.split(/\s+/).length} word
             {(meta?.words ?? trimmed.split(/\s+/).length) === 1 ? "" : "s"} read

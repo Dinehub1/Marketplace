@@ -14,8 +14,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   canDownloadFile, formatBytes, openResult, pickFiles, runJob,
   type JobResult, type PickedFile,
@@ -157,7 +158,7 @@ export default function PhotoCollage() {
           {files.map((f, i) => (
             <View key={`${f.name}-${i}`} style={s.tileWrap}>
               <Image source={{ uri: f.uri }} style={s.tile} resizeMode="cover" />
-              <Pressable
+              <Press
                 onPress={() => remove(i)}
                 accessibilityRole="button"
                 accessibilityLabel={`Remove ${f.name} from the collage`}
@@ -165,7 +166,7 @@ export default function PhotoCollage() {
                 style={s.remove}
               >
                 <Text style={s.removeText}>×</Text>
-              </Pressable>
+              </Press>
             </View>
           ))}
         </View>
@@ -177,7 +178,7 @@ export default function PhotoCollage() {
           const on = l.value === layout;
           const canHold = l.value === "auto" || l.holds >= files.length;
           return (
-            <Pressable
+            <Press
               key={l.value}
               onPress={() => {
                 if (!canHold) return;
@@ -190,7 +191,7 @@ export default function PhotoCollage() {
               style={[s.chip, on && s.chipOn, !canHold && s.chipOff]}
             >
               <Text style={[s.chipText, on && s.chipTextOn, !canHold && s.chipTextOff]}>{l.label}</Text>
-            </Pressable>
+            </Press>
           );
         })}
       </View>
@@ -216,7 +217,7 @@ export default function PhotoCollage() {
         </View>
       ) : null}
 
-      <Pressable
+      <Press
         style={[s.primary, !ready && s.dim]}
         onPress={make}
         disabled={!ready}
@@ -231,9 +232,9 @@ export default function PhotoCollage() {
               : `Make the collage · ${files.length} photos`}
           </Text>
         )}
-      </Pressable>
+      </Press>
 
-      <Pressable
+      <Press
         style={[s.secondary, full && s.dim]}
         onPress={add}
         disabled={full}
@@ -242,10 +243,10 @@ export default function PhotoCollage() {
         <Text style={s.secondaryText}>
           {full ? `That is all ${MAX_PHOTOS} photos` : files.length ? "Add more photos" : "Add photos"}
         </Text>
-      </Pressable>
+      </Press>
 
       {done && !busy ? (
-        <Pressable
+        <Press
           style={s.secondary}
           onPress={async () => {
             if (!shown) return;
@@ -255,7 +256,7 @@ export default function PhotoCollage() {
           accessibilityRole="button"
         >
           <Text style={s.secondaryText}>{canDownloadFile() ? "Save the collage" : "Open the collage"}</Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       {saved ? <Text style={s.hint}>Saved. The tile order follows the photos above.</Text> : null}

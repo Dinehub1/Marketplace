@@ -1,5 +1,5 @@
 import { CategoryIcon } from "@/lib/icons";
-import { categoryPath } from "@/lib/categories";
+import { categoryPath, formatCount } from "@/lib/categories";
 
 /**
  * Category tile used on the marketplace, category landing pages and the
@@ -43,7 +43,7 @@ export function CategoryCard({
         </span>
         {count != null && (
           <span className="tabular mt-0.5 block text-[0.75rem]" style={{ color: "var(--ink-3)" }}>
-            {count.toLocaleString("en-IN")} listings
+            {formatCount(count)} listings
           </span>
         )}
       </span>

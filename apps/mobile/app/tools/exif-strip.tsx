@@ -18,8 +18,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   canDownloadFile, formatBytes, openResult, pickFile, runJob,
   type JobResult, type PickedFile,
@@ -193,7 +194,7 @@ export default function PhotoMetadataCleaner() {
         </View>
       ) : null}
 
-      <Pressable
+      <Press
         style={[s.primary, busy && s.dim]}
         onPress={choose}
         disabled={busy}
@@ -204,10 +205,10 @@ export default function PhotoMetadataCleaner() {
         ) : (
           <Text style={s.primaryText}>{file ? "Choose another photo" : "Choose a photo"}</Text>
         )}
-      </Pressable>
+      </Press>
 
       {done && !busy ? (
-        <Pressable
+        <Press
           style={s.secondary}
           onPress={async () => {
             const url = job?.outputUrl ?? job?.previewUrl;
@@ -220,15 +221,15 @@ export default function PhotoMetadataCleaner() {
           <Text style={s.secondaryText}>
             {canDownloadFile() ? "Save the cleaned photo" : "Open the cleaned photo"}
           </Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       {saved ? <Text style={s.hint}>Saved. The tags are not in the copy.</Text> : null}
 
       {file && !done && !busy && !error ? (
-        <Pressable style={s.secondary} onPress={() => clean(file)} accessibilityRole="button">
+        <Press style={s.secondary} onPress={() => clean(file)} accessibilityRole="button">
           <Text style={s.secondaryText}>Try again</Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       <Text style={s.foot}>

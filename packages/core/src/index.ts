@@ -28,7 +28,10 @@
  * in tsconfig.base.json.
  */
 export * from "./brand-scope.ts";
-export * from "./ai.ts";
+// `./ai.ts` was removed: all 15 of its exports (callJevDecisions, callChatCompletion,
+// the Jev* question/result types) had zero importers across apps/, services/ and
+// packages/ — verified with a repo-wide symbol search. Delete rather than keep: leaving
+// it re-exported made `@hermes/core` advertise an AI client this repo does not call.
 export * from "./payments.ts";
 
 export type CategoryStat = {
@@ -484,3 +487,50 @@ export const TRANSLATE_LANG_NAMES: Record<string, string> = {
 
 /** `English, Hindi, Bengali …` — what both the route's 400 and the screen's help say. */
 export const TRANSLATE_LANGS_HELP = TRANSLATE_LANGS.map((c) => TRANSLATE_LANG_NAMES[c] ?? c).join(", ");
+
+/**
+ * Read a required public environment variable, or fail with a message that says which
+ * one is missing and why that matters.
+ *
+ * Why this exists: two apps (`apps/highwaypass`, `apps/quick-driver`) used to fall back
+ * to a **hardcoded production** Supabase URL and publishable key when the variable was
+ * absent. That value is not a secret — a publishable key is designed to ship inside the
+ * client bundle — so the problem was never exposure. The problem was silence: a build or
+ * a local run that lost `EXPO_PUBLIC_SUPABASE_URL` would keep working and quietly talk to
+ * the production database. A missing variable has to be loud, and it has to name itself,
+ * because "cannot read property of undefined" three screens later tells nobody anything.
+ *
+ * Deliberately does not log the value: these are public keys, but a helper that prints
+ * whatever it is handed would print a service-role key just as happily.
+ */
+export function requireEnv(name: string, hint?: string): string {
+  const value = process.env[name];
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(
+      `Missing required environment variable ${name}.` +
+        (hint ? ` ${hint}` : "") +
+        ` Set it in the repo root .env (see .env.example) or in the build's environment.`,
+    );
+  }
+  return value;
+}
+
+/**
+ * The first of `names` that is set, or a loud failure naming all of them.
+ *
+ * Supabase renamed its client key mid-2025: the publishable key (`sb_publishable_…`)
+ * replaced the legacy anon JWT, and the apps accept either name. That is exactly the
+ * shape where a silent fallback hides a misconfiguration, so this reports every
+ * candidate rather than only the one it happened to check first.
+ */
+export function requireFirstEnv(names: readonly string[], hint?: string): string {
+  for (const name of names) {
+    const value = process.env[name];
+    if (typeof value === "string" && value.length > 0) return value;
+  }
+  throw new Error(
+    `Missing required environment variable: none of ${names.join(", ")} is set.` +
+      (hint ? ` ${hint}` : "") +
+      ` Set one in the repo root .env (see .env.example) or in the build's environment.`,
+  );
+}

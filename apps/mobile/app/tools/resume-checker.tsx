@@ -26,8 +26,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
+  ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   formatBytes, openResult, pickFile, runJob,
   type JobResult, type PickedFile,
@@ -231,7 +232,7 @@ export default function DocumentCheck() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, busy && s.dim]}
         onPress={() => (file ? check(file, keywords) : choose())}
         disabled={busy}
@@ -244,12 +245,12 @@ export default function DocumentCheck() {
             {file ? "Check this document" : "Choose a document"}
           </Text>
         )}
-      </Pressable>
+      </Press>
 
       {file && !busy ? (
-        <Pressable style={s.secondary} onPress={choose} accessibilityRole="button">
+        <Press style={s.secondary} onPress={choose} accessibilityRole="button">
           <Text style={s.secondaryText}>Choose another document</Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       {done ? (
@@ -350,9 +351,9 @@ export default function DocumentCheck() {
               <Text style={s.cardNote}>The report came back empty.</Text>
             )
           ) : (
-            <Pressable style={s.secondary} onPress={showText} accessibilityRole="button">
+            <Press style={s.secondary} onPress={showText} accessibilityRole="button">
               <Text style={s.secondaryText}>Show the text</Text>
-            </Pressable>
+            </Press>
           )}
         </View>
       ) : null}
@@ -373,7 +374,7 @@ export default function DocumentCheck() {
             />
           ) : (
             <>
-              <Pressable
+              <Press
                 style={s.secondary}
                 onPress={async () => {
                   const url = job?.outputUrl;
@@ -385,7 +386,7 @@ export default function DocumentCheck() {
                 <Text style={s.secondaryText}>
                   {job?.free ? "Save the report · free" : "Save the report"}
                 </Text>
-              </Pressable>
+              </Press>
               {job?.free ? (
                 <Text style={s.hint}>
                   This run was free — the report is yours, with no unlock step.

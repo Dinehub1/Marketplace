@@ -33,11 +33,22 @@ async function getAccessToken(): Promise<string> {
       throw new Error('Failed to get Spotify access token');
     }
 
-    const data = await response.json();
+    // `response.json()` is `any`, so a response missing these fields used to store
+    // `null` in `accessToken` and then hand that back as a `string` — the token would
+    // look cached but every later call would fail. Validating here turns a malformed
+    // response into one clear error instead.
+    const data = (await response.json()) as { access_token?: unknown; expires_in?: unknown };
+    if (typeof data.access_token !== 'string' || !data.access_token) {
+      throw new Error('Spotify token response had no access_token');
+    }
+    if (typeof data.expires_in !== 'number') {
+      throw new Error('Spotify token response had no expires_in');
+    }
+
     accessToken = data.access_token;
     // Set expiry to 5 minutes before actual expiry for safety
     tokenExpiry = Date.now() + (data.expires_in - 300) * 1000;
-    
+
     return accessToken;
   } catch (error) {
     console.error('Error getting Spotify access token:', error);

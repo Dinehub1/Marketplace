@@ -9,13 +9,14 @@
  * - AdBanner at the bottom.
  */
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Pressable } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
+import { Press } from "@/components/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { alpha, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { AdBanner } from "@/components/ad-slot";
-import { loadGameScores, recordRound, type GameRecord } from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 import {
   startSprint,
   submitAnswer,
@@ -27,16 +28,9 @@ export default function MathSprintScreen() {
   const insets = useSafeAreaInsets();
 
   const [state, setState] = useState<SprintState>(startSprint);
-  const [record, setRecord] = useState<GameRecord | null>(null);
+  const { best, saveRound } = useGameRecord("math-sprint");
   const [feedbackColor, setFeedbackColor] = useState<string | null>(null);
   const [rewardClaimed, setRewardClaimed] = useState(false);
-
-  // Load high scores
-  useEffect(() => {
-    loadGameScores().then((scores) => {
-      setRecord(scores["math-sprint"] || null);
-    });
-  }, []);
 
   // Timer loop
   useEffect(() => {
@@ -55,17 +49,17 @@ export default function MathSprintScreen() {
     return () => clearInterval(interval);
   }, [state.phase]);
 
-  // Round over: write score
+  // Round over: write score. Keyed on the phase alone — the score, solved count and
+  // streak are frozen by the time phase is "over" (both this timer and
+  // `submitAnswer` only mutate while it is "playing"), so the wider dependency list
+  // it used to carry could only ever re-run the save for the same round.
   useEffect(() => {
     if (state.phase === "over") {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      recordRound(
-        "math-sprint",
-        state.score,
-        `${state.solved} problems • Best streak ${state.bestStreak}`
-      ).then((res) => setRecord(res.record));
+      saveRound(state.score, `${state.solved} problems • Best streak ${state.bestStreak}`);
     }
-  }, [state.phase, state.score, state.solved, state.bestStreak]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.phase]);
 
   function handleChoice(idx: number) {
     if (state.phase !== "playing") return;
@@ -74,10 +68,12 @@ export default function MathSprintScreen() {
 
     if (isCorrect) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setFeedbackColor("#22c55e");
+      // From the theme, not a literal: `"#22c55e"` is the *dark* palette's positive
+      // green, so the "correct" flash was the wrong green on a light background.
+      setFeedbackColor(c.positive);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setFeedbackColor("#ef4444");
+      setFeedbackColor(c.critical);
     }
 
     setTimeout(() => setFeedbackColor(null), 250);
@@ -119,7 +115,7 @@ export default function MathSprintScreen() {
         <View>
           <Text style={[s.title, { color: c.ink }]}>Math Sprint</Text>
           <Text style={[s.subtitle, { color: c.ink2 }]}>
-            Best: {record?.best || 0} pts
+            {best === null ? "Best: —" : `Best: ${best} pts`}
           </Text>
         </View>
 
@@ -133,7 +129,7 @@ export default function MathSprintScreen() {
             style={[
               s.statBadge,
               {
-                backgroundColor: state.timeLeft <= 5 ? "#ef4444" : brand.primary,
+                backgroundColor: state.timeLeft <= 5 ? c.critical : brand.primary,
               },
             ]}
           >
@@ -180,24 +176,24 @@ export default function MathSprintScreen() {
           <View style={s.optionsContainer}>
             <View style={s.optionsRow}>
               {[0, 1].map((idx) => (
-                <Pressable
+                <Press
                   key={idx}
                   onPress={() => handleChoice(idx)}
                   style={[s.optionBtn, { backgroundColor: c.surfaceRaised, borderColor: c.hairline }]}
                 >
                   <Text style={[s.optionText, { color: c.ink }]}>{state.currentProblem.options[idx]}</Text>
-                </Pressable>
+                </Press>
               ))}
             </View>
             <View style={s.optionsRow}>
               {[2, 3].map((idx) => (
-                <Pressable
+                <Press
                   key={idx}
                   onPress={() => handleChoice(idx)}
                   style={[s.optionBtn, { backgroundColor: c.surfaceRaised, borderColor: c.hairline }]}
                 >
                   <Text style={[s.optionText, { color: c.ink }]}>{state.currentProblem.options[idx]}</Text>
-                </Pressable>
+                </Press>
               ))}
             </View>
           </View>
@@ -215,7 +211,7 @@ export default function MathSprintScreen() {
 
           <View style={s.actionRow}>
             {!rewardClaimed && (
-              <Pressable
+              <Press
                 onPress={handleRewardedRevive}
                 style={[
                   s.rewardBtn,
@@ -225,15 +221,15 @@ export default function MathSprintScreen() {
                 <Text style={[s.rewardBtnText, { color: brand.primary }]}>
                   🎁 +30s Extra Time (Rewarded Ad)
                 </Text>
-              </Pressable>
+              </Press>
             )}
 
-            <Pressable
+            <Press
               onPress={handleRestart}
               style={[s.restartBtn, { backgroundColor: brand.primary }]}
             >
               <Text style={s.restartBtnText}>Play Again</Text>
-            </Pressable>
+            </Press>
           </View>
         </View>
       )}

@@ -17,8 +17,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, saveDataUrl, type JobResult, type PickedFile } from "@/lib/tools";
 import { UnlockRow } from "@/components/unlock-row";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
@@ -126,7 +127,7 @@ export default function BackgroundRemover() {
       </Text>
 
       {canRunOnDevice ? (
-        <Pressable
+        <Press
           style={[s.flagRow, onDevice && s.flagRowOn]}
           onPress={() => setOnDevice((v) => !v)}
           accessibilityRole="button"
@@ -141,7 +142,7 @@ export default function BackgroundRemover() {
                 : "Runs the matting in your browser instead of on the server. Nothing is uploaded, nothing is charged."}
             </Text>
           </View>
-        </Pressable>
+        </Press>
       ) : null}
 
       <View style={s.frame}>
@@ -187,7 +188,7 @@ export default function BackgroundRemover() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, busy && s.dim]}
         onPress={choose}
         disabled={busy}
@@ -198,11 +199,11 @@ export default function BackgroundRemover() {
         ) : (
           <Text style={s.primaryText}>{file ? "Choose another photo" : "Choose a photo"}</Text>
         )}
-      </Pressable>
+      </Press>
 
       {done && !busy ? (
         local ? (
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => {
               if (saveDataUrl(local.dataUrl, `${(file?.name ?? "photo").replace(/\.[^.]+$/, "")}-nobg.png`)) {
@@ -212,7 +213,7 @@ export default function BackgroundRemover() {
             accessibilityRole="button"
           >
             <Text style={s.secondaryText}>Save the PNG</Text>
-          </Pressable>
+          </Press>
         ) : job?.locked && job.jobId ? (
           <UnlockRow
             job={job}
@@ -224,7 +225,7 @@ export default function BackgroundRemover() {
             onUnlocked={(url) => setJob({ ...job, locked: false, outputUrl: url })}
           />
         ) : (
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={async () => {
               const url = job?.outputUrl ?? job?.previewUrl;
@@ -237,7 +238,7 @@ export default function BackgroundRemover() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? "Save the PNG" : "Open the PNG"}
             </Text>
-          </Pressable>
+          </Press>
         )
       ) : null}
 
@@ -267,9 +268,9 @@ export default function BackgroundRemover() {
       {saved ? <Text style={s.hint}>Saved. The file keeps its transparency.</Text> : null}
 
       {file && !done && !busy && !error ? (
-        <Pressable style={s.secondary} onPress={() => (onDevice && canRunOnDevice ? runCutHere(file) : runCut(file))} accessibilityRole="button">
+        <Press style={s.secondary} onPress={() => (onDevice && canRunOnDevice ? runCutHere(file) : runCut(file))} accessibilityRole="button">
           <Text style={s.secondaryText}>Try the cut-out again</Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       <Text style={s.foot}>

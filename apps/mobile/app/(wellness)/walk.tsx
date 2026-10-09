@@ -55,7 +55,7 @@
  * twitch as the glyph widths change.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { alpha, radius, space } from "@hermes/tokens";
@@ -67,7 +67,7 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import { Button, Card, Text } from "@/components/ui";
+import { Button, Card, Press, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
 import { SyncBadge } from "@/components/sync-badge";
 import { ProfileAction, WellnessShell } from "@/components/wellness-shell";
@@ -506,7 +506,7 @@ function SoundToggle({
 }) {
   const ui = useProductUI("walk");
   return (
-    <Pressable
+    <Press
       onPress={onPress}
       accessibilityRole="switch"
       accessibilityState={{ checked: muted }}
@@ -525,7 +525,7 @@ function SoundToggle({
       ]}
     >
       <SpeakerGlyph color={muted ? ui.faint : ui.accent} muted={muted} />
-    </Pressable>
+    </Press>
   );
 }
 

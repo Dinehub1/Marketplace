@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Appearance, ColorSchemeName } from 'react-native';
+import { Appearance } from 'react-native';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -16,7 +16,13 @@ const THEME_STORAGE_KEY = '@app_theme_preference';
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('system');
-  const [systemTheme, setSystemTheme] = useState<ColorSchemeName>(Appearance.getColorScheme());
+  // `Appearance.getColorScheme()` returns `ColorSchemeName | null | undefined` while
+  // `useState` inferred only `ColorSchemeName` from the same call, so the initial value
+  // did not match. Deriving the state type from the getter keeps the two in step even if
+  // React Native widens the return type again.
+  const [systemTheme, setSystemTheme] = useState<ReturnType<typeof Appearance.getColorScheme>>(
+    Appearance.getColorScheme()
+  );
 
   // Load saved theme preference on mount
   useEffect(() => {

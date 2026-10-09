@@ -14,19 +14,15 @@
  */
 import { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
-  useWindowDimensions,
-  Pressable,
-  type LayoutChangeEvent,
+  StyleSheet, View, Text, useWindowDimensions, type LayoutChangeEvent,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { alpha, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { AdBanner } from "@/components/ad-slot";
-import { loadGameScores, recordRound, type GameRecord } from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 import {
   createSudoku,
   setCellValue,
@@ -49,7 +45,10 @@ const DIFFICULTIES: { id: Difficulty; label: string }[] = [
   { id: "expert", label: "Expert" },
 ];
 const MAX_MISTAKES = 3;
-const WRONG = "#ef4444";
+// Wrong-entry colour comes from the theme (`c.critical`), not a constant: the old
+// `"#ef4444"` here is the *dark* palette's critical red, so every wrong digit was
+// painted in the dark-mode colour on a light background. Read it inside the component
+// via the `wrong` alias below.
 
 function formatTime(s: number) {
   const mins = Math.floor(s / 60);
@@ -63,6 +62,9 @@ function newGame(diff: Difficulty) {
 
 export default function SudokuScreen() {
   const { c, brand, scheme } = useTheme();
+  /** The wrong-entry colour, from the theme so it is correct in both schemes.
+   *  Replaces a module-level `"#ef4444"` that was the dark palette's value. */
+  const wrong = c.critical;
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
 
@@ -70,7 +72,10 @@ export default function SudokuScreen() {
   const [selected, setSelected] = useState<number | null>(() => firstOpenCell(newGame("easy")));
   const [notesMode, setNotesMode] = useState(false);
   const [timerSec, setTimerSec] = useState(0);
-  const [record, setRecord] = useState<GameRecord | null>(null);
+  /** `best` is `null` until the store answers, which is what distinguishes "no best
+   *  yet" from "not read yet" — the old `record === null` check conflated the two and
+   *  showed "No best yet" during every load. */
+  const { best, saveRound } = useGameRecord("sudoku");
   const [boardArea, setBoardArea] = useState({ w: 0, h: 0 });
   const [toast, setToast] = useState<{ text: string; tone: "info" | "bad" } | null>(null);
 
@@ -94,19 +99,15 @@ export default function SudokuScreen() {
     return () => clearInterval(interval);
   }, [over]);
 
-  // Load scores
-  useEffect(() => {
-    loadGameScores().then((scores) => setRecord(scores.sudoku || null));
-  }, []);
+  // The device record is read by `useGameRecord` above, which owns the same
+  // read-once-on-mount behaviour this screen used to spell out.
 
   // Handle victory
   useEffect(() => {
     if (state.completed) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const score = Math.max(100, 2000 - timerSec * 2 - state.mistakes * 50);
-      recordRound("sudoku", score, `${state.difficulty.toUpperCase()} in ${formatTime(timerSec)}`).then(
-        (res) => setRecord(res.record)
-      );
+      saveRound(score, `${state.difficulty.toUpperCase()} in ${formatTime(timerSec)}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.completed]);
@@ -235,10 +236,14 @@ export default function SudokuScreen() {
           <Text style={[s.timer, { color: c.ink }]}>⏱ {formatTime(timerSec)}</Text>
         </View>
         <View style={s.statsRow}>
-          <Text style={[s.stat, { color: state.mistakes > 0 ? WRONG : c.ink2 }]}>
+          <Text style={[s.stat, { color: state.mistakes > 0 ? wrong : c.ink2 }]}>
             Mistakes {state.mistakes}/{MAX_MISTAKES}
           </Text>
-          <Text style={[s.stat, { color: c.ink2 }]}>{record ? `Best ${record.best}` : "No best yet"}</Text>
+          {/* Gated on `best` being non-null, not on the record being truthy: a stored
+              best of 0 and "not read yet" are different states. */}
+          <Text style={[s.stat, { color: c.ink2 }]}>
+            {best === null ? "Best —" : best === 0 ? "No best yet" : `Best ${best}`}
+          </Text>
         </View>
 
         {/* Difficulty segmented control */}
@@ -246,14 +251,14 @@ export default function SudokuScreen() {
           {DIFFICULTIES.map((d) => {
             const active = state.difficulty === d.id;
             return (
-              <Pressable
+              <Press
                 key={d.id}
                 onPress={() => handleNewGame(d.id)}
                 style={[s.segmentBtn, active && { backgroundColor: brand.primary }]}
                 accessibilityLabel={`New ${d.label} puzzle`}
               >
                 <Text style={[s.segmentText, { color: active ? "#ffffff" : c.ink2 }]}>{d.label}</Text>
-              </Pressable>
+              </Press>
             );
           })}
         </View>
@@ -282,12 +287,12 @@ export default function SudokuScreen() {
 
                 let bgColor = "transparent";
                 if (isSelected) bgColor = alpha(brand.primary, isDark ? 0.55 : 0.4);
-                else if (isWrongVal) bgColor = alpha(WRONG, 0.14);
+                else if (isWrongVal) bgColor = alpha(wrong, 0.14);
                 else if (isSameNum) bgColor = alpha(brand.primary, isDark ? 0.32 : 0.24);
                 else if (isRelated) bgColor = alpha(brand.primary, isDark ? 0.14 : 0.08);
 
                 return (
-                  <Pressable
+                  <Press
                     key={`cell-${idx}`}
                     onPress={() => handleCellPress(idx)}
                     style={[
@@ -308,7 +313,7 @@ export default function SudokuScreen() {
                           s.cellText,
                           {
                             fontSize: cellSize * 0.56,
-                            color: isWrongVal ? WRONG : isInitial ? c.ink : brand.primary,
+                            color: isWrongVal ? wrong : isInitial ? c.ink : brand.primary,
                             fontWeight: isInitial ? "700" : "600",
                           },
                         ]}
@@ -335,7 +340,7 @@ export default function SudokuScreen() {
                         ))}
                       </View>
                     ) : null}
-                  </Pressable>
+                  </Press>
                 );
               })}
             </View>
@@ -344,7 +349,7 @@ export default function SudokuScreen() {
           {/* Game over / victory overlay sits on the board, so the layout never jumps */}
           {over ? (
             <View style={[s.overlay, { backgroundColor: alpha(c.canvas, 0.88) }]}>
-              <Text style={[s.overlayTitle, { color: state.completed ? brand.primary : WRONG }]}>
+              <Text style={[s.overlayTitle, { color: state.completed ? brand.primary : wrong }]}>
                 {state.completed ? "🎉 Puzzle Solved!" : "Out of mistakes"}
               </Text>
               <Text style={[s.overlaySub, { color: c.ink }]}>
@@ -353,7 +358,7 @@ export default function SudokuScreen() {
               </Text>
               <View style={s.overlayActions}>
                 {failed ? (
-                  <Pressable
+                  <Press
                     onPress={() => {
                       // Second chance (rewarded ad slot): forgive the last mistake.
                       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -362,14 +367,14 @@ export default function SudokuScreen() {
                     style={[s.overlayBtn, { backgroundColor: alpha(brand.primary, 0.14) }]}
                   >
                     <Text style={[s.overlayBtnText, { color: brand.primary }]}>Second chance 🎁</Text>
-                  </Pressable>
+                  </Press>
                 ) : null}
-                <Pressable
+                <Press
                   onPress={() => handleNewGame(state.difficulty)}
                   style={[s.overlayBtn, { backgroundColor: brand.primary }]}
                 >
                   <Text style={[s.overlayBtnText, { color: "#ffffff" }]}>New Puzzle →</Text>
-                </Pressable>
+                </Press>
               </View>
             </View>
           ) : null}
@@ -378,7 +383,7 @@ export default function SudokuScreen() {
         {toast ? (
           <View
             pointerEvents="none"
-            style={[s.toast, { backgroundColor: toast.tone === "bad" ? WRONG : brand.primary }]}
+            style={[s.toast, { backgroundColor: toast.tone === "bad" ? wrong : brand.primary }]}
           >
             <Text style={s.toastText}>{toast.text}</Text>
           </View>
@@ -402,7 +407,7 @@ export default function SudokuScreen() {
           },
           { id: "hint", icon: "💡", label: "Hint", onPress: handleHint, active: false },
         ].map((t) => (
-          <Pressable
+          <Press
             key={t.id}
             onPress={t.onPress}
             disabled={over}
@@ -420,7 +425,7 @@ export default function SudokuScreen() {
           >
             <Text style={[s.toolIcon, { color: t.active ? "#ffffff" : brand.primary }]}>{t.icon}</Text>
             <Text style={[s.toolLabel, { color: t.active ? "#ffffff" : c.ink2 }]}>{t.label}</Text>
-          </Pressable>
+          </Press>
         ))}
       </View>
 
@@ -430,7 +435,7 @@ export default function SudokuScreen() {
           const left = 9 - counts[num];
           const done = left <= 0;
           return (
-            <Pressable
+            <Press
               key={num}
               onPress={() => handleNumInput(num)}
               disabled={done || over}
@@ -454,7 +459,7 @@ export default function SudokuScreen() {
                 {num}
               </Text>
               <Text style={[s.numLeft, { color: c.ink2 }]}>{done ? "✓" : left}</Text>
-            </Pressable>
+            </Press>
           );
         })}
       </View>

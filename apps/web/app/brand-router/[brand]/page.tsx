@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Brand } from "@/lib/brands";
 import { getBrand } from "@/lib/brands";
-import { titleize } from "@/lib/categories";
+import { formatCount, titleize } from "@/lib/categories";
 import { brandPublishesDirectory, categoriesForBrand } from "@/lib/brand-categories";
 import { matchBrandRoute } from "@/lib/brand-sitemap";
 import { resolveCategoryRoute } from "@/lib/brand-sitemap-resolve";
@@ -123,9 +123,9 @@ export async function generateMetadata(
   if (subPath === "/marketplace" || subPath === "/listings") {
     const listings = await getActiveListingCount(cityName);
     return {
-      title: `Business Directory in ${cityName} — ${listings.toLocaleString("en-IN")} Local Listings | ${brand.name}`,
+      title: `Business Directory in ${cityName} — ${formatCount(listings)} Local Listings | ${brand.name}`,
       description:
-        `Search ${listings.toLocaleString("en-IN")} businesses in ${cityName} — plumbers, electricians, ` +
+        `Search ${formatCount(listings)} businesses in ${cityName} — plumbers, electricians, ` +
         `doctors, tutors and more. Ratings, addresses and phone numbers you can call directly.`,
       alternates: { canonical: `${origin}/marketplace` },
     };

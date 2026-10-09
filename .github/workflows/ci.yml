@@ -98,6 +98,14 @@ jobs:
             exit 1
           fi
 
+      # The step above catches a drifted *colour*. It cannot catch a drifted brand *tint*
+      # strength, because those are generated from nothing: web derives them with CSS
+      # `color-mix` (it needs a custom property to survive `:hover`) and native derives
+      # them with a TypeScript constant (StyleSheet has no cascade). The same six numbers
+      # are written twice, in two languages, so nothing would notice a one-sided edit.
+      - name: Brand tint strengths agree between web and native
+        run: npm run check:brand-tokens
+
   mobile:
     name: Mobile bundles (iOS + Android)
     runs-on: ubuntu-latest

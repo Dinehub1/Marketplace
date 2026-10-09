@@ -3,6 +3,7 @@ import {
   type City,
   categoryPath,
   categoryAreaPath,
+  formatCount,
   getCategoryAreaIndex,
   getCategoryAreaListings,
   getCategoryIndex,
@@ -155,7 +156,7 @@ export async function CategoryAreaPage({
             <>
               <SectionHeading
                 title={page > 1 ? `${label} in ${areaLabel} — page ${page}` : `${label} in ${areaLabel}`}
-                subtitle={`${total.toLocaleString("en-IN")} ${total === 1 ? "business" : "businesses"} in ${areaLabel}`}
+                subtitle={`${formatCount(total)} ${total === 1 ? "business" : "businesses"} in ${areaLabel}`}
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

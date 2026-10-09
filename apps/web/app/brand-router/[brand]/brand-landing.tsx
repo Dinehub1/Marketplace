@@ -1,4 +1,5 @@
 import { brandPublishesDirectory } from "@/lib/brand-categories";
+import { formatCount } from "@/lib/categories";
 import { BrandHeader, BrandFooter } from "./brand-header";
 import type { Brand } from "@/lib/brands";
 import { getBrandBusinesses } from "@/lib/brands";
@@ -282,7 +283,7 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
           {(brand.features?.leads || brand.features?.payments || showListings) && (
             <div className="mt-9 flex flex-wrap justify-center gap-2">
               {showListings && (
-                <span className="chip tabular">{total.toLocaleString("en-IN")} verified listings</span>
+                <span className="chip tabular">{formatCount(total)} verified listings</span>
               )}
               {brand.features?.leads && <span className="chip">Lead capture</span>}
               {brand.features?.payments && <span className="chip">UPI payments</span>}
@@ -412,7 +413,7 @@ export async function BrandLanding({ brand }: { brand: Brand }) {
             <SectionHeading
               eyebrow="Directory"
               title="Featured businesses"
-              subtitle={`${total.toLocaleString("en-IN")} verified listings in Indore`}
+              subtitle={`${formatCount(total)} verified listings in Indore`}
               viewAllHref={isCustomerSite ? "/marketplace" : "/contact"}
               viewAllLabel="Browse all"
             />

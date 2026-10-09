@@ -24,7 +24,8 @@
  * as the shop's own when it is one phone's would be a lie the shopkeeper bills against.
  */
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Press } from "@/components/ui";
 import { useRouter } from "expo-router";
 import { countersOnThisPhone } from "@/lib/invoice-counter";
 import { productsFor, type Product } from "@/lib/products";
@@ -78,14 +79,14 @@ export default function ShopDashboard() {
                 ? "No bill has been made from this phone yet."
                 : `Bill numbers kept on this phone: ${shops} shop${shops === 1 ? "" : "s"}.`}
           </Text>
-          <Pressable
+          <Press
             style={s.heroCta}
             onPress={() => router.push(hero.route as never)}
             accessibilityRole="button"
             accessibilityLabel={`${hero.label}. ${hero.blurb} ${hero.price}`}
           >
             <Text style={s.heroCtaText}>Make a bill</Text>
-          </Pressable>
+          </Press>
           <Text style={s.heroPrice}>{hero.price}</Text>
         </View>
       ) : (
@@ -138,7 +139,7 @@ function SoonRow({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <Pressable
+    <Press
       style={[s.row, last && s.rowLast]}
       onPress={() => setOpen((v) => !v)}
       accessibilityRole="button"
@@ -160,7 +161,7 @@ function SoonRow({
           <Text style={[s.tagText, { color: ui.faint }]}>SOON</Text>
         </View>
       </View>
-    </Pressable>
+    </Press>
   );
 }
 

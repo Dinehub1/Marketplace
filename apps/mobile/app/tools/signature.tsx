@@ -13,9 +13,10 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator, Image, PanResponder, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, Image, PanResponder, ScrollView, StyleSheet, Text, View,
 } from "react-native";
 import { paletteFor } from "@hermes/tokens";
+import { Press } from "@/components/ui";
 import Svg, { Path, Line } from "react-native-svg";
 import { saveDataUrl } from "@/lib/tools";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
@@ -258,7 +259,7 @@ export default function SignatureMaker() {
       <Text style={s.label}>Pen</Text>
       <View style={s.toolRow}>
         {WIDTHS.map((w) => (
-          <Pressable
+          <Press
             key={w}
             onPress={() => setWidth(w)}
             accessibilityRole="button"
@@ -266,11 +267,11 @@ export default function SignatureMaker() {
             style={[s.tool, width === w && s.toolOn]}
           >
             <View style={{ height: w, width: 20, borderRadius: w, backgroundColor: width === w ? ui.c.brandSecondary : ui.muted }} />
-          </Pressable>
+          </Press>
         ))}
         <View style={s.spacer} />
         {INKS.map((o) => (
-          <Pressable
+          <Press
             key={o.id}
             onPress={() => setInk(o.value)}
             accessibilityRole="button"
@@ -279,10 +280,10 @@ export default function SignatureMaker() {
             style={[s.tool, ink === o.value && s.toolOn]}
           >
             <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: o.value }} />
-          </Pressable>
+          </Press>
         ))}
         <View style={s.spacer} />
-        <Pressable
+        <Press
           onPress={() => {
             setStrokes((prev) => prev.slice(0, -1));
             setPng(null);
@@ -292,8 +293,8 @@ export default function SignatureMaker() {
           style={[s.textTool, strokes.length === 0 && { opacity: 0.4 }]}
         >
           <Text style={s.textToolText}>Undo</Text>
-        </Pressable>
-        <Pressable
+        </Press>
+        <Press
           onPress={() => {
             setStrokes([]);
             setPng(null);
@@ -305,12 +306,12 @@ export default function SignatureMaker() {
           style={[s.textTool, strokes.length === 0 && { opacity: 0.4 }]}
         >
           <Text style={s.textToolText}>Clear</Text>
-        </Pressable>
+        </Press>
       </View>
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (strokes.length === 0 || busy) && s.dim]}
         onPress={exportPng}
         disabled={strokes.length === 0 || busy}
@@ -318,7 +319,7 @@ export default function SignatureMaker() {
         accessibilityState={{ disabled: strokes.length === 0 || busy }}
       >
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>Export PNG</Text>}
-      </Pressable>
+      </Press>
 
       {png ? (
         <View style={s.result}>

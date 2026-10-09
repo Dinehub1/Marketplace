@@ -14,20 +14,15 @@
  */
 import { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  useWindowDimensions,
-  type LayoutChangeEvent,
+  StyleSheet, View, Text, ScrollView, useWindowDimensions, type LayoutChangeEvent,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { alpha, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { AdBanner } from "@/components/ad-slot";
-import { recordRound } from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 import {
   initCrossword,
   enterLetter,
@@ -60,7 +55,9 @@ const KEYBOARD_ROWS = [
 ];
 const KEY_GAP = 5;
 const KB_PAD = 6;
-const WRONG = "#ef4444";
+// Wrong-letter colour comes from the theme (`c.critical`) via the `wrongColor` alias in
+// the component. The `"#ef4444"` that used to live here is the *dark* palette's critical
+// red, so a wrong letter was drawn in the dark-mode colour on a light background.
 
 function formatTime(s: number) {
   const mins = Math.floor(s / 60);
@@ -74,6 +71,12 @@ function scoreFor(sec: number, hints: number) {
 
 export default function CrosswordScreen() {
   const { c, brand, scheme } = useTheme();
+  /** Wrong-letter colour, from the theme so it is correct in both schemes.
+   *  Replaces a module-level `"#ef4444"` that was the dark palette's value.
+   *  Named `wrongColor`, not `wrong`: the cell renderer below already has a local
+   *  `wrong` boolean (`isWrong(...)`), and a colour alias called `wrong` is shadowed
+   *  inside that block — which would have assigned a boolean to a colour. */
+  const wrongColor = c.critical;
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
 
@@ -86,6 +89,15 @@ export default function CrosswordScreen() {
   const [viewMode, setViewMode] = useState<"grid" | "clues">("grid");
   const [boardArea, setBoardArea] = useState({ w: 0, h: 0 });
   const [toast, setToast] = useState<{ text: string; tone: "info" | "bad" } | null>(null);
+  const [justBeatBest, setJustBeatBest] = useState(false);
+
+  // This screen used to call `recordRound` without ever loading the record, so it
+  // wrote a high score it could never read back — the stored best was never shown
+  // and "New best" could never appear. `useGameRecord` is the read half.
+  const { record, ready: recordRead, best, previousBest, saveRound } = useGameRecord(
+    "crossword",
+    () => setJustBeatBest(true),
+  );
 
   const isDark = scheme === "dark";
   const compact = height < 720;
@@ -112,8 +124,7 @@ export default function CrosswordScreen() {
   useEffect(() => {
     if (state.solved) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      recordRound(
-        "crossword",
+      saveRound(
         scoreFor(timerSec, hints),
         `${state.puzzle.title} solved in ${formatTime(timerSec)}`
       );
@@ -188,6 +199,9 @@ export default function CrosswordScreen() {
     setHints(0);
     setViewMode("grid");
     setToast(null);
+    // Clear the "new best" celebration, or it would still be showing on the next
+    // puzzle's win screen and claim a record the player did not just set.
+    setJustBeatBest(false);
   }
 
   function handleNextPuzzle() {
@@ -214,7 +228,7 @@ export default function CrosswordScreen() {
           const isCurrent = activeDir === dir && activeClue.num === item.num;
           const filled = isClueFilled(item, dir);
           return (
-            <Pressable
+            <Press
               key={`${dir}-${item.num}`}
               onPress={() => {
                 Haptics.selectionAsync();
@@ -240,7 +254,7 @@ export default function CrosswordScreen() {
                   {item.answer.length} letters{filled ? "  ✓" : ""}
                 </Text>
               </View>
-            </Pressable>
+            </Press>
           );
         })}
       </>
@@ -267,7 +281,7 @@ export default function CrosswordScreen() {
         </View>
 
         <View style={s.headerActions}>
-          <Pressable
+          <Press
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setViewMode((m) => (m === "grid" ? "clues" : "grid"));
@@ -283,21 +297,21 @@ export default function CrosswordScreen() {
             >
               {viewMode === "clues" ? "Grid" : "Clues"}
             </Text>
-          </Pressable>
-          <Pressable
+          </Press>
+          <Press
             onPress={handleCheck}
             disabled={state.solved}
             style={[s.actionBtn, { backgroundColor: alpha(brand.primary, 0.12) }]}
           >
             <Text style={[s.actionBtnText, { color: brand.primary }]}>Check</Text>
-          </Pressable>
-          <Pressable
+          </Press>
+          <Press
             onPress={handleHint}
             disabled={state.solved}
             style={[s.actionBtn, { backgroundColor: alpha(brand.primary, 0.12) }]}
           >
             <Text style={[s.actionBtnText, { color: brand.primary }]}>Hint 🎁</Text>
-          </Pressable>
+          </Press>
         </View>
       </View>
 
@@ -332,13 +346,13 @@ export default function CrosswordScreen() {
                   } else if (inWord) {
                     bg = alpha(brand.primary, isDark ? 0.28 : 0.18);
                   }
-                  if (wrong) letterColor = WRONG;
+                  if (wrong) letterColor = wrongColor;
                   else if (revealed && !isSelected) letterColor = brand.primary;
 
                   const num = isBlack ? undefined : cellNumber(state.puzzle, r, col);
 
                   return (
-                    <Pressable
+                    <Press
                       key={`${r}-${col}`}
                       disabled={isBlack}
                       onPress={() => handleCellPress(r, col)}
@@ -372,9 +386,9 @@ export default function CrosswordScreen() {
                           {cell}
                         </Text>
                       ) : null}
-                      {wrong ? <View style={[s.wrongSlash, { backgroundColor: WRONG }]} /> : null}
+                      {wrong ? <View style={[s.wrongSlash, { backgroundColor: wrongColor }]} /> : null}
                       {revealed ? <View style={[s.revealDot, { backgroundColor: brand.primary }]} /> : null}
-                    </Pressable>
+                    </Press>
                   );
                 })}
               </View>
@@ -388,7 +402,7 @@ export default function CrosswordScreen() {
             pointerEvents="none"
             style={[
               s.toast,
-              { backgroundColor: toast.tone === "bad" ? WRONG : brand.primary },
+              { backgroundColor: toast.tone === "bad" ? wrongColor : brand.primary },
             ]}
           >
             <Text style={s.toastText}>{toast.text}</Text>
@@ -406,26 +420,37 @@ export default function CrosswordScreen() {
             {formatTime(timerSec)} • {hints} hint{hints === 1 ? "" : "s"} • Score:{" "}
             {scoreFor(timerSec, hints)} pts
           </Text>
+          {/* The stored best, which this screen previously wrote but never read.
+              `recordRead` gates it so the line does not flash a misleading 0 on the
+              first win of a fresh install, and `previousBest` is the number this
+              round had to beat — the same one `recordRound` compared against. */}
+          {recordRead ? (
+            <Text style={[s.victorySub, { color: c.ink2 }]}>
+              {justBeatBest
+                ? `🏆 New best on this device — was ${previousBest ?? 0} pts`
+                : `Best on this device: ${best ?? 0} pts · ${record.rounds} solved`}
+            </Text>
+          ) : null}
           <View style={s.victoryActions}>
-            <Pressable
+            <Press
               onPress={handleReset}
               style={[s.victoryBtn, { backgroundColor: alpha(brand.primary, 0.12) }]}
             >
               <Text style={[s.victoryBtnText, { color: brand.primary }]}>Play Again</Text>
-            </Pressable>
-            <Pressable
+            </Press>
+            <Press
               onPress={handleNextPuzzle}
               style={[s.victoryBtn, { backgroundColor: brand.primary }]}
             >
               <Text style={[s.victoryBtnText, { color: "#ffffff" }]}>Next Puzzle →</Text>
-            </Pressable>
+            </Press>
           </View>
         </View>
       ) : (
         <View>
           {/* Active clue bar */}
           <View style={[s.clueBar, { backgroundColor: alpha(brand.primary, 0.1) }]}>
-            <Pressable
+            <Press
               onPress={() => {
                 Haptics.selectionAsync();
                 setState((prev) => prevClue(prev));
@@ -435,9 +460,9 @@ export default function CrosswordScreen() {
               accessibilityLabel="Previous clue"
             >
               <Text style={[s.clueArrowText, { color: brand.primary }]}>‹</Text>
-            </Pressable>
+            </Press>
 
-            <Pressable
+            <Press
               style={s.clueCenter}
               onPress={() => {
                 Haptics.selectionAsync();
@@ -451,9 +476,9 @@ export default function CrosswordScreen() {
               <Text style={[s.clueText, { color: c.ink }]} numberOfLines={2}>
                 {activeClue.clue}
               </Text>
-            </Pressable>
+            </Press>
 
-            <Pressable
+            <Press
               onPress={() => {
                 Haptics.selectionAsync();
                 setState((prev) => nextClue(prev));
@@ -463,7 +488,7 @@ export default function CrosswordScreen() {
               accessibilityLabel="Next clue"
             >
               <Text style={[s.clueArrowText, { color: brand.primary }]}>›</Text>
-            </Pressable>
+            </Press>
           </View>
 
           {/* Keyboard */}
@@ -473,7 +498,7 @@ export default function CrosswordScreen() {
                 {row.map((k) => {
                   const isBack = k === "⌫";
                   return (
-                    <Pressable
+                    <Press
                       key={k}
                       onPress={() => handleKeyPress(k)}
                       style={({ pressed }) => [
@@ -499,7 +524,7 @@ export default function CrosswordScreen() {
                       >
                         {k}
                       </Text>
-                    </Pressable>
+                    </Press>
                   );
                 })}
               </View>

@@ -1,13 +1,27 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { requireEnv, requireFirstEnv } from '@hermes/core';
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://xpfmqpmhmcouwzebfwhb.supabase.co';
-const supabaseAnonKey =
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    'sb_publishable_XN_U25XfcBdLbXVJhraMsQ_1RQtM_Nc';
+/**
+ * These two used to fall back to a hardcoded production URL and publishable key.
+ *
+ * That value is not a secret — a publishable key is designed to ship inside the client
+ * bundle, and the same one is committed in the repo root `.env` — so the problem was
+ * never exposure. It was silence: a build or local run that lost
+ * `EXPO_PUBLIC_SUPABASE_URL` kept working and quietly talked to the production database.
+ * Failing here, by name, is the point. Supabase renamed the client key in 2025
+ * (`sb_publishable_…` replaced the legacy anon JWT), so either name is accepted.
+ */
+const supabaseUrl = requireEnv(
+    'EXPO_PUBLIC_SUPABASE_URL',
+    'The app cannot reach Supabase without it.',
+);
+const supabaseAnonKey = requireFirstEnv(
+    ['EXPO_PUBLIC_SUPABASE_ANON_KEY', 'EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY'],
+    'Supabase renamed the client key to the publishable key; set either name.',
+);
 
 // Platform-aware storage adapter:
 // - SSR (Node.js): in-memory no-op (window doesn't exist during pre-render)

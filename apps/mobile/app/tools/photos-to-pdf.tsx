@@ -15,8 +15,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   MULTI_MAX, canDownloadFile, formatBytes, openResult, pickFiles, runJob,
   type JobResult, type PickedFile,
@@ -123,7 +124,7 @@ export default function PhotosToPdf() {
                 <Text style={s.rowName} numberOfLines={1}>{f.name}</Text>
                 <Text style={s.rowMeta}>page {i + 1} · {formatBytes(f.size) || "size unknown"}</Text>
               </View>
-              <Pressable
+              <Press
                 onPress={() => remove(i)}
                 accessibilityRole="button"
                 accessibilityLabel={`Remove ${f.name} from the PDF`}
@@ -131,7 +132,7 @@ export default function PhotosToPdf() {
                 style={s.remove}
               >
                 <Text style={s.removeText}>Remove</Text>
-              </Pressable>
+              </Press>
             </View>
           ))}
         </View>
@@ -156,7 +157,7 @@ export default function PhotosToPdf() {
         {PAGE_SIZES.map((p) => {
           const on = p.value === size;
           return (
-            <Pressable
+            <Press
               key={p.value}
               onPress={() => {
                 setSize(p.value);
@@ -167,7 +168,7 @@ export default function PhotosToPdf() {
               style={[s.chip, on && s.chipOn]}
             >
               <Text style={[s.chipText, on && s.chipTextOn]}>{p.label}</Text>
-            </Pressable>
+            </Press>
           );
         })}
       </View>
@@ -192,7 +193,7 @@ export default function PhotosToPdf() {
         </View>
       ) : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (busy || !files.length) && s.dim]}
         onPress={make}
         disabled={busy || !files.length}
@@ -207,9 +208,9 @@ export default function PhotosToPdf() {
               : "Add photos first"}
           </Text>
         )}
-      </Pressable>
+      </Press>
 
-      <Pressable
+      <Press
         style={[s.secondary, full && s.dim]}
         onPress={add}
         disabled={full}
@@ -218,10 +219,10 @@ export default function PhotosToPdf() {
         <Text style={s.secondaryText}>
           {full ? `That is all ${MULTI_MAX} photos` : files.length ? "Add more photos" : "Add photos"}
         </Text>
-      </Pressable>
+      </Press>
 
       {done && !busy ? (
-        <Pressable
+        <Press
           style={s.secondary}
           onPress={async () => {
             if (!pdfUrl) return;
@@ -233,7 +234,7 @@ export default function PhotosToPdf() {
           <Text style={s.secondaryText}>
             {canDownloadFile() ? "Save the PDF" : "Open the PDF"}
           </Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       {saved ? <Text style={s.hint}>Saved. Check the page order before you send it.</Text> : null}

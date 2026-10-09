@@ -1,7 +1,7 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { LeadForm } from "./lead-form";
 import { ClaimBox } from "./claim-box";
-import { CITY_LABEL, categoryPath, cleanBusinessName, localityOf, titleize, telHref, waHref } from "@/lib/categories";
+import { CITY_LABEL, categoryPath, cleanBusinessName, formatCount, localityOf, titleize, telHref, waHref } from "@/lib/categories";
 import { safeJsonLd } from "@/lib/json-ld";
 import { BusinessCard, type BusinessCardData } from "@/components/directory/BusinessCard";
 import { ReviewsBox } from "./reviews-box";
@@ -254,7 +254,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: Brand; 
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.6l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.5 6.1 20.6l1.2-6.5-4.8-4.6 6.6-.9z"/></svg>
                     {Number(biz.rating).toFixed(1)}
                     {biz.reviews_count != null && (
-                      <span style={{ opacity: 0.66, fontWeight: 520 }}>({biz.reviews_count.toLocaleString("en-IN")})</span>
+                      <span style={{ opacity: 0.66, fontWeight: 520 }}>({formatCount(biz.reviews_count)})</span>
                     )}
                   </span>
                 )}
@@ -391,7 +391,7 @@ export async function BusinessDetailPage({ brand, businessId }: { brand: Brand; 
                     <div>
                       <p className="font-semibold text-ink">
                         {biz.rating} <span className="font-normal text-ink-3">/ 5</span>
-                        {reviewsShown != null && <span className="ml-1 font-normal text-ink-3">· {reviewsShown.toLocaleString("en-IN")} reviews</span>}
+                        {reviewsShown != null && <span className="ml-1 font-normal text-ink-3">· {formatCount(reviewsShown)} reviews</span>}
                       </p>
                       {mapsUrl && (
                         <a href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track="directions_click" className="press text-xs underline" style={{ color: "var(--brand-secondary)" }}>

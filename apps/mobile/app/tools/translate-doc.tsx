@@ -31,8 +31,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View,
+  ActivityIndicator, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { TRANSLATE_LANG_NAMES, TRANSLATE_LANGS, TRANSLATE_LANGS_HELP } from "@hermes/core";
 import {
   formatBytes, openResult, pickFile, runJob,
@@ -114,7 +115,7 @@ function LangRow({
       {TRANSLATE_LANGS.map((c) => {
         const on = c === code;
         return (
-          <Pressable
+          <Press
             key={c}
             onPress={() => onPick(c)}
             accessibilityRole="button"
@@ -123,7 +124,7 @@ function LangRow({
             style={[s.chip, on && s.chipOn]}
           >
             <Text style={[s.chipText, on && s.chipTextOn]}>{langLabel(c)}</Text>
-          </Pressable>
+          </Press>
         );
       })}
     </View>
@@ -256,9 +257,9 @@ export default function DocumentTranslation() {
       <LangRow code={source} onPick={setSource} s={s} />
 
       <View style={s.swapRow}>
-        <Pressable style={s.swap} onPress={swap} accessibilityRole="button">
+        <Press style={s.swap} onPress={swap} accessibilityRole="button">
           <Text style={s.swapText}>⇅ Swap the two</Text>
-        </Pressable>
+        </Press>
       </View>
 
       <Text style={s.label}>Translate into</Text>
@@ -273,7 +274,7 @@ export default function DocumentTranslation() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (busy || source === target) && s.dim]}
         onPress={() => (file ? translate(file, source, target) : choose())}
         disabled={busy || (!!file && source === target)}
@@ -288,12 +289,12 @@ export default function DocumentTranslation() {
               : "Choose a document"}
           </Text>
         )}
-      </Pressable>
+      </Press>
 
       {file && !busy ? (
-        <Pressable style={s.secondary} onPress={choose} accessibilityRole="button">
+        <Press style={s.secondary} onPress={choose} accessibilityRole="button">
           <Text style={s.secondaryText}>Choose another document</Text>
-        </Pressable>
+        </Press>
       ) : null}
 
       {done ? (
@@ -383,7 +384,7 @@ export default function DocumentTranslation() {
             />
           ) : (
             <>
-              <Pressable
+              <Press
                 style={s.secondary}
                 onPress={async () => {
                   const url = job?.outputUrl;
@@ -398,7 +399,7 @@ export default function DocumentTranslation() {
                 <Text style={s.secondaryText}>
                   {job?.free ? "Save the translation · free" : "Save the translation"}
                 </Text>
-              </Pressable>
+              </Press>
               {job?.free ? (
                 <Text style={s.hint}>
                   This run was free — the translation is yours, with no unlock step.

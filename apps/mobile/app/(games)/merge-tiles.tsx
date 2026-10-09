@@ -56,12 +56,7 @@ import { useTheme } from "@/lib/theme";
 import { Press } from "@/components/ui";
 import { AdBanner } from "@/components/ad-slot";
 import { useReduceMotion } from "@/lib/motion";
-import {
-  EMPTY_RECORD,
-  loadGameScores,
-  recordRound,
-  type GameRecord,
-} from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 import {
   at,
   bestTile,
@@ -246,7 +241,7 @@ export default function MergeTiles() {
   const [tiles, setTiles] = useState<Tile[]>([]);
   const [notice, setNotice] = useState("");
   const [rewardUsed, setRewardUsed] = useState(false);
-  const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
+  const { record, saveRound } = useGameRecord(GAME);
   const [soundOn, setSoundOn] = useState(true);
   /** The measured area the board gets. Null on the first frame, which falls back to a
    *  window estimate so the opening board is already the right size. */
@@ -342,16 +337,11 @@ export default function MergeTiles() {
     }
   }
 
-  // The device record and sound preference are read on mount, and the round starts immediately
+  // The sound preference is read on mount, and the round starts immediately.
+  // The device record is read by `useGameRecord` above, which owns the same
+  // read-once-on-mount behaviour this effect used to share.
   useEffect(() => {
     let live = true;
-    loadGameScores()
-      .then((scores) => {
-        if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
-      })
-      .catch(() => {
-        /* No stored scores yet is the first run, not a failure: the header shows 0. */
-      });
     AsyncStorage.getItem(SOUND_KEY)
       .then((value) => {
         if (!live) return;
@@ -503,12 +493,11 @@ export default function MergeTiles() {
     const line =
       `${game.moves} ${game.moves === 1 ? "move" : "moves"} · best tile ${game.reached}` +
       (game.won ? ` · ${WIN_TILE} reached` : "");
-    recordRound(GAME, game.score, line)
-      .then(({ record: next }) => setRecord(next))
-      .catch(() => {
-        /* A device that will not store a score still plays the game. */
-      });
-  }, [game]);
+    // `saveRound` persists the round; the header reads the record it returns.
+    saveRound(game.score, line).catch(() => {
+      /* A device that will not store a score still plays the game. */
+    });
+  }, [game, saveRound]);
 
   /**
    * The rewarded ad, kept: the board and the score go back exactly one move, which puts at

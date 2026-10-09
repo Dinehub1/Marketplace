@@ -25,6 +25,7 @@ import { addToFavorites, checkIsFavorite, getEventById, getEventOccurrences, get
 import { AppColors, PremiumColors } from '../../constants/Colors';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLocation } from '../../contexts/LocationContext';
+import type { EventTicketRow } from '../../types/event';
 import { shareEvent } from '../../utils/shareUtils';
 
 const { width, height } = Dimensions.get('window');
@@ -420,21 +421,22 @@ export default function BookEventScreen() {
   };
 
   // Prohibited Items Data from database
-  const getProhibitedItems = () => {
+  const getProhibitedItems = (): any[] => {
     const itemsData = event.event_prohibited_items?.[0]?.items_data || [];
     return itemsData.length > 0 ? itemsData : [
       { name: 'No prohibited items specified', icon: 'information-circle-outline' }
     ];
   };
 
-  // FAQ Data from database
-  const getFaqData = () => {
+  // FAQ Data from database. `content_data` is a JSON column, so the rows are `any` —
+  // typed as an array so the `.map((faq) => …)` callbacks below get a real parameter.
+  const getFaqData = (): any[] => {
     const contentData = event.event_faq_terms?.[0]?.content_data || {};
     return contentData.faq || [];
   };
 
   // Terms Data from database
-  const getTermsData = () => {
+  const getTermsData = (): any[] => {
     const contentData = event.event_faq_terms?.[0]?.content_data || {};
     return contentData.terms || [];
   };
@@ -455,35 +457,43 @@ export default function BookEventScreen() {
   };
 
   // Gallery functionality
-  const getGalleryImages = () => {
+  // The explicit return types below are load-bearing under `strict`. `event` is `any`,
+  // so a bare `return event.x || []` infers the literal `never[]`, which makes every
+  // `.map((img, index) => …)` callback parameter implicitly `any` again — the errors
+  // pointed at the callbacks, but the cause was here.
+  const getGalleryImages = (): string[] => {
     return event.gallery_images || [];
   };
 
   // Experiences data from database
-  const getExperiences = () => {
+  const getExperiences = (): any[] => {
     return event.event_experiences || [];
   };
 
   // Partners data from database
-  const getPartners = () => {
+  const getPartners = (): any[] => {
     return event.event_partners || [];
   };
 
   // Artists data from database
-  const getEventArtists = () => {
+  const getEventArtists = (): any[] => {
     return event.event_artists || [];
   };
 
   // Cover charge tickets - Use occurrence tickets if available, otherwise fallback to event tickets
-  const getCoverChargeTickets = () => {
+  // Explicit return type for the same reason as getGalleryImages: without it the `return []`
+  // branch infers `never[]` and the `.filter(ticket => …)` callbacks become implicit `any`.
+  const getCoverChargeTickets = (): any[] => {
     // If we have occurrence tickets loaded, use those
     if (occurrenceTickets.length > 0) {
       return occurrenceTickets.filter(ticket => ticket.ticket_cover_enabled);
     }
     
-    // Fallback to event tickets
-    if (!event?.event_ticket_types) return [];
-    return event.event_ticket_types.filter(ticket => ticket.ticket_cover_enabled);
+    // Fallback to event tickets. Cast to the ticket row shape: `event` is `any`, so
+    // without it every `.filter`/`.find` callback below is an implicit-`any` error and
+    // `ticket.available` / `ticket.price` are unchecked.
+    const eventTickets = (event.event_ticket_types || []) as EventTicketRow[];
+    return eventTickets.filter(ticket => ticket.ticket_cover_enabled);
   };
 
   const handleGalleryImagePress = (imageUrl: string, index: number) => {
@@ -498,7 +508,7 @@ export default function BookEventScreen() {
   const updateTicketCount = (ticketId: string, change: number) => {
     const currentCount = selectedTickets[ticketId] || 0;
     const newCount = Math.max(0, currentCount + change);
-    const ticket = (event.event_ticket_types || []).find(t => t.id === ticketId);
+    const ticket = ((event.event_ticket_types || []) as EventTicketRow[]).find(t => t.id === ticketId);
     
     if (ticket && newCount <= ticket.available) {
       setSelectedTickets(prev => ({
@@ -510,7 +520,7 @@ export default function BookEventScreen() {
 
   const getTotalAmount = () => {
     return Object.entries(selectedTickets).reduce((total, [ticketId, count]) => {
-      const ticket = (event.event_ticket_types || []).find(t => t.id === ticketId);
+      const ticket = ((event.event_ticket_types || []) as EventTicketRow[]).find(t => t.id === ticketId);
       return total + (ticket ? ticket.price * count : 0);
     }, 0);
   };
@@ -529,7 +539,7 @@ export default function BookEventScreen() {
     const ticketSummary = Object.entries(selectedTickets)
       .filter(([_, count]) => count > 0)
       .map(([ticketId, count]) => {
-        const ticket = (event.event_ticket_types || []).find(t => t.id === ticketId);
+        const ticket = ((event.event_ticket_types || []) as EventTicketRow[]).find(t => t.id === ticketId);
         return `${count}x ${ticket?.name}`;
       })
       .join(', ');
@@ -1298,7 +1308,7 @@ export default function BookEventScreen() {
                 </View>
                 
                 {/* Additional inclusions from ticket features */}
-                {selectedTicketForInclusions?.features?.map((feature, index) => (
+                {selectedTicketForInclusions?.features?.map((feature: any, index: number) => (
                   <View key={index} style={styles.inclusionBulletItem}>
                     <View style={styles.inclusionBulletPoint} />
                     <Text style={styles.inclusionBulletText}>{feature}</Text>

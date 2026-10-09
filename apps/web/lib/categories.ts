@@ -28,6 +28,12 @@ export {
   cleanArea,
   localityOf,
   cleanBusinessName,
+  // `formatCount` was missing from this whitelist, so the web app wrote
+  // `n.toLocaleString("en-IN")` inline in 12 places while the Expo app called
+  // `formatCount` from core — the same display value derived two ways, for the very
+  // number (reviews) that appears on both surfaces. Re-exported here so web can use the
+  // one implementation without changing how any call site imports it.
+  formatCount,
   titleize,
   telHref,
   waHref,

@@ -32,7 +32,8 @@
  * business: the engine prints whatever number it is given.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Press } from "@/components/ui";
 import { counterLabel, nextBillNo, parseBillNo, shopKeyOf, type InvoiceCounter } from "@hermes/core";
 import { paletteFor } from "@hermes/tokens";
 import { canDownloadFile, openResult, runJob, type JobResult } from "@/lib/tools";
@@ -439,7 +440,7 @@ export default function InvoiceMaker() {
               keyboardType="decimal-pad"
               style={[s.input, s.itemRate]}
             />
-            <Pressable
+            <Press
               onPress={() => {
                 setItems((prev) => (prev.length === 1 ? prev : prev.filter((x) => x.id !== it.id)));
                 setJob(null);
@@ -450,7 +451,7 @@ export default function InvoiceMaker() {
               style={[s.itemRemove, items.length === 1 && { opacity: 0.35 }]}
             >
               <Text style={s.itemRemoveText}>×</Text>
-            </Pressable>
+            </Press>
           </View>
           <View style={s.itemMeta}>
             {/* The field is 104 px wide (75 px of room inside it) and the placeholder is
@@ -470,7 +471,7 @@ export default function InvoiceMaker() {
             />
             <View style={s.chipRow}>
               {[null, 0, 5, 12, 18].map((r) => (
-                <Pressable
+                <Press
                   key={String(r)}
                   onPress={() => setItem(it.id, { gstRate: r })}
                   accessibilityRole="button"
@@ -480,13 +481,13 @@ export default function InvoiceMaker() {
                   <Text style={[s.chipText, it.gstRate === r && { color: ui.accent }]}>
                     {r === null ? "Bill" : `${r}%`}
                   </Text>
-                </Pressable>
+                </Press>
               ))}
             </View>
           </View>
         </View>
       ))}
-      <Pressable
+      <Press
         style={s.secondary}
         onPress={() => {
           const id = nextId.current++;
@@ -495,7 +496,7 @@ export default function InvoiceMaker() {
         accessibilityRole="button"
       >
         <Text style={s.secondaryText}>+ Add another item</Text>
-      </Pressable>
+      </Press>
       <Text style={s.help}>
         HSN is the code a B2B bill wants on the line — it is optional, so leave it empty if you
         do not have one. The rate chips set that item&apos;s own GST: “Bill” follows the rate below,
@@ -505,7 +506,7 @@ export default function InvoiceMaker() {
       <Text style={s.section}>GST</Text>
       <View style={s.rateRow}>
         {GST_RATES.map((r) => (
-          <Pressable
+          <Press
             key={r}
             onPress={() => {
               setGstRate(r);
@@ -516,7 +517,7 @@ export default function InvoiceMaker() {
             style={[s.rate, gstRate === r && s.rateOn]}
           >
             <Text style={[s.rateText, gstRate === r && { color: ui.accent }]}>{r}%</Text>
-          </Pressable>
+          </Press>
         ))}
       </View>
       <Text style={s.help}>
@@ -619,7 +620,7 @@ export default function InvoiceMaker() {
       {missing ? <Text style={s.missing}>{missing}</Text> : null}
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (!!missing || busy) && s.dim]}
         onPress={makePdf}
         disabled={!!missing || busy}
@@ -627,7 +628,7 @@ export default function InvoiceMaker() {
         accessibilityState={{ disabled: !!missing || busy }}
       >
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>Make the invoice PDF</Text>}
-      </Pressable>
+      </Press>
 
       {job?.locked && job.jobId ? (
         <View style={s.result}>
@@ -644,7 +645,7 @@ export default function InvoiceMaker() {
       {outputUrl ? (
         <View style={s.result}>
           <Text style={s.label}>The PDF</Text>
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => openResult(outputUrl, fileName)}
             accessibilityRole="button"
@@ -652,7 +653,7 @@ export default function InvoiceMaker() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? `Download ${fileName}` : `Open ${fileName}`}
             </Text>
-          </Pressable>
+          </Press>
           <Text style={s.hint}>
             It carries exactly the {filledItems.length === 1 ? "one item" : `${filledItems.length} items`}{" "}
             above at {rateLabel} GST, and nothing else.

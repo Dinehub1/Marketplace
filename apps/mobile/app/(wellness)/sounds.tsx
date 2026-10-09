@@ -12,7 +12,8 @@
  * - AdBanner at the bottom (generates hundreds of impressions during long sessions).
  */
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { Press } from "@/components/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { setAudioModeAsync } from "expo-audio";
@@ -154,7 +155,7 @@ export default function AmbientSoundsScreen() {
           </Text>
         </View>
 
-        <Pressable
+        <Press
           onPress={handleMasterToggle}
           style={[
             s.playBtn,
@@ -164,14 +165,14 @@ export default function AmbientSoundsScreen() {
           <Text style={[s.playBtnText, { color: isPlaying ? "#ffffff" : c.ink }]}>
             {isPlaying ? "Pause ⏸" : "Play ▶"}
           </Text>
-        </Pressable>
+        </Press>
       </View>
 
       {/* ── Sleep Timer Bar ── */}
       <View style={s.timerBar}>
         <Text style={[s.timerLabel, { color: c.ink2 }]}>SLEEP TIMER:</Text>
         {[15, 30, 45, 60].map((mins) => (
-          <Pressable
+          <Press
             key={mins}
             onPress={() => handleSetTimer(mins)}
             style={[
@@ -190,7 +191,7 @@ export default function AmbientSoundsScreen() {
             >
               {mins}m
             </Text>
-          </Pressable>
+          </Press>
         ))}
       </View>
 
@@ -204,7 +205,7 @@ export default function AmbientSoundsScreen() {
           const isLocked = snd.isPremium && !premiumUnlocked;
 
           return (
-            <Pressable
+            <Press
               key={snd.id}
               onPress={() => toggleSound(snd)}
               style={[
@@ -234,7 +235,7 @@ export default function AmbientSoundsScreen() {
                   {isActive ? "Active" : "Tap to Play"}
                 </Text>
               )}
-            </Pressable>
+            </Press>
           );
         })}
       </ScrollView>

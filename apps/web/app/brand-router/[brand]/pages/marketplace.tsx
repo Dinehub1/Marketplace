@@ -1,6 +1,6 @@
 import { BrandHeader, BrandFooter } from "../brand-header";
 import { categoriesForBrand } from "@/lib/brand-categories";
-import { categoryPath, type City, getAreaIndex, titleize } from "@/lib/categories";
+import { categoryPath, formatCount, type City, getAreaIndex, titleize } from "@/lib/categories";
 import { CategoryIcon } from "@/lib/icons";
 import { BusinessCard, type BusinessCardData } from "@/components/directory/BusinessCard";
 import { CategoryCard } from "@/components/directory/CategoryCard";
@@ -264,7 +264,7 @@ export async function MarketplacePage({ brand, sp = {}, city }: { brand: Brand; 
 
           <SectionHeading
             title={filtered ? "Results" : "Top rated businesses"}
-            subtitle={filtered ? `${total.toLocaleString("en-IN")} ${total === 1 ? "result" : "results"}` : `${total.toLocaleString("en-IN")} verified businesses in ${city.label}`}
+            subtitle={filtered ? `${formatCount(total)} ${total === 1 ? "result" : "results"}` : `${formatCount(total)} verified businesses in ${city.label}`}
           />
           {rows.length === 0 ? (
             <div className="card px-6 py-16 text-center">

@@ -5,6 +5,8 @@ import {
   View,
   StyleSheet,
   type PressableProps,
+  type PressableStateCallbackType,
+  type DimensionValue,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
@@ -72,13 +74,23 @@ export function Text({
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export const Press = forwardRef<View, PressableProps & {
+export const Press = forwardRef<View, Omit<PressableProps, "style"> & {
   children: ReactNode;
   /** Large surfaces compress less; 0.965 on a full-width card looks rubbery. */
   large?: boolean;
   /** Fires on the commit, not the press — reserved for meaningful moments. */
   haptic?: "light" | "medium" | "success" | null;
-  style?: StyleProp<ViewStyle>;
+  /**
+   * Either a plain style, or `Pressable`'s function form.
+   *
+   * The function form has to be declared and *composed*, not just allowed through. A
+   * `Pressable` that receives a function `style` calls it and ignores every other style
+   * passed alongside it — so forwarding the caller's function while the animated style
+   * sat next to it silently dropped the press animation on exactly the elements that had
+   * their own pressed feedback. Wrapping it keeps both: the caller still gets its
+   * `pressed` argument, and the scale still runs.
+   */
+  style?: StyleProp<ViewStyle> | ((state: PressableStateCallbackType) => StyleProp<ViewStyle>);
 }>(function Press({ children, large, haptic = null, style, onPress, ...rest }, ref) {
   const reduceMotion = useReduceMotion();
   /**
@@ -135,7 +147,14 @@ export const Press = forwardRef<View, PressableProps & {
         }
         onPress?.(e);
       }}
-      style={[animated, style]}
+      // Compose rather than forward blindly: when the caller passes the function form,
+      // React Native calls it and *ignores* a sibling style, which would drop `animated`.
+      // Wrapping means the caller's `pressed` still arrives and the scale still applies.
+      style={
+        typeof style === "function"
+          ? (state: PressableStateCallbackType) => [animated, style(state)]
+          : [animated, style]
+      }
       {...rest}
     >
       {children}
@@ -360,6 +379,66 @@ export function Skeleton({ height, width, style }: { height: number; width?: num
         style,
       ]}
     />
+  );
+}
+
+/* ── ProgressBar ───────────────────────────────────────────────────────────
+   A thin track with a fill whose width the caller owns.
+
+   `tap-sprint` and `word-duel` already drew this identically — the same two
+   style objects, byte for byte (`height: 6, borderRadius: 3, overflow:
+   "hidden"` on the track; the same on the fill) — so this replaces a copy, not
+   a design. The dimensions are overridable for a thicker bar, and the defaults
+   are exactly what both games used so the first two callers cannot shift by a
+   pixel.
+
+   The fill takes a plain `width`, not a shared value: both callers compute a
+   `%` string per tick, and one of them renders the fill as an `Animated.View`
+   for its urgency fade. Keeping the animated case out of the component is what
+   lets both keep their own timing without this growing a variant. */
+
+export function ProgressBar({
+  /** 0–1 (clamped), or a ready-made width such as `"42%"`. The games build a
+   *  percentage string on every tick, so that is accepted directly rather than
+   *  being cast at each call site. */
+  value,
+  color,
+  height = 6,
+  trackColor,
+  style,
+}: {
+  value: number | DimensionValue;
+  color: string;
+  height?: number;
+  trackColor?: string;
+  style?: StyleProp<ViewStyle>;
+}) {
+  const { c } = useTheme();
+  // A plain `View` cannot take the `AnimatedNode` arm of `DimensionValue`, which is
+  // why `DimensionValue` is not assignable to `ViewStyle["width"]`. The value here is
+  // always a number or a percentage string, so it is narrowed at this single point
+  // rather than in every caller.
+  const width = (
+    typeof value === "number"
+      ? `${Math.min(100, Math.max(0, value * 100)).toFixed(2)}%`
+      : value
+  ) as ViewStyle["width"];
+  return (
+    <View
+      style={[
+        { height, borderRadius: height / 2, overflow: "hidden", backgroundColor: trackColor ?? c.surfaceInset },
+        style,
+      ]}
+    >
+      <View
+        style={{
+          height,
+          width,
+          borderRadius: height / 2,
+          backgroundColor: color,
+        }}
+      />
+    </View>
   );
 }
 

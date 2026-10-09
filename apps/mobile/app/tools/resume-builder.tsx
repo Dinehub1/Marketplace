@@ -22,14 +22,9 @@
  */
 import { useMemo, useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Pressable,
+  ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { canDownloadFile, openResult, runJob, type JobResult } from "@/lib/tools";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
@@ -255,14 +250,14 @@ export default function ResumeBuilder() {
           <View style={s.entryHead}>
             <Text style={s.entryNo}>Job {i + 1}</Text>
             {experience.length > 1 ? (
-              <Pressable
+              <Press
                 onPress={() => setExperience((prev) => prev.filter((x) => x.id !== e.id))}
                 accessibilityRole="button"
                 accessibilityLabel={`Remove job ${i + 1}`}
                 style={s.remove}
               >
                 <Text style={s.removeText}>Remove</Text>
-              </Pressable>
+              </Press>
             ) : null}
           </View>
           <TextInput
@@ -323,7 +318,7 @@ export default function ResumeBuilder() {
           </Text>
         </View>
       ))}
-      <Pressable
+      <Press
         style={s.secondary}
         onPress={() =>
           setExperience((prev) => [
@@ -334,21 +329,21 @@ export default function ResumeBuilder() {
         accessibilityRole="button"
       >
         <Text style={s.secondaryText}>+ Add another job</Text>
-      </Pressable>
+      </Press>
 
       <Text style={s.section}>Education</Text>
       {education.map((e, i) => (
         <View key={e.id} style={s.entry}>
           <View style={s.entryHead}>
             <Text style={s.entryNo}>Course {i + 1}</Text>
-            <Pressable
+            <Press
               onPress={() => setEducation((prev) => prev.filter((x) => x.id !== e.id))}
               accessibilityRole="button"
               accessibilityLabel={`Remove course ${i + 1}`}
               style={s.remove}
             >
               <Text style={s.removeText}>Remove</Text>
-            </Pressable>
+            </Press>
           </View>
           <TextInput
             value={e.course}
@@ -403,7 +398,7 @@ export default function ResumeBuilder() {
           />
         </View>
       ))}
-      <Pressable
+      <Press
         style={s.secondary}
         onPress={() =>
           setEducation((prev) => [
@@ -414,7 +409,7 @@ export default function ResumeBuilder() {
         accessibilityRole="button"
       >
         <Text style={s.secondaryText}>+ Add education</Text>
-      </Pressable>
+      </Press>
 
       <Text style={s.section}>Skills</Text>
       <TextInput
@@ -436,7 +431,7 @@ export default function ResumeBuilder() {
       {missing ? <Text style={s.missing}>{missing}</Text> : null}
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (!!missing || busy) && s.dim]}
         onPress={() => void makePdf()}
         disabled={!!missing || busy}
@@ -448,12 +443,12 @@ export default function ResumeBuilder() {
         ) : (
           <Text style={s.primaryText}>Make the CV PDF</Text>
         )}
-      </Pressable>
+      </Press>
 
       {outputUrl ? (
         <View style={s.result}>
           <Text style={s.label}>Your CV</Text>
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => openResult(outputUrl, fileName)}
             accessibilityRole="button"
@@ -461,7 +456,7 @@ export default function ResumeBuilder() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? `Download ${fileName}` : `Open ${fileName}`}
             </Text>
-          </Pressable>
+          </Press>
           <Text style={s.hint}>
             {meta?.pages ? `${meta.pages} page${meta.pages === 1 ? "" : "s"}` : "Rendered"} of
             selectable text — the words are in the file, not a picture of the words, which is what

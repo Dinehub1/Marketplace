@@ -637,20 +637,22 @@ export default function LocationSearchScreen() {
               } : null}
               userCity={savedLocation.city}
               onPlaceSelect={handlePlaceSelect}
-              selectedPlaceId={selectedPlaceId}
+              // State holds `string | null`; the cards declare `?: string`. Normalising
+              // at the call site keeps the components' public API free of `null`.
+              selectedPlaceId={selectedPlaceId ?? undefined}
             />
           )}
 
           {/* Popular Cities */}
           <PopularCityCard
             onCitySelect={handleCitySelect}
-            selectedCityId={selectedCityId}
+            selectedCityId={selectedCityId ?? undefined}
           />
 
           {/* All Cities */}
           <AllCityList
             onCitySelect={handleCitySelect}
-            selectedCityId={selectedCityId}
+            selectedCityId={selectedCityId ?? undefined}
           />
 
           {/* Bottom spacing for better scrolling */}

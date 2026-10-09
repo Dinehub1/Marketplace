@@ -209,6 +209,10 @@ export default function PayBillScreen() {
 
       if (paymentError) throw paymentError;
 
+      // `error` and `data` are independent optional fields, so the line above does not
+      // narrow `data`; this is what makes `paymentData.transaction.id` below safe.
+      if (!paymentData) throw new Error('Payment record was not created');
+
       // Process payment through mock gateway
       const paymentResult = await processFinalBillPayment({
         amount: paymentBreakdown.finalPayable,
@@ -219,14 +223,20 @@ export default function PayBillScreen() {
         paymentBreakdown
       });
 
+      // `processFinalBillPayment` is a plain-JS union with no discriminant, so `success`
+      // does not narrow `error`/`data`. Checking each before use also replaces the old
+      // `paymentResult.error.message`, which would have thrown a bare TypeError had the
+      // gateway ever failed without a `message`.
       if (!paymentResult.success) {
-        throw new Error(paymentResult.error.message);
+        throw new Error(paymentResult.error?.message || 'Payment failed. Please try again.');
       }
+      if (!paymentResult.data) throw new Error('Payment gateway returned no data');
+      const gatewayResponse = paymentResult.data;
 
       // Update transaction status
       const { error: statusError } = await processSuccessfulPayment(
         paymentData.transaction.id,
-        paymentResult.data
+        gatewayResponse
       );
 
       if (statusError) throw statusError;
@@ -241,7 +251,7 @@ export default function PayBillScreen() {
         params: {
           type: 'final_bill',
           amount: paymentBreakdown.finalPayable,
-          transactionId: paymentResult.data.transaction_id,
+          transactionId: gatewayResponse.transaction_id,
           restaurantName: booking.restaurant.name,
           bookingId: bookingId
         }

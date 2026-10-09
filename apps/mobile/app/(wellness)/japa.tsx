@@ -58,7 +58,7 @@
  * information instead of removing motion.
  */
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
@@ -72,7 +72,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from "react-native-reanimated";
-import { Button, Card, Text } from "@/components/ui";
+import { Button, Card, Press, Text } from "@/components/ui";
 import { InsightPanel } from "@/components/charts";
 import { SyncBadge } from "@/components/sync-badge";
 import { ProfileAction, WellnessShell } from "@/components/wellness-shell";
@@ -306,7 +306,7 @@ export default function Japa() {
     >
       {/* The pad is the product: it fills the space a hand covers so the screen can be
           used without looking at it. */}
-      <Pressable
+      <Press
         onPress={tap}
         accessibilityRole="button"
         accessibilityLabel={`Count one. Bead ${count + 1} of ${MALA}`}
@@ -354,7 +354,7 @@ export default function Japa() {
             ? `${rounds} round${rounds > 1 ? "s" : ""} done today · ${store.countToday} beads`
             : `${store.countToday} bead${store.countToday === 1 ? "" : "s"} today`}
         </Text>
-      </Pressable>
+      </Press>
 
       <View style={s.row}>
         <Button title="Reset bead" variant="ghost" onPress={resetBead} />
@@ -415,7 +415,7 @@ export default function Japa() {
 function SoundToggle({ muted, onPress }: { muted: boolean; onPress: () => void }) {
   const ui = useProductUI("japa");
   return (
-    <Pressable
+    <Press
       onPress={onPress}
       accessibilityRole="switch"
       accessibilityState={{ checked: muted }}
@@ -431,7 +431,7 @@ function SoundToggle({ muted, onPress }: { muted: boolean; onPress: () => void }
       ]}
     >
       <SpeakerGlyph color={muted ? ui.faint : ui.accent} muted={muted} />
-    </Pressable>
+    </Press>
   );
 }
 

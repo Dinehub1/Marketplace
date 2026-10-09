@@ -14,7 +14,8 @@
  */
 import { useMemo, useState } from "react";
 import { isPageRange, PDF_PAGES_HINT } from "@hermes/core";
-import { ActivityIndicator, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Press } from "@/components/ui";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
 
@@ -198,7 +199,7 @@ export default function PdfToolkit() {
         {ACTIONS.map((a) => {
           const on = a.id === action;
           return (
-            <Pressable
+            <Press
               key={a.id}
               onPress={() => choose(a.id)}
               accessibilityRole="radio"
@@ -213,7 +214,7 @@ export default function PdfToolkit() {
                 </View>
                 <Text style={s.actionJob}>{a.job}</Text>
               </View>
-            </Pressable>
+            </Press>
           );
         })}
       </View>
@@ -225,7 +226,7 @@ export default function PdfToolkit() {
             {ANGLES.map((a) => {
               const on = a.value === angle;
               return (
-                <Pressable
+                <Press
                   key={a.value}
                   onPress={() => {
                     setAngle(a.value);
@@ -237,7 +238,7 @@ export default function PdfToolkit() {
                   style={[s.chip, on && s.chipOn]}
                 >
                   <Text style={[s.chipText, on && s.chipTextOn]}>{a.label}</Text>
-                </Pressable>
+                </Press>
               );
             })}
           </View>
@@ -255,7 +256,7 @@ export default function PdfToolkit() {
             {POSITIONS.map((p) => {
               const on = p.value === position;
               return (
-                <Pressable
+                <Press
                   key={p.value}
                   onPress={() => {
                     setPosition(p.value);
@@ -267,7 +268,7 @@ export default function PdfToolkit() {
                   style={[s.cell, on && s.cellOn]}
                 >
                   <Text style={[s.cellText, on && s.cellTextOn]}>{p.short}</Text>
-                </Pressable>
+                </Press>
               );
             })}
           </View>
@@ -342,7 +343,7 @@ export default function PdfToolkit() {
                 <Text style={s.rowName} numberOfLines={1}>{f.name}</Text>
                 <Text style={s.rowMeta}>{formatBytes(f.size) || "PDF"}</Text>
               </View>
-              <Pressable
+              <Press
                 onPress={() => {
                   setFiles((prev) => prev.filter((_, j) => j !== i));
                   setJob(null);
@@ -352,21 +353,21 @@ export default function PdfToolkit() {
                 style={s.remove}
               >
                 <Text style={s.removeText}>Remove</Text>
-              </Pressable>
+              </Press>
             </View>
           ))
         )}
       </View>
 
-      <Pressable style={s.secondary} onPress={addFiles} accessibilityRole="button">
+      <Press style={s.secondary} onPress={addFiles} accessibilityRole="button">
         <Text style={s.secondaryText}>
           {files.length === 0 ? "Choose a PDF" : action === "merge" ? "Add another PDF" : "Choose a different PDF"}
         </Text>
-      </Pressable>
+      </Press>
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, !ready && s.dim]}
         onPress={run}
         disabled={!ready}
@@ -374,7 +375,7 @@ export default function PdfToolkit() {
         accessibilityState={{ disabled: !ready }}
       >
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>{label}</Text>}
-      </Pressable>
+      </Press>
 
       {job && !busy && resultUrls.length > 0 ? (
         <View style={s.result}>
@@ -389,23 +390,23 @@ export default function PdfToolkit() {
               </Text>
             </View>
           </View>
-          <Pressable
+          <Press
             style={s.primary}
             onPress={() => openResult(resultUrls[0], outName)}
             accessibilityRole="button"
           >
             <Text style={s.primaryText}>{canDownloadFile() ? "Download it" : "Open it"}</Text>
-          </Pressable>
+          </Press>
           {resultUrls.length > 1
             ? resultUrls.slice(1).map((u, i) => (
-                <Pressable
+                <Press
                   key={u}
                   style={s.linkRow}
                   onPress={() => Linking.openURL(u)}
                   accessibilityRole="button"
                 >
                   <Text style={s.link}>File {i + 2} of {resultUrls.length}</Text>
-                </Pressable>
+                </Press>
               ))
             : null}
           <Text style={s.hint}>

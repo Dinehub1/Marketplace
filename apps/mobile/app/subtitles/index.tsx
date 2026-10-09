@@ -19,7 +19,8 @@
  * here as if it were.
  */
 import { useMemo } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Press } from "@/components/ui";
 import { useRouter } from "expo-router";
 import { productsFor, type Product } from "@/lib/products";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
@@ -109,7 +110,7 @@ function Card({
         : "Tap to open";
 
   return (
-    <Pressable
+    <Press
       style={s.card}
       onPress={onPress}
       accessibilityRole="button"
@@ -124,7 +125,7 @@ function Card({
           <Text style={[s.openText, { color: ui.accent }]}>Open →</Text>
         </View>
       </View>
-    </Pressable>
+    </Press>
   );
 }
 

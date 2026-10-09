@@ -28,8 +28,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
+  ActivityIndicator, Image, ScrollView, StyleSheet, Text, TextInput, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import { formatBytes, openResult, runJob, type JobResult } from "@/lib/tools";
 import { UnlockRow } from "@/components/unlock-row";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
@@ -134,7 +135,7 @@ export default function TextToImage() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (busy || !typed) && s.dim]}
         onPress={draw}
         disabled={busy || !typed}
@@ -146,7 +147,7 @@ export default function TextToImage() {
         ) : (
           <Text style={s.primaryText}>Draw the picture</Text>
         )}
-      </Pressable>
+      </Press>
 
       {busy ? <Text style={s.hint}>Drawing on the server — this takes a few seconds.</Text> : null}
 
@@ -209,7 +210,7 @@ export default function TextToImage() {
             />
           ) : (
             <>
-              <Pressable
+              <Press
                 style={s.secondary}
                 onPress={async () => {
                   const url = job?.outputUrl ?? job?.previewUrl;
@@ -221,7 +222,7 @@ export default function TextToImage() {
                 <Text style={s.secondaryText}>
                   {job?.free ? "Save the picture · free" : "Save the picture"}
                 </Text>
-              </Pressable>
+              </Press>
               {job?.free ? (
                 <Text style={s.hint}>
                   This run was free — the file is yours, with no unlock step.

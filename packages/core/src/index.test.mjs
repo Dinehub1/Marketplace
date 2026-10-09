@@ -14,6 +14,7 @@ import {
   isPageRange, PDF_PAGES_HELP, PDF_PAGES_HINT,
   parseBillNo, shopKeyOf, advanceCounter, nextBillNo, counterLabel,
   formatPaise, formatRupees, formatCurrency, isIAPRequired, getGatewayForTransaction,
+  requireEnv, requireFirstEnv,
 } from "./index.ts";
 
 test("category slugs are stable permalinks", () => {
@@ -225,4 +226,53 @@ test("payments: routing enforces App Store compliance and gateway separation", (
     getGatewayForTransaction({ purchaseType: "web_service", platform: "web" }),
     "razorpay",
   );
+});
+
+/**
+ * The two env helpers replaced silent production fallbacks in apps/highwaypass and
+ * apps/quick-driver, so the failing path is the one worth pinning: a missing variable
+ * must throw, must name the variable, and must not print a value that might be secret.
+ */
+test("requireEnv returns a set variable and names a missing one", () => {
+  process.env.HERMES_TEST_PRESENT = "value-here";
+  try {
+    assert.equal(requireEnv("HERMES_TEST_PRESENT"), "value-here");
+
+    assert.throws(
+      () => requireEnv("HERMES_TEST_DEFINITELY_ABSENT"),
+      (err) => {
+        assert.match(err.message, /HERMES_TEST_DEFINITELY_ABSENT/);
+        return true;
+      },
+    );
+
+    // An empty string is "missing" — an unset var and a blank one are the same accident.
+    process.env.HERMES_TEST_EMPTY = "";
+    assert.throws(() => requireEnv("HERMES_TEST_EMPTY"), /HERMES_TEST_EMPTY/);
+  } finally {
+    delete process.env.HERMES_TEST_PRESENT;
+    delete process.env.HERMES_TEST_EMPTY;
+  }
+});
+
+test("requireFirstEnv accepts either key name and lists them all when neither is set", () => {
+  const names = ["HERMES_TEST_KEY_A", "HERMES_TEST_KEY_B"];
+  try {
+    process.env.HERMES_TEST_KEY_B = "second-name-wins";
+    assert.equal(requireFirstEnv(names), "second-name-wins");
+
+    delete process.env.HERMES_TEST_KEY_B;
+    assert.throws(
+      () => requireFirstEnv(names),
+      (err) => {
+        // Both candidates have to appear, or the message sends you to the wrong name.
+        assert.match(err.message, /HERMES_TEST_KEY_A/);
+        assert.match(err.message, /HERMES_TEST_KEY_B/);
+        return true;
+      },
+    );
+  } finally {
+    delete process.env.HERMES_TEST_KEY_A;
+    delete process.env.HERMES_TEST_KEY_B;
+  }
 });

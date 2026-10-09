@@ -105,6 +105,14 @@ export default function EventSummaryScreen() {
 
       console.log('✅ Booking Created Successfully:', data);
 
+      // `error` and `data` are independent optional fields, so the check above does not
+      // narrow `data`. Without this the reads below were on a possibly-null value.
+      if (!data) {
+        alert('Failed to create booking. Please try again.');
+        setIsProcessing(false);
+        return;
+      }
+
       if (totalCoverChargeAmount === 0 || data.autoConfirmed) {
         // No payment needed, booking confirmed
         console.log('🎉 No payment required - redirecting to confirmation');

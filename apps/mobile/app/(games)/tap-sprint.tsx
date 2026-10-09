@@ -34,14 +34,7 @@
  */
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-  type DimensionValue,
-  type GestureResponderEvent,
-  type PressableProps,
+  Platform, StyleSheet, View, useWindowDimensions, type DimensionValue, type GestureResponderEvent, type PressableProps,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { canOpen } from "@/lib/routes";
@@ -57,16 +50,12 @@ import Animated, {
 import { alpha, radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
 import { useReduceMotion } from "@/lib/motion";
+import { GameIntro } from "@/components/game-intro";
 import { Badge, Card, Press, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
 import { Icon } from "@/components/icons";
-import {
-  EMPTY_RECORD,
-  loadGameScores,
-  recordRound,
-  sinceLabel,
-  type GameRecord,
-} from "@/lib/game-scores";
+import { sinceLabel } from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 
 /** targets.mjs colour for this build target, plus a lighter step that survives
  *  the near-black canvas (the deep pink goes muddy on it). */
@@ -258,11 +247,6 @@ export default function TapSprint() {
   const [last, setLast] = useState<{ ms: number; points: number } | null>(null);
   const [notice, setNotice] = useState("");
   const [continueUsed, setContinueUsed] = useState(false);
-  /** The record as loaded, or updated by the round that just ended. */
-  const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
-  /** False until the device store has answered, so the screen never claims
-   *  "no rounds recorded" while it is still reading them. */
-  const [recordRead, setRecordRead] = useState(false);
   const [summary, setSummary] = useState<Summary | null>(null);
   /** Whole seconds left, for the haptic tick. Only changes once a second, so the
    *  100 ms clock keeps owning the re-renders and this adds five of its own. */
@@ -274,6 +258,18 @@ export default function TapSprint() {
    *  when nothing has been touched yet, or once the marker's own timer clears it. */
   const [marker, setMarker] = useState<TouchMark | null>(null);
   const [overFeel, setOverFeel] = useState<{ good: boolean; at: number } | null>(null);
+
+  /** The device record, loaded once on mount and updated by each finished round.
+   *  `ready` is what the start screen gates on, so it never claims "no rounds
+   *  recorded" while the store is still being read. */
+  const { record, ready: recordRead, saveRound } = useGameRecord(GAME, () => {
+    // The beat that marks a real record, and only a real one: the hook fires this
+    // from the stored record's own verdict, so it cannot fire for a round that
+    // merely looked good on this screen. It is deliberately a second, distinct
+    // notification on top of the round-over one, because it means something else.
+    setOverFeel({ good: true, at: Date.now() });
+    notify(Haptics.NotificationFeedbackType.Success);
+  });
 
   // The round clock, the lives and the dot's deadline all live in refs as well
   // as state: the timeout callbacks and the 100ms tick read them, and a state
@@ -384,22 +380,8 @@ export default function TapSprint() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldW, fieldH]);
 
-  // The device record is read once, on mount. It is what "Best score" means on
-  // this screen now: a number that survives closing the app, not one that
-  // restarts with it.
-  useEffect(() => {
-    let live = true;
-    loadGameScores()
-      .then((scores) => {
-        if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
-      })
-      .finally(() => {
-        if (live) setRecordRead(true);
-      });
-    return () => {
-      live = false;
-    };
-  }, []);
+  // The device record is read by `useGameRecord` above, which owns the same
+  // read-once-on-mount behaviour this screen used to spell out.
 
   useEffect(() => {
     if (phase !== "over") return;
@@ -425,19 +407,13 @@ export default function TapSprint() {
     const line = hits
       ? `${hits} ${hits === 1 ? "dot" : "dots"} hit · avg ${avgMs} ms · fastest ${bestMs} ms`
       : "no dots hit";
-    recordRound(GAME, scoreRef.current, line).then(({ record: next, isNewBest }) => {
-      setRecord(next);
+    // `saveRound` persists the round and calls this screen's onNewBest (the
+    // record beat) only when the stored best was actually beaten. The summary's
+    // own `isNewBest` is filled from that same verdict, never guessed here.
+    saveRound(scoreRef.current, line).then(({ isNewBest }) => {
       setSummary((prev) => (prev ? { ...prev, isNewBest } : prev));
-      // The beat that marks a real record, and only a real one: `isNewBest` comes
-      // from the stored record, so it cannot fire for a round that merely looked
-      // good on this screen. It is deliberately a second, distinct notification
-      // on top of the round-over one, because it means something different.
-      if (isNewBest) {
-        setOverFeel({ good: true, at: Date.now() });
-        notify(Haptics.NotificationFeedbackType.Success);
-      }
     });
-  }, [phase]);
+  }, [phase, saveRound]);
 
   function spawn() {
     const r = Math.max(MIN_RADIUS, BASE_RADIUS - hitsRef.current * RADIUS_PER_HIT);
@@ -592,77 +568,42 @@ export default function TapSprint() {
         ) : null}
 
         {phase === "ready" ? (
-          <View style={{ gap: space.base }}>
-            <View style={s.badgeRow}>
-              <Text variant="caption" tone="ink3">
-                THIRTY-SECOND ROUND
-              </Text>
-              <View style={[s.chip, { backgroundColor: accentTint, borderColor: accentEdge }]}>
-                <Text variant="caption" style={{ color: accent }}>
-                  Free
-                </Text>
-              </View>
-            </View>
-
-            <Text variant="hero">How fast are your taps?</Text>
-            <Text variant="lede" tone="ink2">
-              A dot lands in the field. Tap it before it moves on. Thirty seconds, three
-              lives, and the dot gets smaller — and its window shorter — the better you get.
-            </Text>
-
-            <View style={s.steps}>
-              {[
-                "Press start — the clock runs for thirty seconds",
-                "Tap the dot the moment it lands",
-                "Three lives: a missed tap, or a dot you never reach, costs one",
-              ].map((step, i) => (
-                <View key={step} style={s.step}>
-                  <View style={[s.stepDot, { backgroundColor: accentTint }]}>
-                    <Text variant="caption" style={{ color: accent }}>
-                      {i + 1}
-                    </Text>
-                  </View>
-                  <Text variant="meta" tone="ink2" style={s.stepText}>
-                    {step}
-                  </Text>
-                </View>
-              ))}
-            </View>
-
-            <Card style={{ padding: space.base, gap: space.sm }}>
-              <Text variant="title3">Scoring</Text>
-              <Row label="A hit" value={`100 − your reaction in ms (${MIN_POINTS} minimum)`} />
-              <Row label="A missed tap" value="One life" />
-              <Row label="A dot you never reach" value="One life" />
-              <Row label="Running out of lives" value={`${EXTRA_LIVES} more for one rewarded video`} />
-            </Card>
-
-            <Press
-              accessibilityRole="button"
-              accessibilityLabel="Start the round"
-              haptic="medium"
-              onPress={startRound}
-              style={[
-                s.primary,
-                elevation(2),
-                { backgroundColor: accent, shadowColor: accent, shadowOpacity: 0.35 },
-              ]}
-            >
-              <Text variant="title3" style={s.primaryLabel}>
-                Start the round
-              </Text>
-            </Press>
-
-            <Text variant="meta" tone="ink3" style={s.centre}>
-              {!recordRead
+          <GameIntro
+            eyebrow="THIRTY-SECOND ROUND"
+            title="How fast are your taps?"
+            lede={
+              "A dot lands in the field. Tap it before it moves on. Thirty seconds, three lives, and the dot gets smaller — and its window shorter — the better you get."
+            }
+            steps={[
+              "Press start — the clock runs for thirty seconds",
+              "Tap the dot the moment it lands",
+              "Three lives: a missed tap, or a dot you never reach, costs one",
+            ]}
+            scoring={{
+              rows: [
+                { label: "A hit", value: `100 − your reaction in ms (${MIN_POINTS} minimum)` },
+                { label: "A missed tap", value: "One life" },
+                { label: "A dot you never reach", value: "One life" },
+                { label: "Running out of lives", value: `${EXTRA_LIVES} more for one rewarded video` },
+              ],
+            }}
+            accent={accent}
+            accentTint={accentTint}
+            accentEdge={accentEdge}
+            onStart={startRound}
+            // `space.base` to keep this screen's shipped spacing; the other two
+            // games used `space.md` and pass nothing.
+            gap={space.base}
+            recordLine={
+              !recordRead
                 ? "Reading this device's scores…"
                 : record.rounds
                   ? `Best score on this device: ${record.best} · ${record.rounds} ${
                       record.rounds === 1 ? "round" : "rounds"
                     } played`
-                  : "No rounds recorded on this device yet"}
-            </Text>
-          </View>
+                  : "No rounds recorded on this device yet"
+            }
+          />
         ) : null}
 
         {phase === "playing" || phase === "outOfLives" ? (
@@ -742,7 +683,7 @@ export default function TapSprint() {
               // the dot's coordinates are in that frame. Shaking the wrapper moves
               // the picture without moving the ruler.
               <Animated.View style={[s.fieldWrap, fieldShakeStyle]}>
-                <Pressable
+                <Press
                   accessibilityRole="button"
                   accessibilityLabel="Playing field. Tap the dot."
                   // `onPressIn`, not `onPress`: the reaction has to be measured from
@@ -772,7 +713,7 @@ export default function TapSprint() {
                   {marker ? (
                     <Marker key={marker.at} mark={marker} color={accent} wrong={c.critical} />
                   ) : null}
-                </Pressable>
+                </Press>
               </Animated.View>
             ) : (
               <View style={{ gap: space.md }}>
@@ -1082,18 +1023,7 @@ const s = StyleSheet.create({
   root: { flex: 1, paddingHorizontal: space.base },
   column: { width: "100%", maxWidth: 520, alignSelf: "center", gap: space.base },
   back: { width: 44, height: 44, alignItems: "center", justifyContent: "center", marginLeft: -space.sm },
-  badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   head: { flexDirection: "row", alignItems: "center", gap: space.md, flexWrap: "wrap" },
-  chip: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius.pill,
-    paddingHorizontal: space.md,
-    paddingVertical: 4,
-  },
-  steps: { gap: space.sm },
-  step: { flexDirection: "row", alignItems: "center", gap: space.md },
-  stepDot: { width: 26, height: 26, borderRadius: 13, alignItems: "center", justifyContent: "center" },
-  stepText: { flex: 1 },
   primary: {
     minHeight: 52,
     borderRadius: radius.md,
@@ -1101,7 +1031,6 @@ const s = StyleSheet.create({
     justifyContent: "center",
   },
   primaryLabel: { color: "#fff" },
-  centre: { textAlign: "center" },
   hud: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
   hudCell: { gap: 2 },
   tabular: { fontVariant: ["tabular-nums"] },

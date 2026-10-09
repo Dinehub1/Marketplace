@@ -16,7 +16,8 @@
  * short grid.
  */
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Press } from "@/components/ui";
 import { useRouter } from "expo-router";
 import { productText, useProductUI, type ProductUI } from "@/lib/product-ui";
 import { TARGET } from "@/lib/target";
@@ -45,7 +46,7 @@ function Tile({ card, onPress, ui, s }: { card: Card; onPress: () => void; ui: P
   const tag = ready ? "READY" : "COMING SOON";
 
   return (
-    <Pressable
+    <Press
       onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ disabled: !ready }}
@@ -67,7 +68,7 @@ function Tile({ card, onPress, ui, s }: { card: Card; onPress: () => void; ui: P
           <Text style={[s.tagText, { color: ready ? ui.c.positive : ui.faint }]}>{tag}</Text>
         </View>
       </View>
-    </Pressable>
+    </Press>
   );
 }
 
@@ -137,9 +138,9 @@ export default function ProductHub() {
           {notice ? (
             <View style={s.notice}>
               <Text style={s.noticeText}>{notice}</Text>
-              <Pressable onPress={() => setNotice(null)} accessibilityRole="button">
+              <Press onPress={() => setNotice(null)} accessibilityRole="button">
                 <Text style={s.noticeClose}>Dismiss</Text>
-              </Pressable>
+              </Press>
             </View>
           ) : null}
 

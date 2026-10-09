@@ -10,7 +10,11 @@ export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
 ) {
-  const theme = useColorScheme() ?? 'light';
+  // `useColorScheme()` returns `ColorSchemeName`, which in RN 0.86 is
+  // `'light' | 'dark' | null | undefined` — so `props[theme]` was an index error under
+  // `strict`. Narrowing to the two keys the palettes actually have is the fix; a cast
+  // would have hidden the same mistake at the `Colors[theme]` lookup below.
+  const theme = useColorScheme() === 'dark' ? 'dark' : 'light';
   const colorFromProps = props[theme];
 
   if (colorFromProps) {

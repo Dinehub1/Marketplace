@@ -26,16 +26,12 @@ import { canOpen } from "@/lib/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { alpha, radius, space } from "@hermes/tokens";
 import { useTheme } from "@/lib/theme";
-import { Badge, Card, Press, Text } from "@/components/ui";
+import { GameIntro } from "@/components/game-intro";
+import { Badge, Card, Press, ProgressBar, Text } from "@/components/ui";
 import { AdSlot } from "@/components/ad-slot";
 import { Icon } from "@/components/icons";
-import {
-  EMPTY_RECORD,
-  loadGameScores,
-  recordRound,
-  sinceLabel,
-  type GameRecord,
-} from "@/lib/game-scores";
+import { sinceLabel } from "@/lib/game-scores";
+import { useGameRecord } from "@/lib/use-game-record";
 
 /** targets.mjs colour for this build target, plus a lighter step that survives
  *  the near-black canvas (indigo #4f46e5 goes to mud on it). */
@@ -166,11 +162,10 @@ export default function WordDuel() {
   const [notice, setNotice] = useState("");
   const [noticeTone, setNoticeTone] = useState<"ok" | "bad" | "plain">("plain");
   const [packUsed, setPackUsed] = useState(false);
-  /** The record as loaded, or updated by the round that just ended. */
-  const [record, setRecord] = useState<GameRecord>(EMPTY_RECORD);
-  /** False until the device store has answered, so the screen never claims
-   *  "no rounds recorded" while it is still reading them. */
-  const [recordRead, setRecordRead] = useState(false);
+  /** The device record, loaded once on mount and updated by each finished round.
+   *  `ready` gates the start screen so it never claims "no rounds recorded" while
+   *  the store is still being read. */
+  const { record, ready: recordRead, saveRound } = useGameRecord(GAME);
   const [summary, setSummary] = useState<Summary | null>(null);
 
   // Mirrors for the clock callback: a score read inside a timer closure is a
@@ -197,21 +192,8 @@ export default function WordDuel() {
     return () => clearInterval(id);
   }, [phase]);
 
-  // The device record is read once, on mount: this is the number that survives
-  // closing the app, which the old "this session" best did not.
-  useEffect(() => {
-    let live = true;
-    loadGameScores()
-      .then((scores) => {
-        if (live) setRecord(scores[GAME] ?? EMPTY_RECORD);
-      })
-      .finally(() => {
-        if (live) setRecordRead(true);
-      });
-    return () => {
-      live = false;
-    };
-  }, []);
+  // The device record is read by `useGameRecord` above, which owns the same
+  // read-once-on-mount behaviour this screen used to spell out.
 
   useEffect(() => {
     if (phase !== "over") return;
@@ -227,11 +209,12 @@ export default function WordDuel() {
     const line = fs.length
       ? `${fs.length} ${fs.length === 1 ? "word" : "words"} · longest ${longest.toUpperCase()}`
       : "no words found";
-    recordRound(GAME, scoreRef.current, line).then(({ record: next, isNewBest }) => {
-      setRecord(next);
+    // `saveRound` persists the round and reports back whether it actually beat the
+    // stored best — the summary's badge is set from that verdict, never guessed here.
+    saveRound(scoreRef.current, line).then(({ isNewBest }) => {
       setSummary((prev) => (prev ? { ...prev, isNewBest } : prev));
     });
-  }, [phase]);
+  }, [phase, saveRound]);
 
   function startRound() {
     const next = buildRack(usedSeeds.current);
@@ -353,83 +336,39 @@ export default function WordDuel() {
         ) : null}
 
         {phase === "ready" ? (
-          <View style={{ gap: space.base }}>
-            <View style={s.badgeRow}>
-              <Text variant="caption" tone="ink3">
-                SIXTY-SECOND ROUND
-              </Text>
-              <View style={[s.chip, { backgroundColor: accentTint, borderColor: accentEdge }]}>
-                <Text variant="caption" style={{ color: accent }}>
-                  Free
-                </Text>
-              </View>
-            </View>
-
-            <Text variant="hero">How many words in sixty seconds?</Text>
-            <Text variant="lede" tone="ink2">
-              One rack of letters, one minute. Build words of three letters or more from the
-              tiles, each tile used once per word.
-            </Text>
-
-            <View style={s.steps}>
-              {[
-                "Tap tiles to build a word, tap a chosen letter to put it back",
-                "Press check — the word has to be in this game's word list",
-                "Sixty seconds on the clock, three hints in your pocket",
-              ].map((step, i) => (
-                <View key={step} style={s.step}>
-                  <View style={[s.stepDot, { backgroundColor: accentTint }]}>
-                    <Text variant="caption" style={{ color: accent }}>
-                      {i + 1}
-                    </Text>
-                  </View>
-                  <Text variant="meta" tone="ink2" style={s.stepText}>
-                    {step}
-                  </Text>
-                </View>
-              ))}
-            </View>
-
-            <Card style={{ padding: space.base, gap: space.sm }}>
-              <Text variant="title3">What a word is worth</Text>
-              {[3, 4, 5, 6, 7].map((len) => (
-                <View key={len} style={s.row}>
-                  <Text variant="meta" tone="ink2" style={{ flex: 1 }}>
-                    {len} letters
-                  </Text>
-                  <Text variant="meta" style={{ color: c.ink }}>
-                    {POINTS[len]} points
-                  </Text>
-                </View>
-              ))}
-            </Card>
-
-            <Press
-              accessibilityRole="button"
-              accessibilityLabel="Start the round"
-              haptic="medium"
-              onPress={startRound}
-              style={[
-                s.primary,
-                elevation(2),
-                { backgroundColor: accent, shadowColor: accent, shadowOpacity: 0.35 },
-              ]}
-            >
-              <Text variant="title3" style={s.primaryLabel}>
-                Start the round
-              </Text>
-            </Press>
-
-            <Text variant="meta" tone="ink3" style={s.centre}>
-              {!recordRead
+          <GameIntro
+            eyebrow="SIXTY-SECOND ROUND"
+            title="How many words in sixty seconds?"
+            lede={
+              "One rack of letters, one minute. Build words of three letters or more from the tiles, each tile used once per word."
+            }
+            steps={[
+              "Tap tiles to build a word, tap a chosen letter to put it back",
+              "Press check — the word has to be in this game's word list",
+              "Sixty seconds on the clock, three hints in your pocket",
+            ]}
+            scoring={{
+              title: "What a word is worth",
+              rows: [3, 4, 5, 6, 7].map((len) => ({
+                label: `${len} letters`,
+                value: `${POINTS[len]} points`,
+              })),
+            }}
+            accent={accent}
+            accentTint={accentTint}
+            accentEdge={accentEdge}
+            onStart={startRound}
+            gap={space.base}
+            recordLine={
+              !recordRead
                 ? "Reading this device's scores…"
                 : record.rounds
                   ? `Best score on this device: ${record.best} · ${record.rounds} ${
                       record.rounds === 1 ? "round" : "rounds"
                     } played`
-                  : "No rounds recorded on this device yet"}
-            </Text>
-          </View>
+                  : "No rounds recorded on this device yet"
+            }
+          />
         ) : null}
 
         {phase === "playing" || phase === "hintAd" ? (
@@ -463,9 +402,7 @@ export default function WordDuel() {
               </View>
             </View>
 
-            <View style={[s.track, { backgroundColor: c.surfaceInset }]}>
-              <View style={[s.fill, { width: timeFill, backgroundColor: accent }]} />
-            </View>
+            <ProgressBar value={timeFill} color={accent} />
 
             {phase === "playing" && rack ? (
               <>
@@ -786,24 +723,7 @@ const s = StyleSheet.create({
     justifyContent: "center",
     marginLeft: -space.sm,
   },
-  badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   head: { flexDirection: "row", alignItems: "center", gap: space.md, flexWrap: "wrap" },
-  chip: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radius.pill,
-    paddingHorizontal: space.md,
-    paddingVertical: 4,
-  },
-  steps: { gap: space.sm },
-  step: { flexDirection: "row", alignItems: "center", gap: space.md },
-  stepDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepText: { flex: 1 },
   primary: {
     minHeight: 52,
     borderRadius: radius.md,
@@ -819,12 +739,9 @@ const s = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  centre: { textAlign: "center" },
   hud: { flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between" },
   hudCell: { gap: 2 },
   tabular: { fontVariant: ["tabular-nums"] },
-  track: { height: 6, borderRadius: 3, overflow: "hidden" },
-  fill: { height: 6, borderRadius: 3 },
   slots: {
     minHeight: 60,
     borderWidth: 1,

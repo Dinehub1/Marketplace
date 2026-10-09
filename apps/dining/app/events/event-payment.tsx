@@ -138,6 +138,13 @@ export default function EventPaymentScreen() {
 
   const handleVenuePayment = async () => {
     console.log('💳 Processing venue payment (T2) for booking:', bookingId);
+
+    // `handlePayment` already checked this, but that narrowing does not cross into a
+    // separately-declared function — so `user.id` below was a real null dereference.
+    if (!user) {
+      Alert.alert('Authentication Required', 'Please login to continue with payment');
+      return;
+    }
     
     // For venue payment, we need to collect bill details
     // This would typically come from a bill scanning or manual entry screen
@@ -166,6 +173,14 @@ export default function EventPaymentScreen() {
       throw error;
     }
 
+    // `data` is nullable, so it needs its own check rather than relying on `error`.
+    // It is also captured in a const here: the compiler cannot keep the narrowing
+    // inside the `setTimeout` callback below, and this is the value that callback uses.
+    if (!data) {
+      throw new Error('createEventPayment returned no data');
+    }
+    const payment = data;
+
     // Simulate payment processing
     setTimeout(async () => {
       const mockGatewayResponse = {
@@ -174,7 +189,7 @@ export default function EventPaymentScreen() {
         payment_method: 'card'
       };
 
-      await processSuccessfulEventPayment(data.transaction.id, mockGatewayResponse);
+      await processSuccessfulEventPayment(payment.transaction.id, mockGatewayResponse);
       
       setIsProcessing(false);
       
@@ -182,7 +197,7 @@ export default function EventPaymentScreen() {
         pathname: '/events/payment-success',
         params: {
           eventTitle: eventTitle,
-          amount: data.payment.t2_final_payable_amount || '0',
+          amount: payment.payment.t2_final_payable_amount || '0',
           paymentType: 'venue_payment',
           bookingId: bookingId
         }
@@ -261,6 +276,13 @@ export default function EventPaymentScreen() {
     console.log('🎫 Processing paid ticket purchase with new system');
     console.log('🎫 Tickets data:', tickets);
     console.log('📋 Event ID:', eventId);
+
+    // Same reason as handleVenuePayment: `handlePayment`'s narrowing does not reach this
+    // separately-declared function, so the five `user.*` reads below were unchecked.
+    if (!user) {
+      Alert.alert('Authentication Required', 'Please login to continue with payment');
+      return;
+    }
     
     // Animate button press
     Animated.sequence([
@@ -305,11 +327,17 @@ export default function EventPaymentScreen() {
         console.error('❌ Paid booking creation error:', bookingResult.error);
         throw new Error(`Failed to create paid booking: ${JSON.stringify(bookingResult.error)}`);
       }
-      console.log('✅ Paid event booking created:', bookingResult.data.booking.id);
-      console.log('✅ Master Ticket:', bookingResult.data.booking.master_ticket);
-      console.log('✅ Individual Tickets:', bookingResult.data.tickets.length);
-      console.log('🎫 Ticket Numbers:', bookingResult.data.tickets.map(t => t.ticket_number).join(', '));
-      return bookingResult.data;
+      // `error` and `data` are independent optional fields, so checking `error` does not
+      // narrow `data` — this is the check that makes the four reads below safe.
+      if (!bookingResult.data) {
+        throw new Error('Paid booking creation returned neither data nor an error');
+      }
+      const booking = bookingResult.data;
+      console.log('✅ Paid event booking created:', booking.booking.id);
+      console.log('✅ Master Ticket:', booking.booking.master_ticket);
+      console.log('✅ Individual Tickets:', booking.tickets.length);
+      console.log('🎫 Ticket Numbers:', booking.tickets.map(t => t.ticket_number).join(', '));
+      return booking;
     });
 
     const bookingResults = await Promise.all(bookingPromises);

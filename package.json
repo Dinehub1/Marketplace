@@ -47,6 +47,8 @@
     "test:shots": "node scripts/test-marker-retry.mjs",
     "check:targets": "node scripts/check-targets.mjs",
     "check:fleet": "node scripts/check-fleet.mjs",
+    "_comment_check_brand_tokens": "The palette cannot drift (extract.mjs generates it and CI re-runs it). The brand *tint strengths* had no such guard: web derives them with CSS color-mix and native with a TS constant, so the same six numbers are written twice in two languages. This asserts they still agree — it is the only thing that would notice a one-sided edit.",
+    "check:brand-tokens": "node scripts/check-brand-tokens.mjs",
     "ingest:jev": "node scripts/jev-batch-ingest.mjs",
     "_comment_check_game": "The two gates above are about the store listing. This one is about the game: it loads apps/mobile/lib/block-clear.ts in plain Node and asserts the rules, so it runs anywhere — the screenshot probes need Playwright and a preview, and those only exist on the capture VM.",
     "check:game": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-block-clear.mjs",

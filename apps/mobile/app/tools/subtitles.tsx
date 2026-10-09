@@ -18,13 +18,9 @@
  */
 import { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+  ActivityIndicator, ScrollView, StyleSheet, Text, View,
 } from "react-native";
+import { Press } from "@/components/ui";
 import {
   canDownloadFile,
   formatBytes,
@@ -115,7 +111,7 @@ export default function Subtitles() {
       </Text>
 
       <Text style={s.section}>The audio</Text>
-      <Pressable style={s.picker} onPress={() => void choose()} accessibilityRole="button">
+      <Press style={s.picker} onPress={() => void choose()} accessibilityRole="button">
         {file ? (
           <>
             <Text style={s.pickedName} numberOfLines={2}>
@@ -131,7 +127,7 @@ export default function Subtitles() {
             <Text style={s.pickerHint}>MP3, M4A, WAV, OGG, WebM or FLAC</Text>
           </>
         )}
-      </Pressable>
+      </Press>
 
       <Text style={s.help}>
         Video files are not accepted: the model reads an audio track, and pulling the audio out
@@ -142,7 +138,7 @@ export default function Subtitles() {
       <Text style={s.section}>Spoken language</Text>
       <View style={s.chipRow}>
         {LANGS.map((l) => (
-          <Pressable
+          <Press
             key={l.id || "auto"}
             onPress={() => {
               setLang(l.id);
@@ -153,7 +149,7 @@ export default function Subtitles() {
             style={[s.chip, lang === l.id && s.chipOn]}
           >
             <Text style={[s.chipText, lang === l.id && { color: ui.accent }]}>{l.label}</Text>
-          </Pressable>
+          </Press>
         ))}
       </View>
       <Text style={s.help}>
@@ -163,7 +159,7 @@ export default function Subtitles() {
 
       {error ? <Text style={s.error}>{error}</Text> : null}
 
-      <Pressable
+      <Press
         style={[s.primary, (!file || busy) && s.dim]}
         onPress={() => void makeCaptions()}
         disabled={!file || busy}
@@ -171,12 +167,12 @@ export default function Subtitles() {
         accessibilityState={{ disabled: !file || busy }}
       >
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.primaryText}>Make the captions</Text>}
-      </Pressable>
+      </Press>
 
       {outputUrl ? (
         <View style={s.result}>
           <Text style={s.label}>The caption file</Text>
-          <Pressable
+          <Press
             style={s.secondary}
             onPress={() => openResult(outputUrl, fileName)}
             accessibilityRole="button"
@@ -184,7 +180,7 @@ export default function Subtitles() {
             <Text style={s.secondaryText}>
               {canDownloadFile() ? `Download ${fileName}` : `Open ${fileName}`}
             </Text>
-          </Pressable>
+          </Press>
 
           <Text style={s.hint}>
             {meta?.cues ?? 0} line{(meta?.cues ?? 0) === 1 ? "" : "s"} ·{" "}
