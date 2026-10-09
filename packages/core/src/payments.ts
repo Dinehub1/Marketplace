@@ -31,6 +31,7 @@ export type MonorepoProject =
   | "money-map"
   | "cycle-tracker"
   | "smokefree"
+  | "gym-tracker"
   | "mobile"
   | "web"
   | string;

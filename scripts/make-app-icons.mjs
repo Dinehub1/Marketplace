@@ -95,6 +95,7 @@ const MONOGRAM = {
   highwaypass: 'HWY',
   smokefree: 'SF',
   'quick-driver': 'QD',
+  'gym-tracker': 'GYM',
 };
 
 let failed = 0;
@@ -164,6 +165,7 @@ const STANDALONE_APPS = [
   'highwaypass',
   'smokefree',
   'quick-driver',
+  'gym-tracker',
 ];
 const standaloneFiles = [];
 

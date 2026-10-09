@@ -311,6 +311,19 @@ export const LOGOS = {
 <path d="M724 720 C 684 650 644 590 594 500" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round"/>
 <path d="M780 220 l18 46 l46 18 l-46 18 l-18 46 l-18 -46 l-46 -18 l46 -18 Z" fill="url(#gold)"/>`,
   },
+  'gym-tracker': {
+    // A loaded dumbbell over a rising progress line ending in a gold spark: lift, log, get stronger.
+    art: (c) => `<path d="M230 800 L410 690 L550 750 L736 640" fill="none" stroke="${L(c, 0.45)}" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M800 564 l18 46 l46 18 l-46 18 l-18 46 l-18 -46 l-46 -18 l46 -18 Z" fill="url(#gold)"/>
+<g filter="url(#sh)">
+<rect x="330" y="372" width="364" height="56" rx="28" fill="#fff"/>
+<rect x="236" y="276" width="78" height="248" rx="30" fill="#fff"/>
+<rect x="170" y="318" width="60" height="164" rx="24" fill="#fff"/>
+<rect x="710" y="276" width="78" height="248" rx="30" fill="#fff"/>
+<rect x="794" y="318" width="60" height="164" rx="24" fill="#fff"/></g>
+<rect x="262" y="300" width="26" height="200" rx="13" fill="${L(c, 0.6)}"/>
+<rect x="736" y="300" width="26" height="200" rx="13" fill="${L(c, 0.6)}"/>`,
+  },
   'quick-driver': {
     // A delivery scooter with a gold box on the seat, at speed: orders, routes and driver earnings.
     art: (c) => `<g stroke="#fff" stroke-width="24" stroke-linecap="round" opacity=".55"><path d="M140 440 H250"/><path d="M120 530 H220"/><path d="M150 620 H240"/></g>

@@ -28,6 +28,20 @@
         "8082"
       ],
       "port": 8082
+    },
+    {
+      "name": "gym-tracker-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "web",
+        "--workspace",
+        "@hermes/gym-tracker",
+        "--",
+        "--port",
+        "8086"
+      ],
+      "port": 8086
     }
   ]
 }

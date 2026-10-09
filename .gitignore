@@ -84,3 +84,6 @@ shots/
 # does not belong in a public repo.
 supabase/.temp/
 eval-repos/
+
+# start-all-apps.mjs output: pids, per-app logs, QR index. Regenerated, never committed.
+.apps-running/

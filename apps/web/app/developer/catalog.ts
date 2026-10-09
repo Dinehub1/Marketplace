@@ -263,6 +263,13 @@ export const APPS: DeveloperApp[] = [
     blurb: "Driver partner orders, routing & earnings dashboard.",
     platform: "Android & iOS",
   },
+  {
+    id: "gym-tracker",
+    name: "Gym Tracker",
+    bundleId: "com.brandcollabs.gymtracker",
+    blurb: "Weekly workout plan, guided sets, rest timer & personal records.",
+    platform: "Android & iOS",
+  },
 ];
 
 /**

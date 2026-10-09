@@ -64,20 +64,27 @@ const ALIASES = {
   cycle: 'cycle-tracker',
   money: 'money-map',
   highway: 'highwaypass',
+  gym: 'gym-tracker',
 };
 
 // ── arguments ───────────────────────────────────────────────────────────────────
 const argv = process.argv.slice(2);
 const portIdx = argv.indexOf('--port');
 const wantedPort = portIdx > -1 ? Number(argv[portIdx + 1]) : null;
+/** `--host <ip>`: the address printed in the banner and encoded in Expo's QR. */
+const hostIdx = argv.indexOf('--host');
 /**
- * Everything that is not a flag, or a flag's value, is the target id. Guarded on
- * `portIdx > -1`: without it, `portIdx + 1` is 0 when no `--port` was given, which
- * silently filtered out the first argument — so `npm run app -- tap-sprint` printed the
- * list instead of running Tap Sprint.
+ * Everything that is not a flag, or a flag's value, is the target id. Both flag *values*
+ * have to be excluded, not just the flags: `--host 192.168.29.252` otherwise leaves
+ * `192.168.29.252` looking like a positional id, and the run dies on "unknown target".
+ * Guarded on `> -1` because otherwise `idx + 1` is 0 when the flag is absent, which
+ * silently dropped the first argument — so `npm run app -- tap-sprint` printed the list
+ * instead of running Tap Sprint.
  */
-const portValueIdx = portIdx > -1 ? portIdx + 1 : -1;
-const positional = argv.filter((a, i) => !a.startsWith('--') && i !== portValueIdx);
+const flagValueIdx = new Set(
+  [portIdx, hostIdx].filter((i) => i > -1).map((i) => i + 1),
+);
+const positional = argv.filter((a, i) => !a.startsWith('--') && !flagValueIdx.has(i));
 let id = positional[0];
 
 // If no positional id was passed, check if the user accidentally ran `npm run app --<id>` (without space)
@@ -116,6 +123,7 @@ const openOn = (t) => {
   if (t.id === 'highwaypass') return 'root / (apps/highwaypass)';
   if (t.id === 'smokefree') return 'root / (apps/smokefree)';
   if (t.id === 'quick-driver') return 'root / (apps/quick-driver)';
+  if (t.id === 'gym-tracker') return 'root / (apps/gym-tracker)';
   return FIRST_ROUTE[t.id] ? FIRST_ROUTE[t.id] : 'a "not built yet" screen';
 };
 
@@ -167,13 +175,70 @@ if (wantedPort && !(await isFree(wantedPort))) {
 }
 
 // ── banner ──────────────────────────────────────────────────────────────────────
-function lanAddress() {
-  for (const addrs of Object.values(os.networkInterfaces())) {
-    for (const a of addrs ?? []) {
-      if (a.family === 'IPv4' && !a.internal) return a.address;
+/**
+ * The interface the phone should dial, which is *not* simply the first one that is up.
+ *
+ * This used to `return` the first non-internal IPv4 it found, and on this Mac that is
+ * `bridge0` (192.168.3.1) — a virtual bridge, not the Wi-Fi. The banner then printed
+ * `exp://192.168.3.1:8082`, a URL no phone on the LAN can reach, and the QR that Expo
+ * prints is built from the same address. The server was running perfectly; only the
+ * address we told the user to open was wrong, which is the most expensive kind of wrong
+ * because the app looks broken when it is not.
+ *
+ * So: rank the candidates instead of taking the first, and put the default route's
+ * interface at the top — the address the OS would actually use to reach the internet is
+ * the one a phone on the same network can reach back.
+ */
+function defaultRouteInterface() {
+  try {
+    const out = spawnSync('route', ['-n', 'get', 'default'], { encoding: 'utf8' });
+    const m = /interface:\s*(\S+)/.exec(out.stdout ?? '');
+    return m ? m[1] : null;
+  } catch {
+    // Linux (the capture VM) has no `route`; /proc/net/route is the fallback there.
+    try {
+      const line = fs.readFileSync('/proc/net/route', 'utf8').split('\n').slice(1)
+        .map((l) => l.split(/\s+/)).find((c) => c[1] === '00000000');
+      return line ? line[0] : null;
+    } catch {
+      return null;
     }
   }
-  return 'localhost';
+}
+
+function lanAddress() {
+  // An explicit answer always wins: EXPO_HOST, then --host <ip>, then auto-detect.
+  const flag = process.env.EXPO_HOST || (hostIdx > -1 ? argv[hostIdx + 1] : null);
+  if (flag) return flag;
+
+  const preferred = defaultRouteInterface();
+  /** Virtual bridges, VPN tunnels and container links: reachable by the Mac, not the phone. */
+  const virtual = /^(bridge|vmnet|vmenet|utun|tun|tap|docker|veth|llw|awdl|anpi|ap\d)/;
+
+  const candidates = [];
+  for (const [name, addrs] of Object.entries(os.networkInterfaces())) {
+    for (const a of addrs ?? []) {
+      if (a.family !== 'IPv4' || a.internal) continue;
+      const isVirtual = virtual.test(name);
+      candidates.push({
+        address: a.address,
+        // 0 = the default route, 1 = a real interface, 2 = virtual, 3 = link-local.
+        rank: name === preferred ? 0 : isVirtual ? 2 : a.address.startsWith('169.254.') ? 3 : 1,
+      });
+    }
+  }
+  candidates.sort((x, y) => x.rank - y.rank);
+  const chosen = candidates[0]?.address ?? 'localhost';
+
+  // Say so when we skipped a bridge, because "why is my QR a different IP than last
+  // time" is otherwise a mystery the next person has to re-solve from scratch.
+  const skipped = candidates.filter((c) => c.rank >= 2).map((c) => c.address);
+  if (skipped.length) {
+    console.log(`  note        ignoring virtual interface(s) ${skipped.join(', ')} — not reachable from your phone`);
+    console.log(`              override with EXPO_HOST=<ip> or --host <ip> if that is wrong`);
+    console.log('');
+  }
+  return chosen;
 }
 const lan = lanAddress();
 

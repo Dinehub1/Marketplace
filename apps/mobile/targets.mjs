@@ -429,6 +429,19 @@ export const TARGETS = [
     family: "quick-driver",
     firstScreen: "dashboard",
   },
+  {
+    id: "gym-tracker",
+    name: "Gym Tracker",
+    bundleId: "com.brandcollabs.gymtracker",
+    tagline: "Weekly workout plan, guided sets, rest timer & PRs",
+    storeCategory: "Health & Fitness",
+    aso: ["gym tracker", "workout log", "weight lifting", "strength training"],
+    color: "#65a30d",
+    permissions: [],
+    products: [],
+    family: "gym-tracker",
+    firstScreen: "dashboard",
+  },
 ];
 
 export const byId = (id) => TARGETS.find((t) => t.id === id);
@@ -449,6 +462,7 @@ export const STANDALONE_APPS = [
   "highwaypass",
   "smokefree",
   "quick-driver",
+  "gym-tracker",
 ];
 export const isStandalone = (target) =>
   STANDALONE_APPS.includes(typeof target === "string" ? target : target?.id);
@@ -504,6 +518,7 @@ export const FIRST_ROUTE = {
   highwaypass: null,
   smokefree: null,
   "quick-driver": null,
+  "gym-tracker": null,
 };
 
 /**
@@ -550,6 +565,7 @@ export const EAS_PROJECT_ID = {
   highwaypass: null,
   smokefree: null,
   "quick-driver": null,
+  "gym-tracker": null,
 };
 
 /** The EAS project id for a target, or null when its project has not been created. */
