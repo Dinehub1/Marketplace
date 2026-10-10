@@ -20,6 +20,7 @@ import { SavedProvider } from "@/lib/saved";
 import { OwnerProvider } from "@/lib/owner";
 import { useReduceMotion } from "@/lib/motion";
 import { prepareAds } from "@/lib/ads";
+import { initPurchases } from "@/lib/purchases";
 import { canOpen, HOME_ROUTE } from "@/lib/routes";
 
 function Root() {
@@ -37,12 +38,9 @@ function Root() {
   }, [pathname, router]);
 
   useEffect(() => {
-    // Boot the ad subsystem once, at the root rather than on a screen. It is a
-    // no-op unless EXPO_PUBLIC_ADS_ENABLED is set, it never throws, and it is the
-    // only subscriber to impression-level revenue — a screen that owned that
-    // subscription would drop any impression reported after it unmounted, which is
-    // the one number the whole measurement loop runs on.
+    // Boot the ad subsystem and RevenueCat IAP engine once at the root.
     void prepareAds();
+    void initPurchases();
   }, []);
 
   useEffect(() => {

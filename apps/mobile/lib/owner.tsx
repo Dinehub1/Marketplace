@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL, BRAND_SLUG } from "./config";
+import { syncPurchasesUser, resetPurchasesUser } from "./purchases";
 
 const KEY = "hermes-owner";
 
@@ -35,7 +36,13 @@ export function OwnerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     AsyncStorage.getItem(KEY)
       .then((raw) => {
-        if (raw) setSession(JSON.parse(raw) as OwnerSession);
+        if (raw) {
+          const restored = JSON.parse(raw) as OwnerSession;
+          setSession(restored);
+          if (restored.phone) {
+            void syncPurchasesUser(restored.phone);
+          }
+        }
       })
       .catch(() => {})
       .finally(() => setReady(true));
@@ -77,10 +84,12 @@ export function OwnerProvider({ children }: { children: ReactNode }) {
         const next = { phone: typeof data.phone === "string" && data.phone ? data.phone : phone, token };
         setSession(next);
         await AsyncStorage.setItem(KEY, JSON.stringify(next)).catch(() => {});
+        void syncPurchasesUser(next.phone);
       },
       signOut: () => {
         setSession(null);
         AsyncStorage.removeItem(KEY).catch(() => {});
+        void resetPurchasesUser();
       },
     }),
     [session, ready],

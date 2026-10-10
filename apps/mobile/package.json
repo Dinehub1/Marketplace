@@ -31,9 +31,9 @@
     "shots:fast": "node ../../scripts/app-shots.mjs --no-export"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~57.0.16",
     "@brandcollabs/core": "*",
     "@brandcollabs/tokens": "*",
+    "@expo/metro-runtime": "~57.0.16",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "^7.1.8",
     "expo": "~57.0.26",
@@ -54,6 +54,7 @@
     "react-native": "^0.86.3",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-google-mobile-ads": "^16.5.0",
+    "react-native-purchases": "^10.12.2",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",

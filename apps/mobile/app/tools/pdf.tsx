@@ -17,7 +17,15 @@ import { isPageRange, PDF_PAGES_HINT } from "@brandcollabs/core";
 import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Press } from "@/components/ui";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProductUI, type ProductUI } from "@/lib/product-ui";
+import { usePdfPro } from "@/lib/purchases";
+import { useOwner } from "@/lib/owner";
+import { Icon } from "@/components/icons";
+import { PdfPaywallModal } from "@/components/paywall/PdfPaywallModal";
+import { AccountModal } from "@/components/account/AccountModal";
+
+const FREE_MERGE_LIMIT = 3;
 
 type ActionId = "merge" | "split" | "compress" | "rotate" | "page-numbers";
 
@@ -72,8 +80,14 @@ function rangeFileName(range: string): string {
 }
 
 export default function PdfToolkit() {
+  const insets = useSafeAreaInsets();
   const ui = useProductUI("pdf-tools");
-  const s = useMemo(() => makeStyles(ui), [ui]);
+  const s = useMemo(() => makeStyles(ui, insets), [ui, insets]);
+  const owner = useOwner();
+  const { isPro, refresh: refreshPro } = usePdfPro();
+  const [paywallVisible, setPaywallVisible] = useState(false);
+  const [accountVisible, setAccountVisible] = useState(false);
+  const [paywallTrigger, setPaywallTrigger] = useState<string | undefined>();
   const [action, setAction] = useState<ActionId>("merge");
   const [files, setFiles] = useState<PickedFile[]>([]);
   const [pages, setPages] = useState("");
@@ -109,9 +123,19 @@ export default function PdfToolkit() {
   async function addFiles() {
     setError(null);
     setJob(null);
+    if (action === "merge" && !isPro && files.length >= FREE_MERGE_LIMIT) {
+      setPaywallTrigger(`Free tier allows merging up to ${FREE_MERGE_LIMIT} PDFs. Upgrade to Pro for unlimited files.`);
+      setPaywallVisible(true);
+      return;
+    }
     try {
       const picked = await pickFile("pdf");
       if (!picked) return;
+      if (action === "merge" && !isPro && files.length + 1 > FREE_MERGE_LIMIT) {
+        setPaywallTrigger(`Free tier allows merging up to ${FREE_MERGE_LIMIT} PDFs. Upgrade to Pro for unlimited files.`);
+        setPaywallVisible(true);
+        return;
+      }
       setFiles((prev) => (single ? [picked] : [...prev, picked]));
     } catch (e: any) {
       setError(e?.message || "Could not open a file picker on this device.");
@@ -139,6 +163,11 @@ export default function PdfToolkit() {
             : `Number pages at ${posLabel}`;
 
   async function run() {
+    if (action === "merge" && !isPro && files.length > FREE_MERGE_LIMIT) {
+      setPaywallTrigger(`Free tier allows merging up to ${FREE_MERGE_LIMIT} PDFs. Upgrade to Pro for unlimited files.`);
+      setPaywallVisible(true);
+      return;
+    }
     setBusy(true);
     setError(null);
     setJob(null);
@@ -184,10 +213,44 @@ export default function PdfToolkit() {
 
   return (
     <ScrollView style={s.root} contentContainerStyle={s.wrap}>
-      <View style={s.badgeRow}>
-        <Text style={s.badge}>PDF · MERGE · SPLIT · COMPRESS · ROTATE · NUMBERS</Text>
-        <Text style={s.price}>FREE</Text>
+      {/* Top Navigation & Status Bar */}
+      <View style={s.topBar}>
+        <View style={s.brandBadge}>
+          <Text style={s.badge}>PDF TOOLKIT</Text>
+        </View>
+        <View style={s.topActions}>
+          {isPro ? (
+            <View style={s.proBadge}>
+              <Text style={s.proBadgeText}>PRO ACTIVE</Text>
+            </View>
+          ) : (
+            <Press
+              onPress={() => {
+                setPaywallTrigger(undefined);
+                setPaywallVisible(true);
+              }}
+              style={s.proButton}
+              accessibilityRole="button"
+              accessibilityLabel="Upgrade to PDF Pro"
+            >
+              <Text style={s.proButtonText}>GET PRO</Text>
+            </Press>
+          )}
+          <Press
+            onPress={() => setAccountVisible(true)}
+            style={[s.accountBtn, owner.session && s.accountBtnActive]}
+            accessibilityRole="button"
+            accessibilityLabel={owner.session ? `Account: ${owner.session.phone}` : "Account & Cloud Sync"}
+          >
+            <Icon name="person" size={14} color={owner.session ? "#16a34a" : ui.ink} />
+            <Text style={[s.accountBtnText, owner.session && s.accountBtnTextActive]}>
+              {owner.session ? "Synced" : "Sign In"}
+            </Text>
+          </Press>
+        </View>
       </View>
+
+      <Text style={s.subBadge}>MERGE · SPLIT · COMPRESS · ROTATE · NUMBERS</Text>
 
       <Text style={s.h1}>Pick a job,{"\n"}then the file</Text>
       <Text style={s.sub}>
@@ -416,14 +479,28 @@ export default function PdfToolkit() {
       ) : null}
 
       <Text style={s.foot}>
-        Free to use, and no sign-up for a single file. A ₹299/mo plan is priced on the product
-        plan for shops running bulk jobs — the checkout is not part of this build.
+        {isPro
+          ? "PDF Toolkit Pro is active on this device. Unlimited merging, high compression, and clean exports unlocked."
+          : "Free tier allows merging up to 3 PDFs. Unlock unlimited merging and batch tools with PDF Toolkit Pro."}
       </Text>
+
+      <PdfPaywallModal
+        visible={paywallVisible}
+        onClose={() => setPaywallVisible(false)}
+        onSuccess={() => refreshPro()}
+        onOpenAccount={() => setAccountVisible(true)}
+        featureTrigger={paywallTrigger}
+      />
+
+      <AccountModal
+        visible={accountVisible}
+        onClose={() => setAccountVisible(false)}
+      />
     </ScrollView>
   );
 }
 
-function makeStyles(ui: ProductUI) {
+function makeStyles(ui: ProductUI, insets: { top: number; bottom: number }) {
   // This screen has no paper metaphor, so every colour comes from the palette and
   // dark mode is not a second code path: the RGB values that used to sit here
   // (#b91c1c red, #0f172a ink, #f8fafc ground) are now the pdf-tools accent and
@@ -434,11 +511,79 @@ function makeStyles(ui: ProductUI) {
   const LINE = ui.hairline;
   const BG = ui.bg;
   return StyleSheet.create({
-  root: { flex: 1, backgroundColor: BG },
-  wrap: { padding: 22, paddingBottom: 48, maxWidth: 520, width: "100%", alignSelf: "center" },
-  badgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 14 },
-  badge: { color: RED, fontSize: 11, fontWeight: "800", letterSpacing: 1, flexShrink: 1 },
-  price: { color: INK, fontSize: 20, fontWeight: "800" },
+    root: { flex: 1, backgroundColor: BG },
+    wrap: {
+      paddingHorizontal: 20,
+      paddingTop: Math.max(insets.top, 16) + 12,
+      paddingBottom: Math.max(insets.bottom, 24) + 32,
+      maxWidth: 520,
+      width: "100%",
+      alignSelf: "center",
+    },
+    topBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      marginBottom: 6,
+    },
+    brandBadge: {
+      backgroundColor: "rgba(185, 28, 28, 0.08)",
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 6,
+    },
+    badge: { color: RED, fontSize: 11.5, fontWeight: "800", letterSpacing: 0.8 },
+    subBadge: {
+      color: ui.faint,
+      fontSize: 10.5,
+      fontWeight: "700",
+      letterSpacing: 0.6,
+      marginBottom: 16,
+    },
+    topActions: { flexDirection: "row", alignItems: "center", gap: 8 },
+    proButton: {
+      backgroundColor: RED,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+    },
+    proButtonText: {
+      color: "#ffffff",
+      fontSize: 12,
+      fontWeight: "800",
+      letterSpacing: 0.5,
+    },
+    proBadge: {
+      backgroundColor: "#16a34a",
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 16,
+    },
+    proBadgeText: { color: "#ffffff", fontSize: 11.5, fontWeight: "800", letterSpacing: 0.5 },
+    accountBtn: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 16,
+      backgroundColor: ui.surface,
+      borderWidth: 1,
+      borderColor: LINE,
+    },
+    accountBtnActive: {
+      borderColor: "#16a34a",
+      backgroundColor: "rgba(22, 163, 74, 0.1)",
+    },
+    accountBtnText: {
+      fontSize: 12,
+      fontWeight: "600",
+      color: INK,
+    },
+    accountBtnTextActive: {
+      color: "#16a34a",
+      fontWeight: "700",
+    },
   h1: { color: INK, fontSize: 32, fontWeight: "800", lineHeight: 37, marginBottom: 10 },
   sub: { color: MUTED, fontSize: 15, lineHeight: 22, marginBottom: 18 },
   actions: { gap: 8, marginBottom: 18 },
