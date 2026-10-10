@@ -95,22 +95,35 @@ serve(async (req: Request) => {
   }
 
   try {
-    // 1. Verify Secret Authorization
+    // 1. Verify Secret Authorization (Mandatory)
     const authHeader = req.headers.get("authorization") ?? req.headers.get("x-revenuecat-secret") ?? "";
     const expectedAuth = Deno.env.get("REVENUECAT_WEBHOOK_AUTH") ?? Deno.env.get("REVENUECAT_WEBHOOK_SECRET") ?? "";
 
-    if (expectedAuth) {
-      const cleanReceived = authHeader.replace(/^Bearer\s+/i, "").trim();
-      const cleanExpected = expectedAuth.replace(/^Bearer\s+/i, "").trim();
-      if (cleanReceived !== cleanExpected) {
-        console.warn("[revenuecat-webhook] Unauthorized request attempt");
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+    if (!expectedAuth) {
+      console.error("[revenuecat-webhook] Server configuration error: REVENUECAT_WEBHOOK_AUTH secret is not configured.");
+      return new Response(JSON.stringify({ error: "Webhook authorization secret is not configured on server" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const cleanReceived = authHeader.replace(/^Bearer\s+/i, "").trim();
+    const cleanExpected = expectedAuth.replace(/^Bearer\s+/i, "").trim();
+    if (!cleanReceived || cleanReceived !== cleanExpected) {
+      console.warn(
+        `[revenuecat-webhook] Unauthorized: received header present=${Boolean(authHeader)}, matched=${cleanReceived === cleanExpected}`
+      );
+      return new Response(
+        JSON.stringify({
+          error: "Unauthorized",
+          hint: "Authorization header sent by RevenueCat does not match REVENUECAT_WEBHOOK_AUTH configured in Supabase.",
+          received_header_present: Boolean(authHeader),
+        }),
+        {
           status: 401,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
-    } else {
-      console.info("[revenuecat-webhook] REVENUECAT_WEBHOOK_AUTH not set, proceeding without auth check");
+        }
+      );
     }
 
     // 2. Initialize Supabase Service Role Client

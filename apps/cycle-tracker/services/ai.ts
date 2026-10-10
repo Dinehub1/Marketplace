@@ -1,12 +1,9 @@
 import { AIPrediction, CycleData, UserProfile } from '@/types';
 
-const OPENROUTER_URL = process.env.EXPO_PUBLIC_AI_BASE_URL!;
-const OPENROUTER_API_KEY = process.env.EXPO_PUBLIC_AI_API_KEY!;
-const MODEL = process.env.EXPO_PUBLIC_AI_MODEL!;
+const OPENROUTER_URL = process.env.EXPO_PUBLIC_AI_BASE_URL || 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_API_KEY = (process.env.OPENROUTER_API_KEY || process.env.EXPO_PUBLIC_AI_API_KEY || '').trim();
+const MODEL = process.env.EXPO_PUBLIC_AI_MODEL || 'deepseek/deepseek-chat';
 
-if (!OPENROUTER_URL || !OPENROUTER_API_KEY || !MODEL) {
-    console.error('[AI] Missing env vars. Ensure EXPO_PUBLIC_AI_BASE_URL, EXPO_PUBLIC_AI_API_KEY, and EXPO_PUBLIC_AI_MODEL are set in .env');
-}
 
 // Generate a simple hash of cycle data to detect changes
 export function generateDataHash(cycleData: CycleData): string {
@@ -108,8 +105,8 @@ export async function getAIPrediction(
         throw new Error('Not enough cycle data to generate prediction');
     }
 
-    if (!OPENROUTER_API_KEY || !OPENROUTER_URL || !MODEL) {
-        throw new Error('AI env vars not configured. Check .env file.');
+    if (!OPENROUTER_API_KEY) {
+        throw new Error('AI inference service is not configured. Please configure OPENROUTER_API_KEY or proxy via backend.');
     }
 
     console.log(`[AI] Calling ${MODEL} via ${OPENROUTER_URL}`);

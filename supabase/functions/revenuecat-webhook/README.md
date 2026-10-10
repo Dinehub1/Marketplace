@@ -19,12 +19,12 @@ https://xpfmqpmhmcouwzebfwhb.supabase.co/functions/v1/revenuecat-webhook
 2. Click **+ New**.
 3. Configure the fields:
    * **Webhook URL:** `https://xpfmqpmhmcouwzebfwhb.supabase.co/functions/v1/revenuecat-webhook`
-   * **Authorization header:** `Bearer YOUR_OPTIONAL_WEBHOOK_SECRET`
-4. In Supabase Dashboard, set the secret:
+   * **Authorization header:** `Bearer YOUR_REVENUECAT_WEBHOOK_SECRET`
+4. In Supabase Dashboard or CLI, set the secret:
    ```bash
-   npx supabase secrets set REVENUECAT_WEBHOOK_AUTH="YOUR_OPTIONAL_WEBHOOK_SECRET" --project-ref xpfmqpmhmcouwzebfwhb
+   npx supabase secrets set REVENUECAT_WEBHOOK_AUTH="YOUR_REVENUECAT_WEBHOOK_SECRET" --project-ref xpfmqpmhmcouwzebfwhb
    ```
-   *(If `REVENUECAT_WEBHOOK_AUTH` is not set, the function allows incoming requests while logging a reminder).*
+   *(Requests without a matching authorization header are rejected with 401 Unauthorized).*
 5. Click **Send Test Webhook** in RevenueCat to verify the integration.
 
 ---

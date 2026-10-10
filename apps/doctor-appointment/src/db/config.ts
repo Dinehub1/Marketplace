@@ -1,11 +1,20 @@
 import { neon } from '@neondatabase/serverless';
 
-const DATABASE_URL = 'postgresql://neondb_owner:npg_7aubdKhH4qVc@ep-dawn-tooth-ad9ft25c-pooler.c-2.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require';
+/**
+ * Neon database connection.
+ * Credentials must be supplied via environment variables (DATABASE_URL or EXPO_PUBLIC_DATABASE_URL)
+ * and never hardcoded in source control.
+ */
+const DATABASE_URL =
+  process.env.DATABASE_URL ||
+  process.env.EXPO_PUBLIC_DATABASE_URL ||
+  '';
 
 export const sql = neon(DATABASE_URL);
 
 export const dbConfig = {
-  projectId: 'curly-dream-77249049',
-  databaseName: 'neondb',
+  projectId: process.env.NEON_PROJECT_ID || 'curly-dream-77249049',
+  databaseName: process.env.NEON_DATABASE_NAME || 'neondb',
   connectionString: DATABASE_URL,
 };
+

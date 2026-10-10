@@ -23,3 +23,7 @@ port = 54344
 
 [analytics]
 port = 54345
+
+[functions.revenuecat-webhook]
+verify_jwt = false
+
