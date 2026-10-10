@@ -1,5 +1,5 @@
 /**
- * @hermes/core - Unified Multi-Gateway Payment & In-App Purchase Utilities
+ * @brandcollabs/core - Unified Multi-Gateway Payment & In-App Purchase Utilities
  *
  * Provides shared types, contracts, and helpers across all apps in the monorepo:
  *  - Razorpay: Domestic UPI / Cards & International Cards for real-world/web services

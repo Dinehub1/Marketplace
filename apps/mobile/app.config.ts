@@ -346,7 +346,7 @@ const config: ExpoConfig = {
       products: target.products,
       permissions: PERMISSIONS,
       // No `scope` key: which categories a directory app may show is resolved at
-      // runtime from `@hermes/core`'s ownership table (lib/target.ts), so a binary
+      // runtime from `@brandcollabs/core`'s ownership table (lib/target.ts), so a binary
       // can never carry a stale copy of who owns which category.
       ...(target.ads ? { ads: target.ads } : {}),
     },

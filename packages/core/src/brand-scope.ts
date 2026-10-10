@@ -2,7 +2,7 @@
  * Brand → category ownership: the ONE table that decides which business listings
  * belong to which brand.
  *
- * This lives in `@hermes/core` because two independent surfaces have to agree about
+ * This lives in `@brandcollabs/core` because two independent surfaces have to agree about
  * it and must never be able to drift:
  *
  *   • the 28 brand websites, which render /<category>-in-indore landing pages and

@@ -7,7 +7,7 @@ import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
-import { alpha, space } from "@hermes/tokens";
+import { alpha, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { AdBanner } from "@/components/ad-slot";
 

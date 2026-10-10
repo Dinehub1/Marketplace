@@ -1,6 +1,6 @@
 // Server-only PayPal helper for international payments.
 // Reads credentials from the app environment; never import this from a client component.
-import type { PayPalOrder, CapturePayPalOrderResult, SupportedCurrency } from "@hermes/core";
+import type { PayPalOrder, CapturePayPalOrderResult, SupportedCurrency } from "@brandcollabs/core";
 
 const CLIENT_ID = process.env.PAYPAL_CLIENT_ID ?? "";
 const CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET ?? "";

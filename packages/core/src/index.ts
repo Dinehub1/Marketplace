@@ -1,5 +1,5 @@
 /**
- * @hermes/core — domain logic shared by the web app and the Expo app.
+ * @brandcollabs/core — domain logic shared by the web app and the Expo app.
  *
  * What lives here is the part of the product that is genuinely the same on both
  * platforms: how a category becomes a URL slug, how a scraped business name is
@@ -31,8 +31,9 @@ export * from "./brand-scope.ts";
 // `./ai.ts` was removed: all 15 of its exports (callJevDecisions, callChatCompletion,
 // the Jev* question/result types) had zero importers across apps/, services/ and
 // packages/ — verified with a repo-wide symbol search. Delete rather than keep: leaving
-// it re-exported made `@hermes/core` advertise an AI client this repo does not call.
+// it re-exported made `@brandcollabs/core` advertise an AI client this repo does not call.
 export * from "./payments.ts";
+export * from "./auth.ts";
 
 export type CategoryStat = {
   category: string; // the real value as stored, e.g. "Furniture Store"

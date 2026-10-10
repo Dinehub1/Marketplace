@@ -5,8 +5,8 @@ Local-first: everything is stored on the device with AsyncStorage, so there is n
 
 ```bash
 npm run gym                              # from the repo root: Expo Go, port picked for you
-npm test -w @hermes/gym-tracker          # training arithmetic (1RM, PRs, progression, streaks, heatmap)
-npm run typecheck -w @hermes/gym-tracker
+npm test -w @brandcollabs/gym-tracker          # training arithmetic (1RM, PRs, progression, streaks, heatmap)
+npm run typecheck -w @brandcollabs/gym-tracker
 ```
 
 ## Screens
@@ -39,7 +39,7 @@ AGPL too. Nothing from openGym's source is used.
   licence from [gymvisual.com](https://gymvisual.com/)**, or a build with `EXPO_PUBLIC_EXERCISE_MEDIA=off`,
   which replaces every picture with a placeholder.
 
-Regenerate the exercise data (pinned commit) with `npm run build:exercises -w @hermes/gym-tracker`.
+Regenerate the exercise data (pinned commit) with `npm run build:exercises -w @brandcollabs/gym-tracker`.
 
 ## Before a store build
 

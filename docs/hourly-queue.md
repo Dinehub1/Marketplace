@@ -100,7 +100,7 @@ and the file re-downloaded from R2 carries no EXIF and no GPS IFD), **59** (3 ph
 `https://expo.dropby.co.in/api/job`; merge **61** re-run and still 200, so the old
 products are untouched. Five guard cases answer an honest **400** (1 photo "A collage
 needs at least 2 photos", 5 photos, `pagesize=a0`, `layout=9x9`, `cell_px=abc`) rather
-than a 502. `npm run typecheck -w @hermes/web` exit 0 before the gated
+than a 502. `npm run typecheck -w @brandcollabs/web` exit 0 before the gated
 `npm run build && pm2 restart marketplace`; localhost:8080, /galaxy and
 sheharbazaar.dropby.co.in all 200 afterwards.
 Not done here: no screen yet — the toolbox grid still lists nine tiles, so the three
@@ -410,7 +410,7 @@ Regression check, because the install **downgraded `onnxruntime` 1.27.0 → 1.20
 `exif-strip`, `collage` (2x1) and `pdf-tools merge` are 200 too.
 Process: `pm2 stop dropby-worker` → 8099 free → `pm2 start ecosystem.config.js --only
 dropby-worker` (one listener, `health.pid 6560 == pm2 pid`); `npm run typecheck -w
-@hermes/web` exit 0 — it caught a real TDZ error (`DOC_ACCEPTS` read by the ENGINE table
+@brandcollabs/web` exit 0 — it caught a real TDZ error (`DOC_ACCEPTS` read by the ENGINE table
 while the module loads) that was fixed before the gated `npm run build && pm2 restart
 hermes-web`, after which localhost:8080 and `/galaxy` are 200.
 Still open from this item: **(a)** no screen — the toolbox grid has no tile for this
@@ -504,7 +504,7 @@ bags, 350 rupees, 35,000, 15 September 2026; the Hindi keeps 15 सितंब�
 a 9,799-character document → **400** "translates up to 9000 in one job (about four pages)".
 Rows 141-145 are `done`/`failed` in `product_jobs` with the engine's `meta` (item 40's
 column) recording `engines`, `neurons`, `chars_in`. Regressions: `resume-checker` **145** and
-`pdf-tools merge` **146** both still 200. `npm run typecheck -w @hermes/web` exit 0, then the
+`pdf-tools merge` **146** both still 200. `npm run typecheck -w @brandcollabs/web` exit 0, then the
 gated `npm run build && pm2 restart marketplace`; localhost:8080, sheharbazaar and
 expo.dropby.co.in/tools all 200 after. Engine restarted as stop → port free → start (one
 listener on 8099, `health.pid 7384 == pm2 pid`).
@@ -608,7 +608,7 @@ out naming every reason, the zero-key chain landing on `rules`, and the search s
 the two ₹0 paths, the four hosted calls and the honest vision failure printed; `tsc --noEmit`
 in `apps/web` exit 0. **No engine restart and no `npm run build`** — nothing in the web app
 imports the router yet, so the live site was never touched (item 36 wires it in).
-Test script: `npm run test:ai -w @hermes/web`.
+Test script: `npm run test:ai -w @brandcollabs/web`.
 
 ### 18. UPI QR on the invoice (no vendor needed)
 The invoice engine can print a UPI QR from the NPCI spec string
@@ -742,7 +742,7 @@ for the shop, not a cosmetic one. Needs a place to keep it (the screen's own sto
 sends — numbering is the app's business, not the renderer's.
 
 **Result:** the number counts itself, per shop, on the device. The rules are pure and live in
-`@hermes/core` — `parseBillNo` (a trailing digit run, with whatever prefix the shop uses),
+`@brandcollabs/core` — `parseBillNo` (a trailing digit run, with whatever prefix the shop uses),
 `shopKeyOf` (a real 15-character GSTIN when there is one, else the folded shop name),
 `advanceCounter` (forward only: a reprint of `007` against a counter at `014` does not rewind
 it), `nextBillNo` (last + 1, **padded to the width of the last one** so `014` → `015`, and
@@ -755,7 +755,7 @@ be a lie — every sentence about it says "this phone". A number this cannot par
 The field is offered only while it is the app's own: typing in it hands it to the user
 (`billTyped` ref), and the counter never overwrites that. A number already used is said
 **before** the PDF is made, not after.
-Evidence: 8/8 `@hermes/core` tests (two new tables: parse/advance/next, and shop keys),
+Evidence: 8/8 `@brandcollabs/core` tests (two new tables: parse/advance/next, and shop keys),
 then **20/20** checks at 390×844 against the live app — a fresh phone offers `1`, the POST
 that follows is job **115** (HTTP 200) and the field then offers `2` with "the next bill from
 this shop is 2 on this phone"; the counter survives a reload; a second shop starts at `1`
@@ -859,7 +859,7 @@ no range, 5 pages), **100** (`compress`) all 200; the 400s carry `pages must sel
 1-3,7 — also odd, even, l (last page), 3- (from page 3), -4 (up to page 4), !5 (exclude)`; the two
 empty-selection cases are recorded as `failed` rows **95/96** (the route's own shape check answers
 before a row exists, which is the intent). Merge re-run = jobs **102**/**103**, 200.
-`npm run typecheck -w @hermes/web` exit 0, then the gated `npm run build && pm2 restart
+`npm run typecheck -w @brandcollabs/web` exit 0, then the gated `npm run build && pm2 restart
 hermes-web`; `localhost:8080`, `/galaxy`, `sheharbazaar.dropby.co.in` and `expo.dropby.co.in`
 all 200 afterwards. Worker restarted as `pm2 stop` → port free → `pm2 start --only dropby-worker`
 (never a plain restart, see item 12): one listener on 8099, `health.pid 6604 == pm2 pid`.
@@ -943,7 +943,7 @@ the price measured against the real per-image cost (item 16's job) rather than g
   (57 distinct colours in an 8x8 sample, i.e. a drawn picture, not a flat placeholder).
   Honest edges: no prompt → **400 `prompt is required`**; a >300-character prompt → **413
   `prompt is too long`**; `exif-strip` re-run afterwards = job **119**, still 200, so the route
-  change broke nothing else. `npm run typecheck -w @hermes/web` exit 0, then the gated
+  change broke nothing else. `npm run typecheck -w @brandcollabs/web` exit 0, then the gated
   `npm run build && pm2 restart marketplace`; localhost:8080, `/galaxy`,
   sheharbazaar.dropby.co.in and expo.dropby.co.in/tools all 200 after.
 - One caveat measured on the way: the **first** engine call this hour answered
@@ -1174,7 +1174,7 @@ say in the help line what the engine really takes. Evidence to require: `npx exp
 web` at exit 0 with the bundle size, the two gallery shots of `/tools/pdf` re-captured, and a
 screenshot of the bad-input state at phone size next to a real `odd` job id.
 
-**Result:** the grammar now lives in **`@hermes/core`** (`PDF_PAGE_EXPR`, `isPageRange`,
+**Result:** the grammar now lives in **`@brandcollabs/core`** (`PDF_PAGE_EXPR`, `isPageRange`,
 `PDF_PAGES_HELP`, `PDF_PAGES_HINT`) and is imported by **both** the job route and
 `apps/mobile/app/tools/pdf.tsx`, so the field and the 400 can no longer disagree — the screen
 had drifted because it owned a second copy. The field is marked bad with
@@ -1202,7 +1202,7 @@ expo.dropby.co.in/tools/pdf all 200 after. No engine restart was needed (the wor
 touched: one listener on 8099, `health.pid 6604 == pm2 pid`).
 
 ### 26. Route: its own 400 hint offers a bare `!5`, which selects nothing — DONE 2026-09-17
-`PDF_PAGES_HELP` in `@hermes/core` — the sentence the route answers a bad range with — ends
+`PDF_PAGES_HELP` in `@brandcollabs/core` — the sentence the route answers a bad range with — ends
 "… , -4 (up to page 4), !5 (exclude)". pdfcpu parses `!5`, but on its own it **selects
 nothing**: `trim -p '!5'` aborts with `missing page numbers` and writes a 0-byte file, which is
 why the engine answers 400 for it (measured this hour: `!5` and `n5` alone both fail; `1-,!5`
@@ -1222,7 +1222,7 @@ and a note that the language boundary is why the sentence is written twice. The 
 pins **both** sentences: `1-,!5` must be present and a bare exclusion (`/(?:^|[\s(])(?:!|n)\d/`)
 must be absent — proved to fail on the old text (`old flagged as a bare exclusion: true | has
 1-,!5: false`), so the new assertion is a gate and not decoration. `packages/core` **8/8** tests
-pass; `tsc --noEmit` exit 0 for `@hermes/core` and `@hermes/web`.
+pass; `tsc --noEmit` exit 0 for `@brandcollabs/core` and `@brandcollabs/web`.
 Evidence, after the change: the bad range `1 - 3` through `https://expo.dropby.co.in/api/job`
 and through `localhost:8080` both answer **400** with the new sentence
 (`… -4 (up to page 4), 1-,!5 (all but page 5)`); the form the 400 now teaches really runs —
@@ -1628,7 +1628,7 @@ Regression: `exif-strip` on the same route = job **157**, still 200, so the engi
 untouched.
 Catalogue row inserted for `listing-description` (`price_paise 0`, `plan free`, `cost_model
 free_local`, sort 40) — without it the route's own check answers 404 "This product is not switched
-on yet". `npm run typecheck -w @hermes/web` exit 0, then the gated
+on yet". `npm run typecheck -w @brandcollabs/web` exit 0, then the gated
 `npm run build && pm2 restart marketplace`; localhost:8080, /galaxy, sheharbazaar.dropby.co.in,
 expo.dropby.co.in/tools and shots.dropby.co.in/log all 200 afterwards. **No engine restart** — no
 Python file changed (one listener on :8099, `health.pid 8164 == pm2 pid`).
@@ -1831,7 +1831,7 @@ orientation, software]` / `exif_out []` (exactly the response's own object), job
 The pre-change rows are untouched (`id 134-137`, including two `failed` ones, read `meta: null`)
 and the failure path still writes without the column (job **140** `failed`,
 `error "bad request: merge needs at least two PDFs"`, `meta null`), so nothing that worked before
-changed shape. `npm run typecheck -w @hermes/web` exit 0, then the gated
+changed shape. `npm run typecheck -w @brandcollabs/web` exit 0, then the gated
 `npm run build && pm2 restart marketplace`; `localhost:8080` (200), `sheharbazaar.dropby.co.in`
 (200) and `expo.dropby.co.in/tools` (200) after — **the engine was not restarted** (one listener on
 :8099, pid 7200 == pm2 pid) because no engine file changed.
@@ -1866,7 +1866,7 @@ Built the way the README says a game target has to be built, not as a screen and
   three.
 - `scripts/make-app-icons.mjs` gained `MG`, and `npm run icons` wrote
   `assets/targets/merge-tiles/{icon,adaptive-icon,splash-icon}.png`; `npm run eas:profiles -w
-  @hermes/mobile` added the `merge-tiles` build profile (23 profiles).
+  @brandcollabs/mobile` added the `merge-tiles` build profile (23 profiles).
 
 Evidence, all run from the repo root:
 - `node scripts/check-targets.mjs` → **PASSED — 20 targets, 190 pairs compared, 0 too similar,
@@ -1875,7 +1875,7 @@ Evidence, all run from the repo root:
 - `node scripts/check-fleet.mjs` → **20 targets resolve: unique name, slug and bundle id; art on
   disk; every declared route exists**, with `merge-tiles → co.dropby.mergetiles → /merge-tiles`
   reading `ok`. 16/20 publishable; the 4 still owed a first screen are unchanged.
-- `npm run typecheck -w @hermes/mobile` → clean.
+- `npm run typecheck -w @brandcollabs/mobile` → clean.
 - `npx expo export --platform web` → exit 0, 2.7 MB bundle, and the new screen's own copy
   ("Slide the tiles, double the numbers", "Tile row ", "Watch ad to take the move back") is in the
   emitted JS, which is what proves Metro resolved `@/lib/merge-tiles` rather than silently
@@ -1917,7 +1917,7 @@ Evidence, all from the repo root:
   carries the source cells it came from (a renderer cannot guess them), the trace's `merges` and
   `spawnedAt` match the board, a snapshot comes back with nothing to animate, and the swipe
   maths — threshold, diagonal, exact tie, tremor.
-- `npm run typecheck -w @hermes/mobile` → clean; `npx eslint app/merge-tiles.tsx lib/merge-tiles.ts`
+- `npm run typecheck -w @brandcollabs/mobile` → clean; `npx eslint app/merge-tiles.tsx lib/merge-tiles.ts`
   → clean. That lint caught a real one: the first swipe used a gesture-handler worklet built in
   `useMemo`, which the React Compiler hook rules reject as reading refs during render. The board
   now uses React Native's own responder (`onResponderGrant`/`onResponderRelease`) — plain event
@@ -2384,7 +2384,7 @@ export reaches — and after any change to a native dependency, run the export b
 Measured: `node_modules/.bin` holds **72** entries (it should hold hundreds) with stray
 `.<name>.cmd-K0bNTVtJ` files beside them, and its directory mtime is **2026-09-19 02:50** — the
 signature of an interrupted install. Consequences, all measured this hour: `npx tsc` answers
-"This is not the tsc command you are looking for", `npm run typecheck -w @hermes/web` fails with
+"This is not the tsc command you are looking for", `npm run typecheck -w @brandcollabs/web` fails with
 `… is not recognized as an internal or external command`, and `npx expo export` fails the same
 way. `next` *is* present, which is why the live site builds normally.
 The workaround used (and worth keeping in the hourly job): call the CLI's own entry point —

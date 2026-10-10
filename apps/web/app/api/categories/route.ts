@@ -1,4 +1,4 @@
-import { CITY_LABEL } from '@hermes/core';
+import { CITY_LABEL } from '@brandcollabs/core';
 
 const PAGE = 1000; // PostgREST max-rows cap per request
 

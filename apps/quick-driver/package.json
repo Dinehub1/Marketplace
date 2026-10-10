@@ -1,5 +1,5 @@
 {
-  "name": "@hermes/quick-driver",
+  "name": "@brandcollabs/quick-driver",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
@@ -7,7 +7,7 @@
     "@expo/metro-runtime": "~57.0.16",
     "@expo/ui": "~57.0.4",
     "@expo/vector-icons": "^15.0.2",
-    "@hermes/core": "*",
+    "@brandcollabs/core": "*",
     "expo": "~57.0.26",
     "expo-audio": "~57.0.0",
     "expo-camera": "~57.0.1",

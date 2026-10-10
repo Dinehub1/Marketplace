@@ -17,7 +17,7 @@ import { Press } from "@/components/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { setAudioModeAsync } from "expo-audio";
-import { alpha, space } from "@hermes/tokens";
+import { alpha, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { AdBanner } from "@/components/ad-slot";
 

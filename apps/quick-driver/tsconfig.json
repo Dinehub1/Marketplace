@@ -3,11 +3,11 @@
   "compilerOptions": {
     "strict": true,
     "moduleResolution": "bundler",
-    // `@hermes/core` ships raw TypeScript and names its own relative imports with a
+    // `@brandcollabs/core` ships raw TypeScript and names its own relative imports with a
     // `.ts` extension, because its test suite runs under plain `node --test`, which
     // strips types instead of resolving extensions. `tsconfig.base.json` sets this for
     // the workspaces that already import the package; `expo/tsconfig.base` does not, so
-    // an app that starts importing `@hermes/core` has to set it too.
+    // an app that starts importing `@brandcollabs/core` has to set it too.
     "allowImportingTsExtensions": true,
     "paths": {
       "@/*": [
@@ -15,6 +15,12 @@
       ],
       "@/assets/*": [
         "./assets/*"
+      ],
+      "@brandcollabs/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@Brandcollabs/core": [
+        "../../packages/core/src/index.ts"
       ]
     }
   },

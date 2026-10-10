@@ -15,7 +15,7 @@
 import { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { Card, Text } from "@/components/ui";
 import { useProductUI } from "@/lib/product-ui";
 import { useWellnessStore, type SessionRecord } from "@/lib/session";

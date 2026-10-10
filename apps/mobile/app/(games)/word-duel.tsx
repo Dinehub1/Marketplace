@@ -24,7 +24,7 @@ import { StyleSheet, View, useWindowDimensions, type DimensionValue } from "reac
 import { useRouter } from "expo-router";
 import { canOpen } from "@/lib/routes";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { GameIntro } from "@/components/game-intro";
 import { Badge, Card, Press, ProgressBar, Text } from "@/components/ui";

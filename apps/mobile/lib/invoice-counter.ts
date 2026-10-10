@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { advanceCounter, type BillAdvance, type InvoiceCounter } from "@hermes/core";
+import { advanceCounter, type BillAdvance, type InvoiceCounter } from "@brandcollabs/core";
 
 /**
  * Bill numbers, remembered per shop **on the device**.
@@ -12,13 +12,14 @@ import { advanceCounter, type BillAdvance, type InvoiceCounter } from "@hermes/c
  * table): there is no `invoice_counters` table, and a counter labelled as the
  * shop's own when it is one phone's would be a lie on the screen. Every label
  * that shows one of these numbers says "on this phone". The *rules* (parse,
- * advance, suggest next) live in `@hermes/core` so the screen, this store and the
+ * advance, suggest next) live in `@brandcollabs/core` so the screen, this store and the
  * core test all read the same ones; only the storage is here.
  *
  * Stored shape, under one key so nothing needs migrating when a shop key changes:
  *   { "<shopKey>": { last, width, prefix } }
  */
-const KEY = "hermes-invoice-counters";
+const KEY = "brandcollabs-invoice-counters";
+const LEGACY_KEY = "hermes-invoice-counters";
 
 /** Shops kept. Two shops need two counters; a phone that has billed for fifty is
  *  keeping more than any screen shows, so the oldest entries fall off. */
@@ -45,7 +46,7 @@ function saneCounter(value: unknown): InvoiceCounter | null {
 
 async function loadAll(): Promise<Counters> {
   try {
-    const raw = await AsyncStorage.getItem(KEY);
+    const raw = (await AsyncStorage.getItem(KEY)) ?? (await AsyncStorage.getItem(LEGACY_KEY));
     if (!raw) return {};
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     if (!parsed || typeof parsed !== "object") return {};

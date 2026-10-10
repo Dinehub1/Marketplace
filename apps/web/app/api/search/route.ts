@@ -1,4 +1,4 @@
-import { CITY_LABEL } from '@hermes/core';
+import { CITY_LABEL } from '@brandcollabs/core';
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest) {

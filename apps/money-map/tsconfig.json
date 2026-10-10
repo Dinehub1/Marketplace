@@ -2,14 +2,20 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    // `@hermes/expo-ui` (like `@hermes/core`) ships raw TypeScript and names its own
+    // `@brandcollabs/expo-ui` (like `@brandcollabs/core`) ships raw TypeScript and names its own
     // relative imports with an extension, because the packages are consumed as source by
     // Metro rather than built. `expo/tsconfig.base` does not set this flag, so an app
-    // that imports a `@hermes/*` package has to add it.
+    // that imports a `@brandcollabs/*` package has to add it.
     "allowImportingTsExtensions": true,
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@brandcollabs/expo-ui": [
+        "../../packages/expo-ui/src/index.ts"
+      ],
+      "@Brandcollabs/expo-ui": [
+        "../../packages/expo-ui/src/index.ts"
       ]
     }
   },

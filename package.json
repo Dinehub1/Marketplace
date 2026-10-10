@@ -1,5 +1,5 @@
 {
-  "name": "hermes",
+  "name": "brandcollabs",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -15,14 +15,14 @@
     "react-native-safe-area-context": "~5.7.0"
   },
   "scripts": {
-    "dev": "npm run dev -w @hermes/web",
-    "build": "npm run build -w @hermes/web",
-    "start": "npm run start -w @hermes/web",
+    "dev": "npm run dev -w @brandcollabs/web",
+    "build": "npm run build -w @brandcollabs/web",
+    "start": "npm run start -w @brandcollabs/web",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "tokens": "node packages/tokens/scripts/extract.mjs",
     "web": "node scripts/run-app.mjs web",
-    "mobile": "npm run start -w @hermes/mobile --",
+    "mobile": "npm run start -w @brandcollabs/mobile --",
     "dining": "node scripts/run-app.mjs dining",
     "gatted": "node scripts/run-app.mjs gatted",
     "cycle-tracker": "node scripts/run-app.mjs cycle-tracker",
@@ -33,8 +33,8 @@
     "quick-driver": "node scripts/run-app.mjs quick-driver",
     "gym": "node scripts/run-app.mjs gym-tracker",
     "app": "node scripts/run-app.mjs",
-    "mobile:ios": "npm run ios -w @hermes/mobile --",
-    "mobile:android": "npm run android -w @hermes/mobile --",
+    "mobile:ios": "npm run ios -w @brandcollabs/mobile --",
+    "mobile:android": "npm run android -w @brandcollabs/mobile --",
     "_comment_mobile": "The trailing `--` is load-bearing. Without it, `npm run mobile -- --port 8082` is parsed by npm itself: npm eats `--port`, passes a bare `8082` on to `expo start`, and expo reads it as a project root and dies with 'Invalid project root'. With it, the arguments reach expo. APP_TARGET works the same way: `APP_TARGET=japa npm run mobile -- --port 8082` (set it in the shell, not after `--`, because it is read by app.config.ts and not by expo's CLI).",
     "test": "npm run test --workspaces --if-present",
     "ai:report": "node scripts/ai-router-report.mjs",

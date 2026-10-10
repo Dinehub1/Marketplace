@@ -7,7 +7,7 @@ import {
   elevation,
   type Palette,
   type Scheme,
-} from "@hermes/tokens";
+} from "@brandcollabs/tokens";
 import { BRAND } from "./config";
 
 export type ThemeChoice = "light" | "dark" | "system";

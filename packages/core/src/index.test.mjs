@@ -15,6 +15,7 @@ import {
   parseBillNo, shopKeyOf, advanceCounter, nextBillNo, counterLabel,
   formatPaise, formatRupees, formatCurrency, isIAPRequired, getGatewayForTransaction,
   requireEnv, requireFirstEnv,
+  detectAuthChannel, resolveApiBaseUrl, sendOtp, verifyOtp,
 } from "./index.ts";
 
 test("category slugs are stable permalinks", () => {
@@ -234,45 +235,108 @@ test("payments: routing enforces App Store compliance and gateway separation", (
  * must throw, must name the variable, and must not print a value that might be secret.
  */
 test("requireEnv returns a set variable and names a missing one", () => {
-  process.env.HERMES_TEST_PRESENT = "value-here";
+  process.env.BRANDCOLLABS_TEST_PRESENT = "value-here";
   try {
-    assert.equal(requireEnv("HERMES_TEST_PRESENT"), "value-here");
+    assert.equal(requireEnv("BRANDCOLLABS_TEST_PRESENT"), "value-here");
 
     assert.throws(
-      () => requireEnv("HERMES_TEST_DEFINITELY_ABSENT"),
+      () => requireEnv("BRANDCOLLABS_TEST_DEFINITELY_ABSENT"),
       (err) => {
-        assert.match(err.message, /HERMES_TEST_DEFINITELY_ABSENT/);
+        assert.match(err.message, /BRANDCOLLABS_TEST_DEFINITELY_ABSENT/);
         return true;
       },
     );
 
     // An empty string is "missing" — an unset var and a blank one are the same accident.
-    process.env.HERMES_TEST_EMPTY = "";
-    assert.throws(() => requireEnv("HERMES_TEST_EMPTY"), /HERMES_TEST_EMPTY/);
+    process.env.BRANDCOLLABS_TEST_EMPTY = "";
+    assert.throws(() => requireEnv("BRANDCOLLABS_TEST_EMPTY"), /BRANDCOLLABS_TEST_EMPTY/);
   } finally {
-    delete process.env.HERMES_TEST_PRESENT;
-    delete process.env.HERMES_TEST_EMPTY;
+    delete process.env.BRANDCOLLABS_TEST_PRESENT;
+    delete process.env.BRANDCOLLABS_TEST_EMPTY;
   }
 });
 
 test("requireFirstEnv accepts either key name and lists them all when neither is set", () => {
-  const names = ["HERMES_TEST_KEY_A", "HERMES_TEST_KEY_B"];
+  const names = ["BRANDCOLLABS_TEST_KEY_A", "BRANDCOLLABS_TEST_KEY_B"];
   try {
-    process.env.HERMES_TEST_KEY_B = "second-name-wins";
+    process.env.BRANDCOLLABS_TEST_KEY_B = "second-name-wins";
     assert.equal(requireFirstEnv(names), "second-name-wins");
 
-    delete process.env.HERMES_TEST_KEY_B;
+    delete process.env.BRANDCOLLABS_TEST_KEY_B;
     assert.throws(
       () => requireFirstEnv(names),
       (err) => {
         // Both candidates have to appear, or the message sends you to the wrong name.
-        assert.match(err.message, /HERMES_TEST_KEY_A/);
-        assert.match(err.message, /HERMES_TEST_KEY_B/);
+        assert.match(err.message, /BRANDCOLLABS_TEST_KEY_A/);
+        assert.match(err.message, /BRANDCOLLABS_TEST_KEY_B/);
         return true;
       },
     );
   } finally {
-    delete process.env.HERMES_TEST_KEY_A;
-    delete process.env.HERMES_TEST_KEY_B;
+    delete process.env.BRANDCOLLABS_TEST_KEY_A;
+    delete process.env.BRANDCOLLABS_TEST_KEY_B;
+  }
+});
+
+test("auth: detectAuthChannel identifies email vs phone", () => {
+  assert.equal(detectAuthChannel("user@example.com"), "email");
+  assert.equal(detectAuthChannel("hello.world+test@dropby.co.in"), "email");
+  assert.equal(detectAuthChannel("9876543210"), "whatsapp");
+  assert.equal(detectAuthChannel("+919876543210"), "whatsapp");
+  assert.equal(detectAuthChannel("919876543210"), "whatsapp");
+});
+
+test("auth: resolveApiBaseUrl handles custom and environment URLs", () => {
+  assert.equal(resolveApiBaseUrl("https://custom.api.com/"), "https://custom.api.com");
+  process.env.EXPO_PUBLIC_WEB_BASE_URL = "https://app.dropby.co.in/";
+  assert.equal(resolveApiBaseUrl(), "https://app.dropby.co.in");
+  delete process.env.EXPO_PUBLIC_WEB_BASE_URL;
+});
+
+test("auth: sendOtp and verifyOtp perform correct HTTP API requests", async () => {
+  const originalFetch = globalThis.fetch;
+  let sentBody = null;
+  let sentUrl = null;
+
+  globalThis.fetch = async (url, init) => {
+    sentUrl = String(url);
+    sentBody = JSON.parse(init.body);
+    if (sentUrl.includes("/api/otp/send")) {
+      return {
+        ok: true,
+        json: async () => ({ ok: true, channel: sentBody.channel, message: "Code sent" }),
+      };
+    }
+    if (sentUrl.includes("/api/otp/verify")) {
+      return {
+        ok: true,
+        json: async () => ({ ok: true, identifier: sentBody.identifier, channel: sentBody.channel, token: "test.token" }),
+      };
+    }
+    return { ok: false };
+  };
+
+  try {
+    const sendRes = await sendOtp({
+      identifier: "user@dropby.co.in",
+      baseUrl: "https://api.test.com",
+    });
+    assert.equal(sentUrl, "https://api.test.com/api/otp/send");
+    assert.equal(sentBody.channel, "email");
+    assert.equal(sentBody.identifier, "user@dropby.co.in");
+    assert.equal(sendRes.ok, true);
+
+    const verifyRes = await verifyOtp({
+      identifier: "9876543210",
+      code: "123456",
+      channel: "sms",
+      baseUrl: "https://api.test.com",
+    });
+    assert.equal(sentUrl, "https://api.test.com/api/otp/verify");
+    assert.equal(sentBody.channel, "sms");
+    assert.equal(sentBody.code, "123456");
+    assert.equal(verifyRes.token, "test.token");
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });

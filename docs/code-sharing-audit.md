@@ -16,7 +16,7 @@ figure is a judgement rather than a measurement it says so.
 | Shared logic (`packages/core`) | **Real and used** — 22 of ~40 exports consumed by mobile + web |
 | Shared tokens (`packages/tokens`) | **Real and used** — palette is *generated* from `globals.css`; spacing/radius native-only by design |
 | Shared UI components | **Started** — `packages/expo-ui` ships `HapticTab` (2 live consumers); most template atoms are dead, not shared |
-| Standalone apps (9, ~115k lines) | Still **share almost nothing** — 4 of 9 now take a `@hermes/*` package (highwaypass, quick-driver, smokefree, money-map) |
+| Standalone apps (9, ~115k lines) | Still **share almost nothing** — 4 of 9 now take a `@brandcollabs/*` package (highwaypass, quick-driver, smokefree, money-map) |
 | `apps/mobile` internal sharing | **Done** — 44/50 screens import the kit; raw `<Pressable>` 105 → 5, shared `<Press>` 1 → 135 |
 | Dependency hoisting | **Correct** — one root `node_modules`, no duplicate installs |
 | Typecheck | **Clean** — all 14 workspaces, exit 0 (was 12) |
@@ -43,7 +43,7 @@ Worth stating first, because several of these are better than the surrounding re
 
 - **Hoisting is correct.** Root `node_modules` is 3.2 GB; the per-app `node_modules`
   directories are ~0 MB stubs (empty `@babel/`, `@expo/` dirs left by an older
-  per-app `npm install`). `@hermes/core` and `@hermes/tokens` are symlinks from the
+  per-app `npm install`). `@brandcollabs/core` and `@brandcollabs/tokens` are symlinks from the
   root. There is no duplicate-install problem to fix.
 - **All 10 Expo apps are on an identical stack**: `react 19.2.3`, `react-native 0.86.3`,
   `expo 57.0.26`. This is the precondition for sharing components, and it is already
@@ -71,7 +71,7 @@ Worth stating first, because several of these are better than the surrounding re
 
 ## 2. The 9 standalone apps share nothing
 
-**Measured:** `grep -rl "@hermes/core\|@hermes/tokens"` across all 9 standalone apps
+**Measured:** `grep -rl "@brandcollabs/core\|@brandcollabs/tokens"` across all 9 standalone apps
 returns **0 files**. Not one declares either package in its `package.json`.
 
 > **Correction (step 3).** This section originally presented ~1,636 lines of duplicated
@@ -217,7 +217,7 @@ is **146 lines**. The same card, built twice for the two surfaces.
 > recommended deleting ~536 lines. That was wrong about `payments.ts`, and the error is
 > worth recording: the check had searched for *function* symbols only, so it missed the
 > type imports. `apps/web/lib/paypal.ts:3` imports `PayPalOrder`,
-> `CapturePayPalOrderResult` and `SupportedCurrency` from `@hermes/core`, all three of
+> `CapturePayPalOrderResult` and `SupportedCurrency` from `@brandcollabs/core`, all three of
 > which are declared in `payments.ts`. `packages/core/src/index.test.mjs` also exercises
 > `isIAPRequired` and `getGatewayForTransaction`. Deleting the file would have broken the
 > web build and the test suite.
@@ -246,7 +246,7 @@ So roughly half the file is unreferenced app-side, but pruning it is an API-surf
 decision for a shared package, not a verified-dead-code deletion. Left alone
 deliberately.
 
-`apps/dining` still has its own `utils/mockPaymentGateway` and no `@hermes/core`
+`apps/dining` still has its own `utils/mockPaymentGateway` and no `@brandcollabs/core`
 dependency — the "shared layer built, then not adopted" observation stands for `dining`.
 
 ### 4.2 Hardcoded Supabase fallback
@@ -285,7 +285,7 @@ design project and should not be attempted before step 3.
   **bundles at the same byte size as before**, so no runtime behaviour moved.
 - Removed `packages/core/src/ai.ts` (256 lines, 15 exports, zero importers). **Kept
   `payments.ts`** — §4.1 originally called it dead and was wrong.
-- Added `requireEnv` / `requireFirstEnv` to `@hermes/core` (with tests) and used them in
+- Added `requireEnv` / `requireFirstEnv` to `@brandcollabs/core` (with tests) and used them in
   `apps/highwaypass` and `apps/quick-driver`, removing the silent production fallbacks.
   Both apps typecheck and bundle unchanged.
 
@@ -494,10 +494,10 @@ Two findings, both of which change what "share `BusinessCard`" can mean.
 before touching either. `apps/web/components/directory/BusinessCard.tsx` (146 lines) is
 `<article>` / `<div>` / `<a>` with CSS custom properties, Tailwind classes and inline
 `<svg>` marks; `apps/mobile/components/business-card.tsx` (147 lines) is `View` / `Text` /
-`Press` with React Native styles, `useTheme()`, `expo-router`, and `@hermes/tokens`. The
+`Press` with React Native styles, `useTheme()`, `expo-router`, and `@brandcollabs/tokens`. The
 near-identical line count is a coincidence of the same *information* being laid out for
 two platforms. There is no shared component here to extract — only shared *logic*, which
-both already take from `@hermes/core` (`cleanBusinessName`, `telHref`, `waHref`). Forcing
+both already take from `@brandcollabs/core` (`cleanBusinessName`, `telHref`, `waHref`). Forcing
 one component would mean either a platform abstraction or flattening one surface's design.
 
 **2. The React mismatch is worse than "a version bump", and is blocked.** `apps/web`
@@ -517,7 +517,7 @@ the alignment is recorded as blocked pending a deliberate approach (regenerate i
 Linux container, or hand-edit both lock entries together with a verification plan). The
 repo is left consistent: `package.json` and lock both say 19.2.4, web builds.
 
-**What actually shipped: the real duplicated logic.** `@hermes/core` already exports
+**What actually shipped: the real duplicated logic.** `@brandcollabs/core` already exports
 `formatCount(n)` — Indian digit grouping, used by the Expo directory screens for exactly
 this number. The web app had it **missing from its re-export whitelist** in
 `apps/web/lib/categories.ts` (the documented pattern the other 19 helpers use), so web
@@ -527,7 +527,7 @@ review count — was derived two different ways on the two surfaces.
 Migrated **8 of the 10 call sites** to the shared `formatCount`, added it to the
 re-export, and left the 2 that are genuinely not the same function: `inr = (n) =>
 \`₹${…}\`` in `vendor-bookings.tsx` and `booking.tsx` prefix a currency symbol, which
-`formatCount` does not do and `@hermes/core`'s `formatPaise`/`formatRupees` are *unit
+`formatCount` does not do and `@brandcollabs/core`'s `formatPaise`/`formatRupees` are *unit
 conversions* (`×100` / `÷100`), not display formatters.
 
 Verified: web typechecks and **builds** (exit 0), root typecheck clean across 14
@@ -549,7 +549,7 @@ that might need to converge. They are not. Investigating it properly showed:
 - **Spacing and radii are not shared, and should not be.** Web has no `--space-*` or
   `--radius-*` custom properties at all; it uses Tailwind's default scale
   (`rounded-xl` ×103, `rounded-2xl` ×71, …). Native uses `space`/`radius` from
-  `@hermes/tokens` because React Native needs numbers. These cannot share one source
+  `@brandcollabs/tokens` because React Native needs numbers. These cannot share one source
   without either teaching Tailwind a generated scale or generating numbers from Tailwind
   defaults — real churn to relabel two legitimate idioms. Left alone, recommended.
 

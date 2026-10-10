@@ -1,4 +1,4 @@
-# Hermes
+# Brandcollabs
 
 Multi-tenant local business directory. One backend, three deliverables:
 
@@ -55,8 +55,8 @@ Collapsing to the lowest common denominator would cost all of it to save
 duplicating some layout markup.
 
 So `BusinessCard` exists twice — once in `apps/web/components/directory/` and
-once in `apps/mobile/components/` — and both call the same `@hermes/core`
-functions and read the same `@hermes/tokens` values. What must agree, agrees;
+once in `apps/mobile/components/` — and both call the same `@brandcollabs/core`
+functions and read the same `@brandcollabs/tokens` values. What must agree, agrees;
 what should differ per platform, differs.
 
 ## Deployment

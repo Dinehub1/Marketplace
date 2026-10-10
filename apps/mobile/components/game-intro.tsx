@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 
 import { Card, Press, Text } from "@/components/ui";
 import { useTheme } from "@/lib/theme";
-import { space, radius } from "@hermes/tokens";
+import { space, radius } from "@brandcollabs/tokens";
 
 /**
  * The screen a game opens on: eyebrow, title, lede, numbered rules, an optional

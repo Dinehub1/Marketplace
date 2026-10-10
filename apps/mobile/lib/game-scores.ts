@@ -18,7 +18,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
  * Stored shape, under one key so a game added later needs no migration:
  *   { "<game>": { best, rounds, recent: [{ score, line, at }] } }
  */
-const KEY = "hermes-game-scores";
+const KEY = "brandcollabs-game-scores";
+const LEGACY_KEY = "hermes-game-scores";
 
 /** Rounds kept per game. The last five are what the summary screen lists. */
 const RECENT_MAX = 5;
@@ -78,7 +79,7 @@ function saneRecord(value: unknown): GameRecord {
 
 export async function loadGameScores(): Promise<GameScores> {
   try {
-    const raw = await AsyncStorage.getItem(KEY);
+    const raw = (await AsyncStorage.getItem(KEY)) ?? (await AsyncStorage.getItem(LEGACY_KEY));
     if (!raw) return {};
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     if (!parsed || typeof parsed !== "object") return {};

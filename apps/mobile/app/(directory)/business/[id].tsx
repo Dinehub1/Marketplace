@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { radius, space } from "@hermes/tokens";
+import { radius, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { useSaved } from "@/lib/saved";
 import { getBusiness, type Business } from "@/lib/api";
 import { BRAND } from "@/lib/config";
-import { CITY_LABEL } from "@hermes/core";
-import { cleanBusinessName, formatCount, telHref, titleize, waHref } from "@hermes/core";
+import { CITY_LABEL } from "@brandcollabs/core";
+import { cleanBusinessName, formatCount, telHref, titleize, waHref } from "@brandcollabs/core";
 import { Badge, Button, Card, Divider, EmptyState, Press, Skeleton, Text } from "@/components/ui";
 import { Icon } from "@/components/icons";
 

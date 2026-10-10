@@ -2,7 +2,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { HapticTab } from '@hermes/expo-ui';
+import { HapticTab } from '@brandcollabs/expo-ui';
 import { useTheme } from '@/hooks/useTheme';
 
 export default function TabLayout() {

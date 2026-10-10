@@ -1,4 +1,4 @@
-import { CITY_LABEL } from "@hermes/core";
+import { CITY_LABEL } from "@brandcollabs/core";
 /**
  * One door to every AI capability, with a chain behind it.
  *

@@ -1,5 +1,5 @@
 {
-  "name": "@hermes/web",
+  "name": "@brandcollabs/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,7 +17,7 @@
     "next": "16.2.9",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "@hermes/core": "*"
+    "@brandcollabs/core": "*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

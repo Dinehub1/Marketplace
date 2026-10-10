@@ -1,5 +1,5 @@
 {
-  "name": "@hermes/doctor-appointment",
+  "name": "@brandcollabs/doctor-appointment",
   "main": "index.ts",
   "version": "1.0.0",
   "scripts": {

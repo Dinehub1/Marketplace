@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "installCommand": "npm install",
-  "buildCommand": "npm run build -w @hermes/web",
+  "buildCommand": "npm run build -w @brandcollabs/web",
   "outputDirectory": "apps/web/.next",
   "regions": ["bom1"]
 }

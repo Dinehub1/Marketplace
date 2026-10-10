@@ -8,7 +8,7 @@
         "run",
         "dev",
         "--workspace",
-        "@hermes/web",
+        "@brandcollabs/web",
         "--",
         "-p",
         "3001"
@@ -22,7 +22,7 @@
         "run",
         "web",
         "--workspace",
-        "@hermes/cycle-tracker",
+        "@brandcollabs/cycle-tracker",
         "--",
         "--port",
         "8082"
@@ -36,7 +36,7 @@
         "run",
         "web",
         "--workspace",
-        "@hermes/gym-tracker",
+        "@brandcollabs/gym-tracker",
         "--",
         "--port",
         "8086"

@@ -8,7 +8,6 @@ export async function POST(req: NextRequest) {
   const body = (await req.json().catch(() => ({}))) as Record<string, unknown>;
   const rawTarget = String(body.identifier ?? body.phone ?? body.email ?? "").trim();
 
-  // Brute-force guard on top of database per-row attempts cap
   if (rawTarget) {
     const rl = rateLimit(`verify:${clientIp(req)}:${rawTarget}`, 10, 60 * 60 * 1000);
     if (!rl.ok) {

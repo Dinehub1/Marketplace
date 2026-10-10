@@ -5,7 +5,7 @@
     "types": ["node"],
 
     /* This config extends Expo's base rather than the repo's tsconfig.base.json, so it
-     * does not inherit the repo-wide flag. @hermes/core ships raw TypeScript whose
+     * does not inherit the repo-wide flag. @brandcollabs/core ships raw TypeScript whose
      * relative imports name their file (`./brand-scope.ts`) so plain `node --test` can
      * type-strip them; tsc needs this to accept those specifiers. */
     "allowImportingTsExtensions": true,
@@ -14,10 +14,16 @@
       "@/*": [
         "./*"
       ],
-      "@hermes/tokens": [
+      "@brandcollabs/tokens": [
         "../../packages/tokens/src/index.ts"
       ],
-      "@hermes/core": [
+      "@Brandcollabs/tokens": [
+        "../../packages/tokens/src/index.ts"
+      ],
+      "@brandcollabs/core": [
+        "../../packages/core/src/index.ts"
+      ],
+      "@Brandcollabs/core": [
         "../../packages/core/src/index.ts"
       ]
     }

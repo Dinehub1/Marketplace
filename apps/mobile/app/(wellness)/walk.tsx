@@ -58,7 +58,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
-import { alpha, radius, space } from "@hermes/tokens";
+import { alpha, radius, space } from "@brandcollabs/tokens";
 import Svg, { Path as SvgPath } from "react-native-svg";
 import Animated, {
   Easing,

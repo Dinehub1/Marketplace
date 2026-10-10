@@ -1,5 +1,5 @@
 /**
- * @hermes/tokens — the design system, shared by the Next.js web app and the
+ * @brandcollabs/tokens — the design system, shared by the Next.js web app and the
  * Expo app.
  *
  * Colours are generated from `app/globals.css` (see scripts/extract.mjs), so

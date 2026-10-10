@@ -1,5 +1,5 @@
 import { createClient } from "./supabase/server";
-import { cityCopy, DEFAULT_CITY, type City } from "@hermes/core";
+import { cityCopy, DEFAULT_CITY, type City } from "@brandcollabs/core";
 import { headers } from "next/headers";
 import type {
   BlogPost,

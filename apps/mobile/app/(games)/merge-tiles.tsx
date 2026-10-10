@@ -51,7 +51,7 @@ import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { setAudioModeAsync, useAudioPlayer, type AudioPlayer } from "expo-audio";
-import { alpha, space } from "@hermes/tokens";
+import { alpha, space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { Press } from "@/components/ui";
 import { AdBanner } from "@/components/ad-slot";

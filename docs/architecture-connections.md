@@ -14,7 +14,7 @@ deliverable that talks to them.**
 - Deliverable A — **28 brand websites** on one multi-tenant Next.js router (`apps/web`).
 - Deliverable B — **19 Expo store apps** built from one codebase (`apps/mobile`), selected
   by `APP_TARGET` at build time.
-- Both read the **same `businesses` table** and share **`@hermes/core`** for the logic that
+- Both read the **same `businesses` table** and share **`@brandcollabs/core`** for the logic that
   must not disagree between them.
 
 ```
@@ -89,7 +89,7 @@ apps), `product` (5, one leads with its own screen), `directory` (3), `game` (4)
 
 | Family | Talks to | Where |
 |---|---|---|
-| Directory (3 apps) | Supabase PostgREST **directly** — a hand-rolled client, not supabase-js | `lib/api.ts`. The filter comes from `scopeForBrand(target.id)` in `@hermes/core`, resolved at runtime in `lib/target.ts` and compiled into the PostgREST `or=`/`and=` expression — so Swasth Path lists doctors and Gaadi Ghar lists garages instead of all three listing the same 24,048 rows, and the answer cannot drift from the brand websites'. |
+| Directory (3 apps) | Supabase PostgREST **directly** — a hand-rolled client, not supabase-js | `lib/api.ts`. The filter comes from `scopeForBrand(target.id)` in `@brandcollabs/core`, resolved at runtime in `lib/target.ts` and compiled into the PostgREST `or=`/`and=` expression — so Swasth Path lists doctors and Gaadi Ghar lists garages instead of all three listing the same 24,048 rows, and the answer cannot drift from the brand websites'. |
 | Wellness (6 apps) | Supabase PostgREST directly, off-line-first | `lib/wellness-db.ts` + `lib/session.ts`. Identity is a per-install token sent as `x-wellness-token`; only its SHA-256 is stored (`supabase/migrations/20260917000000_wellness_sync.sql`). AsyncStorage holds the cache, the pending-write queue and the token; the database holds sessions and daily counts. |
 | Product + tools | The **web** app's `/api/job` | `lib/tools.ts` → `jobEndpoint()`. On device it is `${WEB_BASE_URL}/api/job`; on web export it is the relative `/api/job`. |
 | Business owner screens | The **web** app's `/api/otp/*` | `lib/owner.tsx`. No second auth system: the app is a client of the website's WhatsApp OTP endpoints and stores the returned phone token. |
@@ -106,14 +106,14 @@ timer have pure-logic gates (`scripts/check-block-clear.mjs`,
 
 | Package | Contents | Consumed by |
 |---|---|---|
-| `@hermes/core` | Slugs, category paths, `cleanBusinessName`, `titleize`, `telHref`/`waHref`, `formatCount`, the pdfcpu page-range grammar, bill-number arithmetic, and **brand→category ownership** (`brand-scope.ts`) | web **and** mobile |
-| `@hermes/tokens` | Colours **generated** from `apps/web/app/globals.css` by `packages/tokens/scripts/extract.mjs` | mobile only (web is the source, not a consumer) |
+| `@brandcollabs/core` | Slugs, category paths, `cleanBusinessName`, `titleize`, `telHref`/`waHref`, `formatCount`, the pdfcpu page-range grammar, bill-number arithmetic, and **brand→category ownership** (`brand-scope.ts`) | web **and** mobile |
+| `@brandcollabs/tokens` | Colours **generated** from `apps/web/app/globals.css` by `packages/tokens/scripts/extract.mjs` | mobile only (web is the source, not a consumer) |
 
 Components are **not** shared. `BusinessCard` exists twice on purpose (README §"What is
 actually shared"): the web UI uses `backdrop-filter`, `:hover`, `prefers-reduced-motion` and
 fluid `clamp()` type that `react-native-web` cannot express.
 
-Transports are **not** shared either — `@hermes/core` contains nothing that fetches, because
+Transports are **not** shared either — `@brandcollabs/core` contains nothing that fetches, because
 the web's caching strategy (`next: { revalidate }`) is meaningless on a phone.
 
 **`brand-scope.ts` is the load-bearing one.** It answers "which business listings belong to
@@ -229,9 +229,9 @@ means it is a decision or a follow-up, deliberately not taken.
 |---|---|---|
 | 1 | **The admin "hermes chat" POST was dead three times over.** It posted to `/admin/api/hermes`, which does not exist; the button was `type="button"` with no handler so it never submitted; and the only field was a `<textarea>`, where Enter inserts a newline rather than submitting. | The form is gone. `admin/hermes-panel.tsx` is now a server component rendering only the half that really worked — the `gateway_state.json` read — and it names Discord / `hermes chat` as the real ways to drive the agent. The gateway exposes no HTTP chat surface, so there was no honest endpoint to implement behind it. |
 | 2 | **Base-domain list duplicated.** `proxy.ts` kept its own copy of the domains, the admin hosts and the Hermes hosts, alongside `lib/base-domains.ts`. | `base-domains.ts` is the single source. It derives `ADMIN_HOSTS` and `HERMES_DASHBOARD_HOSTS` from `BRAND_BASE_DOMAINS`, and `proxy.ts` imports them and reuses the shared `brandSlugFromHost` instead of reimplementing subdomain parsing. Adding a third domain can no longer update one file and not the other. |
-| 3 | **Brand→category ownership written twice** — in `apps/mobile/targets.mjs` and `apps/web/lib/brand-categories.ts` — so web and native could disagree about who owns a category. | The table moved to **`packages/core/src/brand-scope.ts`** (`@hermes/core`), the package that exists for exactly this. The web imports it through a thin `lib/brand-categories.ts` shim; the mobile apps derive their feed filter from `scopeForBrand()` at **runtime** in `lib/target.ts`, so a binary can never carry a stale copy. One table, two views. |
+| 3 | **Brand→category ownership written twice** — in `apps/mobile/targets.mjs` and `apps/web/lib/brand-categories.ts` — so web and native could disagree about who owns a category. | The table moved to **`packages/core/src/brand-scope.ts`** (`@brandcollabs/core`), the package that exists for exactly this. The web imports it through a thin `lib/brand-categories.ts` shim; the mobile apps derive their feed filter from `scopeForBrand()` at **runtime** in `lib/target.ts`, so a binary can never carry a stale copy. One table, two views. |
 | 4 | **`APP_PATHS` in `proxy.ts` was dead** — a 17-line list of "routes the brand router should handle", left from when unlisted paths fell through to the static sites. The router now rewrites every path. | Deleted. The bypass list that *is* used is renamed `BYPASS_PREFIXES` and states why each entry is there. |
-| 5 | **`@hermes/tokens` was in the web app's `transpilePackages`** although no web source imports it — the dependency actually runs the other way (tokens are generated *from* `apps/web/app/globals.css`). | Removed, with the direction recorded in the comment. |
+| 5 | **`@brandcollabs/tokens` was in the web app's `transpilePackages`** although no web source imports it — the dependency actually runs the other way (tokens are generated *from* `apps/web/app/globals.css`). | Removed, with the direction recorded in the comment. |
 | 6 | **Four listings could be built for a store while opening on nothing**, and the gate that catches it was opt-in (`--require-ready`), so no release path ran it. | `check-fleet.mjs` prints an unmissable block naming each unbuildable listing, and a new `check:release` script (`check-targets` + `check-fleet --require-ready`) is bound to every `prebuild:*` hook in `apps/mobile/package.json`, so a store build cannot run while any listing owes a first screen. |
 
 ### Open — deliberate, not oversights
@@ -278,9 +278,9 @@ packages/core    ◄─ pure logic, no fetch, no platform imports
 
 Web and mobile never import each other. They meet at exactly four places:
 
-1. **`@hermes/core`** — including the ownership table, which is the one that decides what each
+1. **`@brandcollabs/core`** — including the ownership table, which is the one that decides what each
    surface is allowed to show.
-2. **`@hermes/tokens`** — colours, one-way from the web's CSS to native.
+2. **`@brandcollabs/tokens`** — colours, one-way from the web's CSS to native.
 3. **The Supabase tables** — both clients read `businesses` directly.
 4. **Three HTTP endpoints on the web app** — `/api/otp/send`, `/api/otp/verify`, `/api/job`.
 

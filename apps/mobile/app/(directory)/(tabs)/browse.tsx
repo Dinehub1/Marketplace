@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, RefreshControl, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 import { useTheme } from "@/lib/theme";
 import { listBusinesses, PAGE_SIZE, type Business } from "@/lib/api";
 import { BRAND } from "@/lib/config";
-import { CITY_LABEL } from "@hermes/core";
+import { CITY_LABEL } from "@brandcollabs/core";
 import { Button, Card, EmptyState, Skeleton, Text } from "@/components/ui";
 import { BusinessCard } from "@/components/business-card";
 

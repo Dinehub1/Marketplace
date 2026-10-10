@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { radius } from "@hermes/tokens";
+import { radius } from "@brandcollabs/tokens";
 import { useTheme, type ThemeChoice } from "@/lib/theme";
 import { Press, Text } from "./ui";
 import { Icon, type IconName } from "./icons";

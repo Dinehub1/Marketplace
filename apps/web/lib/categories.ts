@@ -2,7 +2,7 @@
  * Web-side category data access.
  *
  * The pure half of this file — slugs, paths, name cleaning, tel:/wa.me links —
- * moved to @hermes/core so the Expo app derives identical values from identical
+ * moved to @brandcollabs/core so the Expo app derives identical values from identical
  * code. It is re-exported here rather than deleted: every call site in the app
  * imports from "@/lib/categories", and rewriting forty imports to prove a point
  * about module boundaries would be churn, not clarity.
@@ -37,8 +37,8 @@ export {
   titleize,
   telHref,
   waHref,
-} from "@hermes/core";
-export type { CategoryStat, Listing, City } from "@hermes/core";
+} from "@brandcollabs/core";
+export type { CategoryStat, Listing, City } from "@brandcollabs/core";
 
 import {
   slugifyCategory,
@@ -53,7 +53,7 @@ import {
   CITY_LABEL,
   type CategoryStat,
   type Listing,
-} from "@hermes/core";
+} from "@brandcollabs/core";
 
 function env() {
   return {

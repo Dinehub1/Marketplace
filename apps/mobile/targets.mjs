@@ -165,7 +165,7 @@ export const TARGETS = [
     products: [],
     directory: "swasthpath",
     // No `scope` here. Which categories this app may show is NOT retyped per target:
-    // it is read at runtime from the shared ownership table in `@hermes/core`
+    // it is read at runtime from the shared ownership table in `@brandcollabs/core`
     // (`scopeForBrand`, see lib/target.ts). That table is the same one the brand
     // websites use to decide who publishes /<category>-in-indore, so the app and the
     // site cannot disagree about who owns a category. It is also what keeps the three
@@ -197,7 +197,7 @@ export const TARGETS = [
     permissions: ["LOCATION"],
     products: [],
     directory: "gaadighar",
-    // Scope comes from the shared ownership table in `@hermes/core`, not from here —
+    // Scope comes from the shared ownership table in `@brandcollabs/core`, not from here —
     // see the note on swasthpath above. The table is deliberately tight for this
     // brand (bare "dealer", "showroom" and "garage" stay unowned, because a parking
     // garage is not a car service), and that decision now governs the app and the

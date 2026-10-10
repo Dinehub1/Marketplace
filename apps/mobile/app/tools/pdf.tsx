@@ -13,7 +13,7 @@
  * The work runs on the server behind /api/job with product=pdf-tools.
  */
 import { useMemo, useState } from "react";
-import { isPageRange, PDF_PAGES_HINT } from "@hermes/core";
+import { isPageRange, PDF_PAGES_HINT } from "@brandcollabs/core";
 import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Press } from "@/components/ui";
 import { canDownloadFile, formatBytes, openResult, pickFile, runJob, type JobResult, type PickedFile } from "@/lib/tools";
@@ -88,7 +88,7 @@ export default function PdfToolkit() {
   const single = action !== "merge";
   // A page range is optional for rotate and numbering, but a range that cannot be
   // read is never sent: the engine would either reject it or rotate the wrong pages.
-  // The check is `isPageRange` from @hermes/core — the very function the job route
+  // The check is `isPageRange` from @brandcollabs/core — the very function the job route
   // uses for its 400 — so the field cannot refuse a range the engine accepts
   // (`odd`, `even`, `l`, `3-`, `-4`, `!5`) nor pass one pdfcpu calls a syntax error.
   const usesPages = action === "split" || action === "rotate" || action === "page-numbers";

@@ -3,7 +3,7 @@ import { ScrollView, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/lib/theme";
 import { Text, Card, StatCard, ListItem, Button, Badge, Chip } from "@/components/ui";
-import { space } from "@hermes/tokens";
+import { space } from "@brandcollabs/tokens";
 
 export default function DiningScreen() {
   const { c } = useTheme();

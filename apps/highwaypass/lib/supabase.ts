@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { requireEnv, requireFirstEnv } from '@hermes/core';
+import { requireEnv, requireFirstEnv } from '@brandcollabs/core';
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
@@ -57,46 +57,25 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     },
 });
 
-// Edge Function base URL for custom WhatsApp OTP auth
-const edgeFunctionUrl = `${supabaseUrl}/functions/v1`;
+import { sendOtp as coreSendOtp, verifyOtp as coreVerifyOtp } from '@brandcollabs/core';
 
 export const authApi = {
     sendOtp: async (phone: string) => {
-        const resp = await fetch(`${edgeFunctionUrl}/send-otp`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                apikey: supabaseAnonKey,
-                Authorization: `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify({ phone }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Failed to send OTP');
-        return data as { success: boolean; dev_otp?: string; warning?: string };
+        const res = await coreSendOtp({ identifier: phone, channel: 'whatsapp' });
+        return { success: res.ok, dev_otp: res.devCode, warning: res.deliveryError };
     },
 
     verifyOtp: async (phone: string, otp: string) => {
-        const resp = await fetch(`${edgeFunctionUrl}/verify-otp`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                apikey: supabaseAnonKey,
-                Authorization: `Bearer ${supabaseAnonKey}`,
-            },
-            body: JSON.stringify({ phone, otp }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Verification failed');
-        return data as {
-            success: boolean;
+        const res = await coreVerifyOtp({ identifier: phone, code: otp, channel: 'whatsapp' });
+        return {
+            success: res.ok,
             session: {
-                access_token: string;
-                refresh_token: string;
-                expires_in: number;
-                token_type: string;
-                user: any;
-            };
+                access_token: res.token,
+                refresh_token: res.token,
+                expires_in: 86400,
+                token_type: 'bearer',
+                user: { id: res.identifier, phone: `+91${res.identifier}` },
+            },
         };
     },
 };

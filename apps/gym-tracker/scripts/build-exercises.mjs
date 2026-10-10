@@ -9,8 +9,8 @@
  * runtime, and that loading can be switched off in one place. No image bytes or URLs are bundled.
  *
  * Usage:
- *   npm run build:exercises -w @hermes/gym-tracker            downloads the pinned commit
- *   npm run build:exercises -w @hermes/gym-tracker -- ex.json uses an already-downloaded copy
+ *   npm run build:exercises -w @brandcollabs/gym-tracker            downloads the pinned commit
+ *   npm run build:exercises -w @brandcollabs/gym-tracker -- ex.json uses an already-downloaded copy
  */
 import fs from 'node:fs';
 import path from 'node:path';

@@ -1,5 +1,5 @@
 /**
- * `@hermes/expo-ui` — Expo template UI atoms shared by more than one app.
+ * `@brandcollabs/expo-ui` — Expo template UI atoms shared by more than one app.
  *
  * Why this package exists, and why it is small on purpose.
  *
